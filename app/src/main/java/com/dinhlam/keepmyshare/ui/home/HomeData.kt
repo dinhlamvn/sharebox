@@ -5,5 +5,6 @@ import com.dinhlam.keepmyshare.base.BaseViewModel
 
 data class HomeData(
     val listItem: List<BaseListAdapter.BaseModelView> = emptyList(),
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val title: String = "Home"
 ) : BaseViewModel.BaseData

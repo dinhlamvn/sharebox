@@ -8,8 +8,12 @@ class HomeViewModel : BaseViewModel<HomeData>(HomeData()) {
         loadData()
     }
 
-    private fun loadData() = withData {
+    private fun loadData() {
 
+    }
+
+    fun reload() {
+        loadData()
     }
 
 }

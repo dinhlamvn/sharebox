@@ -1,13 +1,10 @@
 package com.dinhlam.keepmyshare.ui.notifications
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.annotation.StringRes
+import com.dinhlam.keepmyshare.base.BaseViewModel
 
-class NotificationsViewModel : ViewModel() {
+class NotificationsViewModel : BaseViewModel<NotificationData>(NotificationData()) {
+    fun showToast(@StringRes toastRes: Int) = setData { copy(toastStrRes = toastRes) }
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
-    }
-    val text: LiveData<String> = _text
+    fun setTitle(title: String) = setData { copy(title = title) }
 }

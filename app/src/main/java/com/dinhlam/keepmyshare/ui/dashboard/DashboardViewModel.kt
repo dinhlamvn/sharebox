@@ -1,13 +1,11 @@
 package com.dinhlam.keepmyshare.ui.dashboard
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.annotation.StringRes
+import com.dinhlam.keepmyshare.base.BaseViewModel
 
-class DashboardViewModel : ViewModel() {
+class DashboardViewModel : BaseViewModel<DashboardData>(DashboardData()) {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
-    }
-    val text: LiveData<String> = _text
+    fun setTitle(title: String) = setData { copy(title = title) }
+
+    fun showToast(@StringRes toastRes: Int) = setData { copy(toastStrRes = toastRes) }
 }
