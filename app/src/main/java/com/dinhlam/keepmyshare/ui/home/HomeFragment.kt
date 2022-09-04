@@ -40,8 +40,7 @@ class HomeFragment : BaseFragment<HomeData, HomeViewModel, FragmentHomeBinding>(
     }
 
     private val homeAdapter =
-        BaseListAdapter.createAdapter { layoutRes: Int, inflater: LayoutInflater, container: ViewGroup? ->
-            val view = inflater.inflate(layoutRes, container, false)
+        BaseListAdapter.createAdapter { layoutRes: Int, view: View ->
             return@createAdapter when (layoutRes) {
                 R.layout.text_item_view -> HomeTextViewHolder(view)
                 R.layout.image_item_view -> HomeImageViewHolder(view)

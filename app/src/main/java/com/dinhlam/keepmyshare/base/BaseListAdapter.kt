@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.keepmyshare.extensions.asThe
 import com.dinhlam.keepmyshare.utils.Ids
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(private val viewHolderFactory: ViewHolderFactory<T, ViewBinding>) :
@@ -20,15 +21,14 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
     fun interface ViewHolderFactory<T : BaseModelView, VB : ViewBinding> {
         fun onCreateViewHolder(
             layoutRes: Int,
-            inflater: LayoutInflater,
-            container: ViewGroup?
+            itemView: View
         ): BaseViewHolder<T, VB>
     }
 
     companion object {
         @JvmStatic
         fun <T : BaseModelView, VB : ViewBinding> createAdapter(factory: ViewHolderFactory<T, VB>): BaseListAdapter<BaseModelView> {
-            return BaseListAdapter(factory as ViewHolderFactory<BaseModelView, ViewBinding>)
+            return BaseListAdapter(factory.asThe()!!)
         }
     }
 
@@ -37,7 +37,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         viewType: Int
     ): BaseViewHolder<T, ViewBinding> {
         val inflater = LayoutInflater.from(parent.context)
-        return viewHolderFactory.onCreateViewHolder(viewType, inflater, parent)
+        val view = inflater.inflate(viewType, parent, false)
+        return viewHolderFactory.onCreateViewHolder(viewType, view)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
