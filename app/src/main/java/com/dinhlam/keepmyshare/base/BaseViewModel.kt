@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dinhlam.keepmyshare.extensions.asThe
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlin.reflect.KProperty
 
@@ -12,9 +13,10 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
 
     interface BaseData
 
-    data class Consumer(
+    private data class Consumer(
         val consumeField: String,
-        val block: (Any?, Boolean) -> Unit
+        val block: (Any?) -> Unit,
+        val notifyOnChanged: Boolean = false
     )
 
     private val consumers = mutableSetOf<Consumer>()
@@ -24,7 +26,6 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
 
     init {
         _data.postValue(initData)
-
     }
 
     protected fun setData(block: T.() -> T) {
@@ -42,7 +43,13 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
             val afterField = newBaseData::class.java.getDeclaredField(consumer.consumeField)
             afterField.isAccessible = true
             val afterValue = afterField.get(newBaseData)
-            consumer.block.invoke(afterValue, beforeValue != afterValue)
+            viewModelScope.launch(Dispatchers.Main) {
+                if (consumer.notifyOnChanged && beforeValue != afterValue) {
+                    consumer.block.invoke(afterValue)
+                } else if (!consumer.notifyOnChanged) {
+                    consumer.block.invoke(afterValue)
+                }
+            }
         }
     }
 
@@ -57,11 +64,20 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
             }
         }
 
-    fun <T> listen(property: KProperty<T>, block: (T, Boolean) -> Unit) {
+    fun <T> consume(property: KProperty<T>, block: (T) -> Unit) {
         consumers.add(Consumer(property.name, block.asThe()!!))
+    }
+
+    fun <T> consumeOnChange(property: KProperty<T>, block: (T) -> Unit) {
+        consumers.add(Consumer(property.name, block.asThe()!!, true))
     }
 
     fun onClearConsumers() {
         consumers.clear()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }

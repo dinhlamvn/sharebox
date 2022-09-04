@@ -33,7 +33,7 @@ class DashboardFragment :
             viewModel.showToast(R.string.title_dashboard)
         }
 
-        viewModel.listen(DashboardData::toastStrRes) { value, isChanged ->
+        viewModel.consume(DashboardData::toastStrRes) { value ->
             if (value != 0) {
                 Toast.makeText(requireContext(), value, Toast.LENGTH_SHORT).show()
             }

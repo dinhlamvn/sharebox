@@ -24,10 +24,12 @@ class HomeFragment : BaseFragment<HomeData, HomeViewModel, FragmentHomeBinding>(
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
         viewBinding.recyclerView.adapter = homeAdapter
 
-        viewModel.reload()
-
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.reload()
+        }
+
+        viewModel.consumeOnChange(HomeData::listItem) { data ->
+            homeAdapter.submitList(data)
         }
     }
 
@@ -35,7 +37,6 @@ class HomeFragment : BaseFragment<HomeData, HomeViewModel, FragmentHomeBinding>(
 
     override fun onDataChanged(data: HomeData) {
         viewBinding.swipeRefreshLayout.isRefreshing = data.isRefreshing
-        homeAdapter.submitList(data.listItem)
     }
 
     private val homeAdapter =
