@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Keep My Share</string>
+    <string name="app_name">Share Keeper</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_saamplemodule">Module Title</string>
+    <string name="button_save">Save</string>
+    <string name="share_activity_title">Save share</string>
 </resources>

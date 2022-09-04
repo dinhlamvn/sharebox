@@ -8,7 +8,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.dinhlam.keepmyshare"
+        applicationId "com.dinhlam.sharekeeper"
         minSdk 21
         targetSdk 32
         versionCode 1
