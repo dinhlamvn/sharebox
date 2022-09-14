@@ -1,10 +1,10 @@
 package com.dinhlam.sharekeeper.ui.home
 
-import com.dinhlam.sharekeeper.base.BaseListAdapter
 import com.dinhlam.sharekeeper.base.BaseViewModel
+import com.dinhlam.sharekeeper.database.entity.Share
 
 data class HomeData(
-    val listItem: List<BaseListAdapter.BaseModelView> = emptyList(),
     val isRefreshing: Boolean = false,
-    val title: String = "Home"
+    val title: String = "Home",
+    val shareList: List<Share> = emptyList()
 ) : BaseViewModel.BaseData

@@ -4,7 +4,8 @@ import android.net.Uri
 import com.dinhlam.sharekeeper.base.BaseViewModel
 
 data class ShareData(
-    val shareInfo: ShareData.ShareInfo = ShareInfo.None
+    val shareInfo: ShareData.ShareInfo = ShareInfo.None,
+    val isSaveSuccess: Boolean = false
 ) : BaseViewModel.BaseData {
 
     sealed class ShareInfo {

@@ -1,35 +1,28 @@
 package com.dinhlam.sharekeeper.ui.home
 
 import com.dinhlam.sharekeeper.base.BaseViewModel
-import com.dinhlam.sharekeeper.ui.home.modelview.HomeItemModelView
+import com.dinhlam.sharekeeper.database.AppDatabase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class HomeViewModel : BaseViewModel<HomeData>(HomeData()) {
+@HiltViewModel
+class HomeViewModel @Inject constructor(private val appDatabase: AppDatabase) :
+    BaseViewModel<HomeData>(HomeData()) {
 
     init {
         loadData()
     }
 
-    private fun loadData() {
-
+    private fun loadData() = execute {
+        setData { copy(isRefreshing = true) }
+        delay(500)
+        val list = appDatabase.shareDao().getAll()
+        setData { copy(shareList = list, isRefreshing = false) }
     }
 
     fun reload() {
         setData { copy(isRefreshing = true) }
-        executeWithData {
-            delay(5000)
-            val newListItem = (0..99).map {
-                if (it % 2 == 0) {
-                    HomeItemModelView.HomeTextModelView("text$it", "Hello $it")
-                } else {
-                    HomeItemModelView.HomeImageModelView(
-                        "image$it",
-                        "https://tmdl.edu.vn/wp-content/uploads/2022/07/1640841291_596_hinh-nen-girl-xinh-full-hd-cho-laptop-va-may-1.jpg"
-                    )
-                }
-            }
-            setData { copy(listItem = newListItem, isRefreshing = false) }
-        }
+        loadData()
     }
-
 }

@@ -7,11 +7,12 @@ sealed class HomeItemModelView {
 
     data class HomeTextModelView(
         val id: String,
-        val text: String = ""
+        val text: String = "",
+        val createdAt: Long
     ) : BaseListAdapter.BaseModelView(id) {
 
         override val layoutRes: Int
-            get() = R.layout.text_item_view
+            get() = R.layout.model_view_home_share_text
 
         override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
             return other is HomeTextModelView && other.id == this.id

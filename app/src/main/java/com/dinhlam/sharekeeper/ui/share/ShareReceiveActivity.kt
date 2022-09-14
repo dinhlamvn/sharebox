@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.dinhlam.sharekeeper.MainActivity
 import com.dinhlam.sharekeeper.R
@@ -11,6 +12,7 @@ import com.dinhlam.sharekeeper.base.BaseListAdapter
 import com.dinhlam.sharekeeper.base.BaseViewModelActivity
 import com.dinhlam.sharekeeper.databinding.ActivityShareBinding
 import com.dinhlam.sharekeeper.extensions.asThe
+import com.dinhlam.sharekeeper.extensions.getTrimmedText
 import com.dinhlam.sharekeeper.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharekeeper.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharekeeper.ui.share.modelview.ShareMultipleImageModelView
@@ -19,7 +21,9 @@ import com.dinhlam.sharekeeper.ui.share.viewholder.ShareDefaultViewHolder
 import com.dinhlam.sharekeeper.ui.share.viewholder.ShareImageViewHolder
 import com.dinhlam.sharekeeper.ui.share.viewholder.ShareMultipleImageViewHolder
 import com.dinhlam.sharekeeper.ui.share.viewholder.ShareTextViewHolder
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareBinding>() {
 
@@ -97,8 +101,19 @@ class ShareReceiveActivity :
             else -> handleSendNoThing()
         }
 
+        viewModel.consumeOnChange(ShareData::isSaveSuccess) { isSaveSuccess ->
+            if (isSaveSuccess) {
+                Toast.makeText(this, R.string.save_share_successfully, Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+
         viewBinding.buttonCancel.setOnClickListener {
             finish()
+        }
+
+        viewBinding.buttonSave.setOnClickListener {
+            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText())
         }
     }
 

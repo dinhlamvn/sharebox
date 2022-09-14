@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharekeeper.extensions.asThe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -59,10 +60,12 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
 
     protected fun executeWithData(block: suspend (T) -> Unit) =
         viewModelScope.launch(Dispatchers.IO) {
-            data.value?.let { nonNullData ->
-                block.invoke(nonNullData)
-            }
+            val nonNull = data.value ?: return@launch
+            block.invoke(nonNull)
         }
+
+    protected fun execute(block: suspend CoroutineScope.() -> Unit) =
+        viewModelScope.launch(Dispatchers.IO, block = block)
 
     fun <T> consume(property: KProperty<T>, block: (T) -> Unit) {
         consumers.add(Consumer(property.name, block.asThe()!!))
