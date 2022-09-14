@@ -25,7 +25,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
     val data: LiveData<T> = _data
 
     init {
-        _data.postValue(initData)
+        _data.setValue(initData)
     }
 
     protected fun setData(block: T.() -> T) {

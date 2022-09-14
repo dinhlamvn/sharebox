@@ -18,6 +18,12 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         setHasStableIds(true)
     }
 
+    fun buildModelViews(block: MutableList<T>.() -> Unit) {
+        val list = mutableListOf<T>()
+        block.invoke(list)
+        submitList(list)
+    }
+
     fun interface ViewHolderFactory<T : BaseModelView, VB : ViewBinding> {
         fun onCreateViewHolder(
             layoutRes: Int,
@@ -65,7 +71,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         return getItem(position).modelId
     }
 
-    abstract class BaseModelView() {
+    abstract class BaseModelView private constructor() {
 
         constructor(id: String) : this() {
             modelId = Ids.hashString64Bit(id)
