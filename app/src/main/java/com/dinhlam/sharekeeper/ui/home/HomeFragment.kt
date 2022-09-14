@@ -54,13 +54,22 @@ class HomeFragment : BaseFragment<HomeData, HomeViewModel, FragmentHomeBinding>(
         homeAdapter.buildModelViews {
             val list = data.shareList
             addAll(list.map { share ->
-                val shareInfo =
-                    gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareText::class.java)
-                HomeItemModelView.HomeTextModelView(
-                    "${share.id}",
-                    shareInfo.text.orEmpty(),
-                    share.createdAt
-                )
+                if (share.shareType == "text") {
+                    val shareInfo =
+                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareText::class.java)
+                    HomeItemModelView.HomeTextModelView(
+                        "${share.id}",
+                        shareInfo.text.orEmpty(),
+                        share.createdAt
+                    )
+                } else {
+                    val shareInfo =
+                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareImage::class.java)
+                    HomeItemModelView.HomeImageModelView(
+                        "${share.id}",
+                        shareInfo.uri
+                    )
+                }
             })
         }
     }

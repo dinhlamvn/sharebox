@@ -1,6 +1,7 @@
 package com.dinhlam.sharekeeper.loader
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -17,5 +18,9 @@ object ImageLoader {
         Glide.with(context)
             .load(uri)
             .into(imageView)
+    }
+
+    fun get(context: Context, uri: Uri?): Bitmap {
+        return Glide.with(context).asBitmap().load(uri).submit().get()
     }
 }

@@ -1,5 +1,6 @@
 package com.dinhlam.sharekeeper.ui.home.modelview
 
+import android.net.Uri
 import com.dinhlam.sharekeeper.R
 import com.dinhlam.sharekeeper.base.BaseListAdapter
 
@@ -26,7 +27,7 @@ sealed class HomeItemModelView {
 
     data class HomeImageModelView(
         val id: String,
-        val url: String = ""
+        val uri: Uri
     ) : BaseListAdapter.BaseModelView(id) {
 
         override val layoutRes: Int

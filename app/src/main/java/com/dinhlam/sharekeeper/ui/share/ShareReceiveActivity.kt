@@ -113,7 +113,7 @@ class ShareReceiveActivity :
         }
 
         viewBinding.buttonSave.setOnClickListener {
-            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText())
+            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText(), this)
         }
     }
 

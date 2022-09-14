@@ -10,7 +10,7 @@ class HomeImageViewHolder(view: View) :
     BaseListAdapter.BaseViewHolder<HomeItemModelView.HomeImageModelView, ImageItemViewBinding>(view) {
 
     override fun onBind(item: HomeItemModelView.HomeImageModelView, position: Int) {
-        ImageLoader.load(context, item.url, binding.imageView)
+        ImageLoader.load(context, item.uri, binding.imageView)
     }
 
     override fun onUnBind() {

@@ -1,5 +1,6 @@
 package com.dinhlam.sharekeeper.di
 
+import com.dinhlam.sharekeeper.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharekeeper.json.ShareTextJsonSerializerDeserializer
 import com.dinhlam.sharekeeper.ui.share.ShareData
 import com.google.gson.Gson
@@ -21,6 +22,10 @@ object AppModule {
         gsonBuilder.registerTypeAdapter(
             ShareData.ShareInfo.ShareText::class.java,
             ShareTextJsonSerializerDeserializer()
+        )
+        gsonBuilder.registerTypeAdapter(
+            ShareData.ShareInfo.ShareImage::class.java,
+            ShareImageJsonSerializerDeserializer()
         )
         return gsonBuilder.create()
     }
