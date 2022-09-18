@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.dinhlam.sharesaver.MainActivity
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareBinding
 import com.dinhlam.sharesaver.extensions.asThe
 import com.dinhlam.sharesaver.extensions.getTrimmedText
+import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
@@ -22,10 +22,14 @@ import com.dinhlam.sharesaver.ui.share.viewholder.ShareImageViewHolder
 import com.dinhlam.sharesaver.ui.share.viewholder.ShareMultipleImageViewHolder
 import com.dinhlam.sharesaver.ui.share.viewholder.ShareTextViewHolder
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareBinding>() {
+
+    @Inject
+    lateinit var appRouter: AppRouter
 
     override fun onCreateViewBinding(): ActivityShareBinding {
         return ActivityShareBinding.inflate(layoutInflater)
@@ -141,10 +145,8 @@ class ShareReceiveActivity :
 
     private fun openHome() {
         startActivity(
-            Intent(
-                this,
-                MainActivity::class.java
-            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            appRouter.home()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }
 }

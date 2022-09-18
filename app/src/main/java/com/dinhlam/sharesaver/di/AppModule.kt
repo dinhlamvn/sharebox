@@ -5,6 +5,7 @@ import com.dinhlam.sharesaver.json.ShareTextJsonSerializerDeserializer
 import com.dinhlam.sharesaver.ui.share.ShareData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

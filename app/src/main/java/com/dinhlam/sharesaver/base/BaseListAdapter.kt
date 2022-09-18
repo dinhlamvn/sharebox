@@ -28,7 +28,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         fun onCreateViewHolder(
             layoutRes: Int,
             itemView: View
-        ): BaseViewHolder<T, VB>
+        ): BaseViewHolder<T, VB>?
     }
 
     companion object {
@@ -45,6 +45,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(viewType, parent, false)
         return viewHolderFactory.onCreateViewHolder(viewType, view)
+            ?: throw IllegalStateException("VewHolder of view type $viewType undefined")
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
