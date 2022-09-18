@@ -9,13 +9,17 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.dinhlam.sharekeeper"
+        applicationId "com.dinhlam.sharesaver"
         minSdk 21
         targetSdk 33
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                APPLICATION_ID: "$applicationId"
+        ]
     }
 
     buildTypes {

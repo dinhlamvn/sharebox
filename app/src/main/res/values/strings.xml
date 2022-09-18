@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Share Keeper</string>
+    <string name="app_name">Share Saver</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="button_save">Save</string>
-    <string name="share_activity_title">Keeps</string>
+    <string name="share_activity_title">Save</string>
     <string name="button_cancel">Cancel</string>
     <string name="text_input_note_hint">Your note</string>
     <string name="share_empty_content">Share\'s content is empty</string>

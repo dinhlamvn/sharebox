@@ -5,5 +5,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "ShareKeeper"
+rootProject.name = "ShareSaver"
 include ':app'
