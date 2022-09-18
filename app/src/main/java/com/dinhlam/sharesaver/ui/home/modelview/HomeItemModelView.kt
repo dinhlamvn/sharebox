@@ -1,21 +1,19 @@
 package com.dinhlam.sharesaver.ui.home.modelview
 
+import android.content.Intent
 import android.net.Uri
 import android.view.View
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ImageItemViewBinding
 import com.dinhlam.sharesaver.databinding.ModelViewHomeShareTextBinding
+import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.loader.ImageLoader
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 sealed class HomeItemModelView {
 
     data class HomeTextModelView(
-        val id: String,
-        val text: String = "",
-        val createdAt: Long
+        val id: String, val text: String = "", val createdAt: Long
     ) : BaseListAdapter.BaseModelView(id) {
 
         override val layoutRes: Int
@@ -29,16 +27,16 @@ sealed class HomeItemModelView {
             return other is HomeTextModelView && other == this
         }
 
-        class HomeTextViewHolder(view: View) :
-            BaseListAdapter.BaseViewHolder<HomeItemModelView.HomeTextModelView, ModelViewHomeShareTextBinding>(
-                view
-            ) {
+        class HomeTextViewHolder(
+            view: View
+        ) : BaseListAdapter.BaseViewHolder<HomeTextModelView, ModelViewHomeShareTextBinding>(view) {
 
-            private val df = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-
-            override fun onBind(item: HomeItemModelView.HomeTextModelView, position: Int) {
-                binding.textView.text = item.text
-                binding.textViewCreatedDate.text = df.format(item.createdAt)
+            override fun onBind(item: HomeTextModelView, position: Int) {
+                binding.root.setOnClickListener {
+                    startView(item)
+                }
+                binding.textViewShareContent.text = item.text
+                binding.textViewCreatedDate.text = item.createdAt.format("yyyy-MM-dd H:mm")
             }
 
             override fun onUnBind() {
@@ -48,13 +46,18 @@ sealed class HomeItemModelView {
             override fun onCreateViewBinding(view: View): ModelViewHomeShareTextBinding {
                 return ModelViewHomeShareTextBinding.bind(view)
             }
+
+            private fun startView(item: HomeTextModelView) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.text))
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            }
         }
     }
 
 
     data class HomeImageModelView(
-        val id: String,
-        val uri: Uri
+        val id: String, val uri: Uri
     ) : BaseListAdapter.BaseModelView(id) {
 
         override val layoutRes: Int
@@ -69,9 +72,11 @@ sealed class HomeItemModelView {
         }
 
         class HomeImageViewHolder(view: View) :
-            BaseListAdapter.BaseViewHolder<HomeItemModelView.HomeImageModelView, ImageItemViewBinding>(view) {
+            BaseListAdapter.BaseViewHolder<HomeImageModelView, ImageItemViewBinding>(
+                view
+            ) {
 
-            override fun onBind(item: HomeItemModelView.HomeImageModelView, position: Int) {
+            override fun onBind(item: HomeImageModelView, position: Int) {
                 ImageLoader.load(context, item.uri, binding.imageView)
             }
 
