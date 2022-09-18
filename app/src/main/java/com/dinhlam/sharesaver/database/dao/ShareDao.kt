@@ -10,6 +10,9 @@ interface ShareDao {
     @Query("SELECT * FROM share")
     fun getAll(): List<Share>
 
+    @Query("SELECT * FROM share WHERE share_type = :shareType")
+    fun getByShareType(shareType: String): List<Share>
+
     @Insert
     fun insertAll(vararg shares: Share)
 }

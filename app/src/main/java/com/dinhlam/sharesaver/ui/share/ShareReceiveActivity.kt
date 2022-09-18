@@ -17,10 +17,6 @@ import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareTextModelView
-import com.dinhlam.sharesaver.ui.share.viewholder.ShareDefaultViewHolder
-import com.dinhlam.sharesaver.ui.share.viewholder.ShareImageViewHolder
-import com.dinhlam.sharesaver.ui.share.viewholder.ShareMultipleImageViewHolder
-import com.dinhlam.sharesaver.ui.share.viewholder.ShareTextViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -39,11 +35,13 @@ class ShareReceiveActivity :
 
     private val shareContentAdapter = BaseListAdapter.createAdapter { viewType, view ->
         when (viewType) {
-            R.layout.share_item_default -> ShareDefaultViewHolder(view)
-            R.layout.share_item_text -> ShareTextViewHolder(view)
-            R.layout.share_item_image -> ShareImageViewHolder(view)
-            R.layout.share_item_multiple_image -> ShareMultipleImageViewHolder(view)
-            else -> throw NullPointerException("No view holder")
+            R.layout.share_item_default -> ShareDefaultModelView.ShareDefaultViewHolder(view)
+            R.layout.share_item_text -> ShareTextModelView.ShareTextViewHolder(view)
+            R.layout.share_item_image -> ShareImageModelView.ShareImageViewHolder(view)
+            R.layout.share_item_multiple_image -> ShareMultipleImageModelView.ShareMultipleImageViewHolder(
+                view
+            )
+            else -> null
         }
     }
 

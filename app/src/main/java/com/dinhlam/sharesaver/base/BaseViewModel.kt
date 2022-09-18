@@ -1,5 +1,7 @@
 package com.dinhlam.sharesaver.base
 
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,16 +10,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.KProperty
 
 abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewModel() {
 
     interface BaseData
 
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private val setDataQueue: Queue<T.() -> T> = ConcurrentLinkedQueue()
+
     private data class Consumer(
-        val consumeField: String,
-        val block: (Any?) -> Unit,
-        val notifyOnChanged: Boolean = false
+        val consumeField: String, val block: (Any?) -> Unit, val notifyOnChanged: Boolean = false
     )
 
     private val consumers = mutableSetOf<Consumer>()
@@ -30,13 +36,17 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
     }
 
     protected fun setData(block: T.() -> T) {
-        val before = data.value
-        val newBaseData = data.value?.let(block) ?: return
-        _data.postValue(newBaseData)
-        if (before == null) {
-            return
-        }
+        setDataQueue.offer(block)
+        nextSetData()
+    }
 
+    private fun setDataInternal(block: T.() -> T) = mainHandler.post {
+        val before = data.value
+        val newBaseData = data.value?.let(block) ?: return@post
+        _data.setValue(newBaseData)
+        if (before == null) {
+            return@post
+        }
         consumers.forEach { consumer ->
             val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
             beforeField.isAccessible = true
@@ -54,15 +64,31 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         }
     }
 
-    protected fun withData(block: (T) -> Unit) {
+    @Synchronized
+    private fun nextSetData() {
+        while (!setDataQueue.isEmpty()) {
+            val block = setDataQueue.poll() ?: return
+            setDataInternal(block)
+        }
+    }
+
+    protected fun runWithData(block: (T) -> Unit) {
+        nextSetData()
         data.value?.let(block)
     }
 
-    protected fun executeWithData(block: suspend (T) -> Unit) =
+    protected fun <R> withData(block: (T) -> R): R {
+        nextSetData()
+        return data.value!!.let(block)
+    }
+
+    protected fun executeWithData(block: suspend (T) -> Unit) {
+        nextSetData()
         viewModelScope.launch(Dispatchers.IO) {
             val nonNull = data.value ?: return@launch
             block.invoke(nonNull)
         }
+    }
 
     protected fun execute(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(Dispatchers.IO, block = block)
