@@ -14,36 +14,43 @@ class HomeViewModel @Inject constructor(private val appDatabase: AppDatabase) :
         loadFolders()
     }
 
-    private fun loadFolders() {
+    private fun loadFolders() = execute {
+        setData { copy(isRefreshing = true) }
         val folder1 = Folder("folder1", "text", "text")
         val folder2 = Folder("folder2", "image", "image")
         val folders = listOf(folder1, folder2)
-        setData { copy(folders = folders) }
+        setData { copy(folders = folders, isRefreshing = false) }
     }
 
-    fun loadData() = executeWithData { data ->
+    private fun loadShareData() = executeWithData { data ->
         if (data.selectedShareType.isEmpty()) {
-            setData { copy(isRefreshing = false) }
-            return@executeWithData
+            return@executeWithData setData { copy(isRefreshing = false) }
         }
         val list = appDatabase.shareDao().getByShareType(data.selectedShareType)
         setData { copy(shareList = list, isRefreshing = false) }
     }
 
-    fun reload() {
-
+    fun reload() = runWithData { data ->
+        if (data.selectedShareType.isEmpty()) {
+            loadFolders()
+        } else {
+            loadShareData()
+        }
     }
 
     fun onFolderClick(position: Int) = runWithData { data ->
         val folder = data.folders.getOrNull(position) ?: return@runWithData
         setData { copy(selectedShareType = folder.shareType, isRefreshing = true) }
+        loadShareData()
     }
 
-    fun handleBackPressed(): Boolean = withData { data ->
-        if (data.selectedShareType.isEmpty()) {
-            return@withData false
+    fun handleBackPressed(): Boolean {
+        return withData { data ->
+            if (data.selectedShareType.isEmpty()) {
+                return@withData false
+            }
+            setData { copy(selectedShareType = "", shareList = emptyList()) }
+            true
         }
-        setData { copy(selectedShareType = "", shareList = emptyList()) }
-        true
     }
 }

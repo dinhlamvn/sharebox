@@ -72,6 +72,10 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         return getItem(position).modelId
     }
 
+    fun getModelAtPosition(position: Int): T? {
+        return currentList.getOrNull(position)
+    }
+
     abstract class BaseModelView private constructor() {
 
         constructor(id: String) : this() {

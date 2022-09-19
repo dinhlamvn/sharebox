@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.KProperty
@@ -36,16 +37,23 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
     }
 
     protected fun setData(block: T.() -> T) {
-        setDataQueue.offer(block)
-        nextSetData()
+        setDataQueue.add(block)
+        flushSetDataQueue()
     }
 
-    private fun setDataInternal(block: T.() -> T) = mainHandler.post {
+    private fun flushSetDataQueue() {
+        while (!setDataQueue.isEmpty()) {
+            val block = setDataQueue.poll() ?: return
+            setDataInternal(block)
+        }
+    }
+
+    private fun setDataInternal(block: T.() -> T) = viewModelScope.launch(Dispatchers.Main) {
         val before = data.value
-        val newBaseData = data.value?.let(block) ?: return@post
+        val newBaseData = data.value?.let(block) ?: return@launch
         _data.setValue(newBaseData)
         if (before == null) {
-            return@post
+            return@launch
         }
         consumers.forEach { consumer ->
             val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
@@ -64,31 +72,23 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         }
     }
 
-    @Synchronized
-    private fun nextSetData() {
-        while (!setDataQueue.isEmpty()) {
-            val block = setDataQueue.poll() ?: return
-            setDataInternal(block)
-        }
-    }
-
-    protected fun runWithData(block: (T) -> Unit) {
-        nextSetData()
+    protected fun runWithData(block: (T) -> Unit) = viewModelScope.launch(Dispatchers.Main) {
+        flushSetDataQueue()
         data.value?.let(block)
     }
 
     protected fun <R> withData(block: (T) -> R): R {
-        nextSetData()
+        flushSetDataQueue()
         return data.value!!.let(block)
     }
 
-    protected fun executeWithData(block: suspend (T) -> Unit) {
-        nextSetData()
-        viewModelScope.launch(Dispatchers.IO) {
-            val nonNull = data.value ?: return@launch
-            block.invoke(nonNull)
+    protected fun executeWithData(block: suspend (T) -> Unit) =
+        viewModelScope.launch(Dispatchers.Main) {
+            flushSetDataQueue()
+            withContext(Dispatchers.IO) {
+                block.invoke(data.value!!)
+            }
         }
-    }
 
     protected fun execute(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(Dispatchers.IO, block = block)

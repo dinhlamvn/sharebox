@@ -24,10 +24,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>() {
 
+    companion object {
+        private const val SPAN_COUNT = 3
+    }
+
     @Inject
     lateinit var gson: Gson
 
-    private val folderLayoutManager by lazy { GridLayoutManager(this, 3) }
+    private val folderLayoutManager by lazy { GridLayoutManager(this, SPAN_COUNT) }
 
     private val itemLayoutManager by lazy { LinearLayoutManager(this) }
 
@@ -71,6 +75,16 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             }
         }
 
+        folderLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                val model = homeAdapter.getModelAtPosition(position) ?: return 1
+                if (model is LoadingModelView) {
+                    return SPAN_COUNT
+                }
+                return 1
+            }
+        }
+
         viewBinding.recyclerView.layoutManager = folderLayoutManager
         viewBinding.recyclerView.adapter = homeAdapter
 
@@ -78,11 +92,6 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             viewModel.reload()
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
-
-        viewModel.consumeOnChange(HomeData::selectedShareType) {
-            viewModel.loadData()
-        }
-
     }
 
     override fun onDataChanged(data: HomeData) {
@@ -117,8 +126,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                     val shareInfo =
                         gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareImage::class.java)
                     HomeItemModelView.HomeImageModelView(
-                        "${share.id}", shareInfo.uri,
-                        share.createdAt, share.shareNote
+                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
                     )
                 }
             })
