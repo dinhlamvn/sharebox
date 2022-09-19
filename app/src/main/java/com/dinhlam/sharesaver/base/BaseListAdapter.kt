@@ -1,6 +1,9 @@
 package com.dinhlam.sharesaver.base
 
 import android.content.Context
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,36 +14,76 @@ import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharesaver.extensions.asThe
 import com.dinhlam.sharesaver.utils.Ids
 
-class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(private val viewHolderFactory: ViewHolderFactory<T, ViewBinding>) :
-    ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
+class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
+    private val viewHolderFactory: ViewHolderFactory<T, ViewBinding>
+) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
 
     init {
         setHasStableIds(true)
     }
 
-    fun buildModelViews(block: MutableList<T>.() -> Unit) {
-        val list = mutableListOf<T>()
-        block.invoke(list)
-        submitList(list)
+    abstract class ModelViewsFactory : Runnable {
+
+        private val buildModelThread = HandlerThread("build-model-thread")
+        private val handler: Handler by lazy {
+            buildModelThread.start()
+            Handler(buildModelThread.looper)
+        }
+
+        private val mainHandler = Handler(Looper.getMainLooper())
+
+        private val modelViews = mutableListOf<BaseModelView>()
+
+        private var adapter: BaseListAdapter<BaseModelView>? = null
+
+        fun attach(adapter: BaseListAdapter<BaseModelView>) {
+            this.adapter = adapter
+            this.adapter?.submitList(modelViews)
+        }
+
+        fun detach() {
+            this.adapter = null
+        }
+
+        protected abstract fun buildModelViews()
+
+        fun attachModelView(modelView: BaseModelView) {
+            modelViews.add(modelView)
+        }
+
+        override fun run() {
+            modelViews.clear()
+            buildModelViews()
+            adapter?.let {
+                mainHandler.post {
+                    it.submitList(modelViews.toList())
+                }
+            }
+        }
+
+        fun requestBuildModelViews(delayMills: Long = 0L) {
+            handler.removeCallbacks(this)
+            handler.postDelayed(this, delayMills)
+        }
     }
 
     fun interface ViewHolderFactory<T : BaseModelView, VB : ViewBinding> {
         fun onCreateViewHolder(
-            layoutRes: Int,
-            itemView: View
+            layoutRes: Int, itemView: View
         ): BaseViewHolder<T, VB>?
     }
 
     companion object {
         @JvmStatic
-        fun <T : BaseModelView, VB : ViewBinding> createAdapter(factory: ViewHolderFactory<T, VB>): BaseListAdapter<BaseModelView> {
+        fun <T : BaseModelView, VB : ViewBinding> createAdapter(
+            factory: ViewHolderFactory<T, VB>
+        ): BaseListAdapter<BaseModelView> {
             return BaseListAdapter(factory.asThe()!!)
         }
     }
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): BaseViewHolder<T, ViewBinding> {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(viewType, parent, false)
@@ -53,9 +96,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
     }
 
     override fun onBindViewHolder(
-        holder: BaseViewHolder<T, ViewBinding>,
-        position: Int,
-        payloads: MutableList<Any>
+        holder: BaseViewHolder<T, ViewBinding>, position: Int, payloads: MutableList<Any>
     ) {
         holder.onBind(getItem(position), position)
     }
@@ -94,6 +135,16 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(pri
         abstract fun areItemsTheSame(other: BaseModelView): Boolean
 
         abstract fun areContentsTheSame(other: BaseModelView): Boolean
+
+        fun attachTo(factory: ModelViewsFactory) {
+            factory.attachModelView(this)
+        }
+
+        fun attachIf(block: () -> Boolean, factory: ModelViewsFactory) {
+            if (block.invoke()) {
+                factory.attachModelView(this)
+            }
+        }
     }
 
     abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(view: View) :

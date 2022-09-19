@@ -24,6 +24,40 @@ import javax.inject.Inject
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareBinding>() {
 
+    private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
+        override fun buildModelViews() = withData(viewModel) { data ->
+            when (data.shareInfo) {
+                is ShareData.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
+                is ShareData.ShareInfo.ShareImage -> renderShareImageContent(data.shareInfo)
+                is ShareData.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(data.shareInfo)
+                else -> renderShareContentDefault()
+            }
+        }
+
+        private fun renderShareContentDefault() {
+            ShareDefaultModelView().attachTo(this)
+        }
+
+        private fun renderShareTextContent(shareText: ShareData.ShareInfo.ShareText) {
+            ShareTextModelView("shareText", shareText.text).attachTo(this)
+        }
+
+        private fun renderShareImageContent(shareImage: ShareData.ShareInfo.ShareImage) {
+            ShareImageModelView("shareImage", shareImage.uri).attachTo(this)
+        }
+
+        private fun renderShareMultipleImageContent(shareMultipleImage: ShareData.ShareInfo.ShareMultipleImage) {
+            shareMultipleImage.uris.mapIndexed { index, uri ->
+                ShareMultipleImageModelView(
+                    "shareMultipleImage$index",
+                    uri
+                )
+            }.forEach { it.attachTo(this) }
+        }
+
+
+    }
+
     @Inject
     lateinit var appRouter: AppRouter
 
@@ -46,41 +80,7 @@ class ShareReceiveActivity :
     }
 
     override fun onDataChanged(data: ShareData) {
-        when (data.shareInfo) {
-            is ShareData.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
-            is ShareData.ShareInfo.ShareImage -> renderShareImageContent(data.shareInfo)
-            is ShareData.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(data.shareInfo)
-            else -> renderShareContentDefault()
-        }
-    }
-
-    private fun renderShareContentDefault() {
-        shareContentAdapter.buildModelViews {
-            add(ShareDefaultModelView())
-        }
-    }
-
-    private fun renderShareTextContent(shareText: ShareData.ShareInfo.ShareText) {
-        shareContentAdapter.buildModelViews {
-            add(ShareTextModelView("shareText", shareText.text.orEmpty()))
-        }
-    }
-
-    private fun renderShareImageContent(shareImage: ShareData.ShareInfo.ShareImage) {
-        shareContentAdapter.buildModelViews {
-            add(ShareImageModelView("shareImage", shareImage.uri))
-        }
-    }
-
-    private fun renderShareMultipleImageContent(shareMultipleImage: ShareData.ShareInfo.ShareMultipleImage) {
-        shareContentAdapter.buildModelViews {
-            addAll(shareMultipleImage.uris.mapIndexed { index, uri ->
-                ShareMultipleImageModelView(
-                    "shareMultipleImage$index",
-                    uri
-                )
-            })
-        }
+        modelViewsFactory.requestBuildModelViews()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

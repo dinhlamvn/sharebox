@@ -14,7 +14,8 @@ import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
 import com.dinhlam.sharesaver.modelview.LoadingModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeFolderModelView
-import com.dinhlam.sharesaver.ui.home.modelview.HomeItemModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
 import com.dinhlam.sharesaver.ui.share.ShareData
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -23,6 +24,37 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>() {
+
+    private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
+
+        override fun buildModelViews() = withData(viewModel) { data ->
+            if (data.isRefreshing) {
+                LoadingModelView.attachTo(this)
+                return@withData
+            }
+
+            if (data.shareList.isEmpty()) {
+                data.folders.map { folder ->
+                    HomeFolderModelView("folder_${folder.id}", folder.name)
+                }.forEach { it.attachTo(this) }
+            }
+            data.shareList.map { share ->
+                if (share.shareType == "text") {
+                    val shareInfo =
+                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareText::class.java)
+                    HomeTextModelView(
+                        "${share.id}", shareInfo.text.orEmpty(), share.createdAt, share.shareNote
+                    )
+                } else {
+                    val shareInfo =
+                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareImage::class.java)
+                    HomeImageModelView(
+                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
+                    )
+                }
+            }.forEach { it.attachTo(this) }
+        }
+    }
 
     companion object {
         private const val SPAN_COUNT = 3
@@ -39,10 +71,10 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     private val homeAdapter = BaseListAdapter.createAdapter { layoutRes: Int, view: View ->
         return@createAdapter when (layoutRes) {
-            R.layout.model_view_home_share_text -> HomeItemModelView.HomeTextModelView.HomeTextViewHolder(
+            R.layout.model_view_home_share_text -> HomeTextModelView.HomeTextViewHolder(
                 view
             )
-            R.layout.model_view_home_share_image -> HomeItemModelView.HomeImageModelView.HomeImageViewHolder(
+            R.layout.model_view_home_share_image -> HomeImageModelView.HomeImageViewHolder(
                 view
             )
             R.layout.model_view_loading -> LoadingViewHolder(view)
@@ -87,6 +119,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
         viewBinding.recyclerView.layoutManager = folderLayoutManager
         viewBinding.recyclerView.adapter = homeAdapter
+        modelViewsFactory.attach(homeAdapter)
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.reload()
@@ -95,41 +128,11 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     override fun onDataChanged(data: HomeData) {
-        if (data.isRefreshing) {
-            homeAdapter.buildModelViews {
-                add(LoadingModelView)
-            }
-            return
+        viewBinding.recyclerView.layoutManager = if (data.shareList.isEmpty()) {
+            folderLayoutManager
+        } else {
+            itemLayoutManager
         }
-
-        if (data.shareList.isEmpty()) {
-            viewBinding.recyclerView.layoutManager = folderLayoutManager
-            homeAdapter.buildModelViews {
-                addAll(data.folders.map { folder ->
-                    HomeFolderModelView("folder_${folder.id}", folder.name)
-                })
-            }
-            return
-        }
-
-        viewBinding.recyclerView.layoutManager = itemLayoutManager
-        homeAdapter.buildModelViews {
-            val list = data.shareList
-            addAll(list.map { share ->
-                if (share.shareType == "text") {
-                    val shareInfo =
-                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareText::class.java)
-                    HomeItemModelView.HomeTextModelView(
-                        "${share.id}", shareInfo.text.orEmpty(), share.createdAt, share.shareNote
-                    )
-                } else {
-                    val shareInfo =
-                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareImage::class.java)
-                    HomeItemModelView.HomeImageModelView(
-                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
-                    )
-                }
-            })
-        }
+        modelViewsFactory.requestBuildModelViews()
     }
 }

@@ -10,6 +10,8 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseData, VM : BaseViewMo
 
     abstract fun onDataChanged(data: T)
 
+    fun withData(viewModel: VM, block: (T) -> Unit) = block.invoke(viewModel.data.value!!)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.data.observe(this, ::onDataChanged)

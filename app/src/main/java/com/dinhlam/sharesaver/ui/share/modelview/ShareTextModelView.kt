@@ -5,7 +5,7 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ShareItemTextBinding
 
-data class ShareTextModelView(val id: String, val text: String = "") : BaseListAdapter.BaseModelView("share_text_$id") {
+data class ShareTextModelView(val id: String, val text: String?) : BaseListAdapter.BaseModelView("share_text_$id") {
     override val layoutRes: Int
         get() = R.layout.share_item_text
 
