@@ -12,11 +12,14 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
+import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.modelview.LoadingModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeFolderModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
 import com.dinhlam.sharesaver.ui.share.ShareData
+import com.dinhlam.sharesaver.utils.IconUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,21 +41,36 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                     HomeFolderModelView("folder_${folder.id}", folder.name)
                 }.forEach { it.attachTo(this) }
             }
-            data.shareList.map { share ->
-                if (share.shareType == "text") {
-                    val shareInfo =
-                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareText::class.java)
-                    HomeTextModelView(
-                        "${share.id}", shareInfo.text.orEmpty(), share.createdAt, share.shareNote
-                    )
-                } else {
-                    val shareInfo =
-                        gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareImage::class.java)
-                    HomeImageModelView(
-                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
-                    )
-                }
-            }.forEach { it.attachTo(this) }
+
+            data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }.forEach { entry ->
+                val date = entry.key
+                val shares = entry.value
+                HomeDateModelView("date$date", date).attachTo(this)
+                shares.mapIndexed { index, share ->
+                    if (share.shareType == "text") {
+                        val shareInfo = gson.fromJson(
+                            share.shareInfo, ShareData.ShareInfo.ShareText::class.java
+                        )
+                        HomeTextModelView(
+                            id = "${share.id}",
+                            iconUrl = IconUtils.getIconUrl(shareInfo.text),
+                            text = shareInfo.text,
+                            createdAt = share.createdAt,
+                            note = share.shareNote,
+                            showDivider = index < data.shareList.size - 1
+                        )
+                    } else {
+                        val shareInfo = gson.fromJson(
+                            share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
+                        )
+                        HomeImageModelView(
+                            "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
+                        )
+                    }
+                }.forEach { it.attachTo(this) }
+            }
+
+
         }
     }
 
@@ -81,6 +99,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             R.layout.model_view_home_folder -> HomeFolderModelView.HomeFolderViewHolder(view) { position ->
                 viewModel.onFolderClick(position)
             }
+            R.layout.model_view_home_date -> HomeDateModelView.HomeDateViewHolder(view)
             else -> null
         }
     }

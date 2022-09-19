@@ -10,7 +10,7 @@ interface ShareDao {
     @Query("SELECT * FROM share")
     fun getAll(): List<Share>
 
-    @Query("SELECT * FROM share WHERE share_type = :shareType")
+    @Query("SELECT * FROM share WHERE share_type = :shareType ORDER BY id DESC")
     fun getByShareType(shareType: String): List<Share>
 
     @Insert

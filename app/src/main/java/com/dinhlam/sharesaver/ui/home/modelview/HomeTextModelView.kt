@@ -3,15 +3,22 @@ package com.dinhlam.sharesaver.ui.home.modelview
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ModelViewHomeShareTextBinding
 import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharesaver.loader.ImageLoader
 
 data class HomeTextModelView(
-    val id: String, val text: String = "", val createdAt: Long, val note: String? = ""
+    val id: String,
+    val iconUrl: String?,
+    val text: String?,
+    val createdAt: Long,
+    val note: String?,
+    val showDivider: Boolean = true
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val layoutRes: Int
@@ -33,10 +40,14 @@ data class HomeTextModelView(
             binding.root.setOnClickListener {
                 startView(item)
             }
+            ImageLoader.load(
+                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
+            )
             binding.textViewShareContent.text = item.text
-            binding.textViewCreatedDate.text = item.createdAt.format("yyyy-MM-dd H:mm")
+            binding.textViewCreatedDate.text = item.createdAt.format("H:mm")
             binding.textViewNote.isVisible = !item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
+            binding.viewDivider.isInvisible = !item.showDivider
         }
 
         override fun onUnBind() {
