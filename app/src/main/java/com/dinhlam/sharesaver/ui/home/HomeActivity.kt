@@ -36,12 +36,15 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                 return@withData
             }
 
-            if (data.shareList.isEmpty()) {
+            if (data.selectedFolder == null) {
+                supportActionBar?.title = getString(R.string.app_name)
                 data.folders.map { folder ->
                     HomeFolderModelView("folder_${folder.id}", folder.name)
                 }.forEach { it.attachTo(this) }
+                return@withData
             }
 
+            supportActionBar?.title = data.selectedFolder.name
             data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }.forEach { entry ->
                 val date = entry.key
                 val shares = entry.value

@@ -9,5 +9,5 @@ data class HomeData(
     val title: String = "Home",
     val shareList: List<Share> = emptyList(),
     val folders: List<Folder> = emptyList(),
-    val selectedShareType: String = ""
+    val selectedFolder: Folder? = null
 ) : BaseViewModel.BaseData
