@@ -37,14 +37,11 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             }
 
             if (data.selectedFolder == null) {
-                supportActionBar?.title = getString(R.string.app_name)
                 data.folders.map { folder ->
                     HomeFolderModelView("folder_${folder.id}", folder.name)
                 }.forEach { it.attachTo(this) }
                 return@withData
             }
-
-            supportActionBar?.title = data.selectedFolder.name
             data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }.forEach { entry ->
                 val date = entry.key
                 val shares = entry.value
@@ -154,11 +151,13 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     override fun onDataChanged(data: HomeData) {
+        modelViewsFactory.requestBuildModelViews()
         viewBinding.recyclerView.layoutManager = if (data.shareList.isEmpty()) {
             folderLayoutManager
         } else {
             itemLayoutManager
         }
-        modelViewsFactory.requestBuildModelViews()
+        val title = data.selectedFolder?.name ?: getString(R.string.app_name)
+        supportActionBar?.title = title
     }
 }
