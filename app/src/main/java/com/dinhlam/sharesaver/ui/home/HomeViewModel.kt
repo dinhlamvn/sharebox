@@ -16,7 +16,7 @@ class HomeViewModel @Inject constructor(private val appDatabase: AppDatabase) :
 
     private fun loadFolders() = execute {
         setData { copy(isRefreshing = true) }
-        val folder1 = Folder("folder1", "text", "text")
+        val folder1 = Folder("folder1", "web-link", "web-link")
         val folder2 = Folder("folder2", "image", "image")
         val folders = listOf(folder1, folder2)
         setData { copy(folders = folders, isRefreshing = false) }

@@ -31,7 +31,7 @@ object IconUtils {
 
     private fun isFacebookShare(content: String?): Boolean {
         val nonNull = content ?: return false
-        return nonNull.contains("facebook.com")
+        return nonNull.contains("facebook.com") || nonNull.contains("https://fb")
     }
 
     private fun isInstagramShare(content: String?): Boolean {
@@ -41,7 +41,7 @@ object IconUtils {
 
     private fun isYoutubeShare(content: String?): Boolean {
         val nonNull = content ?: return false
-        return nonNull.contains("youtu.be")
+        return nonNull.contains("youtu.be") || nonNull.contains("youtube.com")
     }
 
     private fun isTiktokShare(content: String?): Boolean {

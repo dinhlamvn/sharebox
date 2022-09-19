@@ -17,7 +17,7 @@ import com.dinhlam.sharesaver.modelview.LoadingModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeFolderModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
-import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharesaver.ui.share.ShareData
 import com.dinhlam.sharesaver.utils.IconUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
@@ -47,30 +47,34 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                 val shares = entry.value
                 HomeDateModelView("date$date", date).attachTo(this)
                 shares.mapIndexed { index, share ->
-                    if (share.shareType == "text") {
-                        val shareInfo = gson.fromJson(
-                            share.shareInfo, ShareData.ShareInfo.ShareText::class.java
-                        )
-                        HomeTextModelView(
-                            id = "${share.id}",
-                            iconUrl = IconUtils.getIconUrl(shareInfo.text),
-                            text = shareInfo.text,
-                            createdAt = share.createdAt,
-                            note = share.shareNote,
-                            showDivider = index < data.shareList.size - 1
-                        )
-                    } else {
-                        val shareInfo = gson.fromJson(
-                            share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
-                        )
-                        HomeImageModelView(
-                            "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
-                        )
+                    when (share.shareType) {
+                        "web-link" -> {
+                            val shareInfo = gson.fromJson(
+                                share.shareInfo, ShareData.ShareInfo.ShareText::class.java
+                            )
+                            HomeWebLinkModelView(
+                                id = "${share.id}",
+                                iconUrl = IconUtils.getIconUrl(shareInfo.text),
+                                url = shareInfo.text,
+                                createdAt = share.createdAt,
+                                note = share.shareNote,
+                                showDivider = index < data.shareList.size - 1
+                            )
+                        }
+                        "image" -> {
+                            val shareInfo = gson.fromJson(
+                                share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
+                            )
+                            HomeImageModelView(
+                                "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
+                            )
+                        }
+                        else -> {
+                            null
+                        }
                     }
-                }.forEach { it.attachTo(this) }
+                }.forEach { it?.attachTo(this) }
             }
-
-
         }
     }
 
@@ -89,7 +93,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     private val homeAdapter = BaseListAdapter.createAdapter { layoutRes: Int, view: View ->
         return@createAdapter when (layoutRes) {
-            R.layout.model_view_home_share_text -> HomeTextModelView.HomeTextViewHolder(
+            R.layout.model_view_home_share_web_link -> HomeWebLinkModelView.HomeTextViewHolder(
                 view
             )
             R.layout.model_view_home_share_image -> HomeImageModelView.HomeImageViewHolder(

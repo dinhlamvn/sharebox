@@ -1,70 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="5dp"
-    app:cardUseCompatPadding="true">
+    android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_share_content"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerCrop"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/text_view_note"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_note"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextAppearance.Body1"
+        app:layout_constraintBottom_toTopOf="@id/text_view_created_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/image_share_content"
+        tools:text="This is my note" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_created_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.Caption"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/image_share_content"
+        app:layout_constraintEnd_toEndOf="@id/text_view_note"
+        tools:text="2022-09-14" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        app:barrierDirection="bottom"
+        app:barrierMargin="8dp"
+        app:constraint_referenced_ids="image_share_content" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_share_content"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/image_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+    <View
+        android:id="@+id/view_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorItemDecorator"
+        app:layout_constraintEnd_toStartOf="@id/text_view_created_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_share_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrier"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:barrierMargin="8dp"
-            app:constraint_referenced_ids="image_share_content,image_view" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_view_created_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier"
-            tools:text="2022-09-14" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_view_note"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:ellipsize="end"
-            android:maxLines="5"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_created_date"
-            tools:text="This is my note" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

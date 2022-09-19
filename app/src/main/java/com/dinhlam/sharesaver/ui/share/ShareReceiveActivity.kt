@@ -86,6 +86,7 @@ class ShareReceiveActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding.recyclerView.adapter = shareContentAdapter
+        modelViewsFactory.attach(shareContentAdapter)
 
         when {
             intent.action == Intent.ACTION_SEND -> {

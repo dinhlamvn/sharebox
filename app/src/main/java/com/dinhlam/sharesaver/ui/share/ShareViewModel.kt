@@ -7,6 +7,8 @@ import com.dinhlam.sharesaver.BuildConfig
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.AppDatabase
 import com.dinhlam.sharesaver.database.entity.Share
+import com.dinhlam.sharesaver.extensions.isWebLink
+import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharesaver.loader.ImageLoader
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShareViewModel @Inject constructor(
-    private val appDatabase: AppDatabase,
-    private val gson: Gson
+    private val appDatabase: AppDatabase, private val gson: Gson
 ) : BaseViewModel<ShareData>(ShareData()) {
 
     fun setShareInfo(shareInfo: ShareData.ShareInfo) = setData {
@@ -33,16 +34,19 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun saveShareText(note: String, shareText: ShareData.ShareInfo.ShareText) {
+        val nonNullText = shareText.text.takeIfNotNullOrBlank() ?: return
         val json = gson.toJson(shareText)
-        val share = Share(shareType = "text", shareInfo = json, shareNote = note)
+        val share = if (nonNullText.isWebLink()) {
+            Share(shareType = "web-link", shareInfo = json, shareNote = note)
+        } else {
+            Share(shareType = "text", shareInfo = json, shareNote = note)
+        }
         appDatabase.shareDao().insertAll(share)
         setData { copy(isSaveSuccess = true) }
     }
 
     private fun saveShareImage(
-        context: Context,
-        note: String,
-        shareImage: ShareData.ShareInfo.ShareImage
+        context: Context, note: String, shareImage: ShareData.ShareInfo.ShareImage
     ) {
         val bitmap = ImageLoader.get(context, shareImage.uri)
         val imagePath = context.getExternalFilesDir("share_images")!!
@@ -52,7 +56,9 @@ class ShareViewModel @Inject constructor(
         val imageFile = File(imagePath, "share_image_${System.currentTimeMillis()}.jpg")
         imageFile.createNewFile()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
-        val newUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile)
+        val newUri = FileProvider.getUriForFile(
+            context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
+        )
         val saveShareImage = shareImage.copy(uri = newUri)
         val json = gson.toJson(saveShareImage)
         val share = Share(shareType = "image", shareInfo = json, shareNote = note)

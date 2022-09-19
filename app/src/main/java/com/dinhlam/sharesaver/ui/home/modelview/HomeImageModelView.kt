@@ -3,7 +3,7 @@ package com.dinhlam.sharesaver.ui.home.modelview
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import androidx.core.view.isVisible
+import androidx.core.view.isInvisible
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ModelViewHomeShareImageBinding
@@ -39,8 +39,8 @@ data class HomeImageModelView(
                 startViewImage(item.uri)
             }
             ImageLoader.load(context, item.uri, binding.imageShareContent)
-            binding.textViewCreatedDate.text = item.createdAt.format("yyyy-MM-dd H:mm")
-            binding.textViewNote.isVisible = !item.note.isNullOrBlank()
+            binding.textViewCreatedDate.text = item.createdAt.format("HH:mm")
+            binding.textViewNote.isInvisible = item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
         }
 
@@ -57,7 +57,8 @@ data class HomeImageModelView(
             intent.setDataAndType(uri, "image/*")
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            context.startActivity(Intent.createChooser(intent, "Choose to view"))
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            context.startActivity(intent)
         }
     }
 }
