@@ -73,7 +73,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                             null
                         }
                     }
-                }.forEach { it?.attachTo(this) }
+                }.filterNotNull().forEach { it.attachTo(this) }
             }
         }
     }
