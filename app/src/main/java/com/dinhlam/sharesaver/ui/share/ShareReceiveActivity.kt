@@ -13,6 +13,8 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareBinding
 import com.dinhlam.sharesaver.extensions.asThe
+import com.dinhlam.sharesaver.extensions.getParcelableArrayListExtraCompat
+import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
@@ -151,17 +153,18 @@ class ShareReceiveActivity :
     }
 
     private fun handleSendImage(intent: Intent) {
-        intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM).asThe<Parcelable, Uri>()
-            ?.let { shareUri ->
+        intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM)
+            .asThe<Parcelable, Uri>()?.let { shareUri ->
                 viewModel.setShareInfo(ShareData.ShareInfo.ShareImage(shareUri))
             }
     }
 
     private fun handleSendMultipleImage(intent: Intent) {
-        intent.getParcelableArrayListExtra<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
-            val data = list.mapNotNull { it.asThe<Parcelable, Uri>() }
-            viewModel.setShareInfo(ShareData.ShareInfo.ShareMultipleImage(data))
-        }
+        intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)
+            ?.let { list ->
+                val data = list.mapNotNull { it.asThe<Parcelable, Uri>() }
+                viewModel.setShareInfo(ShareData.ShareInfo.ShareMultipleImage(data))
+            }
     }
 
     private fun openHome() {
