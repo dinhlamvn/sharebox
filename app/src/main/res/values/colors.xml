@@ -8,4 +8,5 @@
 
     <color name="colorItemDecorator">#f0f0f0</color>
     <color name="colorTextBlack">#3A3A3A</color>
+    <color name="colorTextHint">#757575</color>
 </resources>

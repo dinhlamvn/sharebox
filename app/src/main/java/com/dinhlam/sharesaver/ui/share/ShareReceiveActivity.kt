@@ -1,9 +1,11 @@
 package com.dinhlam.sharesaver.ui.share
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.dinhlam.sharesaver.R
@@ -17,6 +19,7 @@ import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareTextModelView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -49,8 +52,7 @@ class ShareReceiveActivity :
         private fun renderShareMultipleImageContent(shareMultipleImage: ShareData.ShareInfo.ShareMultipleImage) {
             shareMultipleImage.uris.mapIndexed { index, uri ->
                 ShareMultipleImageModelView(
-                    "shareMultipleImage$index",
-                    uri
+                    "shareMultipleImage$index", uri
                 )
             }.forEach { it.attachTo(this) }
         }
@@ -58,8 +60,25 @@ class ShareReceiveActivity :
 
     }
 
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                finish()
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            val alpha = slideOffset.times(255).coerceAtMost(153f).toInt()
+            viewBinding.viewBackground.setBackgroundColor(Color.argb(alpha, 0, 0, 0))
+        }
+    }
+
     @Inject
     lateinit var appRouter: AppRouter
+
+    private val behavior: BottomSheetBehavior<View> by lazy {
+        BottomSheetBehavior.from(viewBinding.frameContainer)
+    }
 
     override fun onCreateViewBinding(): ActivityShareBinding {
         return ActivityShareBinding.inflate(layoutInflater)
@@ -88,6 +107,9 @@ class ShareReceiveActivity :
         viewBinding.recyclerView.adapter = shareContentAdapter
         modelViewsFactory.attach(shareContentAdapter)
 
+        behavior.addBottomSheetCallback(bottomSheetCallback)
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         when {
             intent.action == Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("text/") == true) {
@@ -107,12 +129,12 @@ class ShareReceiveActivity :
         viewModel.consumeOnChange(ShareData::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
                 Toast.makeText(this, R.string.save_share_successfully, Toast.LENGTH_SHORT).show()
-                finish()
+                dismiss()
             }
         }
 
         viewBinding.buttonCancel.setOnClickListener {
-            finish()
+            dismiss()
         }
 
         viewBinding.buttonSave.setOnClickListener {
@@ -147,5 +169,9 @@ class ShareReceiveActivity :
             appRouter.home()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
+    }
+
+    private fun dismiss() {
+        behavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 }

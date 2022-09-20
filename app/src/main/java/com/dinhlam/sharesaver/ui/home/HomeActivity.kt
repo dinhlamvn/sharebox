@@ -1,5 +1,6 @@
 package com.dinhlam.sharesaver.ui.home
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -7,7 +8,6 @@ import android.window.OnBackInvokedDispatcher
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
@@ -19,6 +19,7 @@ import com.dinhlam.sharesaver.ui.home.modelview.HomeFolderModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharesaver.ui.share.ShareData
+import com.dinhlam.sharesaver.ui.share.ShareReceiveActivity
 import com.dinhlam.sharesaver.utils.IconUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -85,10 +86,6 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     @Inject
     lateinit var gson: Gson
 
-    private val folderLayoutManager by lazy { GridLayoutManager(this, SPAN_COUNT) }
-
-    private val itemLayoutManager by lazy { LinearLayoutManager(this) }
-
     override val viewModel: HomeViewModel by viewModels()
 
     private val homeAdapter = BaseListAdapter.createAdapter { layoutRes: Int, view: View ->
@@ -130,17 +127,18 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             }
         }
 
-        folderLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                val model = homeAdapter.getModelAtPosition(position) ?: return 1
-                if (model is LoadingModelView) {
+        viewBinding.recyclerView.layoutManager = GridLayoutManager(this, SPAN_COUNT).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val model = homeAdapter.getModelAtPosition(position) ?: return 1
+                    if (model is HomeFolderModelView) {
+                        return 1
+                    }
                     return SPAN_COUNT
                 }
-                return 1
             }
         }
 
-        viewBinding.recyclerView.layoutManager = folderLayoutManager
         viewBinding.recyclerView.adapter = homeAdapter
         modelViewsFactory.attach(homeAdapter)
 
@@ -152,11 +150,6 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override fun onDataChanged(data: HomeData) {
         modelViewsFactory.requestBuildModelViews()
-        viewBinding.recyclerView.layoutManager = if (data.shareList.isEmpty()) {
-            folderLayoutManager
-        } else {
-            itemLayoutManager
-        }
         val title = data.selectedFolder?.name ?: getString(R.string.app_name)
         supportActionBar?.title = title
     }

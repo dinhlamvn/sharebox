@@ -28,7 +28,8 @@
         <activity
             android:name="com.dinhlam.sharesaver.ui.share.ShareReceiveActivity"
             android:exported="true"
-            android:label="@string/share_activity_title">
+            android:label="@string/share_activity_title"
+            android:theme="@style/AppTheme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
