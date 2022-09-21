@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import androidx.core.content.FileProvider
 import com.dinhlam.sharesaver.BuildConfig
 import com.dinhlam.sharesaver.base.BaseViewModel
-import com.dinhlam.sharesaver.database.AppDatabase
 import com.dinhlam.sharesaver.database.entity.Share
 import com.dinhlam.sharesaver.loader.ImageLoader
-import com.dinhlam.sharesaver.utils.FolderUtils
+import com.dinhlam.sharesaver.repository.FolderRepository
+import com.dinhlam.sharesaver.repository.ShareRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -16,42 +16,65 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShareViewModel @Inject constructor(
-    private val appDatabase: AppDatabase, private val gson: Gson
+    private val folderRepository: FolderRepository,
+    private val shareRepository: ShareRepository,
+    private val gson: Gson
 ) : BaseViewModel<ShareData>(ShareData()) {
 
-    fun setShareInfo(shareInfo: ShareData.ShareInfo) = setData {
-        val folder = FolderUtils.getFolderByShareType(shareInfo.shareType)
-        copy(shareInfo = shareInfo, selectedFolder = folder)
-    }
-
-    fun saveShare(note: String, context: Context) = executeWithData { myData ->
-        if (myData.shareInfo is ShareData.ShareInfo.ShareWebLink) {
-            return@executeWithData saveWebLink(note, myData.shareInfo)
-        }
-        if (myData.shareInfo is ShareData.ShareInfo.ShareText) {
-            return@executeWithData saveShareText(note, myData.shareInfo)
-        }
-        if (myData.shareInfo is ShareData.ShareInfo.ShareImage) {
-            return@executeWithData saveShareImage(context, note, myData.shareInfo)
+    fun setShareInfo(shareInfo: ShareData.ShareInfo) = execute {
+        val folder = folderRepository.get("text")
+        setData {
+            copy(shareInfo = shareInfo, selectedFolder = folder)
         }
     }
 
-    private fun saveWebLink(note: String, shareWebLink: ShareData.ShareInfo.ShareWebLink) {
+    fun saveShare(note: String, context: Context) = executeWithData { data ->
+        val folderId: String = data.selectedFolder?.id ?: return@executeWithData
+        if (data.shareInfo is ShareData.ShareInfo.ShareWebLink) {
+            return@executeWithData saveWebLink(folderId, note, data.shareInfo)
+        }
+        if (data.shareInfo is ShareData.ShareInfo.ShareText) {
+            return@executeWithData saveShareText(folderId, note, data.shareInfo)
+        }
+        if (data.shareInfo is ShareData.ShareInfo.ShareImage) {
+            return@executeWithData saveShareImage(context, folderId, note, data.shareInfo)
+        }
+    }
+
+    private fun saveWebLink(
+        folderId: String,
+        note: String,
+        shareWebLink: ShareData.ShareInfo.ShareWebLink
+    ) {
         val json = gson.toJson(shareWebLink)
-        val share = Share(shareType = shareWebLink.shareType, shareInfo = json, shareNote = note)
-        appDatabase.shareDao().insertAll(share)
+        val share = Share(
+            folderId = folderId,
+            shareType = shareWebLink.shareType,
+            shareInfo = json,
+            shareNote = note
+        )
+        shareRepository.insert(share)
         setData { copy(isSaveSuccess = true) }
     }
 
-    private fun saveShareText(note: String, shareText: ShareData.ShareInfo.ShareText) {
+    private fun saveShareText(
+        folderId: String,
+        note: String,
+        shareText: ShareData.ShareInfo.ShareText
+    ) {
         val json = gson.toJson(shareText)
-        val share = Share(shareType = shareText.shareType, shareInfo = json, shareNote = note)
-        appDatabase.shareDao().insertAll(share)
+        val share = Share(
+            folderId = folderId,
+            shareType = shareText.shareType,
+            shareInfo = json,
+            shareNote = note
+        )
+        shareRepository.insert(share)
         setData { copy(isSaveSuccess = true) }
     }
 
     private fun saveShareImage(
-        context: Context, note: String, shareImage: ShareData.ShareInfo.ShareImage
+        context: Context, folderId: String, note: String, shareImage: ShareData.ShareInfo.ShareImage
     ) {
         val bitmap = ImageLoader.get(context, shareImage.uri)
         val imagePath = context.getExternalFilesDir("share_images")!!
@@ -66,8 +89,9 @@ class ShareViewModel @Inject constructor(
         )
         val saveShareImage = shareImage.copy(uri = newUri)
         val json = gson.toJson(saveShareImage)
-        val share = Share(shareType = "image", shareInfo = json, shareNote = note)
-        appDatabase.shareDao().insertAll(share)
+        val share =
+            Share(folderId = folderId, shareType = "image", shareInfo = json, shareNote = note)
+        shareRepository.insert(share)
         setData { copy(isSaveSuccess = true) }
     }
 }

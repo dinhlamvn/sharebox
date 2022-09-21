@@ -35,7 +35,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
             if (data.selectedFolder == null) {
                 data.folders.map { folder ->
-                    HomeFolderModelView("folder_${folder.id}", folder.name)
+                    HomeFolderModelView("folder_${folder.id}", folder.name, folder.desc)
                 }.forEach { it.attachTo(this) }
                 return@withData
             }

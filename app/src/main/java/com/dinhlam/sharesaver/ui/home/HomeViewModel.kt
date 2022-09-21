@@ -1,21 +1,24 @@
 package com.dinhlam.sharesaver.ui.home
 
 import com.dinhlam.sharesaver.base.BaseViewModel
-import com.dinhlam.sharesaver.database.AppDatabase
-import com.dinhlam.sharesaver.utils.FolderUtils
+import com.dinhlam.sharesaver.repository.FolderRepository
+import com.dinhlam.sharesaver.repository.ShareRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val appDatabase: AppDatabase) :
-    BaseViewModel<HomeData>(HomeData()) {
+class HomeViewModel @Inject constructor(
+    private val folderRepository: FolderRepository,
+    private val shareRepository: ShareRepository
+) : BaseViewModel<HomeData>(HomeData()) {
 
     init {
         loadFolders()
     }
 
-    private fun loadFolders() = setData {
-        copy(folders = FolderUtils.getFolders(), isRefreshing = false)
+    private fun loadFolders() = execute {
+        val folders = folderRepository.getAll()
+        setData { copy(folders = folders, isRefreshing = false) }
     }
 
 
@@ -23,7 +26,7 @@ class HomeViewModel @Inject constructor(private val appDatabase: AppDatabase) :
         if (data.selectedFolder == null) {
             return@executeWithData setData { copy(isRefreshing = false) }
         }
-        val list = appDatabase.shareDao().getByShareType(data.selectedFolder.shareType)
+        val list = shareRepository.getByFolder(data.selectedFolder.id)
         setData { copy(shareList = list, isRefreshing = false) }
     }
 

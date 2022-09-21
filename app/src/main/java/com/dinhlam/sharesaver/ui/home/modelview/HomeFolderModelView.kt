@@ -6,7 +6,7 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ModelViewHomeFolderBinding
 
 data class HomeFolderModelView(
-    val id: String, val name: String
+    val id: String, val name: String, val desc: String?
 ) : BaseListAdapter.BaseModelView(id) {
     override val layoutRes: Int
         get() = R.layout.model_view_home_folder
@@ -30,6 +30,7 @@ data class HomeFolderModelView(
                 folderClick(position)
             }
             binding.textViewFolderName.text = item.name
+            binding.textViewFolderDesc.text = item.desc
         }
 
         override fun onUnBind() {

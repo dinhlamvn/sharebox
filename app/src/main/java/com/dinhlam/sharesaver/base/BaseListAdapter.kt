@@ -38,7 +38,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
         fun attach(adapter: BaseListAdapter<BaseModelView>) {
             this.adapter = adapter
-            this.adapter?.submitList(modelViews)
+            requestBuildModelViews()
         }
 
         fun detach() {

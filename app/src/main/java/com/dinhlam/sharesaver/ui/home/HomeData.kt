@@ -1,8 +1,8 @@
 package com.dinhlam.sharesaver.ui.home
 
 import com.dinhlam.sharesaver.base.BaseViewModel
+import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.database.entity.Share
-import com.dinhlam.sharesaver.model.Folder
 
 data class HomeData(
     val isRefreshing: Boolean = false,

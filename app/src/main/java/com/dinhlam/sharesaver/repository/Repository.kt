@@ -1,0 +1,12 @@
+package com.dinhlam.sharesaver.repository
+
+interface Repository<T, in R> {
+    fun insert(item: T)
+    fun update(item: T): Boolean
+    fun delete(item: T): Boolean
+    fun insertMany(vararg items: T)
+    fun updateMany(vararg items: T)
+    fun updateById(id: R, block: () -> T)
+    fun get(id: R): T
+    fun getAll(): List<T>
+}

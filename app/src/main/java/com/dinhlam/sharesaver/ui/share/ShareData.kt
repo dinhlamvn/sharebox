@@ -2,7 +2,7 @@ package com.dinhlam.sharesaver.ui.share
 
 import android.net.Uri
 import com.dinhlam.sharesaver.base.BaseViewModel
-import com.dinhlam.sharesaver.model.Folder
+import com.dinhlam.sharesaver.database.entity.Folder
 
 data class ShareData(
     val shareInfo: ShareInfo = ShareInfo.None,
