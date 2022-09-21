@@ -42,9 +42,13 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
     }
 
     private fun flushSetDataQueue() {
+        val block = setDataQueue.poll() ?: return
+        setDataInternal(block)
+    }
+
+    private fun flushAllSetDataQueue() {
         while (!setDataQueue.isEmpty()) {
-            val block = setDataQueue.poll() ?: return
-            setDataInternal(block)
+            flushSetDataQueue()
         }
     }
 
@@ -73,18 +77,18 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
     }
 
     protected fun runWithData(block: (T) -> Unit) = viewModelScope.launch(Dispatchers.Main) {
-        flushSetDataQueue()
+        flushAllSetDataQueue()
         data.value?.let(block)
     }
 
     protected fun <R> withData(block: (T) -> R): R {
-        flushSetDataQueue()
+        flushAllSetDataQueue()
         return data.value!!.let(block)
     }
 
     protected fun executeWithData(block: suspend (T) -> Unit) =
         viewModelScope.launch(Dispatchers.Main) {
-            flushSetDataQueue()
+            flushAllSetDataQueue()
             withContext(Dispatchers.IO) {
                 block.invoke(data.value!!)
             }

@@ -1,7 +1,6 @@
 package com.dinhlam.sharesaver.ui.share
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
@@ -11,56 +10,28 @@ import androidx.activity.viewModels
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
-import com.dinhlam.sharesaver.databinding.ActivityShareBinding
+import com.dinhlam.sharesaver.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharesaver.extensions.asThe
 import com.dinhlam.sharesaver.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
+import com.dinhlam.sharesaver.extensions.isWebLink
+import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareTextModelView
+import com.dinhlam.sharesaver.ui.share.modelview.ShareWebLinkModelView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareReceiveActivity :
-    BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareBinding>() {
+    BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>() {
 
-    private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-        override fun buildModelViews() = withData(viewModel) { data ->
-            when (data.shareInfo) {
-                is ShareData.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
-                is ShareData.ShareInfo.ShareImage -> renderShareImageContent(data.shareInfo)
-                is ShareData.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(data.shareInfo)
-                else -> renderShareContentDefault()
-            }
-        }
-
-        private fun renderShareContentDefault() {
-            ShareDefaultModelView().attachTo(this)
-        }
-
-        private fun renderShareTextContent(shareText: ShareData.ShareInfo.ShareText) {
-            ShareTextModelView("shareText", shareText.text).attachTo(this)
-        }
-
-        private fun renderShareImageContent(shareImage: ShareData.ShareInfo.ShareImage) {
-            ShareImageModelView("shareImage", shareImage.uri).attachTo(this)
-        }
-
-        private fun renderShareMultipleImageContent(shareMultipleImage: ShareData.ShareInfo.ShareMultipleImage) {
-            shareMultipleImage.uris.mapIndexed { index, uri ->
-                ShareMultipleImageModelView(
-                    "shareMultipleImage$index", uri
-                )
-            }.forEach { it.attachTo(this) }
-        }
-
-
-    }
+    private val modelViewsFactory by lazy { ShareModelViewsFactory(this, viewModel) }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -70,8 +41,7 @@ class ShareReceiveActivity :
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            val alpha = slideOffset.times(255).coerceAtMost(153f).toInt()
-            viewBinding.viewBackground.setBackgroundColor(Color.argb(alpha, 0, 0, 0))
+
         }
     }
 
@@ -82,8 +52,8 @@ class ShareReceiveActivity :
         BottomSheetBehavior.from(viewBinding.frameContainer)
     }
 
-    override fun onCreateViewBinding(): ActivityShareBinding {
-        return ActivityShareBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(): ActivityShareReceiveBinding {
+        return ActivityShareReceiveBinding.inflate(layoutInflater)
     }
 
     override val viewModel: ShareViewModel by viewModels()
@@ -96,12 +66,14 @@ class ShareReceiveActivity :
             R.layout.share_item_multiple_image -> ShareMultipleImageModelView.ShareMultipleImageViewHolder(
                 view
             )
+            R.layout.model_view_share_web_link -> ShareWebLinkModelView.ShareWebLinkViewHolder(view)
             else -> null
         }
     }
 
     override fun onDataChanged(data: ShareData) {
         modelViewsFactory.requestBuildModelViews()
+        viewBinding.textViewFolder.text = data.selectedFolder?.name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +83,12 @@ class ShareReceiveActivity :
 
         behavior.addBottomSheetCallback(bottomSheetCallback)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        viewBinding.viewBackground.setOnClickListener { dismiss() }
+
+        viewBinding.textViewFolder.setOnClickListener {
+            showToast("Select folder")
+        }
 
         when {
             intent.action == Intent.ACTION_SEND -> {
@@ -149,7 +127,12 @@ class ShareReceiveActivity :
     }
 
     private fun handleSendText(intent: Intent) {
-        viewModel.setShareInfo(ShareData.ShareInfo.ShareText(intent.getStringExtra(Intent.EXTRA_TEXT)))
+        val shareContent = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+        val shareInfo = when {
+            shareContent.isWebLink() -> ShareData.ShareInfo.ShareWebLink(shareContent)
+            else -> ShareData.ShareInfo.ShareText(shareContent)
+        }
+        viewModel.setShareInfo(shareInfo)
     }
 
     private fun handleSendImage(intent: Intent) {

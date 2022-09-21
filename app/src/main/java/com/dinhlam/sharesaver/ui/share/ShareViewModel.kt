@@ -7,9 +7,8 @@ import com.dinhlam.sharesaver.BuildConfig
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.AppDatabase
 import com.dinhlam.sharesaver.database.entity.Share
-import com.dinhlam.sharesaver.extensions.isWebLink
-import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharesaver.loader.ImageLoader
+import com.dinhlam.sharesaver.utils.FolderUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -21,10 +20,14 @@ class ShareViewModel @Inject constructor(
 ) : BaseViewModel<ShareData>(ShareData()) {
 
     fun setShareInfo(shareInfo: ShareData.ShareInfo) = setData {
-        copy(shareInfo = shareInfo)
+        val folder = FolderUtils.getFolderByShareType(shareInfo.shareType)
+        copy(shareInfo = shareInfo, selectedFolder = folder)
     }
 
     fun saveShare(note: String, context: Context) = executeWithData { myData ->
+        if (myData.shareInfo is ShareData.ShareInfo.ShareWebLink) {
+            return@executeWithData saveWebLink(note, myData.shareInfo)
+        }
         if (myData.shareInfo is ShareData.ShareInfo.ShareText) {
             return@executeWithData saveShareText(note, myData.shareInfo)
         }
@@ -33,14 +36,16 @@ class ShareViewModel @Inject constructor(
         }
     }
 
+    private fun saveWebLink(note: String, shareWebLink: ShareData.ShareInfo.ShareWebLink) {
+        val json = gson.toJson(shareWebLink)
+        val share = Share(shareType = shareWebLink.shareType, shareInfo = json, shareNote = note)
+        appDatabase.shareDao().insertAll(share)
+        setData { copy(isSaveSuccess = true) }
+    }
+
     private fun saveShareText(note: String, shareText: ShareData.ShareInfo.ShareText) {
-        val nonNullText = shareText.text.takeIfNotNullOrBlank() ?: return
         val json = gson.toJson(shareText)
-        val share = if (nonNullText.isWebLink()) {
-            Share(shareType = "web-link", shareInfo = json, shareNote = note)
-        } else {
-            Share(shareType = "text", shareInfo = json, shareNote = note)
-        }
+        val share = Share(shareType = shareText.shareType, shareInfo = json, shareNote = note)
         appDatabase.shareDao().insertAll(share)
         setData { copy(isSaveSuccess = true) }
     }

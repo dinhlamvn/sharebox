@@ -1,11 +1,7 @@
 package com.dinhlam.sharesaver.ui.home
 
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.window.OnBackInvokedDispatcher
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
@@ -13,13 +9,13 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
 import com.dinhlam.sharesaver.extensions.format
+import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
 import com.dinhlam.sharesaver.modelview.LoadingModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeFolderModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharesaver.ui.share.ShareData
-import com.dinhlam.sharesaver.ui.share.ShareReceiveActivity
 import com.dinhlam.sharesaver.utils.IconUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -111,20 +107,11 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT) {
-                if (viewModel.handleBackPressed()) {
-                    return@registerOnBackInvokedCallback
-                }
-                finish()
+        registerOnBackPressHandler {
+            if (viewModel.handleBackPressed()) {
+                return@registerOnBackPressHandler
             }
-        } else {
-            onBackPressedDispatcher.addCallback {
-                if (viewModel.handleBackPressed()) {
-                    return@addCallback
-                }
-                finish()
-            }
+            finish()
         }
 
         viewBinding.recyclerView.layoutManager = GridLayoutManager(this, SPAN_COUNT).apply {

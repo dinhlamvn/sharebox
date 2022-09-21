@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.dinhlam.sharesaver">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,7 +30,10 @@
             android:name="com.dinhlam.sharesaver.ui.share.ShareReceiveActivity"
             android:exported="true"
             android:label="@string/share_activity_title"
-            android:theme="@style/AppTheme.Transparent">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="adjustPan"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

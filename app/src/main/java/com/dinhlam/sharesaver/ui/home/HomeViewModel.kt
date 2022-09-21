@@ -2,7 +2,7 @@ package com.dinhlam.sharesaver.ui.home
 
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.AppDatabase
-import com.dinhlam.sharesaver.model.Folder
+import com.dinhlam.sharesaver.utils.FolderUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,14 +14,10 @@ class HomeViewModel @Inject constructor(private val appDatabase: AppDatabase) :
         loadFolders()
     }
 
-    private fun loadFolders() = execute {
-        setData { copy(isRefreshing = true) }
-        val folder1 = Folder("folder1", "Web-Links", "web-link")
-        val folder2 = Folder("folder2", "Images", "image")
-        val folder3 = Folder("folder3", "Text", "text")
-        val folders = listOf(folder1, folder2, folder3).sortedBy { it.name }
-        setData { copy(folders = folders, isRefreshing = false) }
+    private fun loadFolders() = setData {
+        copy(folders = FolderUtils.getFolders(), isRefreshing = false)
     }
+
 
     private fun loadShareData() = executeWithData { data ->
         if (data.selectedFolder == null) {
