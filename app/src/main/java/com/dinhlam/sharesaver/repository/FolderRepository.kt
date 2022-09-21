@@ -45,7 +45,7 @@ class FolderRepository @Inject constructor(
             val defaultFolders = listOf(
                 Folder("folder_home", "Home", "For all"),
                 Folder("folder_text", "Texts", "For plain text share"),
-                Folder("folder_url", "Webs", "For web link share"),
+                Folder("folder_web", "Webs", "For web link share"),
                 Folder("folder_image", "Images", "For image share")
             )
             folderDao.insertAll(*defaultFolders.toTypedArray())

@@ -21,8 +21,20 @@ class ShareViewModel @Inject constructor(
     private val gson: Gson
 ) : BaseViewModel<ShareData>(ShareData()) {
 
+    init {
+        execute {
+            folderRepository.getAll()
+        }
+    }
+
     fun setShareInfo(shareInfo: ShareData.ShareInfo) = execute {
-        val folder = folderRepository.get("text")
+        val folderId = when (shareInfo) {
+            is ShareData.ShareInfo.ShareText -> "folder_text"
+            is ShareData.ShareInfo.ShareWebLink -> "folder_web"
+            is ShareData.ShareInfo.ShareImage -> "folder_image"
+            else -> "folder_home"
+        }
+        val folder = folderRepository.get(folderId)
         setData {
             copy(shareInfo = shareInfo, selectedFolder = folder)
         }
@@ -42,9 +54,7 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun saveWebLink(
-        folderId: String,
-        note: String,
-        shareWebLink: ShareData.ShareInfo.ShareWebLink
+        folderId: String, note: String, shareWebLink: ShareData.ShareInfo.ShareWebLink
     ) {
         val json = gson.toJson(shareWebLink)
         val share = Share(
@@ -58,16 +68,11 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun saveShareText(
-        folderId: String,
-        note: String,
-        shareText: ShareData.ShareInfo.ShareText
+        folderId: String, note: String, shareText: ShareData.ShareInfo.ShareText
     ) {
         val json = gson.toJson(shareText)
         val share = Share(
-            folderId = folderId,
-            shareType = shareText.shareType,
-            shareInfo = json,
-            shareNote = note
+            folderId = folderId, shareType = shareText.shareType, shareInfo = json, shareNote = note
         )
         shareRepository.insert(share)
         setData { copy(isSaveSuccess = true) }
