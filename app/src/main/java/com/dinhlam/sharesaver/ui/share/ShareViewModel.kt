@@ -21,22 +21,17 @@ class ShareViewModel @Inject constructor(
     private val gson: Gson
 ) : BaseViewModel<ShareData>(ShareData()) {
 
-    init {
-        execute {
-            folderRepository.getAll()
-        }
-    }
-
-    fun setShareInfo(shareInfo: ShareData.ShareInfo) = execute {
+    fun setShareInfo(shareInfo: ShareData.ShareInfo) = executeWithData { data ->
+        val folders = folderRepository.getAll()
         val folderId = when (shareInfo) {
             is ShareData.ShareInfo.ShareText -> "folder_text"
             is ShareData.ShareInfo.ShareWebLink -> "folder_web"
             is ShareData.ShareInfo.ShareImage -> "folder_image"
             else -> "folder_home"
         }
-        val folder = folderRepository.get(folderId)
+        val folder = folders.firstOrNull { it.id == folderId }
         setData {
-            copy(shareInfo = shareInfo, selectedFolder = folder)
+            copy(folders = folders, shareInfo = shareInfo, selectedFolder = folder)
         }
     }
 

@@ -7,6 +7,7 @@ import com.dinhlam.sharesaver.database.entity.Folder
 data class ShareData(
     val shareInfo: ShareInfo = ShareInfo.None,
     val isSaveSuccess: Boolean = false,
+    val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null
 ) : BaseViewModel.BaseData {
 
