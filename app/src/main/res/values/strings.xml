@@ -11,4 +11,6 @@
     <string name="save_share_successfully">Save successfully</string>
     <string name="text_input_note_hint_desc">Type somethings like: title, description,…</string>
     <string name="view_more">View more</string>
+    <string name="create_new_folder">New Folder</string>
+    <string name="create_new_folder_desc">With your customize</string>
 </resources>

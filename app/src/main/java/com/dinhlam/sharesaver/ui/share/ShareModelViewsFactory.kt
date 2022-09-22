@@ -22,19 +22,19 @@ class ShareModelViewsFactory(
     }
 
     private fun renderShareContentDefault() {
-        ShareDefaultModelView().attachTo(this)
+        ShareDefaultModelView().addTo(this)
     }
 
     private fun renderShareWebLinkContent(shareInfo: ShareData.ShareInfo.ShareWebLink) {
-        ShareWebLinkModelView("shareText", shareInfo.url).attachTo(this)
+        ShareWebLinkModelView("shareText", shareInfo.url).addTo(this)
     }
 
     private fun renderShareTextContent(shareText: ShareData.ShareInfo.ShareText) {
-        ShareTextModelView("shareText", shareText.text).attachTo(this)
+        ShareTextModelView("shareText", shareText.text).addTo(this)
     }
 
     private fun renderShareImageContent(shareImage: ShareData.ShareInfo.ShareImage) {
-        ShareImageModelView("shareImage", shareImage.uri).attachTo(this)
+        ShareImageModelView("shareImage", shareImage.uri).addTo(this)
     }
 
     private fun renderShareMultipleImageContent(shareMultipleImage: ShareData.ShareInfo.ShareMultipleImage) {
@@ -42,6 +42,6 @@ class ShareModelViewsFactory(
             ShareMultipleImageModelView(
                 "shareMultipleImage$index", uri
             )
-        }.forEach { it.attachTo(this) }
+        }.forEach { it.addTo(this) }
     }
 }

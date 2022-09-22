@@ -2,6 +2,7 @@ package com.dinhlam.sharesaver.modelview
 
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 
 object LoadingModelView : BaseListAdapter.BaseModelView("loading_view") {
     override val layoutRes: Int
@@ -13,5 +14,9 @@ object LoadingModelView : BaseListAdapter.BaseModelView("loading_view") {
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
         return other is LoadingModelView
+    }
+
+    override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
+        return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 }

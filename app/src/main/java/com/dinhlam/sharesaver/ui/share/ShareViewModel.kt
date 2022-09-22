@@ -29,10 +29,13 @@ class ShareViewModel @Inject constructor(
             is ShareData.ShareInfo.ShareImage -> "folder_image"
             else -> "folder_home"
         }
-        val folder = folders.firstOrNull { it.id == folderId }
-        setData {
-            copy(folders = folders, shareInfo = shareInfo, selectedFolder = folder)
-        }
+        setData { copy(folders = folders, shareInfo = shareInfo) }
+        setSelectedFolder(folderId)
+    }
+
+    fun setSelectedFolder(folderId: String) = runWithData { data ->
+        val folder = data.folders.firstOrNull { it.id == folderId }
+        setData { copy(selectedFolder = folder) }
     }
 
     fun saveShare(note: String, context: Context) = executeWithData { data ->

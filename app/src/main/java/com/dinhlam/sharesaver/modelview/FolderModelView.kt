@@ -1,0 +1,40 @@
+package com.dinhlam.sharesaver.modelview
+
+import android.view.View
+import com.dinhlam.sharesaver.R
+import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.databinding.ModelViewFolderBinding
+
+data class FolderModelView(
+    val id: String, val name: String, val desc: String?
+) : BaseListAdapter.BaseModelView(id) {
+    override val layoutRes: Int
+        get() = R.layout.model_view_folder
+
+    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
+        return other is FolderModelView && this.id == other.id
+    }
+
+    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
+        return other is FolderModelView && this == other
+    }
+
+    class FolderViewHolder(view: View, private val folderClick: (Int) -> Unit) :
+        BaseListAdapter.BaseViewHolder<FolderModelView, ModelViewFolderBinding>(view) {
+        override fun onCreateViewBinding(view: View): ModelViewFolderBinding {
+            return ModelViewFolderBinding.bind(view)
+        }
+
+        override fun onBind(item: FolderModelView, position: Int) {
+            binding.root.setOnClickListener {
+                folderClick(position)
+            }
+            binding.textViewFolderName.text = item.name
+            binding.textViewFolderDesc.text = item.desc
+        }
+
+        override fun onUnBind() {
+
+        }
+    }
+}

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
 
-inline fun <T, reified R> T?.asThe(): R? {
+inline fun <reified R> Any?.cast(): R? {
     return this as? R
 }
 

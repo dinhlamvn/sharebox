@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.dinhlam.sharesaver.extensions.asThe
+import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.utils.Ids
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
@@ -47,7 +47,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
         protected abstract fun buildModelViews()
 
-        fun attachModelView(modelView: BaseModelView) {
+        fun addModelView(modelView: BaseModelView) {
             modelViews.add(modelView)
         }
 
@@ -78,7 +78,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         fun <T : BaseModelView, VB : ViewBinding> createAdapter(
             factory: ViewHolderFactory<T, VB>
         ): BaseListAdapter<BaseModelView> {
-            return BaseListAdapter(factory.asThe()!!)
+            return BaseListAdapter(factory.cast()!!)
         }
     }
 
@@ -136,13 +136,16 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
         abstract fun areContentsTheSame(other: BaseModelView): Boolean
 
-        fun attachTo(factory: ModelViewsFactory) {
-            factory.attachModelView(this)
+        open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =
+            BaseSpanSizeLookup.SpanSizeConfig.Normal
+
+        fun addTo(factory: ModelViewsFactory) {
+            factory.addModelView(this)
         }
 
-        fun attachIf(block: () -> Boolean, factory: ModelViewsFactory) {
+        fun addToIf(block: () -> Boolean, factory: ModelViewsFactory) {
             if (block.invoke()) {
-                factory.attachModelView(this)
+                factory.addModelView(this)
             }
         }
     }

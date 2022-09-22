@@ -18,14 +18,16 @@ import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemBinding
 import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemMoreBinding
-import com.dinhlam.sharesaver.extensions.asThe
+import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.dpF
 import com.dinhlam.sharesaver.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.isWebLink
+import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.router.AppRouter
+import com.dinhlam.sharesaver.ui.share.dialog.ShareFolderPickerDialogFragment
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
@@ -37,7 +39,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareReceiveActivity :
-    BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>() {
+    BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>(),
+    ShareFolderPickerDialogFragment.OnShareFolderPickerCallback {
 
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
@@ -146,7 +149,7 @@ class ShareReceiveActivity :
     }
 
     private fun handleSendImage(intent: Intent) {
-        intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM).asThe<Parcelable, Uri>()
+        intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM).cast<Uri>()
             ?.let { shareUri ->
                 viewModel.setShareInfo(ShareData.ShareInfo.ShareImage(shareUri))
             }
@@ -154,7 +157,7 @@ class ShareReceiveActivity :
 
     private fun handleSendMultipleImage(intent: Intent) {
         intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
-            val data = list.mapNotNull { it.asThe<Parcelable, Uri>() }
+            val data = list.mapNotNull { it.cast<Uri>() }
             viewModel.setShareInfo(ShareData.ShareInfo.ShareMultipleImage(data))
         }
     }
@@ -215,6 +218,15 @@ class ShareReceiveActivity :
     }
 
     private fun showPickMoreFolderDialog() {
+        val dialog = ShareFolderPickerDialogFragment()
+        dialog.show(supportFragmentManager, "picker")
+    }
 
+    override fun onFolderSelected(folderId: String) {
+        viewModel.setSelectedFolder(folderId)
+    }
+
+    override fun onCreateNewFolder() {
+        showToast("New Folder")
     }
 }

@@ -6,13 +6,14 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
 import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
+import com.dinhlam.sharesaver.modelview.FolderModelView
 import com.dinhlam.sharesaver.modelview.LoadingModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
-import com.dinhlam.sharesaver.ui.home.modelview.HomeFolderModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharesaver.ui.share.ShareData
@@ -29,20 +30,20 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
         override fun buildModelViews() = withData(viewModel) { data ->
             if (data.isRefreshing) {
-                LoadingModelView.attachTo(this)
+                LoadingModelView.addTo(this)
                 return@withData
             }
 
             if (data.selectedFolder == null) {
                 data.folders.map { folder ->
-                    HomeFolderModelView("folder_${folder.id}", folder.name, folder.desc)
-                }.forEach { it.attachTo(this) }
+                    FolderModelView("folder_${folder.id}", folder.name, folder.desc)
+                }.forEach { it.addTo(this) }
                 return@withData
             }
             data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }.forEach { entry ->
                 val date = entry.key
                 val shares = entry.value
-                HomeDateModelView("date$date", date).attachTo(this)
+                HomeDateModelView("date$date", date).addTo(this)
                 shares.mapIndexed { index, share ->
                     when (share.shareType) {
                         "web-link" -> {
@@ -70,7 +71,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                             null
                         }
                     }
-                }.filterNotNull().forEach { it.attachTo(this) }
+                }.filterNotNull().forEach { it.addTo(this) }
             }
         }
     }
@@ -93,7 +94,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                 view
             )
             R.layout.model_view_loading -> LoadingViewHolder(view)
-            R.layout.model_view_home_folder -> HomeFolderModelView.HomeFolderViewHolder(view) { position ->
+            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view) { position ->
                 viewModel.onFolderClick(position)
             }
             R.layout.model_view_home_date -> HomeDateModelView.HomeDateViewHolder(view)
@@ -115,15 +116,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         }
 
         viewBinding.recyclerView.layoutManager = GridLayoutManager(this, SPAN_COUNT).apply {
-            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    val model = homeAdapter.getModelAtPosition(position) ?: return 1
-                    if (model is HomeFolderModelView) {
-                        return 1
-                    }
-                    return SPAN_COUNT
-                }
-            }
+            spanSizeLookup = BaseSpanSizeLookup(homeAdapter, this)
         }
 
         viewBinding.recyclerView.adapter = homeAdapter

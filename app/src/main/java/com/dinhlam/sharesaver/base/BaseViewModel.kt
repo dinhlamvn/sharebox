@@ -5,7 +5,7 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dinhlam.sharesaver.extensions.asThe
+import com.dinhlam.sharesaver.extensions.cast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -98,11 +98,11 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         viewModelScope.launch(Dispatchers.IO, block = block)
 
     fun <T> consume(property: KProperty<T>, block: (T) -> Unit) {
-        consumers.add(Consumer(property.name, block.asThe()!!))
+        consumers.add(Consumer(property.name, block.cast()!!))
     }
 
     fun <T> consumeOnChange(property: KProperty<T>, block: (T) -> Unit) {
-        consumers.add(Consumer(property.name, block.asThe()!!, true))
+        consumers.add(Consumer(property.name, block.cast()!!, true))
     }
 
     fun onClearConsumers() {
