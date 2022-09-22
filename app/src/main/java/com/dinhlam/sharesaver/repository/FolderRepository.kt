@@ -16,7 +16,7 @@ class FolderRepository @Inject constructor(
     }
 
     override fun update(item: Folder): Boolean {
-        return folderDao.update(item) > 0
+        return folderDao.update(item.copy(updatedAt = System.currentTimeMillis())) > 0
     }
 
     override fun delete(item: Folder): Boolean {
@@ -31,8 +31,10 @@ class FolderRepository @Inject constructor(
 
     }
 
-    override fun updateById(id: String, block: () -> Folder) {
-        update(folderDao.getById(id))
+    override fun updateById(id: String, block: (Folder) -> Folder) {
+        val folder = folderDao.getById(id)
+        val newData = block.invoke(folder)
+        update(newData.copy(updatedAt = System.currentTimeMillis()))
     }
 
     override fun get(id: String): Folder {

@@ -94,4 +94,9 @@ class ShareViewModel @Inject constructor(
         shareRepository.insert(share)
         setData { copy(isSaveSuccess = true) }
     }
+
+    fun selectedFolder(id: String) = runWithData { data ->
+        val folder = data.folders.firstOrNull { it.id == id }
+        setData { copy(selectedFolder = folder) }
+    }
 }

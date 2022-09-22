@@ -6,7 +6,7 @@ interface Repository<T, in R> {
     fun delete(item: T): Boolean
     fun insertMany(vararg items: T)
     fun updateMany(vararg items: T)
-    fun updateById(id: R, block: () -> T)
+    fun updateById(id: R, block: (T) -> T)
     fun get(id: R): T
     fun getAll(): List<T>
 }

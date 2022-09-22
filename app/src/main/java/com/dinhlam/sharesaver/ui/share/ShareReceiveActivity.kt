@@ -1,22 +1,30 @@
 package com.dinhlam.sharesaver.ui.share
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareReceiveBinding
+import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemBinding
+import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemMoreBinding
 import com.dinhlam.sharesaver.extensions.asThe
+import com.dinhlam.sharesaver.extensions.dp
+import com.dinhlam.sharesaver.extensions.dpF
 import com.dinhlam.sharesaver.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.isWebLink
-import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
@@ -30,6 +38,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>() {
+
+    companion object {
+        private const val LIMIT_SHOWED_FOLDER = 3
+    }
 
     private val modelViewsFactory by lazy { ShareModelViewsFactory(this, viewModel) }
 
@@ -86,9 +98,7 @@ class ShareReceiveActivity :
 
         viewBinding.viewBackground.setOnClickListener { dismiss() }
 
-        viewBinding.textViewFolder.setOnClickListener {
-            showToast("Select folder")
-        }
+        viewBinding.textViewFolder.setOnClickListener(::showFloatingPopupFolderPicker)
 
         when {
             intent.action == Intent.ACTION_SEND -> {
@@ -136,18 +146,17 @@ class ShareReceiveActivity :
     }
 
     private fun handleSendImage(intent: Intent) {
-        intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM)
-            .asThe<Parcelable, Uri>()?.let { shareUri ->
+        intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM).asThe<Parcelable, Uri>()
+            ?.let { shareUri ->
                 viewModel.setShareInfo(ShareData.ShareInfo.ShareImage(shareUri))
             }
     }
 
     private fun handleSendMultipleImage(intent: Intent) {
-        intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)
-            ?.let { list ->
-                val data = list.mapNotNull { it.asThe<Parcelable, Uri>() }
-                viewModel.setShareInfo(ShareData.ShareInfo.ShareMultipleImage(data))
-            }
+        intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
+            val data = list.mapNotNull { it.asThe<Parcelable, Uri>() }
+            viewModel.setShareInfo(ShareData.ShareInfo.ShareMultipleImage(data))
+        }
     }
 
     private fun openHome() {
@@ -159,5 +168,53 @@ class ShareReceiveActivity :
 
     private fun dismiss() {
         behavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun showFloatingPopupFolderPicker(view: View) = withData(viewModel) { data ->
+        val width = 150.dp(this)
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        val popupWindow = PopupWindow(this)
+        popupWindow.width = width
+        popupWindow.height = height
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 10.dpF(this)
+        popupWindow.isOutsideTouchable = true
+        fun dismissPopup() {
+            if (popupWindow.isShowing) {
+                popupWindow.dismiss()
+            }
+        }
+
+        val takeFolders = data.folders.take(LIMIT_SHOWED_FOLDER)
+        val popupView = LinearLayout(this)
+        val layoutParams = LinearLayout.LayoutParams(
+            width, height
+        )
+        popupView.orientation = LinearLayout.VERTICAL
+        popupView.layoutParams = layoutParams
+        takeFolders.forEach { folder ->
+            val binding = ShareFolderPickerItemBinding.inflate(layoutInflater)
+            binding.textView.text = folder.name
+            binding.root.setOnClickListener {
+                dismissPopup()
+                viewModel.selectedFolder(folder.id)
+            }
+            popupView.addView(binding.root, layoutParams)
+        }
+        if (takeFolders.size < data.folders.size) {
+            val binding = ShareFolderPickerItemMoreBinding.inflate(layoutInflater)
+            binding.textView.text = getString(R.string.view_more)
+            binding.root.setOnClickListener {
+                dismissPopup()
+                showPickMoreFolderDialog()
+            }
+            popupView.addView(binding.root, layoutParams)
+        }
+        popupWindow.contentView = popupView
+        popupWindow.showAsDropDown(view)
+    }
+
+    private fun showPickMoreFolderDialog() {
+
     }
 }

@@ -12,7 +12,7 @@ class ShareRepository @Inject constructor(
     }
 
     override fun update(item: Share): Boolean {
-        return shareDao.update(item) > 0
+        return shareDao.update(item.copy(updatedAt = System.currentTimeMillis())) > 0
     }
 
     override fun delete(item: Share): Boolean {
@@ -27,7 +27,7 @@ class ShareRepository @Inject constructor(
 
     }
 
-    override fun updateById(id: Int, block: () -> Share) {
+    override fun updateById(id: Int, block: (Share) -> Share) {
 
     }
 
