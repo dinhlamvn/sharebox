@@ -102,4 +102,10 @@ class ShareViewModel @Inject constructor(
         val folder = data.folders.firstOrNull { it.id == id }
         setData { copy(selectedFolder = folder) }
     }
+
+    fun setSelectedFolderAfterCreate(folderId: String) = execute {
+        val folders = folderRepository.getAll()
+        val folder = folders.firstOrNull { it.id == folderId }
+        setData { copy(folders = folders, selectedFolder = folder) }
+    }
 }

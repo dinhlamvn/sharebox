@@ -17,6 +17,7 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemBinding
+import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemCreateBinding
 import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemMoreBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.dp
@@ -25,9 +26,9 @@ import com.dinhlam.sharesaver.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.isWebLink
-import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.router.AppRouter
-import com.dinhlam.sharesaver.ui.share.dialog.ShareFolderPickerDialogFragment
+import com.dinhlam.sharesaver.ui.share.dialog.foldercreator.ShareFolderCreatorDialogFragment
+import com.dinhlam.sharesaver.ui.share.dialog.folderpicker.ShareFolderPickerDialogFragment
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
@@ -40,7 +41,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>(),
-    ShareFolderPickerDialogFragment.OnShareFolderPickerCallback {
+    ShareFolderPickerDialogFragment.OnShareFolderPickerCallback,
+    ShareFolderCreatorDialogFragment.OnShareFolderCreatorCallback {
 
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
@@ -195,6 +197,7 @@ class ShareReceiveActivity :
         )
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams
+
         takeFolders.forEach { folder ->
             val binding = ShareFolderPickerItemBinding.inflate(layoutInflater)
             binding.textView.text = folder.name
@@ -204,6 +207,7 @@ class ShareReceiveActivity :
             }
             popupView.addView(binding.root, layoutParams)
         }
+
         if (takeFolders.size < data.folders.size) {
             val binding = ShareFolderPickerItemMoreBinding.inflate(layoutInflater)
             binding.textView.text = getString(R.string.view_more)
@@ -213,6 +217,15 @@ class ShareReceiveActivity :
             }
             popupView.addView(binding.root, layoutParams)
         }
+
+        val binding = ShareFolderPickerItemCreateBinding.inflate(layoutInflater)
+        binding.textView.text = getString(R.string.create_new_folder)
+        binding.root.setOnClickListener {
+            dismissPopup()
+            onCreateNewFolder()
+        }
+        popupView.addView(binding.root, layoutParams)
+
         popupWindow.contentView = popupView
         popupWindow.showAsDropDown(view)
     }
@@ -227,6 +240,11 @@ class ShareReceiveActivity :
     }
 
     override fun onCreateNewFolder() {
-        showToast("New Folder")
+        val dialog = ShareFolderCreatorDialogFragment()
+        dialog.show(supportFragmentManager, "creator")
+    }
+
+    override fun onFolderCreated(folderId: String) {
+        viewModel.setSelectedFolderAfterCreate(folderId)
     }
 }

@@ -1,0 +1,44 @@
+package com.dinhlam.sharesaver.ui.share.dialog.foldercreator
+
+import com.dinhlam.sharesaver.R
+import com.dinhlam.sharesaver.base.BaseViewModel
+import com.dinhlam.sharesaver.database.entity.Folder
+import com.dinhlam.sharesaver.extensions.md5
+import com.dinhlam.sharesaver.repository.FolderRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class ShareFolderCreatorDialogViewModel @Inject constructor(
+    private val folderRepository: FolderRepository
+) : BaseViewModel<ShareFolderCreatorDialogData>(ShareFolderCreatorDialogData()) {
+
+    fun createFolder(
+        folderName: String,
+        folderDesc: String? = null,
+        folderPassword: String? = null,
+        folderPasswordAlias: String? = null
+    ) {
+        if (folderName.isBlank()) {
+            return setData { copy(error = R.string.error_require_folder_name) }
+        }
+        val folder = Folder(
+            id = "folder_${System.currentTimeMillis()}",
+            name = folderName,
+            desc = folderDesc,
+            password = folderPassword?.md5(),
+            passwordAlias = folderPasswordAlias
+        )
+        execute {
+            folderRepository.insert(folder)
+        }.invokeOnCompletion {
+            setData { copy(folderIdInserted = folder.id) }
+        }
+    }
+
+    fun clearError() = runWithData { data ->
+        if (data.error != 0) {
+            setData { copy(error = 0) }
+        }
+    }
+}

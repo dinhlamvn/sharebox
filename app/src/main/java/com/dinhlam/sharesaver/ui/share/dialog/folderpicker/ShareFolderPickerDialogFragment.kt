@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.share.dialog
+package com.dinhlam.sharesaver.ui.share.dialog.folderpicker
 
 import android.os.Bundle
 import android.view.LayoutInflater

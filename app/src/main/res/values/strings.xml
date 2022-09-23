@@ -13,4 +13,14 @@
     <string name="view_more">View more</string>
     <string name="create_new_folder">New Folder</string>
     <string name="create_new_folder_desc">With your customize</string>
+    <string name="text_input_folder_name_hint_desc">Type your favourite name</string>
+    <string name="text_input_folder_name_hint">Folder\'s name</string>
+    <string name="text_input_folder_desc_hint_desc">Type somethings about this folder</string>
+    <string name="text_input_folder_desc_hint">Folder\'s description (Optional)</string>
+    <string name="error_require_folder_name">Please input the folder\'s name</string>
+    <string name="text_input_folder_password_hint_desc">Type password here</string>
+    <string name="text_input_folder_password_hint">Password (Optional)</string>
+    <string name="check_box_create_folder_password">Encrypt with password</string>
+    <string name="text_input_folder_password_alias_hint_desc">Your alias</string>
+    <string name="text_input_folder_password_alias_hint">Password alias (Optional)</string>
 </resources>
