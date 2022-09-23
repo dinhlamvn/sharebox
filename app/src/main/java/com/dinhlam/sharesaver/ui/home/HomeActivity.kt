@@ -55,8 +55,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                                 iconUrl = IconUtils.getIconUrl(shareInfo.text),
                                 url = shareInfo.text,
                                 createdAt = share.createdAt,
-                                note = share.shareNote,
-                                showDivider = index < data.shareList.size - 1
+                                note = share.shareNote
                             )
                         }
                         "image" -> {

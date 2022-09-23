@@ -18,8 +18,7 @@ data class HomeWebLinkModelView(
     val iconUrl: String?,
     val url: String?,
     val createdAt: Long,
-    val note: String?,
-    val showDivider: Boolean = true
+    val note: String?
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val layoutRes: Int
@@ -52,7 +51,6 @@ data class HomeWebLinkModelView(
             binding.textViewCreatedDate.text = item.createdAt.format("H:mm")
             binding.textViewNote.isVisible = !item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
-            binding.viewDivider.isInvisible = !item.showDivider
         }
 
         override fun onUnBind() {
