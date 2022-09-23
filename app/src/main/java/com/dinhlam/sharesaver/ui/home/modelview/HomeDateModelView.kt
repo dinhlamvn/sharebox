@@ -3,6 +3,7 @@ package com.dinhlam.sharesaver.ui.home.modelview
 import android.view.View
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.databinding.ModelViewHomeDateBinding
 
 data class HomeDateModelView(
@@ -17,6 +18,10 @@ data class HomeDateModelView(
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
         return other is HomeDateModelView && this == other
+    }
+
+    override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
+        return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
     class HomeDateViewHolder(view: View) :

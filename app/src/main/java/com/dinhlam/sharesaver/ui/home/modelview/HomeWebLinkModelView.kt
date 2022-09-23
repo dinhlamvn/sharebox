@@ -7,6 +7,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.databinding.ModelViewHomeShareWebLinkBinding
 import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
@@ -26,6 +27,10 @@ data class HomeWebLinkModelView(
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
         return other is HomeWebLinkModelView && other.id == this.id
+    }
+
+    override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
+        return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

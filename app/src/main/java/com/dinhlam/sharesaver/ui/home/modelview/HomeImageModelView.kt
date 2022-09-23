@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.view.isInvisible
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.databinding.ModelViewHomeShareImageBinding
 import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
@@ -23,6 +24,10 @@ data class HomeImageModelView(
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
         return other is HomeImageModelView && other.id == this.id
+    }
+
+    override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
+        return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
