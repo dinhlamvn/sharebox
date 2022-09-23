@@ -23,4 +23,5 @@
     <string name="check_box_create_folder_password">Encrypt with password</string>
     <string name="text_input_folder_password_alias_hint_desc">Your alias</string>
     <string name="text_input_folder_password_alias_hint">Password alias (Optional)</string>
+    <string name="error_create_folder_try_again">Has an error until create folder, please try again!</string>
 </resources>

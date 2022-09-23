@@ -29,9 +29,10 @@ class ShareFolderCreatorDialogViewModel @Inject constructor(
             password = folderPassword?.md5(),
             passwordAlias = folderPasswordAlias
         )
-        execute {
+        execute(onError = {
+            setData { copy(toastRes = R.string.error_create_folder_try_again) }
+        }) {
             folderRepository.insert(folder)
-        }.invokeOnCompletion {
             setData { copy(folderIdInserted = folder.id) }
         }
     }
@@ -39,6 +40,12 @@ class ShareFolderCreatorDialogViewModel @Inject constructor(
     fun clearError() = runWithData { data ->
         if (data.error != 0) {
             setData { copy(error = 0) }
+        }
+    }
+
+    fun clearToast() = runWithData { data ->
+        if (data.toastRes != 0) {
+            setData { copy(toastRes = 0) }
         }
     }
 }

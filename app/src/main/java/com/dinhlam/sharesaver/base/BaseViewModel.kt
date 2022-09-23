@@ -86,16 +86,30 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         return data.value!!.let(block)
     }
 
-    protected fun executeWithData(block: suspend (T) -> Unit) =
-        viewModelScope.launch(Dispatchers.Main) {
-            flushAllSetDataQueue()
-            withContext(Dispatchers.IO) {
+    protected fun executeWithData(
+        onError: ((Throwable) -> Unit)? = null,
+        block: suspend (T) -> Unit,
+    ) = viewModelScope.launch(Dispatchers.Main) {
+        flushAllSetDataQueue()
+        withContext(Dispatchers.IO) {
+            try {
                 block.invoke(data.value!!)
+            } catch (e: Exception) {
+                onError?.invoke(e)
             }
         }
+    }
 
-    protected fun execute(block: suspend CoroutineScope.() -> Unit) =
-        viewModelScope.launch(Dispatchers.IO, block = block)
+    protected fun execute(
+        onError: ((Throwable) -> Unit)? = null,
+        block: suspend CoroutineScope.() -> Unit,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            block.invoke(this)
+        } catch (e: Exception) {
+            onError?.invoke(e)
+        }
+    }
 
     fun <T> consume(property: KProperty<T>, block: (T) -> Unit) {
         consumers.add(Consumer(property.name, block.cast()!!))

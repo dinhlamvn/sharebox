@@ -11,6 +11,7 @@ import com.dinhlam.sharesaver.base.BaseDialogFragment
 import com.dinhlam.sharesaver.databinding.DialogShareFolderCreatorBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.getTrimmedText
+import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,6 +48,13 @@ class ShareFolderCreatorDialogFragment :
             folderId?.let {
                 activity.cast<OnShareFolderCreatorCallback>()?.onFolderCreated(it)
                 dismiss()
+            }
+        }
+
+        viewModel.consumeOnChange(ShareFolderCreatorDialogData::toastRes) { toastRes ->
+            if (toastRes != 0) {
+                showToast(getString(toastRes))
+                viewModel.clearToast()
             }
         }
 
