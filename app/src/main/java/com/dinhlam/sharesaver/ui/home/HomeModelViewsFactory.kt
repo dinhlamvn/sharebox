@@ -1,0 +1,65 @@
+package com.dinhlam.sharesaver.ui.home
+
+import com.dinhlam.sharesaver.base.BaseListAdapter
+import com.dinhlam.sharesaver.extensions.format
+import com.dinhlam.sharesaver.modelview.FolderModelView
+import com.dinhlam.sharesaver.modelview.LoadingModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
+import com.dinhlam.sharesaver.ui.share.ShareData
+import com.dinhlam.sharesaver.utils.IconUtils
+import com.google.gson.Gson
+
+class HomeModelViewsFactory(
+    private val homeActivity: HomeActivity,
+    private val viewModel: HomeViewModel,
+    private val gson: Gson
+) : BaseListAdapter.ModelViewsFactory() {
+
+    override fun buildModelViews() = homeActivity.withData(viewModel) { data ->
+        if (data.isRefreshing) {
+            LoadingModelView.addTo(this)
+            return@withData
+        }
+
+        if (data.selectedFolder == null) {
+            data.folders.map { folder ->
+                FolderModelView("folder_${folder.id}", folder.name, folder.desc)
+            }.forEach { it.addTo(this) }
+            return@withData
+        }
+        data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }.forEach { entry ->
+            val date = entry.key
+            val shares = entry.value
+            HomeDateModelView("date$date", date).addTo(this)
+            shares.mapNotNull { share ->
+                when (share.shareType) {
+                    "web-link" -> {
+                        val shareInfo = gson.fromJson(
+                            share.shareInfo, ShareData.ShareInfo.ShareText::class.java
+                        )
+                        HomeWebLinkModelView(
+                            id = "${share.id}",
+                            iconUrl = IconUtils.getIconUrl(shareInfo.text),
+                            url = shareInfo.text,
+                            createdAt = share.createdAt,
+                            note = share.shareNote
+                        )
+                    }
+                    "image" -> {
+                        val shareInfo = gson.fromJson(
+                            share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
+                        )
+                        HomeImageModelView(
+                            "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
+                        )
+                    }
+                    else -> {
+                        null
+                    }
+                }
+            }.forEach { it.addTo(this) }
+        }
+    }
+}

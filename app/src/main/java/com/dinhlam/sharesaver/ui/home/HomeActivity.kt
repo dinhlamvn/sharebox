@@ -1,79 +1,34 @@
 package com.dinhlam.sharesaver.ui.home
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
-import com.dinhlam.sharesaver.extensions.format
+import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
 import com.dinhlam.sharesaver.modelview.FolderModelView
-import com.dinhlam.sharesaver.modelview.LoadingModelView
+import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
-import com.dinhlam.sharesaver.ui.share.ShareData
-import com.dinhlam.sharesaver.utils.IconUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>() {
+class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>(),
+    FolderCreatorDialogFragment.OnFolderCreatorCallback {
 
-    private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-
-        override fun buildModelViews() = withData(viewModel) { data ->
-            if (data.isRefreshing) {
-                LoadingModelView.addTo(this)
-                return@withData
-            }
-
-            if (data.selectedFolder == null) {
-                data.folders.map { folder ->
-                    FolderModelView("folder_${folder.id}", folder.name, folder.desc)
-                }.forEach { it.addTo(this) }
-                return@withData
-            }
-            data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }.forEach { entry ->
-                val date = entry.key
-                val shares = entry.value
-                HomeDateModelView("date$date", date).addTo(this)
-                shares.mapIndexed { index, share ->
-                    when (share.shareType) {
-                        "web-link" -> {
-                            val shareInfo = gson.fromJson(
-                                share.shareInfo, ShareData.ShareInfo.ShareText::class.java
-                            )
-                            HomeWebLinkModelView(
-                                id = "${share.id}",
-                                iconUrl = IconUtils.getIconUrl(shareInfo.text),
-                                url = shareInfo.text,
-                                createdAt = share.createdAt,
-                                note = share.shareNote
-                            )
-                        }
-                        "image" -> {
-                            val shareInfo = gson.fromJson(
-                                share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
-                            )
-                            HomeImageModelView(
-                                "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
-                            )
-                        }
-                        else -> {
-                            null
-                        }
-                    }
-                }.filterNotNull().forEach { it.addTo(this) }
-            }
-        }
-    }
+    private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
 
     companion object {
         private const val SPAN_COUNT = 3
@@ -131,5 +86,27 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         modelViewsFactory.requestBuildModelViews()
         val title = data.selectedFolder?.name ?: getString(R.string.app_name)
         supportActionBar?.title = title
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu.cast<MenuBuilder>()?.setOptionalIconsVisible(true)
+        return menuInflater.inflate(R.menu.home_menu, menu).let { true }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.item_create_folder) {
+            showDialogCreateFolder()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showDialogCreateFolder() {
+        val dialog = FolderCreatorDialogFragment()
+        dialog.show(supportFragmentManager, "DialogCreateFolder")
+    }
+
+    override fun onFolderCreated(folderId: String) {
+        viewModel.reload()
     }
 }

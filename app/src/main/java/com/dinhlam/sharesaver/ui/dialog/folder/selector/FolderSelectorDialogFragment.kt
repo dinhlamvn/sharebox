@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class FolderSelectorDialogFragment :
     BaseDialogFragment<FolderSelectorDialogData, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
 
-    interface OnShareFolderPickerCallback {
+    interface OnFolderSelectorCallback {
         fun onFolderSelected(folderId: String)
         fun onCreateNewFolder()
     }
@@ -76,7 +76,7 @@ class FolderSelectorDialogFragment :
 
         viewModel.consumeOnChange(FolderSelectorDialogData::selectedFolder) {
             val folderId = it?.id ?: return@consumeOnChange
-            activity?.cast<OnShareFolderPickerCallback>()
+            activity?.cast<OnFolderSelectorCallback>()
                 ?.onFolderSelected(folderId)?.also {
                     dismiss()
                 }
@@ -84,7 +84,7 @@ class FolderSelectorDialogFragment :
 
         viewModel.consumeOnChange(FolderSelectorDialogData::requestCreateFolder) { isCreateNewFolder ->
             if (isCreateNewFolder) {
-                activity?.cast<OnShareFolderPickerCallback>()?.onCreateNewFolder()?.also {
+                activity?.cast<OnFolderSelectorCallback>()?.onCreateNewFolder()?.also {
                     dismiss()
                 }
             }

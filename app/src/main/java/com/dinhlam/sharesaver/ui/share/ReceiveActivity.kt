@@ -16,9 +16,9 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareReceiveBinding
-import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemBinding
-import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemCreateBinding
-import com.dinhlam.sharesaver.databinding.ShareFolderPickerItemMoreBinding
+import com.dinhlam.sharesaver.databinding.MenuItemAddBinding
+import com.dinhlam.sharesaver.databinding.MenuItemFolderSelectorBinding
+import com.dinhlam.sharesaver.databinding.MenuItemMoreBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.dpF
@@ -39,10 +39,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ShareReceiveActivity :
+class ReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>(),
-    FolderSelectorDialogFragment.OnShareFolderPickerCallback,
-    FolderCreatorDialogFragment.OnShareFolderCreatorCallback {
+    FolderSelectorDialogFragment.OnFolderSelectorCallback,
+    FolderCreatorDialogFragment.OnFolderCreatorCallback {
 
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
@@ -199,7 +199,7 @@ class ShareReceiveActivity :
         popupView.layoutParams = layoutParams
 
         takeFolders.forEach { folder ->
-            val binding = ShareFolderPickerItemBinding.inflate(layoutInflater)
+            val binding = MenuItemFolderSelectorBinding.inflate(layoutInflater)
             binding.textView.text = folder.name
             binding.root.setOnClickListener {
                 dismissPopup()
@@ -209,8 +209,7 @@ class ShareReceiveActivity :
         }
 
         if (takeFolders.size < data.folders.size) {
-            val binding = ShareFolderPickerItemMoreBinding.inflate(layoutInflater)
-            binding.textView.text = getString(R.string.view_more)
+            val binding = MenuItemMoreBinding.inflate(layoutInflater)
             binding.root.setOnClickListener {
                 dismissPopup()
                 showPickMoreFolderDialog()
@@ -218,7 +217,7 @@ class ShareReceiveActivity :
             popupView.addView(binding.root, layoutParams)
         }
 
-        val binding = ShareFolderPickerItemCreateBinding.inflate(layoutInflater)
+        val binding = MenuItemAddBinding.inflate(layoutInflater)
         binding.textView.text = getString(R.string.create_new_folder)
         binding.root.setOnClickListener {
             dismissPopup()

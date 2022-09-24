@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class FolderCreatorDialogFragment :
     BaseDialogFragment<FolderCreatorDialogData, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
 
-    interface OnShareFolderCreatorCallback {
+    interface OnFolderCreatorCallback {
         fun onFolderCreated(folderId: String)
     }
 
@@ -46,7 +46,7 @@ class FolderCreatorDialogFragment :
 
         viewModel.consumeOnChange(FolderCreatorDialogData::folderIdInserted) { folderId ->
             folderId?.let {
-                activity.cast<OnShareFolderCreatorCallback>()?.onFolderCreated(it)
+                activity.cast<OnFolderCreatorCallback>()?.onFolderCreated(it)
                 dismiss()
             }
         }
