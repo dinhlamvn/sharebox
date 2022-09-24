@@ -57,7 +57,9 @@ class HomeViewModel @Inject constructor(
 
     fun deleteFolder(folder: Folder) {
         setData { copy(showProgress = true) }
-        execute {
+        execute(onError = {
+            setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
+        }) {
             val deleted = folderRepository.delete(folder)
             if (deleted) {
                 setData { copy(showProgress = false) }
