@@ -39,11 +39,11 @@ class FolderSelectorDialogFragment :
         }
     }
 
-    private val folderAdapter = BaseListAdapter.createAdapter { layoutRes, view ->
-        return@createAdapter when (layoutRes) {
-            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view) { position ->
+    private val folderAdapter = BaseListAdapter.createAdapter { modelViewLayout, view ->
+        return@createAdapter when (modelViewLayout) {
+            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view, { position ->
                 viewModel.onSelectedFolder(position)
-            }
+            })
             R.layout.model_view_new_folder -> NewFolderModelView.NewFolderViewHolder(view) {
                 viewModel.requestCreateNewFolder()
             }

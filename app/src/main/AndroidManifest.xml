@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name="com.dinhlam.sharesaver.ui.share.ReceiveActivity"
+            android:name="com.dinhlam.sharesaver.ui.share.ShareActivity"
             android:exported="true"
             android:label="@string/share_activity_title"
             android:screenOrientation="portrait"

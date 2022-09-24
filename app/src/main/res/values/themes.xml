@@ -39,4 +39,12 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="AppTheme.CheckBox" parent="AppTheme">
+        <item name="android:buttonTint">@color/primaryColor</item>
+    </style>
+
+    <style name="AppTheme.ProgressBar" parent="AppTheme">
+        <item name="colorAccent">@color/primaryColor</item>
+    </style>
+
 </resources>

@@ -8,10 +8,10 @@ import com.dinhlam.sharesaver.ui.share.modelview.ShareTextModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareWebLinkModelView
 
 class ShareModelViewsFactory(
-    private val shareReceiveActivity: ReceiveActivity, private val viewModel: ShareViewModel
+    private val shareShareActivity: ShareActivity, private val viewModel: ShareViewModel
 ) : BaseListAdapter.ModelViewsFactory() {
 
-    override fun buildModelViews() = shareReceiveActivity.withData(viewModel) { data ->
+    override fun buildModelViews() = shareShareActivity.withData(viewModel) { data ->
         when (data.shareInfo) {
             is ShareData.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
             is ShareData.ShareInfo.ShareWebLink -> renderShareWebLinkContent(data.shareInfo)

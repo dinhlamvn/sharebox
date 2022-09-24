@@ -1,20 +1,34 @@
 package com.dinhlam.sharesaver.ui.home
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.activity.viewModels
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
+import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
+import com.dinhlam.sharesaver.databinding.MenuItemIconWithTextBinding
 import com.dinhlam.sharesaver.extensions.cast
+import com.dinhlam.sharesaver.extensions.dp
+import com.dinhlam.sharesaver.extensions.dpF
 import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
+import com.dinhlam.sharesaver.extensions.showAlert
+import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderModelView
+import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogData
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
@@ -39,8 +53,8 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override val viewModel: HomeViewModel by viewModels()
 
-    private val homeAdapter = BaseListAdapter.createAdapter { layoutRes: Int, view: View ->
-        return@createAdapter when (layoutRes) {
+    private val homeAdapter = BaseListAdapter.createAdapter { modelViewLayout: Int, view: View ->
+        return@createAdapter when (modelViewLayout) {
             R.layout.model_view_home_share_web_link -> HomeWebLinkModelView.HomeTextViewHolder(
                 view
             )
@@ -48,9 +62,9 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                 view
             )
             R.layout.model_view_loading -> LoadingViewHolder(view)
-            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view) { position ->
+            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view, { position ->
                 viewModel.onFolderClick(position)
-            }
+            }, ::onFolderLongClick)
             R.layout.model_view_home_date -> HomeDateModelView.HomeDateViewHolder(view)
             else -> null
         }
@@ -80,12 +94,21 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             viewModel.reload()
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
+
+        viewModel.consumeOnChange(FolderCreatorDialogData::toastRes) { toastRes ->
+            if (toastRes != 0) {
+                showToast(getString(toastRes))
+                viewModel.clearToast()
+            }
+        }
     }
 
     override fun onDataChanged(data: HomeData) {
         modelViewsFactory.requestBuildModelViews()
         val title = data.selectedFolder?.name ?: getString(R.string.app_name)
         supportActionBar?.title = title
+
+        viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -108,5 +131,65 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override fun onFolderCreated(folderId: String) {
         viewModel.reload()
+    }
+
+    private fun onFolderLongClick(clickedView: View, position: Int) {
+        val folder =
+            withData(viewModel) { homeData -> homeData.folders.getOrNull(position) } ?: return
+        val width = 150.dp(this)
+        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        val popupWindow = PopupWindow(this)
+        popupWindow.width = width
+        popupWindow.height = height
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 10.dpF(this)
+        popupWindow.isOutsideTouchable = true
+        fun dismissPopup() {
+            if (popupWindow.isShowing) {
+                popupWindow.dismiss()
+            }
+        }
+
+        val popupView = LinearLayout(this)
+        val layoutParams = LinearLayout.LayoutParams(
+            width, height
+        )
+        popupView.orientation = LinearLayout.VERTICAL
+        popupView.layoutParams = layoutParams
+
+        val bindingItemDelete = MenuItemIconWithTextBinding.inflate(layoutInflater)
+        bindingItemDelete.imageIcon.setImageResource(R.drawable.ic_delete)
+        bindingItemDelete.textView.text = getString(R.string.delete)
+        bindingItemDelete.root.setOnClickListener {
+            dismissPopup()
+            showConfirmDeleteFolder(folder)
+        }
+        popupView.addView(bindingItemDelete.root, layoutParams)
+
+        val bindingItemRename = MenuItemIconWithTextBinding.inflate(layoutInflater)
+        bindingItemRename.imageIcon.setImageResource(R.drawable.ic_rename)
+        bindingItemRename.textView.text = getString(R.string.rename)
+        bindingItemRename.root.setOnClickListener {
+            dismissPopup()
+        }
+        popupView.addView(bindingItemRename.root, layoutParams)
+
+        popupWindow.contentView = popupView
+        popupWindow.showAsDropDown(clickedView, 0, -clickedView.height / 2)
+    }
+
+    private fun showConfirmDeleteFolder(folder: Folder) {
+        val title = getString(R.string.confirmation)
+        val message = HtmlCompat.fromHtml(
+            getString(R.string.delete_folder_confirmation_message, folder.name),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
+        showAlert(title,
+            message,
+            getString(R.string.delete),
+            getString(R.string.cancel),
+            onPosClickListener = { _, _ ->
+                viewModel.deleteFolder(folder)
+            })
     }
 }

@@ -1,6 +1,8 @@
 package com.dinhlam.sharesaver.ui.home
 
+import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseViewModel
+import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.repository.FolderRepository
 import com.dinhlam.sharesaver.repository.ShareRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,8 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val folderRepository: FolderRepository,
-    private val shareRepository: ShareRepository
+    private val folderRepository: FolderRepository, private val shareRepository: ShareRepository
 ) : BaseViewModel<HomeData>(HomeData()) {
 
     init {
@@ -51,6 +52,25 @@ class HomeViewModel @Inject constructor(
             }
             setData { copy(selectedFolder = null, shareList = emptyList()) }
             true
+        }
+    }
+
+    fun deleteFolder(folder: Folder) {
+        setData { copy(showProgress = true) }
+        execute {
+            val deleted = folderRepository.delete(folder)
+            if (deleted) {
+                setData { copy(showProgress = false) }
+                reload()
+            } else {
+                setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
+            }
+        }
+    }
+
+    fun clearToast() = runWithData { data ->
+        if (data.toastRes != 0) {
+            setData { copy(toastRes = 0) }
         }
     }
 }

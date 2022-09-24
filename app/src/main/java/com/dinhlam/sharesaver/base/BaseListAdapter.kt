@@ -69,7 +69,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
     fun interface ViewHolderFactory<T : BaseModelView, VB : ViewBinding> {
         fun onCreateViewHolder(
-            layoutRes: Int, itemView: View
+            modelViewLayout: Int, itemView: View
         ): BaseViewHolder<T, VB>?
     }
 

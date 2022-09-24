@@ -19,8 +19,11 @@ data class FolderModelView(
         return other is FolderModelView && this == other
     }
 
-    class FolderViewHolder(view: View, private val folderClick: (Int) -> Unit) :
-        BaseListAdapter.BaseViewHolder<FolderModelView, ModelViewFolderBinding>(view) {
+    class FolderViewHolder(
+        view: View,
+        private val folderClick: (Int) -> Unit,
+        private val folderLongClick: ((View, Int) -> Unit)? = null
+    ) : BaseListAdapter.BaseViewHolder<FolderModelView, ModelViewFolderBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewFolderBinding {
             return ModelViewFolderBinding.bind(view)
         }
@@ -29,6 +32,13 @@ data class FolderModelView(
             binding.root.setOnClickListener {
                 folderClick(position)
             }
+            folderLongClick?.let {
+                binding.root.setOnLongClickListener { clickedView ->
+                    it(clickedView, position)
+                    return@setOnLongClickListener true
+                }
+            }
+
             binding.textViewFolderName.text = item.name
             binding.textViewFolderDesc.text = item.desc
         }

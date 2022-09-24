@@ -100,6 +100,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/check_box_create_folder_password"
                 android:textAppearance="@style/TextAppearance.Body1"
+                android:theme="@style/AppTheme.CheckBox"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_layout_folder_desc" />
 

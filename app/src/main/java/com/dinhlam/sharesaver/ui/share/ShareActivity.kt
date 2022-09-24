@@ -39,7 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ReceiveActivity :
+class ShareActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>(),
     FolderSelectorDialogFragment.OnFolderSelectorCallback,
     FolderCreatorDialogFragment.OnFolderCreatorCallback {
@@ -75,8 +75,8 @@ class ReceiveActivity :
 
     override val viewModel: ShareViewModel by viewModels()
 
-    private val shareContentAdapter = BaseListAdapter.createAdapter { viewType, view ->
-        when (viewType) {
+    private val shareContentAdapter = BaseListAdapter.createAdapter { modelViewLayout, view ->
+        when (modelViewLayout) {
             R.layout.share_item_default -> ShareDefaultModelView.ShareDefaultViewHolder(view)
             R.layout.share_item_text -> ShareTextModelView.ShareTextViewHolder(view)
             R.layout.share_item_image -> ShareImageModelView.ShareImageViewHolder(view)

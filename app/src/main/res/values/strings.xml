@@ -24,4 +24,11 @@
     <string name="text_input_folder_password_alias_hint_desc">Your alias</string>
     <string name="text_input_folder_password_alias_hint">Password alias (Optional)</string>
     <string name="error_create_folder_try_again">Has an error until create folder, please try again!</string>
+    <string name="remove">Remove</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="delete_folder_error">Has an error until delete this folder, please try again!</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="delete_folder_confirmation_message"><![CDATA[Are you sure delete folder <b>%s</b>?]]></string>
+    <string name="cancel">Cancel</string>
 </resources>
