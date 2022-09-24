@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.share.dialog.folderpicker
+package com.dinhlam.sharesaver.ui.dialog.folder.selector
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseDialogFragment
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
-import com.dinhlam.sharesaver.databinding.DialogShareFolderPickerBinding
+import com.dinhlam.sharesaver.databinding.DialogFolderSelectorBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.modelview.FolderModelView
 import com.dinhlam.sharesaver.modelview.LoadingModelView
@@ -19,8 +19,8 @@ import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ShareFolderPickerDialogFragment :
-    BaseDialogFragment<ShareFolderPickerDialogData, ShareFolderPickerDialogViewModel, DialogShareFolderPickerBinding>() {
+class FolderSelectorDialogFragment :
+    BaseDialogFragment<FolderSelectorDialogData, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
 
     interface OnShareFolderPickerCallback {
         fun onFolderSelected(folderId: String)
@@ -54,13 +54,13 @@ class ShareFolderPickerDialogFragment :
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
-    ): DialogShareFolderPickerBinding {
-        return DialogShareFolderPickerBinding.inflate(inflater, container, false)
+    ): DialogFolderSelectorBinding {
+        return DialogFolderSelectorBinding.inflate(inflater, container, false)
     }
 
-    override val viewModel: ShareFolderPickerDialogViewModel by viewModels()
+    override val viewModel: FolderSelectorDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: ShareFolderPickerDialogData) {
+    override fun onDataChanged(data: FolderSelectorDialogData) {
         if (data.selectedFolder != null || data.requestCreateFolder) {
             return
         }
@@ -74,7 +74,7 @@ class ShareFolderPickerDialogFragment :
         viewBinding.recyclerView.adapter = folderAdapter
         modelViewsFactory.attach(folderAdapter)
 
-        viewModel.consumeOnChange(ShareFolderPickerDialogData::selectedFolder) {
+        viewModel.consumeOnChange(FolderSelectorDialogData::selectedFolder) {
             val folderId = it?.id ?: return@consumeOnChange
             activity?.cast<OnShareFolderPickerCallback>()
                 ?.onFolderSelected(folderId)?.also {
@@ -82,7 +82,7 @@ class ShareFolderPickerDialogFragment :
                 }
         }
 
-        viewModel.consumeOnChange(ShareFolderPickerDialogData::requestCreateFolder) { isCreateNewFolder ->
+        viewModel.consumeOnChange(FolderSelectorDialogData::requestCreateFolder) { isCreateNewFolder ->
             if (isCreateNewFolder) {
                 activity?.cast<OnShareFolderPickerCallback>()?.onCreateNewFolder()?.also {
                     dismiss()

@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.share.dialog.foldercreator
+package com.dinhlam.sharesaver.ui.dialog.folder.creator
 
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseViewModel
@@ -9,9 +9,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ShareFolderCreatorDialogViewModel @Inject constructor(
+class FolderCreatorDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
-) : BaseViewModel<ShareFolderCreatorDialogData>(ShareFolderCreatorDialogData()) {
+) : BaseViewModel<FolderCreatorDialogData>(FolderCreatorDialogData()) {
 
     fun createFolder(
         folderName: String,

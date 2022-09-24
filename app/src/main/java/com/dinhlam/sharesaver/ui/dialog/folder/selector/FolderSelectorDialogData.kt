@@ -1,9 +1,9 @@
-package com.dinhlam.sharesaver.ui.share.dialog.folderpicker
+package com.dinhlam.sharesaver.ui.dialog.folder.selector
 
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.entity.Folder
 
-data class ShareFolderPickerDialogData(
+data class FolderSelectorDialogData(
     val isFirstLoad: Boolean = true,
     val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null,

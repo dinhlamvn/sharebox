@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.share.dialog.folderpicker
+package com.dinhlam.sharesaver.ui.dialog.folder.selector
 
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.repository.FolderRepository
@@ -6,9 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ShareFolderPickerDialogViewModel @Inject constructor(
+class FolderSelectorDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
-) : BaseViewModel<ShareFolderPickerDialogData>(ShareFolderPickerDialogData()) {
+) : BaseViewModel<FolderSelectorDialogData>(FolderSelectorDialogData()) {
 
     fun onSelectedFolder(position: Int) = runWithData { data ->
         val selectedFolder = data.folders.getOrNull(position) ?: return@runWithData

@@ -27,8 +27,8 @@ import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.isWebLink
 import com.dinhlam.sharesaver.router.AppRouter
-import com.dinhlam.sharesaver.ui.share.dialog.foldercreator.ShareFolderCreatorDialogFragment
-import com.dinhlam.sharesaver.ui.share.dialog.folderpicker.ShareFolderPickerDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.folder.selector.FolderSelectorDialogFragment
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
@@ -41,8 +41,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>(),
-    ShareFolderPickerDialogFragment.OnShareFolderPickerCallback,
-    ShareFolderCreatorDialogFragment.OnShareFolderCreatorCallback {
+    FolderSelectorDialogFragment.OnShareFolderPickerCallback,
+    FolderCreatorDialogFragment.OnShareFolderCreatorCallback {
 
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
@@ -231,7 +231,7 @@ class ShareReceiveActivity :
     }
 
     private fun showPickMoreFolderDialog() {
-        val dialog = ShareFolderPickerDialogFragment()
+        val dialog = FolderSelectorDialogFragment()
         dialog.show(supportFragmentManager, "picker")
     }
 
@@ -240,7 +240,7 @@ class ShareReceiveActivity :
     }
 
     override fun onCreateNewFolder() {
-        val dialog = ShareFolderCreatorDialogFragment()
+        val dialog = FolderCreatorDialogFragment()
         dialog.show(supportFragmentManager, "creator")
     }
 

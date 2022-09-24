@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.share.dialog.foldercreator
+package com.dinhlam.sharesaver.ui.dialog.folder.creator
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharesaver.base.BaseDialogFragment
-import com.dinhlam.sharesaver.databinding.DialogShareFolderCreatorBinding
+import com.dinhlam.sharesaver.databinding.DialogFolderCreatorBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.showToast
@@ -16,8 +16,8 @@ import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ShareFolderCreatorDialogFragment :
-    BaseDialogFragment<ShareFolderCreatorDialogData, ShareFolderCreatorDialogViewModel, DialogShareFolderCreatorBinding>() {
+class FolderCreatorDialogFragment :
+    BaseDialogFragment<FolderCreatorDialogData, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
 
     interface OnShareFolderCreatorCallback {
         fun onFolderCreated(folderId: String)
@@ -25,18 +25,18 @@ class ShareFolderCreatorDialogFragment :
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
-    ): DialogShareFolderCreatorBinding {
-        return DialogShareFolderCreatorBinding.inflate(inflater, container, false)
+    ): DialogFolderCreatorBinding {
+        return DialogFolderCreatorBinding.inflate(inflater, container, false)
     }
 
-    override val viewModel: ShareFolderCreatorDialogViewModel by viewModels()
+    override val viewModel: FolderCreatorDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: ShareFolderCreatorDialogData) {
+    override fun onDataChanged(data: FolderCreatorDialogData) {
 
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
-        viewModel.consumeOnChange(ShareFolderCreatorDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(FolderCreatorDialogData::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textLayoutFolderName.error = getString(errorRes)
             } else {
@@ -44,14 +44,14 @@ class ShareFolderCreatorDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(ShareFolderCreatorDialogData::folderIdInserted) { folderId ->
+        viewModel.consumeOnChange(FolderCreatorDialogData::folderIdInserted) { folderId ->
             folderId?.let {
                 activity.cast<OnShareFolderCreatorCallback>()?.onFolderCreated(it)
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(ShareFolderCreatorDialogData::toastRes) { toastRes ->
+        viewModel.consumeOnChange(FolderCreatorDialogData::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()

@@ -1,9 +1,9 @@
-package com.dinhlam.sharesaver.ui.share.dialog.foldercreator
+package com.dinhlam.sharesaver.ui.dialog.folder.creator
 
 import androidx.annotation.StringRes
 import com.dinhlam.sharesaver.base.BaseViewModel
 
-data class ShareFolderCreatorDialogData(
+data class FolderCreatorDialogData(
     val folderIdInserted: String? = null,
     val folderName: String = "",
     val folderDesc: String = "",
