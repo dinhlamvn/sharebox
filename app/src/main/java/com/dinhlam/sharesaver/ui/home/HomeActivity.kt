@@ -18,6 +18,7 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
+import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
 import com.dinhlam.sharesaver.databinding.MenuItemIconWithTextBinding
 import com.dinhlam.sharesaver.extensions.cast
@@ -27,10 +28,12 @@ import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderModelView
+import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
+import com.dinhlam.sharesaver.utils.ExtraUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +41,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>(),
-    FolderCreatorDialogFragment.OnFolderCreatorCallback {
+    FolderCreatorDialogFragment.OnFolderCreatorCallback,
+    FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback {
 
     private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
 
@@ -105,10 +109,21 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override fun onDataChanged(data: HomeData) {
         modelViewsFactory.requestBuildModelViews()
-        val title = data.selectedFolder?.name ?: getString(R.string.app_name)
-        supportActionBar?.title = title
+        setupUiOnFolderSelected(data.selectedFolder)
+
 
         viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
+    }
+
+    private fun setupUiOnFolderSelected(folder: Folder?) {
+        if (folder != null) {
+            val title = folder.name
+            supportActionBar?.title = title
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            supportActionBar?.title = getString(R.string.app_name)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -120,6 +135,9 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         if (item.itemId == R.id.item_create_folder) {
             showDialogCreateFolder()
             return true
+        }
+        if (item.itemId == android.R.id.home) {
+            return viewModel.handleBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -181,26 +199,36 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     private fun showConfirmDeleteFolder(confirmation: HomeData.FolderDeleteConfirmation?) {
         val nonNull = confirmation ?: return
         val title = getString(R.string.confirmation)
-        val numberOfShare =
-            resources.getQuantityString(
-                R.plurals.share_count_text,
-                nonNull.shareCount,
-                nonNull.shareCount
-            )
+        val numberOfShare = resources.getQuantityString(
+            R.plurals.share_count_text, nonNull.shareCount, nonNull.shareCount
+        )
         val message = HtmlCompat.fromHtml(
             getString(
-                R.string.delete_folder_confirmation_message,
-                nonNull.folder.name,
-                numberOfShare
-            ),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
+                R.string.delete_folder_confirmation_message, nonNull.folder.name, numberOfShare
+            ), HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         showAlert(title,
             message,
             getString(R.string.delete),
             getString(R.string.cancel),
             onPosClickListener = { _, _ ->
-                viewModel.deleteFolder(nonNull.folder)
+                if (nonNull.folder.password.isNullOrEmpty()) {
+                    viewModel.deleteFolder(nonNull.folder)
+                } else {
+                    val dialog = FolderConfirmPasswordDialogFragment()
+                    dialog.arguments = Bundle().apply {
+                        putString(ExtraUtils.EXTRA_FOLDER_ID, nonNull.folder.id)
+                    }
+                    dialog.show(supportFragmentManager, "DialogConfirmPassword")
+                }
             })
+    }
+
+    override fun onPasswordVerified() {
+        viewModel.deleteFolderAfterPasswordVerified()
+    }
+
+    override fun onCancelConfirmPassword() {
+        viewModel.clearFolderDeleteConfirmation()
     }
 }

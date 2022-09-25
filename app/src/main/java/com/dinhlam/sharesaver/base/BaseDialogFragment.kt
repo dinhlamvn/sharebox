@@ -27,7 +27,7 @@ abstract class BaseDialogFragment<T : BaseViewModel.BaseData, VM : BaseViewModel
 
     abstract fun onDataChanged(data: T)
 
-    fun withData(viewModel: VM, block: (T) -> Unit) = block.invoke(viewModel.data.value!!)
+    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.data.value!!)
 
     override fun onCreateView(
         inflater: LayoutInflater,

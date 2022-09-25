@@ -25,7 +25,12 @@ class HomeModelViewsFactory(
 
         if (data.selectedFolder == null) {
             data.folders.map { folder ->
-                FolderModelView("folder_${folder.id}", folder.name, folder.desc)
+                FolderModelView(
+                    "folder_${folder.id}",
+                    folder.name,
+                    folder.desc,
+                    !folder.password.isNullOrEmpty()
+                )
             }.forEach { it.addTo(this) }
             return@withData
         }

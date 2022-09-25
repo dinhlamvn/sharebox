@@ -21,7 +21,7 @@ abstract class BaseFragment<T : BaseViewModel.BaseData, VM : BaseViewModel<T>, V
 
     abstract fun onDataChanged(data: T)
 
-    fun withData(viewModel: VM, block: (T) -> Unit) = block.invoke(viewModel.data.value!!)
+    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.data.value!!)
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -86,4 +86,13 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
+
+    fun clearFolderDeleteConfirmation() = setData {
+        copy(folderDeleteConfirmation = null)
+    }
+
+    fun deleteFolderAfterPasswordVerified() = runWithData { data ->
+        val folder = data.folderDeleteConfirmation?.folder ?: return@runWithData
+        deleteFolder(folder)
+    }
 }

@@ -1,12 +1,13 @@
 package com.dinhlam.sharesaver.modelview
 
 import android.view.View
+import androidx.core.view.isVisible
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ModelViewFolderBinding
 
 data class FolderModelView(
-    val id: String, val name: String, val desc: String?
+    val id: String, val name: String, val desc: String?, val hasPassword: Boolean = false
 ) : BaseListAdapter.BaseModelView(id) {
     override val layoutRes: Int
         get() = R.layout.model_view_folder
@@ -41,6 +42,7 @@ data class FolderModelView(
 
             binding.textViewFolderName.text = item.name
             binding.textViewFolderDesc.text = item.desc
+            binding.imageViewKey.isVisible = item.hasPassword
         }
 
         override fun onUnBind() {

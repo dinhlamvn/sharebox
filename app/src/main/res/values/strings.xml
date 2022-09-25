@@ -32,6 +32,10 @@
     <string name="delete_folder_confirmation_message"><![CDATA[Are you sure delete folder <b>%s</b> (%s)?]]></string>
     <string name="cancel">Cancel</string>
     <string name="delete_folder_success">Folder deleted</string>
+    <string name="text_input_folder_password_confirm_hint">Password</string>
+    <string name="button_done">Done</string>
+    <string name="password_incorrect">Password is incorrect</string>
+    <string name="error_require_password">Please input password</string>
 
     <plurals name="share_count_text">
         <item quantity="one">%d share</item>
