@@ -1,6 +1,7 @@
 package com.dinhlam.sharesaver.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -23,4 +24,10 @@ interface ShareDao {
 
     @Query("SELECT * FROM share WHERE id = :id")
     fun getById(id: Int): Share
+
+    @Query("SELECT COUNT(*) FROM share WHERE folder_id = :folderId")
+    fun countByFolder(folderId: String): Int
+
+    @Query("DELETE FROM share WHERE folder_id = :folderId")
+    fun deleteByFolder(folderId: String)
 }

@@ -13,4 +13,10 @@ data class HomeData(
     val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null,
     @StringRes val toastRes: Int = 0,
-) : BaseViewModel.BaseData
+    val folderDeleteConfirmation: FolderDeleteConfirmation? = null
+) : BaseViewModel.BaseData {
+    data class FolderDeleteConfirmation(
+        val folder: Folder,
+        val shareCount: Int
+    )
+}

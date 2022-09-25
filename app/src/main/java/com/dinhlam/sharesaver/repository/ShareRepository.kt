@@ -42,4 +42,12 @@ class ShareRepository @Inject constructor(
     fun getByFolder(folderId: String): List<Share> {
         return shareDao.getByFolder(folderId)
     }
+
+    fun countByFolder(folderId: String): Int {
+        return shareDao.countByFolder(folderId)
+    }
+
+    fun deleteByFolder(folderId: String) {
+        shareDao.deleteByFolder(folderId)
+    }
 }

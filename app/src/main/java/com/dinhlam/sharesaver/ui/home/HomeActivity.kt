@@ -18,7 +18,6 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
-import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
 import com.dinhlam.sharesaver.databinding.MenuItemIconWithTextBinding
 import com.dinhlam.sharesaver.extensions.cast
@@ -28,7 +27,6 @@ import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderModelView
-import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogData
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
@@ -95,12 +93,14 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consumeOnChange(FolderCreatorDialogData::toastRes) { toastRes ->
+        viewModel.consumeOnChange(HomeData::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()
             }
         }
+
+        viewModel.consumeOnChange(HomeData::folderDeleteConfirmation, ::showConfirmDeleteFolder)
     }
 
     override fun onDataChanged(data: HomeData) {
@@ -162,7 +162,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         bindingItemDelete.textView.text = getString(R.string.delete)
         bindingItemDelete.root.setOnClickListener {
             dismissPopup()
-            showConfirmDeleteFolder(folder)
+            viewModel.showConfirmDeleteFolder(folder)
         }
         popupView.addView(bindingItemDelete.root, layoutParams)
 
@@ -178,10 +178,21 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         popupWindow.showAsDropDown(clickedView, 0, -clickedView.height / 2)
     }
 
-    private fun showConfirmDeleteFolder(folder: Folder) {
+    private fun showConfirmDeleteFolder(confirmation: HomeData.FolderDeleteConfirmation?) {
+        val nonNull = confirmation ?: return
         val title = getString(R.string.confirmation)
+        val numberOfShare =
+            resources.getQuantityString(
+                R.plurals.share_count_text,
+                nonNull.shareCount,
+                nonNull.shareCount
+            )
         val message = HtmlCompat.fromHtml(
-            getString(R.string.delete_folder_confirmation_message, folder.name),
+            getString(
+                R.string.delete_folder_confirmation_message,
+                nonNull.folder.name,
+                numberOfShare
+            ),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         showAlert(title,
@@ -189,7 +200,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             getString(R.string.delete),
             getString(R.string.cancel),
             onPosClickListener = { _, _ ->
-                viewModel.deleteFolder(folder)
+                viewModel.deleteFolder(nonNull.folder)
             })
     }
 }

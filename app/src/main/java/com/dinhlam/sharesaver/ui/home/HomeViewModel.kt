@@ -56,13 +56,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun deleteFolder(folder: Folder) {
-        setData { copy(showProgress = true) }
+        setData { copy(showProgress = true, folderDeleteConfirmation = null) }
         execute(onError = {
             setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
         }) {
             val deleted = folderRepository.delete(folder)
             if (deleted) {
-                setData { copy(showProgress = false) }
+                setData { copy(showProgress = false, toastRes = R.string.delete_folder_success) }
                 reload()
             } else {
                 setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
@@ -73,6 +73,17 @@ class HomeViewModel @Inject constructor(
     fun clearToast() = runWithData { data ->
         if (data.toastRes != 0) {
             setData { copy(toastRes = 0) }
+        }
+    }
+
+    fun showConfirmDeleteFolder(folder: Folder) = execute {
+        val shareCount = shareRepository.countByFolder(folder.id)
+        setData {
+            copy(
+                folderDeleteConfirmation = HomeData.FolderDeleteConfirmation(
+                    folder, shareCount
+                )
+            )
         }
     }
 }

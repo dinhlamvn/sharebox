@@ -29,6 +29,12 @@
     <string name="delete">Delete</string>
     <string name="delete_folder_error">Has an error until delete this folder, please try again!</string>
     <string name="confirmation">Confirmation</string>
-    <string name="delete_folder_confirmation_message"><![CDATA[Are you sure delete folder <b>%s</b>?]]></string>
+    <string name="delete_folder_confirmation_message"><![CDATA[Are you sure delete folder <b>%s</b> (%s)?]]></string>
     <string name="cancel">Cancel</string>
+    <string name="delete_folder_success">Folder deleted</string>
+
+    <plurals name="share_count_text">
+        <item quantity="one">%d share</item>
+        <item quantity="other">%d shares</item>
+    </plurals>
 </resources>

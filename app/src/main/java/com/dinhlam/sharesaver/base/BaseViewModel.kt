@@ -67,7 +67,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
             afterField.isAccessible = true
             val afterValue = afterField.get(newBaseData)
             viewModelScope.launch(Dispatchers.Main) {
-                if (consumer.notifyOnChanged && beforeValue != afterValue) {
+                if (consumer.notifyOnChanged && beforeValue !== afterValue) {
                     consumer.block.invoke(afterValue)
                 } else if (!consumer.notifyOnChanged) {
                     consumer.block.invoke(afterValue)

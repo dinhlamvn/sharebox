@@ -7,7 +7,10 @@ import androidx.room.PrimaryKey
 
 @Entity(
     foreignKeys = [ForeignKey(
-        entity = Folder::class, parentColumns = ["id"], childColumns = ["folder_id"]
+        onDelete = ForeignKey.CASCADE,
+        entity = Folder::class,
+        parentColumns = ["id"],
+        childColumns = ["folder_id"]
     )]
 )
 data class Share(
