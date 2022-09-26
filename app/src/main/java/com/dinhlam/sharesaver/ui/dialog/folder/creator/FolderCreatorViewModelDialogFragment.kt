@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
-import com.dinhlam.sharesaver.base.BaseDialogFragment
+import com.dinhlam.sharesaver.base.BaseViewModelDialogFragment
 import com.dinhlam.sharesaver.databinding.DialogFolderCreatorBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.getTrimmedText
@@ -16,8 +16,8 @@ import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderCreatorDialogFragment :
-    BaseDialogFragment<FolderCreatorDialogData, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
+class FolderCreatorViewModelDialogFragment :
+    BaseViewModelDialogFragment<FolderCreatorDialogData, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
 
     interface OnFolderCreatorCallback {
         fun onFolderCreated(folderId: String)

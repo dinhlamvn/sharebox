@@ -9,7 +9,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharesaver.R
-import com.dinhlam.sharesaver.base.BaseDialogFragment
+import com.dinhlam.sharesaver.base.BaseViewModelDialogFragment
 import com.dinhlam.sharesaver.databinding.DialogFolderConfirmPasswordBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.getTrimmedText
@@ -18,8 +18,8 @@ import com.dinhlam.sharesaver.utils.ExtraUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderConfirmPasswordDialogFragment :
-    BaseDialogFragment<FolderConfirmPasswordDialogData, FolderConfirmPasswordDialogViewModel, DialogFolderConfirmPasswordBinding>() {
+class FolderConfirmPasswordViewModelDialogFragment :
+    BaseViewModelDialogFragment<FolderConfirmPasswordDialogData, FolderConfirmPasswordDialogViewModel, DialogFolderConfirmPasswordBinding>() {
 
     interface OnConfirmPasswordCallback {
         fun onPasswordVerified()

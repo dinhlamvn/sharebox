@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
-import com.dinhlam.sharesaver.base.BaseDialogFragment
+import com.dinhlam.sharesaver.base.BaseViewModelDialogFragment
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.databinding.DialogFolderSelectorBinding
@@ -20,8 +20,8 @@ import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderSelectorDialogFragment :
-    BaseDialogFragment<FolderSelectorDialogData, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
+class FolderSelectorViewModelDialogFragment :
+    BaseViewModelDialogFragment<FolderSelectorDialogData, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
 
     interface OnFolderSelectorCallback {
         fun onFolderSelected(folderId: String)

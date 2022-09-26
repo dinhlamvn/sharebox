@@ -1,30 +1,28 @@
 package com.dinhlam.sharesaver.ui.home.modelview
 
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import androidx.core.view.isVisible
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
-import com.dinhlam.sharesaver.databinding.ModelViewHomeShareWebLinkBinding
+import com.dinhlam.sharesaver.databinding.ModelViewHomeShareTextBinding
 import com.dinhlam.sharesaver.extensions.format
 import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharesaver.loader.ImageLoader
 
-data class HomeWebLinkModelView(
+data class HomeTextModelView(
     val id: String,
     val iconUrl: String?,
-    val url: String?,
+    val content: String?,
     val createdAt: Long,
     val note: String?
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val layoutRes: Int
-        get() = R.layout.model_view_home_share_web_link
+        get() = R.layout.model_view_home_share_text
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeWebLinkModelView && other.id == this.id
+        return other is HomeTextModelView && other.id == this.id
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -32,21 +30,22 @@ data class HomeWebLinkModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeWebLinkModelView && other == this
+        return other is HomeTextModelView && other == this
     }
 
-    class HomeWebLinkViewHolder(
-        view: View
-    ) : BaseListAdapter.BaseViewHolder<HomeWebLinkModelView, ModelViewHomeShareWebLinkBinding>(view) {
+    class HomeTextViewHolder(
+        view: View, private val onClick: (String?) -> Unit
+    ) : BaseListAdapter.BaseViewHolder<HomeTextModelView, ModelViewHomeShareTextBinding>(view) {
 
-        override fun onBind(item: HomeWebLinkModelView, position: Int) {
+        override fun onBind(item: HomeTextModelView, position: Int) {
             binding.root.setOnClickListener {
-                startView(item)
+                onClick.invoke(item.content)
             }
+
             ImageLoader.load(
                 context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
             )
-            binding.textViewUrl.text = item.url
+            binding.textViewContent.text = item.content
             binding.textViewCreatedDate.text = item.createdAt.format("H:mm")
             binding.textViewNote.isVisible = !item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
@@ -56,16 +55,8 @@ data class HomeWebLinkModelView(
 
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewHomeShareWebLinkBinding {
-            return ModelViewHomeShareWebLinkBinding.bind(view)
-        }
-
-        private fun startView(item: HomeWebLinkModelView) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            intent.addCategory(Intent.CATEGORY_BROWSABLE)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+        override fun onCreateViewBinding(view: View): ModelViewHomeShareTextBinding {
+            return ModelViewHomeShareTextBinding.bind(view)
         }
     }
 }

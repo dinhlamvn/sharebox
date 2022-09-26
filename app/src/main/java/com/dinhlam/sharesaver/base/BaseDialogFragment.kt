@@ -13,21 +13,14 @@ import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.screenWidth
 
-abstract class BaseDialogFragment<T : BaseViewModel.BaseData, VM : BaseViewModel<T>, VB : ViewBinding> :
-    DialogFragment() {
+abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
     abstract fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
-
-    abstract val viewModel: VM
 
     private var binding: VB? = null
 
     protected val viewBinding: VB
         get() = binding!!
-
-    abstract fun onDataChanged(data: T)
-
-    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.data.value!!)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,13 +35,8 @@ abstract class BaseDialogFragment<T : BaseViewModel.BaseData, VM : BaseViewModel
     open fun onViewPreLoad(savedInstanceState: Bundle?) {
     }
 
-    open fun getSpacing(): Int {
-        return 0
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.data.observe(viewLifecycleOwner, ::onDataChanged)
         onViewDidLoad(view, savedInstanceState)
     }
 
@@ -57,7 +45,6 @@ abstract class BaseDialogFragment<T : BaseViewModel.BaseData, VM : BaseViewModel
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        viewModel.onClearConsumers()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -74,5 +61,9 @@ abstract class BaseDialogFragment<T : BaseViewModel.BaseData, VM : BaseViewModel
             wd.setLayout(dialogWidth, dialogHeight)
             wd.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
+    }
+
+    open fun getSpacing(): Int {
+        return 0
     }
 }

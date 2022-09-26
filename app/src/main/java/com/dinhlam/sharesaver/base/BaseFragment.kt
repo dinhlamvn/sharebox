@@ -7,21 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseFragment<T : BaseViewModel.BaseData, VM : BaseViewModel<T>, VB : ViewBinding> :
-    Fragment() {
+abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     abstract fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
-
-    abstract val viewModel: VM
 
     private var binding: VB? = null
 
     protected val viewBinding: VB
         get() = binding!!
-
-    abstract fun onDataChanged(data: T)
-
-    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.data.value!!)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +31,6 @@ abstract class BaseFragment<T : BaseViewModel.BaseData, VM : BaseViewModel<T>, V
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.data.observe(viewLifecycleOwner, ::onDataChanged)
         onViewDidLoad(view, savedInstanceState)
     }
 
@@ -47,6 +39,5 @@ abstract class BaseFragment<T : BaseViewModel.BaseData, VM : BaseViewModel<T>, V
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        viewModel.onClearConsumers()
     }
 }

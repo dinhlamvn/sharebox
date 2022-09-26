@@ -1,5 +1,6 @@
 package com.dinhlam.sharesaver.ui.home
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -29,10 +30,12 @@ import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderModelView
-import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordViewModelDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorViewModelDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
+import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharesaver.utils.ExtraUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
@@ -42,8 +45,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>(),
-    FolderCreatorDialogFragment.OnFolderCreatorCallback,
-    FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback {
+    FolderCreatorViewModelDialogFragment.OnFolderCreatorCallback,
+    FolderConfirmPasswordViewModelDialogFragment.OnConfirmPasswordCallback {
 
     private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
 
@@ -61,8 +64,18 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             LoadingViewHolder(this)
         }
 
+        withViewType(R.layout.model_view_home_share_text) {
+            HomeTextModelView.HomeTextViewHolder(this) { textContent ->
+                val dialog = TextViewerDialogFragment()
+                dialog.arguments = Bundle().apply {
+                    putString(Intent.EXTRA_TEXT, textContent)
+                }
+                dialog.show(supportFragmentManager, "TextViewerDialogFragment")
+            }
+        }
+
         withViewType(R.layout.model_view_home_share_web_link) {
-            HomeWebLinkModelView.HomeTextViewHolder(this)
+            HomeWebLinkModelView.HomeWebLinkViewHolder(this)
         }
 
         withViewType(R.layout.model_view_home_share_image) {
@@ -149,7 +162,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     private fun showDialogCreateFolder() {
-        val dialog = FolderCreatorDialogFragment()
+        val dialog = FolderCreatorViewModelDialogFragment()
         dialog.show(supportFragmentManager, "DialogCreateFolder")
     }
 
@@ -218,7 +231,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         if (folder.password.isNullOrEmpty()) {
             viewModel.openFolderAfterPasswordVerified()
         } else {
-            val dialog = FolderConfirmPasswordDialogFragment()
+            val dialog = FolderConfirmPasswordViewModelDialogFragment()
             dialog.arguments = Bundle().apply {
                 putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
             }
@@ -245,7 +258,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                 if (folder.password.isNullOrEmpty()) {
                     viewModel.deleteFolder(folder)
                 } else {
-                    val dialog = FolderConfirmPasswordDialogFragment()
+                    val dialog = FolderConfirmPasswordViewModelDialogFragment()
                     dialog.arguments = Bundle().apply {
                         putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
                     }
