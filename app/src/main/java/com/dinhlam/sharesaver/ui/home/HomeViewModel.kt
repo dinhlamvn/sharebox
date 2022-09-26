@@ -39,9 +39,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onFolderClick(position: Int) = runWithData { data ->
-        val folder = data.folders.getOrNull(position) ?: return@runWithData
-        setData { copy(selectedFolder = folder, isRefreshing = true) }
+    fun onFolderClick(position: Int) = executeWithData { data ->
+        val folder = data.folders.getOrNull(position) ?: return@executeWithData
+        val shareCount = shareRepository.countByFolder(folder.id)
+        setData {
+            copy(
+                folderActionConfirmation = HomeData.FolderActionConfirmation(
+                    folder,
+                    shareCount,
+                    HomeData.FolderActionConfirmation.FolderActionType.OPEN
+                )
+            )
+        }
+    }
+
+    private fun selectFolder(folder: Folder) {
+        setData {
+            copy(
+                folderActionConfirmation = null, selectedFolder = folder, isRefreshing = true
+            )
+        }
         loadShareData()
     }
 
@@ -56,7 +73,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun deleteFolder(folder: Folder) {
-        setData { copy(showProgress = true, folderDeleteConfirmation = null) }
+        setData { copy(showProgress = true, folderActionConfirmation = null) }
         execute(onError = {
             setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
         }) {
@@ -80,19 +97,26 @@ class HomeViewModel @Inject constructor(
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(
-                folderDeleteConfirmation = HomeData.FolderDeleteConfirmation(
-                    folder, shareCount
+                folderActionConfirmation = HomeData.FolderActionConfirmation(
+                    folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.DELETE
                 )
             )
         }
     }
 
-    fun clearFolderDeleteConfirmation() = setData {
-        copy(folderDeleteConfirmation = null)
+    fun clearFolderActionConfirmation() = setData {
+        copy(folderActionConfirmation = null)
     }
 
     fun deleteFolderAfterPasswordVerified() = runWithData { data ->
-        val folder = data.folderDeleteConfirmation?.folder ?: return@runWithData
+        val folder = data.folderActionConfirmation?.folder
+            ?: return@runWithData clearFolderActionConfirmation()
         deleteFolder(folder)
+    }
+
+    fun openFolderAfterPasswordVerified() = runWithData { data ->
+        val folder = data.folderActionConfirmation?.folder
+            ?: return@runWithData clearFolderActionConfirmation()
+        selectFolder(folder)
     }
 }

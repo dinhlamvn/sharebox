@@ -25,6 +25,7 @@ import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.dpF
 import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
+import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderModelView
@@ -55,20 +56,25 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override val viewModel: HomeViewModel by viewModels()
 
-    private val homeAdapter = BaseListAdapter.createAdapter { modelViewLayout: Int, view: View ->
-        return@createAdapter when (modelViewLayout) {
-            R.layout.model_view_home_share_web_link -> HomeWebLinkModelView.HomeTextViewHolder(
-                view
-            )
-            R.layout.model_view_home_share_image -> HomeImageModelView.HomeImageViewHolder(
-                view
-            )
-            R.layout.model_view_loading -> LoadingViewHolder(view)
-            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view, { position ->
-                viewModel.onFolderClick(position)
-            }, ::onFolderLongClick)
-            R.layout.model_view_home_date -> HomeDateModelView.HomeDateViewHolder(view)
-            else -> null
+    private val homeAdapter = BaseListAdapter.createAdapter {
+        withViewType(R.layout.model_view_loading) {
+            LoadingViewHolder(this)
+        }
+
+        withViewType(R.layout.model_view_home_share_web_link) {
+            HomeWebLinkModelView.HomeTextViewHolder(this)
+        }
+
+        withViewType(R.layout.model_view_home_share_image) {
+            HomeImageModelView.HomeImageViewHolder(this)
+        }
+
+        withViewType(R.layout.model_view_folder) {
+            FolderModelView.FolderViewHolder(this, viewModel::onFolderClick, ::onFolderLongClick)
+        }
+
+        withViewType(R.layout.model_view_home_date) {
+            HomeDateModelView.HomeDateViewHolder(this)
         }
     }
 
@@ -89,6 +95,8 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             spanSizeLookup = BaseSpanSizeLookup(homeAdapter, this)
         }
 
+        viewBinding.recyclerView.setupWith(homeAdapter, modelViewsFactory)
+
         viewBinding.recyclerView.adapter = homeAdapter
         modelViewsFactory.attach(homeAdapter)
 
@@ -104,14 +112,12 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             }
         }
 
-        viewModel.consumeOnChange(HomeData::folderDeleteConfirmation, ::showConfirmDeleteFolder)
+        viewModel.consumeOnChange(HomeData::folderActionConfirmation, ::handleFolderAction)
     }
 
     override fun onDataChanged(data: HomeData) {
         modelViewsFactory.requestBuildModelViews()
         setupUiOnFolderSelected(data.selectedFolder)
-
-
         viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
     }
 
@@ -196,15 +202,39 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         popupWindow.showAsDropDown(clickedView, 0, -clickedView.height / 2)
     }
 
-    private fun showConfirmDeleteFolder(confirmation: HomeData.FolderDeleteConfirmation?) {
+    private fun handleFolderAction(confirmation: HomeData.FolderActionConfirmation?) {
         val nonNull = confirmation ?: return
+        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.DELETE) {
+            return maybeShowConfirmPasswordToDeleteFolder(nonNull)
+        }
+
+        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.OPEN) {
+            return maybeShowConfirmPasswordToOpenFolder(nonNull)
+        }
+    }
+
+    private fun maybeShowConfirmPasswordToOpenFolder(confirmation: HomeData.FolderActionConfirmation) {
+        val folder = confirmation.folder
+        if (folder.password.isNullOrEmpty()) {
+            viewModel.openFolderAfterPasswordVerified()
+        } else {
+            val dialog = FolderConfirmPasswordDialogFragment()
+            dialog.arguments = Bundle().apply {
+                putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
+            }
+            dialog.show(supportFragmentManager, "DialogConfirmPassword")
+        }
+    }
+
+    private fun maybeShowConfirmPasswordToDeleteFolder(confirmation: HomeData.FolderActionConfirmation) {
+        val folder = confirmation.folder
         val title = getString(R.string.confirmation)
         val numberOfShare = resources.getQuantityString(
-            R.plurals.share_count_text, nonNull.shareCount, nonNull.shareCount
+            R.plurals.share_count_text, confirmation.shareCount, confirmation.shareCount
         )
         val message = HtmlCompat.fromHtml(
             getString(
-                R.string.delete_folder_confirmation_message, nonNull.folder.name, numberOfShare
+                R.string.delete_folder_confirmation_message, folder.name, numberOfShare
             ), HtmlCompat.FROM_HTML_MODE_LEGACY
         )
         showAlert(title,
@@ -212,12 +242,12 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             getString(R.string.delete),
             getString(R.string.cancel),
             onPosClickListener = { _, _ ->
-                if (nonNull.folder.password.isNullOrEmpty()) {
-                    viewModel.deleteFolder(nonNull.folder)
+                if (folder.password.isNullOrEmpty()) {
+                    viewModel.deleteFolder(folder)
                 } else {
                     val dialog = FolderConfirmPasswordDialogFragment()
                     dialog.arguments = Bundle().apply {
-                        putString(ExtraUtils.EXTRA_FOLDER_ID, nonNull.folder.id)
+                        putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
                     }
                     dialog.show(supportFragmentManager, "DialogConfirmPassword")
                 }
@@ -225,10 +255,17 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     override fun onPasswordVerified() {
-        viewModel.deleteFolderAfterPasswordVerified()
+        val actionType =
+            withData(viewModel) { data -> data.folderActionConfirmation?.folderActionType }
+                ?: return viewModel.clearFolderActionConfirmation()
+        when (actionType) {
+            HomeData.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified()
+            HomeData.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
+            else -> return
+        }
     }
 
     override fun onCancelConfirmPassword() {
-        viewModel.clearFolderDeleteConfirmation()
+        viewModel.clearFolderActionConfirmation()
     }
 }

@@ -76,9 +76,11 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         }
     }
 
-    protected fun runWithData(block: (T) -> Unit) = viewModelScope.launch(Dispatchers.Main) {
-        flushAllSetDataQueue()
-        data.value?.let(block)
+    protected fun runWithData(block: (T) -> Unit) {
+        viewModelScope.launch(Dispatchers.Main) {
+            flushAllSetDataQueue()
+            data.value?.let(block)
+        }
     }
 
     protected fun <R> withData(block: (T) -> R): R {

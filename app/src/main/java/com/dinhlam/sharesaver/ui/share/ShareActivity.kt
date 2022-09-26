@@ -26,6 +26,7 @@ import com.dinhlam.sharesaver.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharesaver.extensions.getParcelableExtraCompat
 import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.isWebLink
+import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.selector.FolderSelectorDialogFragment
@@ -75,16 +76,25 @@ class ShareActivity :
 
     override val viewModel: ShareViewModel by viewModels()
 
-    private val shareContentAdapter = BaseListAdapter.createAdapter { modelViewLayout, view ->
-        when (modelViewLayout) {
-            R.layout.share_item_default -> ShareDefaultModelView.ShareDefaultViewHolder(view)
-            R.layout.share_item_text -> ShareTextModelView.ShareTextViewHolder(view)
-            R.layout.share_item_image -> ShareImageModelView.ShareImageViewHolder(view)
-            R.layout.share_item_multiple_image -> ShareMultipleImageModelView.ShareMultipleImageViewHolder(
-                view
-            )
-            R.layout.model_view_share_web_link -> ShareWebLinkModelView.ShareWebLinkViewHolder(view)
-            else -> null
+    private val shareContentAdapter = BaseListAdapter.createAdapter {
+        withViewType(R.layout.share_item_default) {
+            ShareDefaultModelView.ShareDefaultViewHolder(this)
+        }
+
+        withViewType(R.layout.share_item_text) {
+            ShareTextModelView.ShareTextViewHolder(this)
+        }
+
+        withViewType(R.layout.share_item_image) {
+            ShareImageModelView.ShareImageViewHolder(this)
+        }
+
+        withViewType(R.layout.share_item_multiple_image) {
+            ShareMultipleImageModelView.ShareMultipleImageViewHolder(this)
+        }
+
+        withViewType(R.layout.model_view_share_web_link) {
+            ShareWebLinkModelView.ShareWebLinkViewHolder(this)
         }
     }
 
@@ -95,8 +105,7 @@ class ShareActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding.recyclerView.adapter = shareContentAdapter
-        modelViewsFactory.attach(shareContentAdapter)
+        viewBinding.recyclerView.setupWith(shareContentAdapter, modelViewsFactory)
 
         behavior.addBottomSheetCallback(bottomSheetCallback)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED

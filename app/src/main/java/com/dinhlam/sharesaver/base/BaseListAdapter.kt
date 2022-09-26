@@ -15,7 +15,7 @@ import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.utils.Ids
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
-    private val viewHolderFactory: ViewHolderFactory<T, ViewBinding>
+    private val viewHolderManager: ViewHolderManager
 ) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
 
     init {
@@ -67,18 +67,25 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         }
     }
 
-    fun interface ViewHolderFactory<T : BaseModelView, VB : ViewBinding> {
-        fun onCreateViewHolder(
-            modelViewLayout: Int, itemView: View
-        ): BaseViewHolder<T, VB>?
+    class ViewHolderManager internal constructor() {
+        private val viewHolders = mutableMapOf<Int, View.() -> BaseViewHolder<*, ViewBinding>>()
+
+        fun withViewType(viewType: Int, block: View.() -> BaseViewHolder<*, *>) {
+            val viewHolderBlock = block.cast<View.() -> BaseViewHolder<*, ViewBinding>>()
+                ?: error("Just support view holder extend from ${BaseViewHolder::class}")
+            viewHolders[viewType] = viewHolderBlock
+        }
+
+        fun getViewHolder(viewType: Int) = viewHolders[viewType]
     }
 
     companion object {
         @JvmStatic
-        fun <T : BaseModelView, VB : ViewBinding> createAdapter(
-            factory: ViewHolderFactory<T, VB>
+        fun createAdapter(
+            block: ViewHolderManager.() -> Unit
         ): BaseListAdapter<BaseModelView> {
-            return BaseListAdapter(factory.cast()!!)
+            val viewHolderManager = ViewHolderManager().apply(block)
+            return BaseListAdapter(viewHolderManager)
         }
     }
 
@@ -87,8 +94,9 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     ): BaseViewHolder<T, ViewBinding> {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(viewType, parent, false)
-        return viewHolderFactory.onCreateViewHolder(viewType, view)
-            ?: throw IllegalStateException("VewHolder of view type $viewType undefined")
+        val block = viewHolderManager.getViewHolder(viewType)
+            ?: error("ViewHolder of $viewType is undefined.")
+        return block.invoke(view).cast() ?: error("Error create view holder of $viewType")
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
@@ -100,7 +108,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     ) {
         holder.onBind(getItem(position), position)
     }
-
+    
     override fun onViewRecycled(holder: BaseViewHolder<T, ViewBinding>) {
         holder.onUnBind()
     }

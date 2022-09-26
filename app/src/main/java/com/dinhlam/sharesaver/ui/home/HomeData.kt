@@ -13,10 +13,17 @@ data class HomeData(
     val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null,
     @StringRes val toastRes: Int = 0,
-    val folderDeleteConfirmation: FolderDeleteConfirmation? = null
+    val folderActionConfirmation: FolderActionConfirmation? = null
 ) : BaseViewModel.BaseData {
-    data class FolderDeleteConfirmation(
+    data class FolderActionConfirmation(
         val folder: Folder,
-        val shareCount: Int
-    )
+        val shareCount: Int,
+        val folderActionType: FolderActionType
+    ) {
+        enum class FolderActionType {
+            OPEN,
+            DELETE,
+            RENAME
+        }
+    }
 }

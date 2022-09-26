@@ -12,6 +12,7 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.databinding.DialogFolderSelectorBinding
 import com.dinhlam.sharesaver.extensions.cast
+import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.modelview.FolderModelView
 import com.dinhlam.sharesaver.modelview.LoadingModelView
 import com.dinhlam.sharesaver.modelview.NewFolderModelView
@@ -39,16 +40,19 @@ class FolderSelectorDialogFragment :
         }
     }
 
-    private val folderAdapter = BaseListAdapter.createAdapter { modelViewLayout, view ->
-        return@createAdapter when (modelViewLayout) {
-            R.layout.model_view_folder -> FolderModelView.FolderViewHolder(view, { position ->
-                viewModel.onSelectedFolder(position)
-            })
-            R.layout.model_view_new_folder -> NewFolderModelView.NewFolderViewHolder(view) {
+    private val folderAdapter = BaseListAdapter.createAdapter {
+        withViewType(R.layout.model_view_folder) {
+            FolderModelView.FolderViewHolder(this, viewModel::onSelectedFolder)
+        }
+
+        withViewType(R.layout.model_view_new_folder) {
+            NewFolderModelView.NewFolderViewHolder(this) {
                 viewModel.requestCreateNewFolder()
             }
-            R.layout.model_view_loading -> LoadingViewHolder(view)
-            else -> null
+        }
+
+        withViewType(R.layout.model_view_loading) {
+            LoadingViewHolder(this)
         }
     }
 
@@ -71,8 +75,7 @@ class FolderSelectorDialogFragment :
         viewBinding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3).apply {
             spanSizeLookup = BaseSpanSizeLookup(folderAdapter, this)
         }
-        viewBinding.recyclerView.adapter = folderAdapter
-        modelViewsFactory.attach(folderAdapter)
+        viewBinding.recyclerView.setupWith(folderAdapter, modelViewsFactory)
 
         viewModel.consumeOnChange(FolderSelectorDialogData::selectedFolder) {
             val folderId = it?.id ?: return@consumeOnChange
