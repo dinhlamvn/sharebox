@@ -50,7 +50,8 @@ class HomeModelViewsFactory(
                             iconUrl = IconUtils.getIconUrl(shareInfo.url),
                             url = shareInfo.url,
                             createdAt = share.createdAt,
-                            note = share.shareNote
+                            note = share.shareNote,
+                            shareId = share.id
                         )
                     }
                     "image" -> {
@@ -58,7 +59,7 @@ class HomeModelViewsFactory(
                             share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
                         )
                         HomeImageModelView(
-                            "${share.id}", shareInfo.uri, share.createdAt, share.shareNote
+                            "${share.id}", shareInfo.uri, share.createdAt, share.shareNote, share.id
                         )
                     }
                     "text" -> {
@@ -70,7 +71,8 @@ class HomeModelViewsFactory(
                             iconUrl = IconUtils.getIconUrl(shareInfo.text),
                             content = shareInfo.text,
                             createdAt = share.createdAt,
-                            note = share.shareNote
+                            note = share.shareNote,
+                            shareId = share.id
                         )
                     }
                     else -> {

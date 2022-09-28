@@ -15,7 +15,8 @@ data class HomeTextModelView(
     val iconUrl: String?,
     val content: String?,
     val createdAt: Long,
-    val note: String?
+    val note: String?,
+    val shareId: Int,
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val layoutRes: Int
@@ -34,10 +35,16 @@ data class HomeTextModelView(
     }
 
     class HomeTextViewHolder(
-        view: View, private val onClick: (String?) -> Unit
+        view: View,
+        private val onClick: (String?) -> Unit,
+        private val onShareToOther: (Int) -> Unit
     ) : BaseListAdapter.BaseViewHolder<HomeTextModelView, ModelViewHomeShareTextBinding>(view) {
 
         override fun onBind(item: HomeTextModelView, position: Int) {
+            binding.imageShare.setOnClickListener {
+                onShareToOther.invoke(item.shareId)
+            }
+
             binding.root.setOnClickListener {
                 onClick.invoke(item.content)
             }

@@ -17,7 +17,8 @@ data class HomeWebLinkModelView(
     val iconUrl: String?,
     val url: String?,
     val createdAt: Long,
-    val note: String?
+    val note: String?,
+    val shareId: Int
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val layoutRes: Int
@@ -36,12 +37,15 @@ data class HomeWebLinkModelView(
     }
 
     class HomeWebLinkViewHolder(
-        view: View
+        view: View, val shareToOther: (Int) -> Unit
     ) : BaseListAdapter.BaseViewHolder<HomeWebLinkModelView, ModelViewHomeShareWebLinkBinding>(view) {
 
         override fun onBind(item: HomeWebLinkModelView, position: Int) {
             binding.root.setOnClickListener {
                 startView(item)
+            }
+            binding.imageShare.setOnClickListener {
+                shareToOther(item.shareId)
             }
             ImageLoader.load(
                 context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true

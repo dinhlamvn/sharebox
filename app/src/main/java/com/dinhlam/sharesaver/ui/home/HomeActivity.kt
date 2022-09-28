@@ -29,6 +29,7 @@ import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
 import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
+import com.dinhlam.sharesaver.helper.ShareHelper
 import com.dinhlam.sharesaver.modelview.FolderModelView
 import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordViewModelDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorViewModelDialogFragment
@@ -57,6 +58,9 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     @Inject
     lateinit var gson: Gson
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
     override val viewModel: HomeViewModel by viewModels()
 
     private val homeAdapter = BaseListAdapter.createAdapter {
@@ -65,21 +69,21 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         }
 
         withViewType(R.layout.model_view_home_share_text) {
-            HomeTextModelView.HomeTextViewHolder(this) { textContent ->
+            HomeTextModelView.HomeTextViewHolder(this, { textContent ->
                 val dialog = TextViewerDialogFragment()
                 dialog.arguments = Bundle().apply {
                     putString(Intent.EXTRA_TEXT, textContent)
                 }
                 dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-            }
+            }, ::showDialogShareToOther)
         }
 
         withViewType(R.layout.model_view_home_share_web_link) {
-            HomeWebLinkModelView.HomeWebLinkViewHolder(this)
+            HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
         }
 
         withViewType(R.layout.model_view_home_share_image) {
-            HomeImageModelView.HomeImageViewHolder(this)
+            HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
         }
 
         withViewType(R.layout.model_view_folder) {
@@ -280,5 +284,14 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     override fun onCancelConfirmPassword() {
         viewModel.clearFolderActionConfirmation()
+    }
+
+    private fun showDialogShareToOther(shareId: Int) {
+        val shareData = withData(viewModel) { data ->
+            data.shareList.firstOrNull { share ->
+                share.id == shareId
+            }
+        } ?: return
+        shareHelper.shareToOther(shareData)
     }
 }
