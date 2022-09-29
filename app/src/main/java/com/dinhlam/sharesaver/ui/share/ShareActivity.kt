@@ -199,7 +199,7 @@ class ShareActivity :
             }
         }
 
-        val takeFolders = data.folders.take(LIMIT_SHOWED_FOLDER)
+        val takeFolders = data.folders.sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
             width, height
