@@ -13,7 +13,8 @@ data class HomeData(
     val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null,
     @StringRes val toastRes: Int = 0,
-    val folderActionConfirmation: FolderActionConfirmation? = null
+    val folderActionConfirmation: FolderActionConfirmation? = null,
+    val folderPasswordConfirmRemind: Set<String> = emptySet()
 ) : BaseViewModel.BaseData {
     data class FolderActionConfirmation(
         val folder: Folder,

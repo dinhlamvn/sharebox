@@ -130,9 +130,12 @@ class HomeViewModel @Inject constructor(
         setData { copy(folderActionConfirmation = newConfirmation) }
     }
 
-    fun openFolderAfterPasswordVerified() = runWithData { data ->
+    fun openFolderAfterPasswordVerified(isRemindPassword: Boolean) = runWithData { data ->
         val folder = data.folderActionConfirmation?.folder
             ?: return@runWithData clearFolderActionConfirmation()
+        if (isRemindPassword) {
+            setData { copy(folderPasswordConfirmRemind = folderPasswordConfirmRemind.plus(folder.id)) }
+        }
         selectFolder(folder)
     }
 }

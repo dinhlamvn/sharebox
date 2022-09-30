@@ -240,13 +240,9 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     private fun maybeShowConfirmPasswordToOpenFolder(confirmation: HomeData.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty()) {
-            viewModel.openFolderAfterPasswordVerified()
+            viewModel.openFolderAfterPasswordVerified(false)
         } else {
-            val dialog = FolderConfirmPasswordDialogFragment()
-            dialog.arguments = Bundle().apply {
-                putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
-            }
-            dialog.show(supportFragmentManager, "DialogConfirmPassword")
+            showConfirmPasswordDialog(folder.id)
         }
     }
 
@@ -269,11 +265,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
                 if (folder.password.isNullOrEmpty()) {
                     viewModel.deleteFolder(folder)
                 } else {
-                    val dialog = FolderConfirmPasswordDialogFragment()
-                    dialog.arguments = Bundle().apply {
-                        putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
-                    }
-                    dialog.show(supportFragmentManager, "DialogConfirmPassword")
+                    showConfirmPasswordDialog(folder.id)
                 }
             })
     }
@@ -287,23 +279,31 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             }
             dialog.show(supportFragmentManager, "DialogRenameFolder")
         } else {
-            val dialog = FolderConfirmPasswordDialogFragment()
-            dialog.arguments = Bundle().apply {
-                putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
-            }
-            dialog.show(supportFragmentManager, "DialogConfirmPassword")
+            showConfirmPasswordDialog(folder.id)
         }
     }
 
-    override fun onPasswordVerified() {
+    private fun showConfirmPasswordDialog(id: String) = withData(viewModel) { data ->
+        if (data.folderPasswordConfirmRemind.contains(id)) {
+            return@withData onPasswordVerified(false)
+        }
+        val dialog = FolderConfirmPasswordDialogFragment()
+        dialog.arguments = Bundle().apply {
+            putString(ExtraUtils.EXTRA_FOLDER_ID, id)
+        }
+        dialog.show(supportFragmentManager, "DialogConfirmPassword")
+    }
+
+    override fun onPasswordVerified(isRemindPassword: Boolean) {
         val actionType =
             withData(viewModel) { data -> data.folderActionConfirmation?.folderActionType }
                 ?: return viewModel.clearFolderActionConfirmation()
         when (actionType) {
-            HomeData.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified()
+            HomeData.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified(
+                isRemindPassword
+            )
             HomeData.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
             HomeData.FolderActionConfirmation.FolderActionType.RENAME -> viewModel.renameFolderAfterPasswordVerified()
-            else -> return viewModel.clearFolderActionConfirmation()
         }
     }
 

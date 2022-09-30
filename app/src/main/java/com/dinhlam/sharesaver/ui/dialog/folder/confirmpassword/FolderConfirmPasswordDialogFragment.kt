@@ -22,7 +22,7 @@ class FolderConfirmPasswordDialogFragment :
     BaseViewModelDialogFragment<FolderConfirmPasswordDialogData, FolderConfirmPasswordDialogViewModel, DialogFolderConfirmPasswordBinding>() {
 
     interface OnConfirmPasswordCallback {
-        fun onPasswordVerified()
+        fun onPasswordVerified(isRemindPassword: Boolean = false)
         fun onCancelConfirmPassword()
     }
 
@@ -66,7 +66,8 @@ class FolderConfirmPasswordDialogFragment :
         viewModel.consumeOnChange(FolderConfirmPasswordDialogData::verifyPasswordSuccess) { isPasswordVerified ->
             if (isPasswordVerified) {
                 dismiss()
-                activity.cast<OnConfirmPasswordCallback>()?.onPasswordVerified()
+                activity.cast<OnConfirmPasswordCallback>()
+                    ?.onPasswordVerified(viewBinding.checkboxSavePassword.isChecked)
             }
         }
 
