@@ -18,7 +18,7 @@ object ImageLoader {
     fun load(context: Context, uri: Uri?, imageView: ImageView) {
         Glide.with(context)
             .load(uri)
-            .centerCrop()
+            .fitCenter()
             .into(imageView)
     }
 

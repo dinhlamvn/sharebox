@@ -17,6 +17,11 @@
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
 
+    <style name="AppTheme.Button" parent="AppTheme">
+        <item name="android:layout_height">58dp</item>
+        <item name="cornerRadius">24dp</item>
+    </style>
+
     <style name="Button.Secondary" parent="AppTheme">
         <item name="colorPrimary">@color/secondaryColor</item>
     </style>
@@ -45,6 +50,16 @@
 
     <style name="AppTheme.ProgressBar" parent="AppTheme">
         <item name="colorAccent">@color/primaryColor</item>
+    </style>
+
+    <style name="AppTheme.MaterialCardView.TopLeftRightCorners" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeCardViewTopLeftRightCorners</item>
+    </style>
+
+    <style name="ShapeCardViewTopLeftRightCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">20dp</item>
+        <item name="cornerSizeTopLeft">20dp</item>
     </style>
 
 </resources>

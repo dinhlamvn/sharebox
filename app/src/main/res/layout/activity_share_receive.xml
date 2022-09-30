@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rectangle_white_top_left_right_rounded_16"
+        android:clipToPadding="false"
         android:paddingBottom="16dp"
         app:behavior_fitToContents="true"
         app:behavior_hideable="true"
@@ -86,15 +87,17 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="400dp"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
             android:fillViewport="true"
             app:layout_constraintTop_toBottomOf="@id/text_layout_note">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
@@ -103,10 +106,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_save"
+            style="@style/AppTheme.Button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:text="@string/button_save"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -118,10 +121,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            style="@style/AppTheme.Button"
+            android:layout_width="120dp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:paddingHorizontal="@dimen/activity_horizontal_margin"
             android:text="@string/button_cancel"
@@ -131,7 +134,6 @@
             app:layout_constraintEnd_toStartOf="@id/button_save"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/scroll_view" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
