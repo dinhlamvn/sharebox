@@ -37,6 +37,7 @@
     <string name="password_incorrect">Password is incorrect</string>
     <string name="error_require_password">Please input password</string>
     <string name="password_alias"><![CDATA[Password alias: <b>%s</b>]]></string>
+    <string name="error_folder_rename">Has an error when change name</string>
 
     <plurals name="share_count_text">
         <item quantity="one">%d share</item>

@@ -18,7 +18,7 @@ import com.dinhlam.sharesaver.utils.ExtraUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderConfirmPasswordViewModelDialogFragment :
+class FolderConfirmPasswordDialogFragment :
     BaseViewModelDialogFragment<FolderConfirmPasswordDialogData, FolderConfirmPasswordDialogViewModel, DialogFolderConfirmPasswordBinding>() {
 
     interface OnConfirmPasswordCallback {

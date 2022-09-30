@@ -18,7 +18,8 @@ data class HomeData(
     data class FolderActionConfirmation(
         val folder: Folder,
         val shareCount: Int,
-        val folderActionType: FolderActionType
+        val folderActionType: FolderActionType,
+        val ignorePassword: Boolean = false
     ) {
         enum class FolderActionType {
             OPEN,
