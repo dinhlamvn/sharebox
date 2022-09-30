@@ -66,8 +66,7 @@ class FolderConfirmPasswordDialogFragment :
         viewModel.consumeOnChange(FolderConfirmPasswordDialogData::verifyPasswordSuccess) { isPasswordVerified ->
             if (isPasswordVerified) {
                 dismiss()
-                activity.cast<OnConfirmPasswordCallback>()
-                    ?.onPasswordVerified(viewBinding.checkboxSavePassword.isChecked)
+                getCallback()?.onPasswordVerified(viewBinding.checkboxSavePassword.isChecked)
             }
         }
 
@@ -95,7 +94,11 @@ class FolderConfirmPasswordDialogFragment :
         super.onDismiss(dialog)
         val isVerified = withData(viewModel) { it.verifyPasswordSuccess }
         if (!isVerified) {
-            activity.cast<OnConfirmPasswordCallback>()?.onCancelConfirmPassword()
+            getCallback()?.onCancelConfirmPassword()
         }
+    }
+
+    private fun getCallback(): OnConfirmPasswordCallback? {
+        return activity?.cast() ?: parentFragment.cast()
     }
 }

@@ -55,7 +55,7 @@ class RenameFolderDialogFragment :
         viewModel.consumeOnChange(RenameFolderDialogData::renameFolderSuccess) { isRenameFolderSuccess ->
             if (isRenameFolderSuccess) {
                 dismiss()
-                activity.cast<OnConfirmRenameCallback>()?.onRenameSuccess()
+                getCallback()?.onRenameSuccess()
             }
         }
 
@@ -89,7 +89,11 @@ class RenameFolderDialogFragment :
         super.onDismiss(dialog)
         val isVerified = withData(viewModel) { it.renameFolderSuccess }
         if (!isVerified) {
-            activity.cast<OnConfirmRenameCallback>()?.onCancelRename()
+            getCallback()?.onCancelRename()
         }
+    }
+
+    private fun getCallback(): OnConfirmRenameCallback? {
+        return activity?.cast() ?: parentFragment.cast()
     }
 }

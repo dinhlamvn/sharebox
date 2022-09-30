@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
-import com.dinhlam.sharesaver.base.BaseViewModelDialogFragment
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
+import com.dinhlam.sharesaver.base.BaseViewModelDialogFragment
 import com.dinhlam.sharesaver.databinding.DialogFolderSelectorBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.setupWith
@@ -79,15 +79,14 @@ class FolderSelectorViewModelDialogFragment :
 
         viewModel.consumeOnChange(FolderSelectorDialogData::selectedFolder) {
             val folderId = it?.id ?: return@consumeOnChange
-            activity?.cast<OnFolderSelectorCallback>()
-                ?.onFolderSelected(folderId)?.also {
-                    dismiss()
-                }
+            getCallback()?.onFolderSelected(folderId)?.also {
+                dismiss()
+            }
         }
 
         viewModel.consumeOnChange(FolderSelectorDialogData::requestCreateFolder) { isCreateNewFolder ->
             if (isCreateNewFolder) {
-                activity?.cast<OnFolderSelectorCallback>()?.onCreateNewFolder()?.also {
+                getCallback()?.onCreateNewFolder()?.also {
                     dismiss()
                 }
             }
@@ -96,5 +95,9 @@ class FolderSelectorViewModelDialogFragment :
 
     override fun getSpacing(): Int {
         return 32
+    }
+
+    private fun getCallback(): OnFolderSelectorCallback? {
+        return activity?.cast() ?: parentFragment.cast()
     }
 }

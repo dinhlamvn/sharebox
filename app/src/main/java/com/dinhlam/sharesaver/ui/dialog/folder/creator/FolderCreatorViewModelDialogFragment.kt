@@ -46,7 +46,7 @@ class FolderCreatorViewModelDialogFragment :
 
         viewModel.consumeOnChange(FolderCreatorDialogData::folderIdInserted) { folderId ->
             folderId?.let {
-                activity.cast<OnFolderCreatorCallback>()?.onFolderCreated(it)
+                getCallback()?.onFolderCreated(it)
                 dismiss()
             }
         }
@@ -90,5 +90,9 @@ class FolderCreatorViewModelDialogFragment :
 
     override fun getSpacing(): Int {
         return 32
+    }
+
+    private fun getCallback(): OnFolderCreatorCallback? {
+        return activity?.cast() ?: parentFragment.cast()
     }
 }
