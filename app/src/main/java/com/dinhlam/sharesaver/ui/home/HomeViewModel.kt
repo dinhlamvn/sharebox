@@ -91,7 +91,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun showConfirmDeleteFolder(folder: Folder) = execute {
+    fun processFolderForDelete(folder: Folder) = execute {
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(
@@ -102,12 +102,23 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun showConfirmRenameFolder(folder: Folder) = execute {
+    fun processFolderForRename(folder: Folder) = execute {
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(
                 folderActionConfirmation = HomeData.FolderActionConfirmation(
                     folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.RENAME
+                )
+            )
+        }
+    }
+
+    fun processFolderForDetail(folder: Folder) = execute {
+        val shareCount = shareRepository.countByFolder(folder.id)
+        setData {
+            copy(
+                folderActionConfirmation = HomeData.FolderActionConfirmation(
+                    folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.DETAIL
                 )
             )
         }
@@ -124,6 +135,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun renameFolderAfterPasswordVerified() = withData { data ->
+        val confirmation =
+            data.folderActionConfirmation ?: return@withData clearFolderActionConfirmation()
+        val newConfirmation = confirmation.copy(ignorePassword = true)
+        setData { copy(folderActionConfirmation = newConfirmation) }
+    }
+
+    fun showDetailFolderAfterPasswordVerified() = withData { data ->
         val confirmation =
             data.folderActionConfirmation ?: return@withData clearFolderActionConfirmation()
         val newConfirmation = confirmation.copy(ignorePassword = true)

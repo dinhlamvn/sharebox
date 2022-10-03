@@ -9,11 +9,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.screenWidth
+import kotlin.reflect.KClass
 
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
+
+    companion object {
+        fun <T : BaseDialogFragment<*>> showDialog(
+            clazz: KClass<T>,
+            fragmentManager: FragmentManager,
+            tag: String = "DialogFragment",
+            block: T.() -> Unit = { }
+        ) {
+            val constructor = clazz.java.getConstructor()
+            val dialogFragment = constructor.newInstance()
+            dialogFragment.apply(block)
+            dialogFragment.show(fragmentManager, tag)
+        }
+    }
 
     abstract fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
@@ -23,9 +39,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
         get() = binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         onViewPreLoad(savedInstanceState)
         binding = onCreateViewBinding(inflater, container)

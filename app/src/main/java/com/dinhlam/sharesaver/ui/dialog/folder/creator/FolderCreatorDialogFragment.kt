@@ -16,7 +16,7 @@ import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderCreatorViewModelDialogFragment :
+class FolderCreatorDialogFragment :
     BaseViewModelDialogFragment<FolderCreatorDialogData, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
 
     interface OnFolderCreatorCallback {

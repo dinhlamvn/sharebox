@@ -20,7 +20,7 @@ import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderSelectorViewModelDialogFragment :
+class FolderSelectorDialogFragment :
     BaseViewModelDialogFragment<FolderSelectorDialogData, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
 
     interface OnFolderSelectorCallback {

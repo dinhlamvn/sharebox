@@ -25,7 +25,8 @@ data class HomeData(
         enum class FolderActionType {
             OPEN,
             DELETE,
-            RENAME
+            RENAME,
+            DETAIL
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharesaver.R
+import com.dinhlam.sharesaver.base.BaseDialogFragment
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
@@ -32,7 +33,8 @@ import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.helper.ShareHelper
 import com.dinhlam.sharesaver.modelview.FolderModelView
 import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorViewModelDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
+import com.dinhlam.sharesaver.ui.dialog.folder.detail.FolderDetailDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.rename.RenameFolderDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
@@ -47,7 +49,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>(),
-    FolderCreatorViewModelDialogFragment.OnFolderCreatorCallback,
+    FolderCreatorDialogFragment.OnFolderCreatorCallback,
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
     RenameFolderDialogFragment.OnConfirmRenameCallback {
 
@@ -168,7 +170,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     private fun showDialogCreateFolder() {
-        val dialog = FolderCreatorViewModelDialogFragment()
+        val dialog = FolderCreatorDialogFragment()
         dialog.show(supportFragmentManager, "DialogCreateFolder")
     }
 
@@ -205,7 +207,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         bindingItemDelete.textView.text = getString(R.string.delete)
         bindingItemDelete.root.setOnClickListener {
             dismissPopup()
-            viewModel.showConfirmDeleteFolder(folder)
+            viewModel.processFolderForDelete(folder)
         }
         popupView.addView(bindingItemDelete.root, layoutParams)
 
@@ -214,9 +216,18 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         bindingItemRename.textView.text = getString(R.string.rename)
         bindingItemRename.root.setOnClickListener {
             dismissPopup()
-            viewModel.showConfirmRenameFolder(folder)
+            viewModel.processFolderForRename(folder)
         }
         popupView.addView(bindingItemRename.root, layoutParams)
+
+        val bindingItemInfo = MenuItemIconWithTextBinding.inflate(layoutInflater)
+        bindingItemInfo.imageIcon.setImageResource(R.drawable.ic_detail)
+        bindingItemInfo.textView.text = getString(R.string.details)
+        bindingItemInfo.root.setOnClickListener {
+            dismissPopup()
+            viewModel.processFolderForDetail(folder)
+        }
+        popupView.addView(bindingItemInfo.root, layoutParams)
 
         popupWindow.contentView = popupView
         popupWindow.showAsDropDown(clickedView, 0, -clickedView.height / 2)
@@ -234,6 +245,10 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
         if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.RENAME) {
             return maybeShowConfirmPasswordToRenameFolder(nonNull)
+        }
+
+        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.DETAIL) {
+            return maybeShowConfirmPasswordToViewDetailFolder(nonNull)
         }
     }
 
@@ -262,7 +277,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             getString(R.string.delete),
             getString(R.string.cancel),
             onPosClickListener = { _, _ ->
-                if (folder.password.isNullOrEmpty()) {
+                if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
                     viewModel.deleteFolder(folder)
                 } else {
                     showConfirmPasswordDialog(folder.id)
@@ -273,11 +288,28 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     private fun maybeShowConfirmPasswordToRenameFolder(confirmation: HomeData.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
-            val dialog = RenameFolderDialogFragment()
-            dialog.arguments = Bundle().apply {
-                putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
+            BaseDialogFragment.showDialog(
+                RenameFolderDialogFragment::class, supportFragmentManager
+            ) {
+                arguments = Bundle().apply {
+                    putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
+                }
             }
-            dialog.show(supportFragmentManager, "DialogRenameFolder")
+        } else {
+            showConfirmPasswordDialog(folder.id)
+        }
+    }
+
+    private fun maybeShowConfirmPasswordToViewDetailFolder(confirmation: HomeData.FolderActionConfirmation) {
+        val folder = confirmation.folder
+        if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
+            BaseDialogFragment.showDialog(
+                FolderDetailDialogFragment::class, supportFragmentManager
+            ) {
+                arguments = Bundle().apply {
+                    putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
+                }
+            }
         } else {
             showConfirmPasswordDialog(folder.id)
         }
@@ -287,11 +319,13 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         if (data.folderPasswordConfirmRemind.contains(id)) {
             return@withData onPasswordVerified(false)
         }
-        val dialog = FolderConfirmPasswordDialogFragment()
-        dialog.arguments = Bundle().apply {
-            putString(ExtraUtils.EXTRA_FOLDER_ID, id)
+        BaseDialogFragment.showDialog(
+            FolderConfirmPasswordDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putString(ExtraUtils.EXTRA_FOLDER_ID, id)
+            }
         }
-        dialog.show(supportFragmentManager, "DialogConfirmPassword")
     }
 
     override fun onPasswordVerified(isRemindPassword: Boolean) {
@@ -304,6 +338,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             )
             HomeData.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
             HomeData.FolderActionConfirmation.FolderActionType.RENAME -> viewModel.renameFolderAfterPasswordVerified()
+            HomeData.FolderActionConfirmation.FolderActionType.DETAIL -> viewModel.showDetailFolderAfterPasswordVerified()
         }
     }
 

@@ -36,7 +36,7 @@ class RenameFolderDialogFragment :
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
-        val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return
+        val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
 
         viewModel.consumeOnChange(RenameFolderDialogData::folder) { folder ->

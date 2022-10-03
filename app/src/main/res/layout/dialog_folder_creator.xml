@@ -58,7 +58,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_layout_folder_desc"
                 android:layout_width="match_parent"
@@ -92,6 +91,39 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_created_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="16dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Body1"
+                app:layout_constraintTop_toBottomOf="@id/text_layout_folder_desc" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_updated_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Body1"
+                app:layout_constraintTop_toBottomOf="@id/text_created_date" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_share_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Body1"
+                app:layout_constraintTop_toBottomOf="@id/text_updated_date" />
+
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox_password"
                 android:layout_width="wrap_content"
@@ -102,7 +134,7 @@
                 android:textAppearance="@style/TextAppearance.Body1"
                 android:theme="@style/AppTheme.CheckBox"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_folder_desc" />
+                app:layout_constraintTop_toBottomOf="@id/text_share_count" />
 
 
             <com.google.android.material.textfield.TextInputLayout
