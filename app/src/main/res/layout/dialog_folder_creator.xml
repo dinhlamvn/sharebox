@@ -183,6 +183,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_save"
+        style="@style/AppTheme.Button"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
