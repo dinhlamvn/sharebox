@@ -137,6 +137,12 @@ class ShareActivity :
             }
         }
 
+        viewModel.consumeOnChange(ShareData::selectedFolder) { folder ->
+            folder?.id?.let { folderId ->
+                viewModel.saveLastSelectedFolder(folderId)
+            }
+        }
+
         viewBinding.buttonCancel.setOnClickListener {
             dismiss()
         }
@@ -199,8 +205,8 @@ class ShareActivity :
             }
         }
 
-        val takeFolders =
-            data.folders.sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
+        val takeFolders = data.folders.filterNot { folder -> folder.id == data.selectedFolder?.id }
+            .sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
             width, height
@@ -213,7 +219,7 @@ class ShareActivity :
             binding.textView.text = folder.name
             binding.root.setOnClickListener {
                 dismissPopup()
-                viewModel.selectedFolder(folder.id)
+                viewModel.setSelectedFolder(folder.id)
             }
             popupView.addView(binding.root, layoutParams)
         }

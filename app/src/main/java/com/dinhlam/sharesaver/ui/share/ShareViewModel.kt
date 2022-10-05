@@ -7,6 +7,7 @@ import com.dinhlam.sharesaver.BuildConfig
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.entity.Share
 import com.dinhlam.sharesaver.loader.ImageLoader
+import com.dinhlam.sharesaver.pref.AppSharePref
 import com.dinhlam.sharesaver.repository.FolderRepository
 import com.dinhlam.sharesaver.repository.ShareRepository
 import com.google.gson.Gson
@@ -18,15 +19,18 @@ import javax.inject.Inject
 class ShareViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
     private val shareRepository: ShareRepository,
-    private val gson: Gson
+    private val gson: Gson,
+    private val appSharePref: AppSharePref,
 ) : BaseViewModel<ShareData>(ShareData()) {
 
-    fun setShareInfo(shareInfo: ShareData.ShareInfo) = executeWithData { data ->
+    fun setShareInfo(shareInfo: ShareData.ShareInfo) = execute {
         val folders = folderRepository.getAll()
-        val folderId = when (shareInfo) {
-            is ShareData.ShareInfo.ShareText -> "folder_text"
-            is ShareData.ShareInfo.ShareWebLink -> "folder_web"
-            is ShareData.ShareInfo.ShareImage -> "folder_image"
+        val historySelectedFolder = appSharePref.getLastSelectedFolder()
+        val folderId = when {
+            historySelectedFolder.isNotBlank() -> historySelectedFolder
+            shareInfo is ShareData.ShareInfo.ShareText -> "folder_text"
+            shareInfo is ShareData.ShareInfo.ShareWebLink -> "folder_web"
+            shareInfo is ShareData.ShareInfo.ShareImage -> "folder_image"
             else -> "folder_home"
         }
         setData { copy(folders = folders, shareInfo = shareInfo) }
@@ -35,6 +39,7 @@ class ShareViewModel @Inject constructor(
 
     fun setSelectedFolder(folderId: String) = runWithData { data ->
         val folder = data.folders.firstOrNull { it.id == folderId }
+            ?: data.folders.sortedByDescending { it.createdAt }.getOrNull(0)
         setData { copy(selectedFolder = folder) }
     }
 
@@ -98,14 +103,11 @@ class ShareViewModel @Inject constructor(
         setData { copy(isSaveSuccess = true) }
     }
 
-    fun selectedFolder(id: String) = runWithData { data ->
-        val folder = data.folders.firstOrNull { it.id == id }
-        setData { copy(selectedFolder = folder) }
-    }
-
     fun setSelectedFolderAfterCreate(folderId: String) = execute {
         val folders = folderRepository.getAll()
         val folder = folders.firstOrNull { it.id == folderId }
         setData { copy(folders = folders, selectedFolder = folder) }
     }
+
+    fun saveLastSelectedFolder(folderId: String) = appSharePref.setLastSelectedFolder(folderId)
 }
