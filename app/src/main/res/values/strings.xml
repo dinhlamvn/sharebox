@@ -40,9 +40,13 @@
     <string name="error_folder_rename">Has an error when change name</string>
     <string name="check_box_save_password_next_session">Save password for next session</string>
     <string name="details">Details</string>
-    <string name="created_date_template"><![CDATA[<b>Created date</b>: %s]]></string>
-    <string name="updated_date_template"><![CDATA[<b>Updated date</b>: %s]]></string>
-    <string name="share_count_template"><![CDATA[<b>Share count</b>: %s]]></string>
+    <string name="created_date_title">Created date:</string>
+    <string name="updated_date_title">Updated date:</string>
+    <string name="share_count_title">Share count:</string>
+    <string name="button_close">Close</string>
+    <string name="description_title">Description:</string>
+    <string name="folder_desc_empty">No desc</string>
+    <string name="has_password_title">Has password:</string>
 
     <plurals name="share_count_text">
         <item quantity="one">%d share</item>
