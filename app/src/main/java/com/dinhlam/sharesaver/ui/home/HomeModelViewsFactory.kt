@@ -2,7 +2,7 @@ package com.dinhlam.sharesaver.ui.home
 
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.extensions.format
-import com.dinhlam.sharesaver.modelview.FolderModelView
+import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.modelview.LoadingModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
@@ -26,10 +26,11 @@ class HomeModelViewsFactory(
 
         if (data.selectedFolder == null) {
             data.folders.map { folder ->
-                FolderModelView(
+                FolderListModelView(
                     "folder_${folder.id}",
                     folder.name,
                     folder.desc,
+                    folder.updatedAt,
                     !folder.password.isNullOrEmpty()
                 )
             }.forEach { it.addTo(this) }

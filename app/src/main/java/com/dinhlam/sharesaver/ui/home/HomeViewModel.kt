@@ -156,4 +156,8 @@ class HomeViewModel @Inject constructor(
         }
         selectFolder(folder)
     }
+
+    fun isFolderSelected() = withData { data ->
+        data.selectedFolder != null
+    }
 }

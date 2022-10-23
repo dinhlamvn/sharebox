@@ -14,11 +14,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseDialogFragment
 import com.dinhlam.sharesaver.base.BaseListAdapter
-import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.databinding.ActivityMainBinding
@@ -31,7 +30,7 @@ import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.helper.ShareHelper
-import com.dinhlam.sharesaver.modelview.FolderModelView
+import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.detail.FolderDetailDialogFragment
@@ -90,8 +89,10 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
         }
 
-        withViewType(R.layout.model_view_folder) {
-            FolderModelView.FolderViewHolder(this, viewModel::onFolderClick, ::onFolderLongClick)
+        withViewType(R.layout.model_view_folder_list) {
+            FolderListModelView.FolderListViewHolder(
+                this, viewModel::onFolderClick, ::onFolderLongClick
+            )
         }
 
         withViewType(R.layout.model_view_home_date) {
@@ -112,9 +113,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             finish()
         }
 
-        viewBinding.recyclerView.layoutManager = GridLayoutManager(this, SPAN_COUNT).apply {
-            spanSizeLookup = BaseSpanSizeLookup(homeAdapter, this)
-        }
+        viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
 
         viewBinding.recyclerView.setupWith(homeAdapter, modelViewsFactory)
 
@@ -151,11 +150,14 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             supportActionBar?.title = getString(R.string.app_name)
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
+        invalidateOptionsMenu()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menu.cast<MenuBuilder>()?.setOptionalIconsVisible(true)
-        return menuInflater.inflate(R.menu.home_menu, menu).let { true }
+        menuInflater.inflate(R.menu.home_menu, menu)
+        menu?.findItem(R.id.item_create_folder)?.isVisible = !viewModel.isFolderSelected()
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
