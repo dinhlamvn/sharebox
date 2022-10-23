@@ -31,6 +31,7 @@ import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.helper.ShareHelper
 import com.dinhlam.sharesaver.modelview.FolderListModelView
+import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.detail.FolderDetailDialogFragment
@@ -54,15 +55,14 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
 
-    companion object {
-        private const val SPAN_COUNT = 3
-    }
-
     @Inject
     lateinit var gson: Gson
 
     @Inject
     lateinit var shareHelper: ShareHelper
+
+    @Inject
+    lateinit var appRouter: AppRouter
 
     override val viewModel: HomeViewModel by viewModels()
 
@@ -167,6 +167,10 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         }
         if (item.itemId == android.R.id.home) {
             return viewModel.handleBackPressed()
+        }
+        if (item.itemId == R.id.item_setting) {
+            startActivity(appRouter.setting())
+            return true
         }
         return super.onOptionsItemSelected(item)
     }

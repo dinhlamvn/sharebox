@@ -52,4 +52,17 @@
         <item quantity="one">%d share</item>
         <item quantity="other">%d shares</item>
     </plurals>
+
+    <!-- Facebook declare -->
+    <string name="facebook_app_id">647232403661006</string>
+    <string name="fb_login_protocol_scheme">fb647232403661006</string>
+    <string name="facebook_client_token">58f30ca9da7ab64f6e8b147f7fd4cf9b</string>
+    <!-- End of facebook -->
+
+    <string name="setting_activity_title">Settings</string>
+    <string name="setting">Settings</string>
+    <string name="request_login_facebook">You need login to your Facebook account to use some feature in app.</string>
+    <string name="login_facebook_error">Has error until login Facebook, try again!</string>
+    <string name="login_facebook_success">Login to Facebook successfully with profile: %s</string>
+
 </resources>

@@ -50,7 +50,7 @@ dependencies {
     def appcompat_version = "1.5.1"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
-    def material_version = "1.6.1"
+    def material_version = "1.7.0"
     implementation "com.google.android.material:material:$material_version"
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -80,6 +80,10 @@ dependencies {
     // Gson
     def gson_version = "2.9.1"
     implementation "com.google.code.gson:gson:$gson_version"
+
+    // Facebook
+    def facebook_version = "8.2.0"
+    implementation "com.facebook.android:facebook-android-sdk:$facebook_version"
 }
 
 kapt {

@@ -1,9 +1,14 @@
 package com.dinhlam.sharesaver.extensions
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 
 fun Fragment.screenWidth() = resources.displayMetrics.widthPixels
+
+fun Fragment.showToast(@StringRes text: Int, duration: Int = Toast.LENGTH_SHORT) {
+    showToast(getString(text, duration))
+}
 
 fun Fragment.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
     text.takeIfNotNullOrBlank()?.let { toastContent ->

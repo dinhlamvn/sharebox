@@ -6,6 +6,7 @@ import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import androidx.annotation.StringRes
 
 fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -17,6 +18,10 @@ fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
             handler.invoke()
         }
     }
+}
+
+fun Activity.showToast(@StringRes text: Int, duration: Int = Toast.LENGTH_SHORT) {
+    showToast(getString(text, duration))
 }
 
 fun Activity.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {

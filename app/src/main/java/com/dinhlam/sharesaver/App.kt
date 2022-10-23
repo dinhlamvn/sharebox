@@ -4,6 +4,7 @@ import android.app.Application
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.pref.AppSharePref
 import com.dinhlam.sharesaver.repository.FolderRepository
+import com.facebook.appevents.AppEventsLogger
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -23,7 +24,12 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initializeFacebook()
         createDefaultFoldersOnFirstLaunch()
+    }
+
+    private fun initializeFacebook() {
+        AppEventsLogger.activateApp(this)
     }
 
     private fun createDefaultFoldersOnFirstLaunch() {
