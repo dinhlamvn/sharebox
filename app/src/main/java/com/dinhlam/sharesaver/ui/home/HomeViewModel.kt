@@ -10,33 +10,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val folderRepository: FolderRepository, private val shareRepository: ShareRepository
+    private val folderRepository: FolderRepository,
+    private val shareRepository: ShareRepository
 ) : BaseViewModel<HomeData>(HomeData()) {
 
     init {
         loadFolders()
     }
 
-    private fun loadFolders() = executeJob {
+    fun loadFolders() = executeJob {
         val folders = folderRepository.getAll()
         setData { copy(folders = folders, isRefreshing = false) }
-    }
-
-
-    private fun loadShareData() = execute { data ->
-        if (data.selectedFolder == null) {
-            return@execute setData { copy(isRefreshing = false) }
-        }
-        val list = shareRepository.getByFolder(data.selectedFolder.id)
-        setData { copy(shareList = list, isRefreshing = false) }
-    }
-
-    fun reload() = runWithData { data ->
-        if (data.selectedFolder == null) {
-            loadFolders()
-        } else {
-            loadShareData()
-        }
     }
 
     fun onFolderClick(position: Int) = execute { data ->
@@ -51,23 +35,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun selectFolder(folder: Folder) {
-        setData {
-            copy(
-                folderActionConfirmation = null, selectedFolder = folder, isRefreshing = true
-            )
-        }
-        loadShareData()
-    }
-
-    fun handleBackPressed(): Boolean {
-        return withData { data ->
-            if (data.selectedFolder == null) {
-                return@withData false
-            }
-            setData { copy(selectedFolder = null, shareList = emptyList()) }
-            true
-        }
+    private fun openFolder(folder: Folder) {
+        setData { copy(folderActionConfirmation = null, folderToOpen = folder) }
     }
 
     fun deleteFolder(folder: Folder) {
@@ -78,7 +47,7 @@ class HomeViewModel @Inject constructor(
             val deleted = folderRepository.delete(folder)
             if (deleted) {
                 setData { copy(showProgress = false, toastRes = R.string.delete_folder_success) }
-                reload()
+                loadFolders()
             } else {
                 setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
             }
@@ -154,10 +123,10 @@ class HomeViewModel @Inject constructor(
         if (isRemindPassword) {
             setData { copy(folderPasswordConfirmRemind = folderPasswordConfirmRemind.plus(folder.id)) }
         }
-        selectFolder(folder)
+        openFolder(folder)
     }
 
-    fun isFolderSelected() = withData { data ->
-        data.selectedFolder != null
+    fun clearOpenFolder() = setData {
+        copy(folderToOpen = null)
     }
 }

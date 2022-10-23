@@ -1,6 +1,5 @@
 package com.dinhlam.sharesaver.ui.home
 
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -20,27 +19,20 @@ import com.dinhlam.sharesaver.base.BaseDialogFragment
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.database.entity.Folder
-import com.dinhlam.sharesaver.databinding.ActivityMainBinding
+import com.dinhlam.sharesaver.databinding.ActivityHomeBinding
 import com.dinhlam.sharesaver.databinding.MenuItemIconWithTextBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.dpF
-import com.dinhlam.sharesaver.extensions.registerOnBackPressHandler
 import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
-import com.dinhlam.sharesaver.helper.ShareHelper
 import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.detail.FolderDetailDialogFragment
 import com.dinhlam.sharesaver.ui.dialog.folder.rename.RenameFolderDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.text.TextViewerDialogFragment
-import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
-import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
-import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
-import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharesaver.utils.ExtraUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -48,7 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMainBinding>(),
+class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHomeBinding>(),
     FolderCreatorDialogFragment.OnFolderCreatorCallback,
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
     RenameFolderDialogFragment.OnConfirmRenameCallback {
@@ -57,9 +49,6 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     @Inject
     lateinit var gson: Gson
-
-    @Inject
-    lateinit var shareHelper: ShareHelper
 
     @Inject
     lateinit var appRouter: AppRouter
@@ -71,57 +60,24 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             LoadingViewHolder(this)
         }
 
-        withViewType(R.layout.model_view_home_share_text) {
-            HomeTextModelView.HomeTextViewHolder(this, { textContent ->
-                val dialog = TextViewerDialogFragment()
-                dialog.arguments = Bundle().apply {
-                    putString(Intent.EXTRA_TEXT, textContent)
-                }
-                dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-            }, ::showDialogShareToOther)
-        }
-
-        withViewType(R.layout.model_view_home_share_web_link) {
-            HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
-        }
-
-        withViewType(R.layout.model_view_home_share_image) {
-            HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
-        }
-
         withViewType(R.layout.model_view_folder_list) {
             FolderListModelView.FolderListViewHolder(
                 this, viewModel::onFolderClick, ::onFolderLongClick
             )
         }
-
-        withViewType(R.layout.model_view_home_date) {
-            HomeDateModelView.HomeDateViewHolder(this)
-        }
     }
 
-    override fun onCreateViewBinding(): ActivityMainBinding {
-        return ActivityMainBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(): ActivityHomeBinding {
+        return ActivityHomeBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        registerOnBackPressHandler {
-            if (viewModel.handleBackPressed()) {
-                return@registerOnBackPressHandler
-            }
-            finish()
-        }
-
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-
         viewBinding.recyclerView.setupWith(homeAdapter, modelViewsFactory)
 
-        viewBinding.recyclerView.adapter = homeAdapter
-        modelViewsFactory.attach(homeAdapter)
-
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.reload()
+            viewModel.loadFolders()
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
@@ -133,40 +89,33 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
         }
 
         viewModel.consumeOnChange(this, HomeData::folderActionConfirmation, ::handleFolderAction)
+
+        viewModel.consumeOnChange(this, HomeData::folderToOpen) { folderToOpen ->
+            folderToOpen?.let {
+                viewModel.clearOpenFolder()
+                openFolder(it)
+            }
+        }
+    }
+
+    private fun openFolder(folder: Folder) {
+        startActivity(appRouter.shareList(folder.id))
     }
 
     override fun onDataChanged(data: HomeData) {
         modelViewsFactory.requestBuildModelViews()
-        setupUiOnFolderSelected(data.selectedFolder)
         viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
-    }
-
-    private fun setupUiOnFolderSelected(folder: Folder?) {
-        if (folder != null) {
-            val title = folder.name
-            supportActionBar?.title = title
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        } else {
-            supportActionBar?.title = getString(R.string.app_name)
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        }
-        invalidateOptionsMenu()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menu.cast<MenuBuilder>()?.setOptionalIconsVisible(true)
-        menuInflater.inflate(R.menu.home_menu, menu)
-        menu?.findItem(R.id.item_create_folder)?.isVisible = !viewModel.isFolderSelected()
-        return true
+        return menuInflater.inflate(R.menu.home_menu, menu).let { true }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.item_create_folder) {
             showDialogCreateFolder()
             return true
-        }
-        if (item.itemId == android.R.id.home) {
-            return viewModel.handleBackPressed()
         }
         if (item.itemId == R.id.item_setting) {
             startActivity(appRouter.setting())
@@ -181,7 +130,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     override fun onFolderCreated(folderId: String) {
-        viewModel.reload()
+        viewModel.loadFolders()
     }
 
     private fun onFolderLongClick(clickedView: View, position: Int) {
@@ -352,19 +301,10 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
     }
 
     override fun onRenameSuccess() {
-        viewModel.reload()
+        viewModel.loadFolders()
     }
 
     override fun onCancelRename() {
         viewModel.clearFolderActionConfirmation()
-    }
-
-    private fun showDialogShareToOther(shareId: Int) {
-        val shareData = withData(viewModel) { data ->
-            data.shareList.firstOrNull { share ->
-                share.id == shareId
-            }
-        } ?: return
-        shareHelper.shareToOther(shareData)
     }
 }
