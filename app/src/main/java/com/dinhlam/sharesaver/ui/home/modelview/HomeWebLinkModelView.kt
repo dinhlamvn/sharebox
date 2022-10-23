@@ -21,7 +21,7 @@ data class HomeWebLinkModelView(
     val shareId: Int
 ) : BaseListAdapter.BaseModelView(id) {
 
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.model_view_home_share_web_link
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

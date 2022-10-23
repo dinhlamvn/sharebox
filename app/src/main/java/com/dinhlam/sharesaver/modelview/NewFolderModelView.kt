@@ -7,7 +7,7 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ModelViewNewFolderBinding
 
 object NewFolderModelView : BaseListAdapter.BaseModelView("model_view_new_folder") {
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.model_view_new_folder
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

@@ -9,7 +9,7 @@ import com.dinhlam.sharesaver.databinding.ModelViewHomeDateBinding
 data class HomeDateModelView(
     val id: String, val date: String
 ) : BaseListAdapter.BaseModelView(id) {
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.model_view_home_date
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

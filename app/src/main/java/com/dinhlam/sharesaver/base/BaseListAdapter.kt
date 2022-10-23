@@ -114,7 +114,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position).layoutRes
+        return getItem(position).modelLayoutRes
     }
 
     override fun getItemId(position: Int): Long {
@@ -138,7 +138,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         var modelId: Long = 0L
             private set
 
-        abstract val layoutRes: Int
+        abstract val modelLayoutRes: Int
 
         abstract fun areItemsTheSame(other: BaseModelView): Boolean
 

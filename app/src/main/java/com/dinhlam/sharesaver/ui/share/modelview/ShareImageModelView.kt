@@ -9,7 +9,7 @@ import com.dinhlam.sharesaver.loader.ImageLoader
 
 data class ShareImageModelView(val id: String, val uri: Uri) :
     BaseListAdapter.BaseModelView("share_image_$id") {
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.share_item_image
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

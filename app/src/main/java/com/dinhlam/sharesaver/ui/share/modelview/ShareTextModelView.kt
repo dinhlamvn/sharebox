@@ -6,7 +6,7 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ShareItemTextBinding
 
 data class ShareTextModelView(val id: String, val text: String?) : BaseListAdapter.BaseModelView("share_text_$id") {
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.share_item_text
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

@@ -7,7 +7,7 @@ import com.dinhlam.sharesaver.databinding.ModelViewShareWebLinkBinding
 
 data class ShareWebLinkModelView(val id: String, val url: String?) :
     BaseListAdapter.BaseModelView("share_url_$id") {
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.model_view_share_web_link
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {

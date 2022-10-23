@@ -16,7 +16,7 @@ data class HomeImageModelView(
     val id: String, val uri: Uri, val createdAt: Long, val note: String?, val shareId: Int
 ) : BaseListAdapter.BaseModelView(id) {
 
-    override val layoutRes: Int
+    override val modelLayoutRes: Int
         get() = R.layout.model_view_home_share_image
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
