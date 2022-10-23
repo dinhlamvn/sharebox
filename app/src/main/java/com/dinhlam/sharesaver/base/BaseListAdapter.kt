@@ -2,7 +2,6 @@ package com.dinhlam.sharesaver.base
 
 import android.content.Context
 import android.os.Handler
-import android.os.HandlerThread
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.utils.Ids
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     private val viewHolderManager: ViewHolderManager
@@ -22,13 +26,10 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         setHasStableIds(true)
     }
 
-    abstract class ModelViewsFactory : Runnable {
+    abstract class ModelViewsFactory {
 
-        private val buildModelThread = HandlerThread("build-model-thread")
-        private val handler: Handler by lazy {
-            buildModelThread.start()
-            Handler(buildModelThread.looper)
-        }
+        private val coroutineScope = CoroutineScope(Dispatchers.IO)
+        private var job: Job? = null
 
         private val mainHandler = Handler(Looper.getMainLooper())
 
@@ -51,19 +52,23 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
             modelViews.add(modelView)
         }
 
-        override fun run() {
+        private fun buildModelViewsInternal(coroutineScope: CoroutineScope) {
             modelViews.clear()
             buildModelViews()
-            adapter?.let {
-                mainHandler.post {
-                    it.submitList(modelViews.toList())
-                }
+            coroutineScope.launch(Dispatchers.Main) {
+                adapter?.submitList(modelViews.toList())
             }
         }
 
         fun requestBuildModelViews(delayMills: Long = 0L) {
-            handler.removeCallbacks(this)
-            handler.postDelayed(this, delayMills)
+            if (job?.isActive == true && job?.isCompleted == false) {
+                job?.cancel()
+                job = null
+            }
+            job = coroutineScope.launch {
+                delay(delayMills)
+                buildModelViewsInternal(this)
+            }
         }
     }
 
@@ -108,7 +113,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     ) {
         holder.onBind(getItem(position), position)
     }
-    
+
     override fun onViewRecycled(holder: BaseViewHolder<T, ViewBinding>) {
         holder.onUnBind()
     }
