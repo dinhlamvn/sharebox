@@ -241,20 +241,19 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
 
     private fun handleFolderAction(confirmation: HomeData.FolderActionConfirmation?) {
         val nonNull = confirmation ?: return
-        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.DELETE) {
-            return maybeShowConfirmPasswordToDeleteFolder(nonNull)
-        }
-
-        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.OPEN) {
-            return maybeShowConfirmPasswordToOpenFolder(nonNull)
-        }
-
-        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.RENAME) {
-            return maybeShowConfirmPasswordToRenameFolder(nonNull)
-        }
-
-        if (nonNull.folderActionType == HomeData.FolderActionConfirmation.FolderActionType.DETAIL) {
-            return maybeShowConfirmPasswordToViewDetailFolder(nonNull)
+        return when (nonNull.folderActionType) {
+            HomeData.FolderActionConfirmation.FolderActionType.DELETE -> maybeShowConfirmPasswordToDeleteFolder(
+                nonNull
+            )
+            HomeData.FolderActionConfirmation.FolderActionType.OPEN -> maybeShowConfirmPasswordToOpenFolder(
+                nonNull
+            )
+            HomeData.FolderActionConfirmation.FolderActionType.RENAME -> maybeShowConfirmPasswordToRenameFolder(
+                nonNull
+            )
+            HomeData.FolderActionConfirmation.FolderActionType.DETAIL -> maybeShowConfirmPasswordToViewDetailFolder(
+                nonNull
+            )
         }
     }
 
