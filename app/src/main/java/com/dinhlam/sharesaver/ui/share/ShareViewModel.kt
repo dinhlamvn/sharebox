@@ -23,7 +23,7 @@ class ShareViewModel @Inject constructor(
     private val appSharePref: AppSharePref,
 ) : BaseViewModel<ShareData>(ShareData()) {
 
-    fun setShareInfo(shareInfo: ShareData.ShareInfo) = execute {
+    fun setShareInfo(shareInfo: ShareData.ShareInfo) = executeJob {
         val folders = folderRepository.getAll()
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
         val folderId = when {
@@ -43,16 +43,16 @@ class ShareViewModel @Inject constructor(
         setData { copy(selectedFolder = folder) }
     }
 
-    fun saveShare(note: String, context: Context) = executeWithData { data ->
-        val folderId: String = data.selectedFolder?.id ?: return@executeWithData
+    fun saveShare(note: String, context: Context) = execute { data ->
+        val folderId: String = data.selectedFolder?.id ?: return@execute
         if (data.shareInfo is ShareData.ShareInfo.ShareWebLink) {
-            return@executeWithData saveWebLink(folderId, note, data.shareInfo)
+            return@execute saveWebLink(folderId, note, data.shareInfo)
         }
         if (data.shareInfo is ShareData.ShareInfo.ShareText) {
-            return@executeWithData saveShareText(folderId, note, data.shareInfo)
+            return@execute saveShareText(folderId, note, data.shareInfo)
         }
         if (data.shareInfo is ShareData.ShareInfo.ShareImage) {
-            return@executeWithData saveShareImage(context, folderId, note, data.shareInfo)
+            return@execute saveShareImage(context, folderId, note, data.shareInfo)
         }
     }
 
@@ -103,7 +103,7 @@ class ShareViewModel @Inject constructor(
         setData { copy(isSaveSuccess = true) }
     }
 
-    fun setSelectedFolderAfterCreate(folderId: String) = execute {
+    fun setSelectedFolderAfterCreate(folderId: String) = executeJob {
         val folders = folderRepository.getAll()
         val folder = folders.firstOrNull { it.id == folderId }
         setData { copy(folders = folders, selectedFolder = folder) }

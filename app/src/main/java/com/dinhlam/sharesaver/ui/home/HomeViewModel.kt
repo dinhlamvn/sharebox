@@ -17,15 +17,15 @@ class HomeViewModel @Inject constructor(
         loadFolders()
     }
 
-    private fun loadFolders() = execute {
+    private fun loadFolders() = executeJob {
         val folders = folderRepository.getAll()
         setData { copy(folders = folders, isRefreshing = false) }
     }
 
 
-    private fun loadShareData() = executeWithData { data ->
+    private fun loadShareData() = execute { data ->
         if (data.selectedFolder == null) {
-            return@executeWithData setData { copy(isRefreshing = false) }
+            return@execute setData { copy(isRefreshing = false) }
         }
         val list = shareRepository.getByFolder(data.selectedFolder.id)
         setData { copy(shareList = list, isRefreshing = false) }
@@ -39,8 +39,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onFolderClick(position: Int) = executeWithData { data ->
-        val folder = data.folders.getOrNull(position) ?: return@executeWithData
+    fun onFolderClick(position: Int) = execute { data ->
+        val folder = data.folders.getOrNull(position) ?: return@execute
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(
@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
 
     fun deleteFolder(folder: Folder) {
         setData { copy(showProgress = true, folderActionConfirmation = null) }
-        execute(onError = {
+        executeJob(onError = {
             setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
         }) {
             val deleted = folderRepository.delete(folder)
@@ -91,7 +91,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForDelete(folder: Folder) = execute {
+    fun processFolderForDelete(folder: Folder) = executeJob {
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(
@@ -102,7 +102,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForRename(folder: Folder) = execute {
+    fun processFolderForRename(folder: Folder) = executeJob {
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(
@@ -113,7 +113,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForDetail(folder: Folder) = execute {
+    fun processFolderForDetail(folder: Folder) = executeJob {
         val shareCount = shareRepository.countByFolder(folder.id)
         setData {
             copy(

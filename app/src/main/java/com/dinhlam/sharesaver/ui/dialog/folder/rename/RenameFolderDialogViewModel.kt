@@ -11,18 +11,18 @@ class RenameFolderDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
 ) : BaseViewModel<RenameFolderDialogData>(RenameFolderDialogData()) {
 
-    fun loadFolderData(folderId: String) = execute {
+    fun loadFolderData(folderId: String) = executeJob {
         val folder = folderRepository.get(folderId)
         setData { copy(folder = folder) }
     }
 
-    fun confirmName(newName: String) = executeWithData { data ->
+    fun confirmName(newName: String) = execute { data ->
         if (newName.isBlank()) {
-            return@executeWithData setData { copy(error = R.string.error_require_folder_name) }
+            return@execute setData { copy(error = R.string.error_require_folder_name) }
         }
-        val folder = data.folder ?: return@executeWithData
+        val folder = data.folder ?: return@execute
         if (newName == folder.name) {
-            return@executeWithData setData { copy(isIgnoreRename = true) }
+            return@execute setData { copy(isIgnoreRename = true) }
         }
         val newFolder = folder.copy(name = newName)
         val updated = folderRepository.update(newFolder)

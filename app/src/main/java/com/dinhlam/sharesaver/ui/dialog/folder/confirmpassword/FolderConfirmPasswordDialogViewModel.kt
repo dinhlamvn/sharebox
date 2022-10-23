@@ -12,7 +12,7 @@ class FolderConfirmPasswordDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
 ) : BaseViewModel<FolderConfirmPasswordDialogData>(FolderConfirmPasswordDialogData()) {
 
-    fun loadFolderData(folderId: String) = execute {
+    fun loadFolderData(folderId: String) = executeJob {
         val folder = folderRepository.get(folderId)
         setData { copy(folder = folder) }
     }

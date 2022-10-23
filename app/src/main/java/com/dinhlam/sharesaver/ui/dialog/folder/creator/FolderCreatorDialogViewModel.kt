@@ -29,7 +29,7 @@ class FolderCreatorDialogViewModel @Inject constructor(
             password = folderPassword?.md5(),
             passwordAlias = folderPasswordAlias
         )
-        execute(onError = {
+        executeJob(onError = {
             setData { copy(toastRes = R.string.error_create_folder_try_again) }
         }) {
             folderRepository.insert(folder)

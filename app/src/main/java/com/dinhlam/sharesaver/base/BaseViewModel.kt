@@ -92,7 +92,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         return data.value!!.let(block)
     }
 
-    protected fun executeWithData(
+    protected fun execute(
         onError: ((Throwable) -> Unit)? = null,
         block: suspend (T) -> Unit,
     ) = viewModelScope.launch(Dispatchers.Main) {
@@ -106,7 +106,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         }
     }
 
-    protected fun execute(
+    protected fun executeJob(
         onError: ((Throwable) -> Unit)? = null,
         block: suspend CoroutineScope.() -> Unit,
     ) = viewModelScope.launch(Dispatchers.IO) {

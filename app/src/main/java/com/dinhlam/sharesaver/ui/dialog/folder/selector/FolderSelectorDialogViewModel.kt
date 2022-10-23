@@ -20,7 +20,7 @@ class FolderSelectorDialogViewModel @Inject constructor(
     }
 
     init {
-        execute {
+        executeJob {
             val folders = folderRepository.getAll()
             setData { copy(folders = folders, isFirstLoad = false) }
         }
