@@ -130,14 +130,14 @@ class ShareActivity :
             else -> handleSendNoThing()
         }
 
-        viewModel.consumeOnChange(ShareData::isSaveSuccess) { isSaveSuccess ->
+        viewModel.consumeOnChange(this, ShareData::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
                 Toast.makeText(this, R.string.save_share_successfully, Toast.LENGTH_SHORT).show()
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(ShareData::selectedFolder) { folder ->
+        viewModel.consumeOnChange(this, ShareData::selectedFolder) { folder ->
             folder?.id?.let { folderId ->
                 viewModel.saveLastSelectedFolder(folderId)
             }

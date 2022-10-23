@@ -42,7 +42,7 @@ class FolderConfirmPasswordDialogFragment :
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
 
-        viewModel.consumeOnChange(FolderConfirmPasswordDialogData::folder) { folder ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogData::folder) { folder ->
             val nonNull = folder ?: return@consumeOnChange
             nonNull.passwordAlias.takeIfNotNullOrBlank()?.let { alias ->
                 viewBinding.textPasswordAlias.visibility = View.VISIBLE
@@ -55,7 +55,7 @@ class FolderConfirmPasswordDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(FolderConfirmPasswordDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogData::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textLayoutFolderPassword.error = getString(errorRes)
             } else {
@@ -63,7 +63,7 @@ class FolderConfirmPasswordDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(FolderConfirmPasswordDialogData::verifyPasswordSuccess) { isPasswordVerified ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogData::verifyPasswordSuccess) { isPasswordVerified ->
             if (isPasswordVerified) {
                 dismiss()
                 getCallback()?.onPasswordVerified(viewBinding.checkboxSavePassword.isChecked)

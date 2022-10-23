@@ -126,14 +126,14 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityMain
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consumeOnChange(HomeData::toastRes) { toastRes ->
+        viewModel.consumeOnChange(this, HomeData::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()
             }
         }
 
-        viewModel.consumeOnChange(HomeData::folderActionConfirmation, ::handleFolderAction)
+        viewModel.consumeOnChange(this, HomeData::folderActionConfirmation, ::handleFolderAction)
     }
 
     override fun onDataChanged(data: HomeData) {

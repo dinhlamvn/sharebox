@@ -33,8 +33,8 @@ class FolderDetailDialogFragment :
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
-        viewModel.consumeOnChange(FolderDetailDialogData::folder, ::onRenderFolderDetail)
-        viewModel.consume(FolderDetailDialogData::shareCount, ::onShareCountChange)
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderDetailDialogData::folder, ::onRenderFolderDetail)
+        viewModel.consume(viewLifecycleOwner, FolderDetailDialogData::shareCount, ::onShareCountChange)
 
         viewBinding.buttonClose.setOnClickListener { dismiss() }
     }

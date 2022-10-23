@@ -39,12 +39,12 @@ class RenameFolderDialogFragment :
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
 
-        viewModel.consumeOnChange(RenameFolderDialogData::folder) { folder ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::folder) { folder ->
             val nonNull = folder ?: return@consumeOnChange
             viewBinding.textInputFolderName.setText(nonNull.name)
         }
 
-        viewModel.consumeOnChange(RenameFolderDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textInputFolderName.error = getString(errorRes)
             } else {
@@ -52,14 +52,14 @@ class RenameFolderDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(RenameFolderDialogData::renameFolderSuccess) { isRenameFolderSuccess ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::renameFolderSuccess) { isRenameFolderSuccess ->
             if (isRenameFolderSuccess) {
                 dismiss()
                 getCallback()?.onRenameSuccess()
             }
         }
 
-        viewModel.consumeOnChange(RenameFolderDialogData::isIgnoreRename) { isIgnoreRename ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::isIgnoreRename) { isIgnoreRename ->
             if (isIgnoreRename) {
                 dismiss()
             }

@@ -36,7 +36,7 @@ class FolderCreatorDialogFragment :
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
-        viewModel.consumeOnChange(FolderCreatorDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogData::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textLayoutFolderName.error = getString(errorRes)
             } else {
@@ -44,14 +44,14 @@ class FolderCreatorDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(FolderCreatorDialogData::folderIdInserted) { folderId ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogData::folderIdInserted) { folderId ->
             folderId?.let {
                 getCallback()?.onFolderCreated(it)
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(FolderCreatorDialogData::toastRes) { toastRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogData::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()

@@ -2,7 +2,9 @@ package com.dinhlam.sharesaver.base
 
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharesaver.extensions.cast
@@ -24,7 +26,9 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
     private val setDataQueue: Queue<T.() -> T> = ConcurrentLinkedQueue()
 
     private data class Consumer(
-        val consumeField: String, val block: (Any?) -> Unit, val notifyOnChanged: Boolean = false
+        val consumeField: String,
+        val anyLiveData: MutableLiveData<Any?>,
+        val notifyOnChanged: Boolean = false
     )
 
     private val consumers = mutableSetOf<Consumer>()
@@ -59,18 +63,18 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         if (before == null) {
             return@launch
         }
-        consumers.forEach { consumer ->
-            val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
-            beforeField.isAccessible = true
-            val beforeValue = beforeField.get(before)
-            val afterField = newBaseData::class.java.getDeclaredField(consumer.consumeField)
-            afterField.isAccessible = true
-            val afterValue = afterField.get(newBaseData)
-            viewModelScope.launch(Dispatchers.Main) {
+        withContext(Dispatchers.IO) {
+            consumers.forEach { consumer ->
+                val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
+                beforeField.isAccessible = true
+                val beforeValue = beforeField.get(before)
+                val afterField = newBaseData::class.java.getDeclaredField(consumer.consumeField)
+                afterField.isAccessible = true
+                val afterValue = afterField.get(newBaseData)
                 if (consumer.notifyOnChanged && beforeValue !== afterValue) {
-                    consumer.block.invoke(afterValue)
+                    consumer.anyLiveData.postValue(afterValue)
                 } else if (!consumer.notifyOnChanged) {
-                    consumer.block.invoke(afterValue)
+                    consumer.anyLiveData.postValue(afterValue)
                 }
             }
         }
@@ -113,12 +117,20 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         }
     }
 
-    fun <T> consume(property: KProperty<T>, block: (T) -> Unit) {
-        consumers.add(Consumer(property.name, block.cast()!!))
+    fun <T> consume(lifecycleOwner: LifecycleOwner, property: KProperty<T>, block: (T) -> Unit) {
+        val liveData = OneTimeLiveData<T>()
+        liveData.observe(lifecycleOwner, block)
+        consumers.add(Consumer(property.name, liveData.cast()!!))
     }
 
-    fun <T> consumeOnChange(property: KProperty<T>, block: (T) -> Unit) {
-        consumers.add(Consumer(property.name, block.cast()!!, true))
+    fun <T> consumeOnChange(
+        lifecycleOwner: LifecycleOwner,
+        property: KProperty<T>,
+        block: (T) -> Unit
+    ) {
+        val liveData = OneTimeLiveData<T>()
+        liveData.observe(lifecycleOwner, block)
+        consumers.add(Consumer(property.name, liveData.cast()!!, true))
     }
 
     fun onClearConsumers() {
