@@ -77,14 +77,14 @@ class FolderSelectorDialogFragment :
         }
         viewBinding.recyclerView.setupWith(folderAdapter, modelViewsFactory)
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderSelectorDialogState::selectedFolder) {
-            val folderId = it?.id ?: return@consumeOnChange
+        viewModel.consume(viewLifecycleOwner, FolderSelectorDialogState::selectedFolder) {
+            val folderId = it?.id ?: return@consume
             getCallback()?.onFolderSelected(folderId)?.also {
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(
+        viewModel.consume(
             viewLifecycleOwner,
             FolderSelectorDialogState::requestCreateFolder
         ) { isCreateNewFolder ->

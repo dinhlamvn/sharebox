@@ -18,10 +18,10 @@ class ShareListModelViewsFactory constructor(
     private val gson: Gson
 ) : BaseListAdapter.ModelViewsFactory() {
 
-    override fun buildModelViews() = activity.withData(viewModel) { data ->
+    override fun buildModelViews() = activity.withState(viewModel) { data ->
         if (data.isRefreshing) {
             LoadingModelView.addTo(this)
-            return@withData
+            return@withState
         }
 
         val map = data.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }

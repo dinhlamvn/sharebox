@@ -33,12 +33,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private val consumers = mutableSetOf<Consumer>()
 
-    private val _state = OneTimeLiveData<T>()
+    private val _state = OneTimeLiveData(initState)
     val state: LiveData<T> = _state
-
-    init {
-        setState { initState }
-    }
 
     protected fun setState(block: T.() -> T) {
         setStateQueue.add(block)
@@ -112,20 +108,15 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    fun <T> consume(lifecycleOwner: LifecycleOwner, property: KProperty<T>, block: (T) -> Unit) {
-        val liveData = OneTimeLiveData<T>()
-        liveData.observe(lifecycleOwner, block)
-        consumers.add(Consumer(property.name, liveData.cast()!!))
-    }
-
-    fun <T> consumeOnChange(
+    fun <T> consume(
         lifecycleOwner: LifecycleOwner,
         property: KProperty<T>,
+        notifyOnChanged: Boolean = true,
         block: (T) -> Unit
     ) {
-        val liveData = OneTimeLiveData<T>()
+        val liveData = OneTimeLiveData<T>(null)
         liveData.observe(lifecycleOwner, block)
-        consumers.add(Consumer(property.name, liveData.cast()!!, true))
+        consumers.add(Consumer(property.name, liveData.cast()!!, notifyOnChanged))
     }
 
     fun onClearConsumers() {

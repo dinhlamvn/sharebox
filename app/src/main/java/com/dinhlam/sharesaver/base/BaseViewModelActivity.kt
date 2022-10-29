@@ -10,7 +10,7 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
 
     abstract fun onDataChanged(data: T)
 
-    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
+    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

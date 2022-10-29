@@ -130,14 +130,14 @@ class ShareActivity :
             else -> handleSendNoThing()
         }
 
-        viewModel.consumeOnChange(this, ShareState::isSaveSuccess) { isSaveSuccess ->
+        viewModel.consume(this, ShareState::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
                 Toast.makeText(this, R.string.save_share_successfully, Toast.LENGTH_SHORT).show()
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(this, ShareState::selectedFolder) { folder ->
+        viewModel.consume(this, ShareState::selectedFolder) { folder ->
             folder?.id?.let { folderId ->
                 viewModel.saveLastSelectedFolder(folderId)
             }
@@ -190,7 +190,7 @@ class ShareActivity :
         behavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
-    private fun showFloatingPopupFolderPicker(view: View) = withData(viewModel) { data ->
+    private fun showFloatingPopupFolderPicker(view: View) = withState(viewModel) { data ->
         val width = 150.dp(this)
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this)

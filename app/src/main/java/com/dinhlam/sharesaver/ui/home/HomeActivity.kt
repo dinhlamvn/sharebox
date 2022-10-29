@@ -81,16 +81,16 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consumeOnChange(this, HomeState::toastRes) { toastRes ->
+        viewModel.consume(this, HomeState::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()
             }
         }
 
-        viewModel.consumeOnChange(this, HomeState::folderActionConfirmation, ::handleFolderAction)
+        viewModel.consume(this, HomeState::folderActionConfirmation, true, ::handleFolderAction)
 
-        viewModel.consumeOnChange(this, HomeState::folderToOpen) { folderToOpen ->
+        viewModel.consume(this, HomeState::folderToOpen) { folderToOpen ->
             folderToOpen?.let {
                 viewModel.clearOpenFolder()
                 openFolder(it)
@@ -135,7 +135,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun onFolderLongClick(clickedView: View, position: Int) {
         val folder =
-            withData(viewModel) { homeData -> homeData.folders.getOrNull(position) } ?: return
+            withState(viewModel) { homeData -> homeData.folders.getOrNull(position) } ?: return
         val width = 150.dp(this)
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this)
@@ -269,9 +269,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
     }
 
-    private fun showConfirmPasswordDialog(id: String) = withData(viewModel) { data ->
+    private fun showConfirmPasswordDialog(id: String) = withState(viewModel) { data ->
         if (data.folderPasswordConfirmRemind.contains(id)) {
-            return@withData onPasswordVerified(false)
+            return@withState onPasswordVerified(false)
         }
         BaseDialogFragment.showDialog(
             FolderConfirmPasswordDialogFragment::class, supportFragmentManager
@@ -284,7 +284,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onPasswordVerified(isRemindPassword: Boolean) {
         val actionType =
-            withData(viewModel) { data -> data.folderActionConfirmation?.folderActionType }
+            withState(viewModel) { data -> data.folderActionConfirmation?.folderActionType }
                 ?: return viewModel.clearFolderActionConfirmation()
         when (actionType) {
             HomeState.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified(

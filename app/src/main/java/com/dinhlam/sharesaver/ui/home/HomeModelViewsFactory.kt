@@ -11,10 +11,10 @@ class HomeModelViewsFactory(
     private val gson: Gson
 ) : BaseListAdapter.ModelViewsFactory() {
 
-    override fun buildModelViews() = homeActivity.withData(viewModel) { data ->
+    override fun buildModelViews() = homeActivity.withState(viewModel) { data ->
         if (data.isRefreshing) {
             LoadingModelView.addTo(this)
-            return@withData
+            return@withState
         }
         data.folders.map { folder ->
             FolderListModelView(
