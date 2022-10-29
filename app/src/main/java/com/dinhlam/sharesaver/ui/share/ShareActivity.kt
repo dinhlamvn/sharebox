@@ -41,7 +41,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareActivity :
-    BaseViewModelActivity<ShareData, ShareViewModel, ActivityShareReceiveBinding>(),
+    BaseViewModelActivity<ShareState, ShareViewModel, ActivityShareReceiveBinding>(),
     FolderSelectorDialogFragment.OnFolderSelectorCallback,
     FolderCreatorDialogFragment.OnFolderCreatorCallback {
 
@@ -98,7 +98,7 @@ class ShareActivity :
         }
     }
 
-    override fun onDataChanged(data: ShareData) {
+    override fun onDataChanged(data: ShareState) {
         modelViewsFactory.requestBuildModelViews()
         viewBinding.textViewFolder.text = data.selectedFolder?.name
     }
@@ -130,14 +130,14 @@ class ShareActivity :
             else -> handleSendNoThing()
         }
 
-        viewModel.consumeOnChange(this, ShareData::isSaveSuccess) { isSaveSuccess ->
+        viewModel.consumeOnChange(this, ShareState::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
                 Toast.makeText(this, R.string.save_share_successfully, Toast.LENGTH_SHORT).show()
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(this, ShareData::selectedFolder) { folder ->
+        viewModel.consumeOnChange(this, ShareState::selectedFolder) { folder ->
             folder?.id?.let { folderId ->
                 viewModel.saveLastSelectedFolder(folderId)
             }
@@ -153,14 +153,14 @@ class ShareActivity :
     }
 
     private fun handleSendNoThing() {
-        viewModel.setShareInfo(ShareData.ShareInfo.None)
+        viewModel.setShareInfo(ShareState.ShareInfo.None)
     }
 
     private fun handleSendText(intent: Intent) {
         val shareContent = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
         val shareInfo = when {
-            shareContent.isWebLink() -> ShareData.ShareInfo.ShareWebLink(shareContent)
-            else -> ShareData.ShareInfo.ShareText(shareContent)
+            shareContent.isWebLink() -> ShareState.ShareInfo.ShareWebLink(shareContent)
+            else -> ShareState.ShareInfo.ShareText(shareContent)
         }
         viewModel.setShareInfo(shareInfo)
     }
@@ -168,14 +168,14 @@ class ShareActivity :
     private fun handleSendImage(intent: Intent) {
         intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM).cast<Uri>()
             ?.let { shareUri ->
-                viewModel.setShareInfo(ShareData.ShareInfo.ShareImage(shareUri))
+                viewModel.setShareInfo(ShareState.ShareInfo.ShareImage(shareUri))
             }
     }
 
     private fun handleSendMultipleImage(intent: Intent) {
         intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
             val data = list.mapNotNull { it.cast<Uri>() }
-            viewModel.setShareInfo(ShareData.ShareInfo.ShareMultipleImage(data))
+            viewModel.setShareInfo(ShareState.ShareInfo.ShareMultipleImage(data))
         }
     }
 

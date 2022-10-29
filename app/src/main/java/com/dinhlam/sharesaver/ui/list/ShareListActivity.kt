@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareListActivity :
-    BaseViewModelActivity<ShareListData, ShareListViewModel, ActivityShareListBinding>() {
+    BaseViewModelActivity<ShareListState, ShareListViewModel, ActivityShareListBinding>() {
 
     private val modelViewsFactory by lazy { ShareListModelViewsFactory(this, viewModel, gson) }
 
@@ -93,7 +93,7 @@ class ShareListActivity :
         }
     }
 
-    override fun onDataChanged(data: ShareListData) {
+    override fun onDataChanged(data: ShareListState) {
         modelViewsFactory.requestBuildModelViews()
         supportActionBar?.title = data.title
     }

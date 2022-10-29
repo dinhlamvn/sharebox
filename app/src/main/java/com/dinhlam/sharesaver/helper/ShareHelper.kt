@@ -8,7 +8,7 @@ import android.os.Build
 import com.dinhlam.sharesaver.BuildConfig
 import com.dinhlam.sharesaver.database.entity.Share
 import com.dinhlam.sharesaver.ui.share.ShareActivity
-import com.dinhlam.sharesaver.ui.share.ShareData
+import com.dinhlam.sharesaver.ui.share.ShareState
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -23,19 +23,19 @@ class ShareHelper @Inject constructor(
         when (share.shareType) {
             "web-link" -> {
                 val shareData =
-                    gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareWebLink::class.java)
+                    gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java)
                 intent.putExtra(Intent.EXTRA_TEXT, shareData.url)
                 intent.type = "text/*"
             }
             "text" -> {
                 val shareData =
-                    gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareText::class.java)
+                    gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareText::class.java)
                 intent.putExtra(Intent.EXTRA_TEXT, shareData.text)
                 intent.type = "text/*"
             }
             "image" -> {
                 val shareData =
-                    gson.fromJson(share.shareInfo, ShareData.ShareInfo.ShareImage::class.java)
+                    gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareImage::class.java)
                 intent.putExtra(Intent.EXTRA_STREAM, shareData.uri)
                 intent.setDataAndType(shareData.uri, "image/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION

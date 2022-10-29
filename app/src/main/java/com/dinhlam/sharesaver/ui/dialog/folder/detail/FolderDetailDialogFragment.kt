@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FolderDetailDialogFragment :
-    BaseViewModelDialogFragment<FolderDetailDialogData, FolderDetailDialogViewModel, DialogFolderDetailBinding>() {
+    BaseViewModelDialogFragment<FolderDetailDialogState, FolderDetailDialogViewModel, DialogFolderDetailBinding>() {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -26,15 +26,15 @@ class FolderDetailDialogFragment :
 
     override val viewModel: FolderDetailDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderDetailDialogData) {
+    override fun onDataChanged(data: FolderDetailDialogState) {
 
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderDetailDialogData::folder, ::onRenderFolderDetail)
-        viewModel.consume(viewLifecycleOwner, FolderDetailDialogData::shareCount, ::onShareCountChange)
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderDetailDialogState::folder, ::onRenderFolderDetail)
+        viewModel.consume(viewLifecycleOwner, FolderDetailDialogState::shareCount, ::onShareCountChange)
 
         viewBinding.buttonClose.setOnClickListener { dismiss() }
     }

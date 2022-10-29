@@ -10,30 +10,30 @@ import javax.inject.Inject
 @HiltViewModel
 class FolderConfirmPasswordDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
-) : BaseViewModel<FolderConfirmPasswordDialogData>(FolderConfirmPasswordDialogData()) {
+) : BaseViewModel<FolderConfirmPasswordDialogState>(FolderConfirmPasswordDialogState()) {
 
     fun loadFolderData(folderId: String) = executeJob {
         val folder = folderRepository.get(folderId)
-        setData { copy(folder = folder) }
+        setState { copy(folder = folder) }
     }
 
-    fun confirmPassword(password: String) = runWithData { data ->
+    fun confirmPassword(password: String) = withState { data ->
         if (password.isBlank()) {
-            return@runWithData setData { copy(error = R.string.error_require_password) }
+            return@withState setState { copy(error = R.string.error_require_password) }
         }
-        val folder = data.folder ?: return@runWithData
+        val folder = data.folder ?: return@withState
         val folderPassword = folder.password
         val inputPassword = password.md5()
         if (folderPassword != inputPassword) {
-            setData { copy(error = R.string.password_incorrect) }
+            setState { copy(error = R.string.password_incorrect) }
         } else {
-            setData { copy(verifyPasswordSuccess = true) }
+            setState { copy(verifyPasswordSuccess = true) }
         }
     }
 
-    fun clearError() = runWithData { data ->
+    fun clearError() = withState { data ->
         if (data.error != 0) {
-            setData { copy(error = 0) }
+            setState { copy(error = 0) }
         }
     }
 }

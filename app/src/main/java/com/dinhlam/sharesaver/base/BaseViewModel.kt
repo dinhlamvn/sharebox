@@ -17,13 +17,13 @@ import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.KProperty
 
-abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewModel() {
+abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewModel() {
 
-    interface BaseData
+    interface BaseState
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private val setDataQueue: Queue<T.() -> T> = ConcurrentLinkedQueue()
+    private val setStateQueue: Queue<T.() -> T> = ConcurrentLinkedQueue()
 
     private data class Consumer(
         val consumeField: String,
@@ -33,33 +33,33 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
 
     private val consumers = mutableSetOf<Consumer>()
 
-    private val _data = OneTimeLiveData<T>()
-    val data: LiveData<T> = _data
+    private val _state = OneTimeLiveData<T>()
+    val state: LiveData<T> = _state
 
     init {
-        _data.setValue(initData)
+        setState { initState }
     }
 
-    protected fun setData(block: T.() -> T) {
-        setDataQueue.add(block)
-        flushSetDataQueue()
+    protected fun setState(block: T.() -> T) {
+        setStateQueue.add(block)
+        flushSetStateQueue()
     }
 
-    private fun flushSetDataQueue() {
-        val block = setDataQueue.poll() ?: return
-        setDataInternal(block)
+    private fun flushSetStateQueue() {
+        val block = setStateQueue.poll() ?: return
+        setStateInternal(block)
     }
 
-    private fun flushAllSetDataQueue() {
-        while (!setDataQueue.isEmpty()) {
-            flushSetDataQueue()
+    private fun flushAllSetStateQueue() {
+        while (!setStateQueue.isEmpty()) {
+            flushSetStateQueue()
         }
     }
 
-    private fun setDataInternal(block: T.() -> T) = viewModelScope.launch(Dispatchers.Main) {
-        val before = data.value
-        val newBaseData = data.value?.let(block) ?: return@launch
-        _data.setValue(newBaseData)
+    private fun setStateInternal(block: T.() -> T) = viewModelScope.launch(Dispatchers.Main) {
+        val before = state.value
+        val newBaseData = state.value?.let(block) ?: return@launch
+        _state.setValue(newBaseData)
         if (before == null) {
             return@launch
         }
@@ -80,26 +80,21 @@ abstract class BaseViewModel<T : BaseViewModel.BaseData>(initData: T) : ViewMode
         }
     }
 
-    protected fun runWithData(block: (T) -> Unit) {
+    protected fun withState(block: (T) -> Unit) {
         viewModelScope.launch(Dispatchers.Main) {
-            flushAllSetDataQueue()
-            data.value?.let(block)
+            flushAllSetStateQueue()
+            state.value?.let(block)
         }
-    }
-
-    protected fun <R> withData(block: (T) -> R): R {
-        flushAllSetDataQueue()
-        return data.value!!.let(block)
     }
 
     protected fun execute(
         onError: ((Throwable) -> Unit)? = null,
         block: suspend (T) -> Unit,
     ) = viewModelScope.launch(Dispatchers.Main) {
-        flushAllSetDataQueue()
+        flushAllSetStateQueue()
         withContext(Dispatchers.IO) {
             try {
-                block.invoke(data.value!!)
+                block.invoke(state.value!!)
             } catch (e: Exception) {
                 onError?.invoke(e)
             }

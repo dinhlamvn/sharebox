@@ -10,17 +10,17 @@ import javax.inject.Inject
 class ShareListViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
     private val shareRepository: ShareRepository
-) : BaseViewModel<ShareListData>(ShareListData()) {
+) : BaseViewModel<ShareListState>(ShareListState()) {
 
     fun setFolderId(folderId: String) = executeJob {
         val folder = folderRepository.get(folderId)
-        setData { copy(folderId = folder.id, title = folder.name) }
+        setState { copy(folderId = folder.id, title = folder.name) }
         loadShareList()
     }
 
     fun loadShareList() = execute { data ->
-        val folderId = data.folderId ?: return@execute setData { copy(isRefreshing = false) }
+        val folderId = data.folderId ?: return@execute setState { copy(isRefreshing = false) }
         val list = shareRepository.getByFolder(folderId)
-        setData { copy(shareList = list, isRefreshing = false) }
+        setState { copy(shareList = list, isRefreshing = false) }
     }
 }

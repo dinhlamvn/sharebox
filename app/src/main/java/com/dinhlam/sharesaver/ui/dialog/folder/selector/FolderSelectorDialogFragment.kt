@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FolderSelectorDialogFragment :
-    BaseViewModelDialogFragment<FolderSelectorDialogData, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
+    BaseViewModelDialogFragment<FolderSelectorDialogState, FolderSelectorDialogViewModel, DialogFolderSelectorBinding>() {
 
     interface OnFolderSelectorCallback {
         fun onFolderSelected(folderId: String)
@@ -64,7 +64,7 @@ class FolderSelectorDialogFragment :
 
     override val viewModel: FolderSelectorDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderSelectorDialogData) {
+    override fun onDataChanged(data: FolderSelectorDialogState) {
         if (data.selectedFolder != null || data.requestCreateFolder) {
             return
         }
@@ -77,7 +77,7 @@ class FolderSelectorDialogFragment :
         }
         viewBinding.recyclerView.setupWith(folderAdapter, modelViewsFactory)
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderSelectorDialogData::selectedFolder) {
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderSelectorDialogState::selectedFolder) {
             val folderId = it?.id ?: return@consumeOnChange
             getCallback()?.onFolderSelected(folderId)?.also {
                 dismiss()
@@ -86,7 +86,7 @@ class FolderSelectorDialogFragment :
 
         viewModel.consumeOnChange(
             viewLifecycleOwner,
-            FolderSelectorDialogData::requestCreateFolder
+            FolderSelectorDialogState::requestCreateFolder
         ) { isCreateNewFolder ->
             if (isCreateNewFolder) {
                 getCallback()?.onCreateNewFolder()?.also {

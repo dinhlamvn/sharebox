@@ -21,43 +21,43 @@ class ShareViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val gson: Gson,
     private val appSharePref: AppSharePref,
-) : BaseViewModel<ShareData>(ShareData()) {
+) : BaseViewModel<ShareState>(ShareState()) {
 
-    fun setShareInfo(shareInfo: ShareData.ShareInfo) = executeJob {
+    fun setShareInfo(shareInfo: ShareState.ShareInfo) = executeJob {
         val folders = folderRepository.getAll()
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
         val folderId = when {
             historySelectedFolder.isNotBlank() -> historySelectedFolder
-            shareInfo is ShareData.ShareInfo.ShareText -> "folder_text"
-            shareInfo is ShareData.ShareInfo.ShareWebLink -> "folder_web"
-            shareInfo is ShareData.ShareInfo.ShareImage -> "folder_image"
+            shareInfo is ShareState.ShareInfo.ShareText -> "folder_text"
+            shareInfo is ShareState.ShareInfo.ShareWebLink -> "folder_web"
+            shareInfo is ShareState.ShareInfo.ShareImage -> "folder_image"
             else -> "folder_home"
         }
-        setData { copy(folders = folders, shareInfo = shareInfo) }
+        setState { copy(folders = folders, shareInfo = shareInfo) }
         setSelectedFolder(folderId)
     }
 
-    fun setSelectedFolder(folderId: String) = runWithData { data ->
+    fun setSelectedFolder(folderId: String) = withState { data ->
         val folder = data.folders.firstOrNull { it.id == folderId }
             ?: data.folders.sortedByDescending { it.createdAt }.getOrNull(0)
-        setData { copy(selectedFolder = folder) }
+        setState { copy(selectedFolder = folder) }
     }
 
     fun saveShare(note: String, context: Context) = execute { data ->
         val folderId: String = data.selectedFolder?.id ?: return@execute
-        if (data.shareInfo is ShareData.ShareInfo.ShareWebLink) {
+        if (data.shareInfo is ShareState.ShareInfo.ShareWebLink) {
             return@execute saveWebLink(folderId, note, data.shareInfo)
         }
-        if (data.shareInfo is ShareData.ShareInfo.ShareText) {
+        if (data.shareInfo is ShareState.ShareInfo.ShareText) {
             return@execute saveShareText(folderId, note, data.shareInfo)
         }
-        if (data.shareInfo is ShareData.ShareInfo.ShareImage) {
+        if (data.shareInfo is ShareState.ShareInfo.ShareImage) {
             return@execute saveShareImage(context, folderId, note, data.shareInfo)
         }
     }
 
     private fun saveWebLink(
-        folderId: String, note: String, shareWebLink: ShareData.ShareInfo.ShareWebLink
+        folderId: String, note: String, shareWebLink: ShareState.ShareInfo.ShareWebLink
     ) {
         val json = gson.toJson(shareWebLink)
         val share = Share(
@@ -67,22 +67,22 @@ class ShareViewModel @Inject constructor(
             shareNote = note
         )
         shareRepository.insert(share)
-        setData { copy(isSaveSuccess = true) }
+        setState { copy(isSaveSuccess = true) }
     }
 
     private fun saveShareText(
-        folderId: String, note: String, shareText: ShareData.ShareInfo.ShareText
+        folderId: String, note: String, shareText: ShareState.ShareInfo.ShareText
     ) {
         val json = gson.toJson(shareText)
         val share = Share(
             folderId = folderId, shareType = shareText.shareType, shareInfo = json, shareNote = note
         )
         shareRepository.insert(share)
-        setData { copy(isSaveSuccess = true) }
+        setState { copy(isSaveSuccess = true) }
     }
 
     private fun saveShareImage(
-        context: Context, folderId: String, note: String, shareImage: ShareData.ShareInfo.ShareImage
+        context: Context, folderId: String, note: String, shareImage: ShareState.ShareInfo.ShareImage
     ) {
         val bitmap = ImageLoader.get(context, shareImage.uri)
         val imagePath = context.getExternalFilesDir("share_images")!!
@@ -100,13 +100,13 @@ class ShareViewModel @Inject constructor(
         val share =
             Share(folderId = folderId, shareType = "image", shareInfo = json, shareNote = note)
         shareRepository.insert(share)
-        setData { copy(isSaveSuccess = true) }
+        setState { copy(isSaveSuccess = true) }
     }
 
     fun setSelectedFolderAfterCreate(folderId: String) = executeJob {
         val folders = folderRepository.getAll()
         val folder = folders.firstOrNull { it.id == folderId }
-        setData { copy(folders = folders, selectedFolder = folder) }
+        setState { copy(folders = folders, selectedFolder = folder) }
     }
 
     fun saveLastSelectedFolder(folderId: String) = appSharePref.setLastSelectedFolder(folderId)

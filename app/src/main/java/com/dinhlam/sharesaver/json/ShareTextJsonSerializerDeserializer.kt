@@ -1,6 +1,6 @@
 package com.dinhlam.sharesaver.json
 
-import com.dinhlam.sharesaver.ui.share.ShareData
+import com.dinhlam.sharesaver.ui.share.ShareState
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -9,10 +9,10 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
-class ShareTextJsonSerializerDeserializer : JsonSerializer<ShareData.ShareInfo.ShareText>,
-    JsonDeserializer<ShareData.ShareInfo.ShareText> {
+class ShareTextJsonSerializerDeserializer : JsonSerializer<ShareState.ShareInfo.ShareText>,
+    JsonDeserializer<ShareState.ShareInfo.ShareText> {
     override fun serialize(
-        src: ShareData.ShareInfo.ShareText,
+        src: ShareState.ShareInfo.ShareText,
         typeOfSrc: Type?,
         context: JsonSerializationContext?
     ): JsonElement {
@@ -25,7 +25,7 @@ class ShareTextJsonSerializerDeserializer : JsonSerializer<ShareData.ShareInfo.S
         json: JsonElement,
         typeOfT: Type?,
         context: JsonDeserializationContext?
-    ): ShareData.ShareInfo.ShareText {
-        return ShareData.ShareInfo.ShareText(json.asJsonObject.get("data").asString)
+    ): ShareState.ShareInfo.ShareText {
+        return ShareState.ShareInfo.ShareText(json.asJsonObject.get("data").asString)
     }
 }

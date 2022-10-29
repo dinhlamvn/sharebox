@@ -4,12 +4,12 @@ import android.net.Uri
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.entity.Folder
 
-data class ShareData(
+data class ShareState(
     val shareInfo: ShareInfo = ShareInfo.None,
     val isSaveSuccess: Boolean = false,
     val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null
-) : BaseViewModel.BaseData {
+) : BaseViewModel.BaseState {
 
     sealed class ShareInfo(val shareType: String) {
         object None : ShareInfo("none")

@@ -5,7 +5,7 @@ import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.database.entity.Share
 
-data class HomeData(
+data class HomeState(
     val showProgress: Boolean = false,
     val isRefreshing: Boolean = false,
     val shareList: List<Share> = emptyList(),
@@ -14,7 +14,7 @@ data class HomeData(
     @StringRes val toastRes: Int = 0,
     val folderActionConfirmation: FolderActionConfirmation? = null,
     val folderPasswordConfirmRemind: Set<String> = emptySet()
-) : BaseViewModel.BaseData {
+) : BaseViewModel.BaseState {
     data class FolderActionConfirmation(
         val folder: Folder,
         val shareCount: Int,

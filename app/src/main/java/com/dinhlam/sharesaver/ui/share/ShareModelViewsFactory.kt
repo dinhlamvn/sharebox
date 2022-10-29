@@ -13,10 +13,10 @@ class ShareModelViewsFactory(
 
     override fun buildModelViews() = shareShareActivity.withData(viewModel) { data ->
         when (data.shareInfo) {
-            is ShareData.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
-            is ShareData.ShareInfo.ShareWebLink -> renderShareWebLinkContent(data.shareInfo)
-            is ShareData.ShareInfo.ShareImage -> renderShareImageContent(data.shareInfo)
-            is ShareData.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(data.shareInfo)
+            is ShareState.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
+            is ShareState.ShareInfo.ShareWebLink -> renderShareWebLinkContent(data.shareInfo)
+            is ShareState.ShareInfo.ShareImage -> renderShareImageContent(data.shareInfo)
+            is ShareState.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(data.shareInfo)
             else -> renderShareContentDefault()
         }
     }
@@ -25,19 +25,19 @@ class ShareModelViewsFactory(
         ShareDefaultModelView().addTo(this)
     }
 
-    private fun renderShareWebLinkContent(shareInfo: ShareData.ShareInfo.ShareWebLink) {
+    private fun renderShareWebLinkContent(shareInfo: ShareState.ShareInfo.ShareWebLink) {
         ShareWebLinkModelView("shareText", shareInfo.url).addTo(this)
     }
 
-    private fun renderShareTextContent(shareText: ShareData.ShareInfo.ShareText) {
+    private fun renderShareTextContent(shareText: ShareState.ShareInfo.ShareText) {
         ShareTextModelView("shareText", shareText.text).addTo(this)
     }
 
-    private fun renderShareImageContent(shareImage: ShareData.ShareInfo.ShareImage) {
+    private fun renderShareImageContent(shareImage: ShareState.ShareInfo.ShareImage) {
         ShareImageModelView("shareImage", shareImage.uri).addTo(this)
     }
 
-    private fun renderShareMultipleImageContent(shareMultipleImage: ShareData.ShareInfo.ShareMultipleImage) {
+    private fun renderShareMultipleImageContent(shareMultipleImage: ShareState.ShareInfo.ShareMultipleImage) {
         shareMultipleImage.uris.mapIndexed { index, uri ->
             ShareMultipleImageModelView(
                 "shareMultipleImage$index", uri

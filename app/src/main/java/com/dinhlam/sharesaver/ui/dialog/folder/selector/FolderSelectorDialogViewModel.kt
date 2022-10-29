@@ -8,21 +8,21 @@ import javax.inject.Inject
 @HiltViewModel
 class FolderSelectorDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
-) : BaseViewModel<FolderSelectorDialogData>(FolderSelectorDialogData()) {
+) : BaseViewModel<FolderSelectorDialogState>(FolderSelectorDialogState()) {
 
-    fun onSelectedFolder(position: Int) = runWithData { data ->
-        val selectedFolder = data.folders.getOrNull(position) ?: return@runWithData
-        setData { copy(selectedFolder = selectedFolder) }
+    fun onSelectedFolder(position: Int) = withState { data ->
+        val selectedFolder = data.folders.getOrNull(position) ?: return@withState
+        setState { copy(selectedFolder = selectedFolder) }
     }
 
-    fun requestCreateNewFolder() = setData {
+    fun requestCreateNewFolder() = setState {
         copy(requestCreateFolder = true)
     }
 
     init {
         executeJob {
             val folders = folderRepository.getAll()
-            setData { copy(folders = folders, isFirstLoad = false) }
+            setState { copy(folders = folders, isFirstLoad = false) }
         }
     }
 }

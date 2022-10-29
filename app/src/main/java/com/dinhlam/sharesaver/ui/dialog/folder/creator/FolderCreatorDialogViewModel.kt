@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FolderCreatorDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
-) : BaseViewModel<FolderCreatorDialogData>(FolderCreatorDialogData()) {
+) : BaseViewModel<FolderCreatorDialogState>(FolderCreatorDialogState()) {
 
     fun createFolder(
         folderName: String,
@@ -20,7 +20,7 @@ class FolderCreatorDialogViewModel @Inject constructor(
         folderPasswordAlias: String? = null
     ) {
         if (folderName.isBlank()) {
-            return setData { copy(error = R.string.error_require_folder_name) }
+            return setState { copy(error = R.string.error_require_folder_name) }
         }
         val folder = Folder(
             id = "folder_${System.currentTimeMillis()}",
@@ -30,22 +30,22 @@ class FolderCreatorDialogViewModel @Inject constructor(
             passwordAlias = folderPasswordAlias
         )
         executeJob(onError = {
-            setData { copy(toastRes = R.string.error_create_folder_try_again) }
+            setState { copy(toastRes = R.string.error_create_folder_try_again) }
         }) {
             folderRepository.insert(folder)
-            setData { copy(folderIdInserted = folder.id) }
+            setState { copy(folderIdInserted = folder.id) }
         }
     }
 
-    fun clearError() = runWithData { data ->
+    fun clearError() = withState { data ->
         if (data.error != 0) {
-            setData { copy(error = 0) }
+            setState { copy(error = 0) }
         }
     }
 
-    fun clearToast() = runWithData { data ->
+    fun clearToast() = withState { data ->
         if (data.toastRes != 0) {
-            setData { copy(toastRes = 0) }
+            setState { copy(toastRes = 0) }
         }
     }
 }

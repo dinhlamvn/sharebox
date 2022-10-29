@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RenameFolderDialogFragment :
-    BaseViewModelDialogFragment<RenameFolderDialogData, RenameFolderDialogViewModel, DialogFolderInputRenameBinding>() {
+    BaseViewModelDialogFragment<RenameFolderDialogState, RenameFolderDialogViewModel, DialogFolderInputRenameBinding>() {
 
     interface OnConfirmRenameCallback {
         fun onRenameSuccess()
@@ -31,7 +31,7 @@ class RenameFolderDialogFragment :
 
     override val viewModel: RenameFolderDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: RenameFolderDialogData) {
+    override fun onDataChanged(data: RenameFolderDialogState) {
 
     }
 
@@ -39,12 +39,12 @@ class RenameFolderDialogFragment :
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
 
-        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::folder) { folder ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogState::folder) { folder ->
             val nonNull = folder ?: return@consumeOnChange
             viewBinding.textInputFolderName.setText(nonNull.name)
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogState::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textInputFolderName.error = getString(errorRes)
             } else {
@@ -52,14 +52,14 @@ class RenameFolderDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::renameFolderSuccess) { isRenameFolderSuccess ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogState::renameFolderSuccess) { isRenameFolderSuccess ->
             if (isRenameFolderSuccess) {
                 dismiss()
                 getCallback()?.onRenameSuccess()
             }
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogData::isIgnoreRename) { isIgnoreRename ->
+        viewModel.consumeOnChange(viewLifecycleOwner, RenameFolderDialogState::isIgnoreRename) { isIgnoreRename ->
             if (isIgnoreRename) {
                 dismiss()
             }

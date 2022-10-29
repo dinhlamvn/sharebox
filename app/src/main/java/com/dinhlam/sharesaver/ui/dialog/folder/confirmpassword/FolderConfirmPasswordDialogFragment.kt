@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FolderConfirmPasswordDialogFragment :
-    BaseViewModelDialogFragment<FolderConfirmPasswordDialogData, FolderConfirmPasswordDialogViewModel, DialogFolderConfirmPasswordBinding>() {
+    BaseViewModelDialogFragment<FolderConfirmPasswordDialogState, FolderConfirmPasswordDialogViewModel, DialogFolderConfirmPasswordBinding>() {
 
     interface OnConfirmPasswordCallback {
         fun onPasswordVerified(isRemindPassword: Boolean = false)
@@ -34,7 +34,7 @@ class FolderConfirmPasswordDialogFragment :
 
     override val viewModel: FolderConfirmPasswordDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderConfirmPasswordDialogData) {
+    override fun onDataChanged(data: FolderConfirmPasswordDialogState) {
 
     }
 
@@ -42,7 +42,7 @@ class FolderConfirmPasswordDialogFragment :
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogData::folder) { folder ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogState::folder) { folder ->
             val nonNull = folder ?: return@consumeOnChange
             nonNull.passwordAlias.takeIfNotNullOrBlank()?.let { alias ->
                 viewBinding.textPasswordAlias.visibility = View.VISIBLE
@@ -55,7 +55,7 @@ class FolderConfirmPasswordDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogState::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textLayoutFolderPassword.error = getString(errorRes)
             } else {
@@ -63,7 +63,7 @@ class FolderConfirmPasswordDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogData::verifyPasswordSuccess) { isPasswordVerified ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderConfirmPasswordDialogState::verifyPasswordSuccess) { isPasswordVerified ->
             if (isPasswordVerified) {
                 dismiss()
                 getCallback()?.onPasswordVerified(viewBinding.checkboxSavePassword.isChecked)

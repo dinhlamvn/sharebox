@@ -3,18 +3,18 @@ package com.dinhlam.sharesaver.base
 import android.os.Bundle
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseViewModelActivity<T : BaseViewModel.BaseData, VM : BaseViewModel<T>, VB : ViewBinding> :
+abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
     BaseActivity<VB>() {
 
     abstract val viewModel: VM
 
     abstract fun onDataChanged(data: T)
 
-    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.data.value!!)
+    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.data.observe(this, ::onDataChanged)
+        viewModel.state.observe(this, ::onDataChanged)
     }
 
     override fun onDestroy() {

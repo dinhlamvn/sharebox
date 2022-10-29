@@ -10,11 +10,11 @@ import javax.inject.Inject
 class FolderDetailDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
     private val shareRepository: ShareRepository
-) : BaseViewModel<FolderDetailDialogData>(FolderDetailDialogData()) {
+) : BaseViewModel<FolderDetailDialogState>(FolderDetailDialogState()) {
 
     fun loadFolderData(folderId: String) = executeJob {
         val folder = folderRepository.get(folderId)
         val shareCount = shareRepository.countByFolder(folderId)
-        setData { copy(folder = folder, shareCount = shareCount) }
+        setState { copy(folder = folder, shareCount = shareCount) }
     }
 }

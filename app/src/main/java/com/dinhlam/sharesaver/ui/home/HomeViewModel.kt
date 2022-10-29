@@ -12,7 +12,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
     private val shareRepository: ShareRepository
-) : BaseViewModel<HomeData>(HomeData()) {
+) : BaseViewModel<HomeState>(HomeState()) {
 
     init {
         loadFolders()
@@ -20,52 +20,52 @@ class HomeViewModel @Inject constructor(
 
     fun loadFolders() = executeJob {
         val folders = folderRepository.getAll()
-        setData { copy(folders = folders, isRefreshing = false) }
+        setState { copy(folders = folders, isRefreshing = false) }
     }
 
     fun onFolderClick(position: Int) = execute { data ->
         val folder = data.folders.getOrNull(position) ?: return@execute
         val shareCount = shareRepository.countByFolder(folder.id)
-        setData {
+        setState {
             copy(
-                folderActionConfirmation = HomeData.FolderActionConfirmation(
-                    folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.OPEN
+                folderActionConfirmation = HomeState.FolderActionConfirmation(
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.OPEN
                 )
             )
         }
     }
 
     private fun openFolder(folder: Folder) {
-        setData { copy(folderActionConfirmation = null, folderToOpen = folder) }
+        setState { copy(folderActionConfirmation = null, folderToOpen = folder) }
     }
 
     fun deleteFolder(folder: Folder) {
-        setData { copy(showProgress = true, folderActionConfirmation = null) }
+        setState { copy(showProgress = true, folderActionConfirmation = null) }
         executeJob(onError = {
-            setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
+            setState { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
         }) {
             val deleted = folderRepository.delete(folder)
             if (deleted) {
-                setData { copy(showProgress = false, toastRes = R.string.delete_folder_success) }
+                setState { copy(showProgress = false, toastRes = R.string.delete_folder_success) }
                 loadFolders()
             } else {
-                setData { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
+                setState { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
             }
         }
     }
 
-    fun clearToast() = runWithData { data ->
+    fun clearToast() = withState { data ->
         if (data.toastRes != 0) {
-            setData { copy(toastRes = 0) }
+            setState { copy(toastRes = 0) }
         }
     }
 
     fun processFolderForDelete(folder: Folder) = executeJob {
         val shareCount = shareRepository.countByFolder(folder.id)
-        setData {
+        setState {
             copy(
-                folderActionConfirmation = HomeData.FolderActionConfirmation(
-                    folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.DELETE
+                folderActionConfirmation = HomeState.FolderActionConfirmation(
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.DELETE
                 )
             )
         }
@@ -73,10 +73,10 @@ class HomeViewModel @Inject constructor(
 
     fun processFolderForRename(folder: Folder) = executeJob {
         val shareCount = shareRepository.countByFolder(folder.id)
-        setData {
+        setState {
             copy(
-                folderActionConfirmation = HomeData.FolderActionConfirmation(
-                    folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.RENAME
+                folderActionConfirmation = HomeState.FolderActionConfirmation(
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.RENAME
                 )
             )
         }
@@ -84,49 +84,49 @@ class HomeViewModel @Inject constructor(
 
     fun processFolderForDetail(folder: Folder) = executeJob {
         val shareCount = shareRepository.countByFolder(folder.id)
-        setData {
+        setState {
             copy(
-                folderActionConfirmation = HomeData.FolderActionConfirmation(
-                    folder, shareCount, HomeData.FolderActionConfirmation.FolderActionType.DETAIL
+                folderActionConfirmation = HomeState.FolderActionConfirmation(
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.DETAIL
                 )
             )
         }
     }
 
-    fun clearFolderActionConfirmation() = setData {
+    fun clearFolderActionConfirmation() = setState {
         copy(folderActionConfirmation = null)
     }
 
-    fun deleteFolderAfterPasswordVerified() = runWithData { data ->
+    fun deleteFolderAfterPasswordVerified() = withState { data ->
         val folder = data.folderActionConfirmation?.folder
-            ?: return@runWithData clearFolderActionConfirmation()
+            ?: return@withState clearFolderActionConfirmation()
         deleteFolder(folder)
     }
 
-    fun renameFolderAfterPasswordVerified() = withData { data ->
+    fun renameFolderAfterPasswordVerified() = withState { data ->
         val confirmation =
-            data.folderActionConfirmation ?: return@withData clearFolderActionConfirmation()
+            data.folderActionConfirmation ?: return@withState clearFolderActionConfirmation()
         val newConfirmation = confirmation.copy(ignorePassword = true)
-        setData { copy(folderActionConfirmation = newConfirmation) }
+        setState { copy(folderActionConfirmation = newConfirmation) }
     }
 
-    fun showDetailFolderAfterPasswordVerified() = withData { data ->
+    fun showDetailFolderAfterPasswordVerified() = withState { data ->
         val confirmation =
-            data.folderActionConfirmation ?: return@withData clearFolderActionConfirmation()
+            data.folderActionConfirmation ?: return@withState clearFolderActionConfirmation()
         val newConfirmation = confirmation.copy(ignorePassword = true)
-        setData { copy(folderActionConfirmation = newConfirmation) }
+        setState { copy(folderActionConfirmation = newConfirmation) }
     }
 
-    fun openFolderAfterPasswordVerified(isRemindPassword: Boolean) = runWithData { data ->
+    fun openFolderAfterPasswordVerified(isRemindPassword: Boolean) = withState { data ->
         val folder = data.folderActionConfirmation?.folder
-            ?: return@runWithData clearFolderActionConfirmation()
+            ?: return@withState clearFolderActionConfirmation()
         if (isRemindPassword) {
-            setData { copy(folderPasswordConfirmRemind = folderPasswordConfirmRemind.plus(folder.id)) }
+            setState { copy(folderPasswordConfirmRemind = folderPasswordConfirmRemind.plus(folder.id)) }
         }
         openFolder(folder)
     }
 
-    fun clearOpenFolder() = setData {
+    fun clearOpenFolder() = setState {
         copy(folderToOpen = null)
     }
 }

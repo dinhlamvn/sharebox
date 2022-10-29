@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FolderCreatorDialogFragment :
-    BaseViewModelDialogFragment<FolderCreatorDialogData, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
+    BaseViewModelDialogFragment<FolderCreatorDialogState, FolderCreatorDialogViewModel, DialogFolderCreatorBinding>() {
 
     interface OnFolderCreatorCallback {
         fun onFolderCreated(folderId: String)
@@ -31,12 +31,12 @@ class FolderCreatorDialogFragment :
 
     override val viewModel: FolderCreatorDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderCreatorDialogData) {
+    override fun onDataChanged(data: FolderCreatorDialogState) {
 
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogData::error) { errorRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogState::error) { errorRes ->
             if (errorRes != 0) {
                 viewBinding.textLayoutFolderName.error = getString(errorRes)
             } else {
@@ -44,14 +44,14 @@ class FolderCreatorDialogFragment :
             }
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogData::folderIdInserted) { folderId ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogState::folderIdInserted) { folderId ->
             folderId?.let {
                 getCallback()?.onFolderCreated(it)
                 dismiss()
             }
         }
 
-        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogData::toastRes) { toastRes ->
+        viewModel.consumeOnChange(viewLifecycleOwner, FolderCreatorDialogState::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()

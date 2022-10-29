@@ -40,7 +40,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHomeBinding>(),
+class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     FolderCreatorDialogFragment.OnFolderCreatorCallback,
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
     RenameFolderDialogFragment.OnConfirmRenameCallback {
@@ -81,16 +81,16 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consumeOnChange(this, HomeData::toastRes) { toastRes ->
+        viewModel.consumeOnChange(this, HomeState::toastRes) { toastRes ->
             if (toastRes != 0) {
                 showToast(getString(toastRes))
                 viewModel.clearToast()
             }
         }
 
-        viewModel.consumeOnChange(this, HomeData::folderActionConfirmation, ::handleFolderAction)
+        viewModel.consumeOnChange(this, HomeState::folderActionConfirmation, ::handleFolderAction)
 
-        viewModel.consumeOnChange(this, HomeData::folderToOpen) { folderToOpen ->
+        viewModel.consumeOnChange(this, HomeState::folderToOpen) { folderToOpen ->
             folderToOpen?.let {
                 viewModel.clearOpenFolder()
                 openFolder(it)
@@ -102,7 +102,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
         startActivity(appRouter.shareList(folder.id))
     }
 
-    override fun onDataChanged(data: HomeData) {
+    override fun onDataChanged(data: HomeState) {
         modelViewsFactory.requestBuildModelViews()
         viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
     }
@@ -188,25 +188,25 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
         popupWindow.showAsDropDown(clickedView, 0, -clickedView.height / 2)
     }
 
-    private fun handleFolderAction(confirmation: HomeData.FolderActionConfirmation?) {
+    private fun handleFolderAction(confirmation: HomeState.FolderActionConfirmation?) {
         val nonNull = confirmation ?: return
         return when (nonNull.folderActionType) {
-            HomeData.FolderActionConfirmation.FolderActionType.DELETE -> maybeShowConfirmPasswordToDeleteFolder(
+            HomeState.FolderActionConfirmation.FolderActionType.DELETE -> maybeShowConfirmPasswordToDeleteFolder(
                 nonNull
             )
-            HomeData.FolderActionConfirmation.FolderActionType.OPEN -> maybeShowConfirmPasswordToOpenFolder(
+            HomeState.FolderActionConfirmation.FolderActionType.OPEN -> maybeShowConfirmPasswordToOpenFolder(
                 nonNull
             )
-            HomeData.FolderActionConfirmation.FolderActionType.RENAME -> maybeShowConfirmPasswordToRenameFolder(
+            HomeState.FolderActionConfirmation.FolderActionType.RENAME -> maybeShowConfirmPasswordToRenameFolder(
                 nonNull
             )
-            HomeData.FolderActionConfirmation.FolderActionType.DETAIL -> maybeShowConfirmPasswordToViewDetailFolder(
+            HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> maybeShowConfirmPasswordToViewDetailFolder(
                 nonNull
             )
         }
     }
 
-    private fun maybeShowConfirmPasswordToOpenFolder(confirmation: HomeData.FolderActionConfirmation) {
+    private fun maybeShowConfirmPasswordToOpenFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty()) {
             viewModel.openFolderAfterPasswordVerified(false)
@@ -215,7 +215,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
         }
     }
 
-    private fun maybeShowConfirmPasswordToDeleteFolder(confirmation: HomeData.FolderActionConfirmation) {
+    private fun maybeShowConfirmPasswordToDeleteFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
         val title = getString(R.string.confirmation)
         val numberOfShare = resources.getQuantityString(
@@ -239,7 +239,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
             })
     }
 
-    private fun maybeShowConfirmPasswordToRenameFolder(confirmation: HomeData.FolderActionConfirmation) {
+    private fun maybeShowConfirmPasswordToRenameFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
@@ -254,7 +254,7 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
         }
     }
 
-    private fun maybeShowConfirmPasswordToViewDetailFolder(confirmation: HomeData.FolderActionConfirmation) {
+    private fun maybeShowConfirmPasswordToViewDetailFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
@@ -287,12 +287,12 @@ class HomeActivity : BaseViewModelActivity<HomeData, HomeViewModel, ActivityHome
             withData(viewModel) { data -> data.folderActionConfirmation?.folderActionType }
                 ?: return viewModel.clearFolderActionConfirmation()
         when (actionType) {
-            HomeData.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified(
+            HomeState.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified(
                 isRemindPassword
             )
-            HomeData.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
-            HomeData.FolderActionConfirmation.FolderActionType.RENAME -> viewModel.renameFolderAfterPasswordVerified()
-            HomeData.FolderActionConfirmation.FolderActionType.DETAIL -> viewModel.showDetailFolderAfterPasswordVerified()
+            HomeState.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
+            HomeState.FolderActionConfirmation.FolderActionType.RENAME -> viewModel.renameFolderAfterPasswordVerified()
+            HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> viewModel.showDetailFolderAfterPasswordVerified()
         }
     }
 

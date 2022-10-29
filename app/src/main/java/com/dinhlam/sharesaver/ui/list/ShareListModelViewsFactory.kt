@@ -8,7 +8,7 @@ import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeWebLinkModelView
-import com.dinhlam.sharesaver.ui.share.ShareData
+import com.dinhlam.sharesaver.ui.share.ShareState
 import com.dinhlam.sharesaver.utils.IconUtils
 import com.google.gson.Gson
 
@@ -38,7 +38,7 @@ class ShareListModelViewsFactory constructor(
             when (share.shareType) {
                 "web-link" -> {
                     val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareData.ShareInfo.ShareWebLink::class.java
+                        share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
                     )
                     HomeWebLinkModelView(
                         id = "${share.id}",
@@ -51,7 +51,7 @@ class ShareListModelViewsFactory constructor(
                 }
                 "image" -> {
                     val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareData.ShareInfo.ShareImage::class.java
+                        share.shareInfo, ShareState.ShareInfo.ShareImage::class.java
                     )
                     HomeImageModelView(
                         "${share.id}", shareInfo.uri, share.createdAt, share.shareNote, share.id
@@ -59,7 +59,7 @@ class ShareListModelViewsFactory constructor(
                 }
                 "text" -> {
                     val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareData.ShareInfo.ShareText::class.java
+                        share.shareInfo, ShareState.ShareInfo.ShareText::class.java
                     )
                     HomeTextModelView(
                         id = "${share.id}",
