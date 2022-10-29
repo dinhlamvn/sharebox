@@ -31,7 +31,7 @@ class RenameFolderDialogFragment :
 
     override val viewModel: RenameFolderDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: RenameFolderDialogState) {
+    override fun onStateChanged(data: RenameFolderDialogState) {
 
     }
 
@@ -87,7 +87,7 @@ class RenameFolderDialogFragment :
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        val isVerified = withData(viewModel) { it.renameFolderSuccess }
+        val isVerified = withState(viewModel) { it.renameFolderSuccess }
         if (!isVerified) {
             getCallback()?.onCancelRename()
         }

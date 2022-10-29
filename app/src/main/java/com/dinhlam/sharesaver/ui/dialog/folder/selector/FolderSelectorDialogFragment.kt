@@ -29,9 +29,9 @@ class FolderSelectorDialogFragment :
     }
 
     private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-        override fun buildModelViews() = withData(viewModel) { data ->
+        override fun buildModelViews() = withState(viewModel) { data ->
             if (data.isFirstLoad) {
-                return@withData LoadingModelView.addTo(this)
+                return@withState LoadingModelView.addTo(this)
             }
             data.folders.forEach {
                 FolderModelView("folder_${it.id}", it.name, it.desc).addTo(this)
@@ -64,7 +64,7 @@ class FolderSelectorDialogFragment :
 
     override val viewModel: FolderSelectorDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderSelectorDialogState) {
+    override fun onStateChanged(data: FolderSelectorDialogState) {
         if (data.selectedFolder != null || data.requestCreateFolder) {
             return
         }

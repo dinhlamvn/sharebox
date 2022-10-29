@@ -9,12 +9,12 @@ abstract class BaseViewModelFragment<T : BaseViewModel.BaseState, VM : BaseViewM
 
     abstract val viewModel: VM
 
-    abstract fun onDataChanged(data: T)
+    abstract fun onStateChanged(data: T)
 
-    fun <R> withData(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
+    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.state.observe(viewLifecycleOwner, ::onDataChanged)
+        viewModel.state.observe(viewLifecycleOwner, ::onStateChanged)
         super.onViewCreated(view, savedInstanceState)
     }
 

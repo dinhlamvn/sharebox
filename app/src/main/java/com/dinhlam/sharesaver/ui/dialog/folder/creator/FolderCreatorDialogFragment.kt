@@ -31,7 +31,7 @@ class FolderCreatorDialogFragment :
 
     override val viewModel: FolderCreatorDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderCreatorDialogState) {
+    override fun onStateChanged(data: FolderCreatorDialogState) {
 
     }
 

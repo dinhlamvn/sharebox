@@ -8,13 +8,13 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
 
     abstract val viewModel: VM
 
-    abstract fun onDataChanged(data: T)
+    abstract fun onStateChange(data: T)
 
     fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.state.observe(this, ::onDataChanged)
+        viewModel.state.observe(this, ::onStateChange)
     }
 
     override fun onDestroy() {

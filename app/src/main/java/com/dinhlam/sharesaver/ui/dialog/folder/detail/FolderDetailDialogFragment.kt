@@ -26,7 +26,7 @@ class FolderDetailDialogFragment :
 
     override val viewModel: FolderDetailDialogViewModel by viewModels()
 
-    override fun onDataChanged(data: FolderDetailDialogState) {
+    override fun onStateChanged(data: FolderDetailDialogState) {
 
     }
 
