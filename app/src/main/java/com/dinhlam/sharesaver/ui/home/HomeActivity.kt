@@ -37,7 +37,9 @@ import com.dinhlam.sharesaver.utils.ExtraUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Integer.max
 import javax.inject.Inject
+import kotlin.math.min
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
@@ -185,7 +187,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         popupView.addView(bindingItemInfo.root, layoutParams)
 
         popupWindow.contentView = popupView
-        popupWindow.showAsDropDown(clickedView, 0, -clickedView.height / 2)
+
+        clickedView.post {
+            val bottom = clickedView.bottom
+            val parentBottom = viewBinding.recyclerView.bottom
+            val yOffset = min(0, parentBottom - (bottom + 150.dp(this)))
+            popupWindow.showAsDropDown(clickedView, 0, yOffset)
+        }
     }
 
     private fun handleFolderAction(confirmation: HomeState.FolderActionConfirmation?) {
