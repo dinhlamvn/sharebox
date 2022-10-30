@@ -11,6 +11,8 @@ import com.dinhlam.sharesaver.extensions.cast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Queue
@@ -33,8 +35,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private val consumers = mutableSetOf<Consumer>()
 
-    private val _state = OneTimeLiveData(initState)
-    val state: LiveData<T> = _state
+    private val _state = MutableStateFlow(initState)
+    val state: StateFlow<T> = _state
 
     protected fun setState(block: T.() -> T) {
         setStateQueue.add(block)
@@ -54,11 +56,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private fun setStateInternal(block: T.() -> T) = viewModelScope.launch(Dispatchers.Main) {
         val before = state.value
-        val newBaseData = state.value?.let(block) ?: return@launch
-        _state.setValue(newBaseData)
-        if (before == null) {
-            return@launch
-        }
+        val newBaseData = state.value.let(block)
+        _state.value = newBaseData
         withContext(Dispatchers.IO) {
             consumers.forEach { consumer ->
                 val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
@@ -79,7 +78,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     protected fun withState(block: (T) -> Unit) {
         viewModelScope.launch(Dispatchers.Main) {
             flushAllSetStateQueue()
-            state.value?.let(block)
+            block(state.value)
         }
     }
 
@@ -90,7 +89,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         flushAllSetStateQueue()
         withContext(Dispatchers.IO) {
             try {
-                block.invoke(state.value!!)
+                block.invoke(state.value)
             } catch (e: Exception) {
                 onError?.invoke(e)
             }

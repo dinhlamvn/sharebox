@@ -98,7 +98,7 @@ class ShareActivity :
         }
     }
 
-    override fun onStateChange(data: ShareState) {
+    override fun onStateChanged(data: ShareState) {
         modelViewsFactory.requestBuildModelViews()
         viewBinding.textViewFolder.text = data.selectedFolder?.name
     }

@@ -104,7 +104,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         startActivity(appRouter.shareList(folder.id))
     }
 
-    override fun onStateChange(data: HomeState) {
+    override fun onStateChanged(data: HomeState) {
         modelViewsFactory.requestBuildModelViews()
         viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
     }

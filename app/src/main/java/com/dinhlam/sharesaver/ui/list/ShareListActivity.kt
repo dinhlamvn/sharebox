@@ -93,7 +93,7 @@ class ShareListActivity :
         }
     }
 
-    override fun onStateChange(data: ShareListState) {
+    override fun onStateChanged(data: ShareListState) {
         modelViewsFactory.requestBuildModelViews()
         supportActionBar?.title = data.title
     }
