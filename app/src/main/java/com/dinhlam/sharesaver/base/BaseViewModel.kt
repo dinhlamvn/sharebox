@@ -3,7 +3,6 @@ package com.dinhlam.sharesaver.base
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,16 +55,16 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private fun setStateInternal(block: T.() -> T) = viewModelScope.launch(Dispatchers.Main) {
         val before = state.value
-        val newBaseData = state.value.let(block)
-        _state.value = newBaseData
+        val after = block.invoke(before)
+        _state.value = after
         withContext(Dispatchers.IO) {
             consumers.forEach { consumer ->
                 val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
                 beforeField.isAccessible = true
                 val beforeValue = beforeField.get(before)
-                val afterField = newBaseData::class.java.getDeclaredField(consumer.consumeField)
+                val afterField = after::class.java.getDeclaredField(consumer.consumeField)
                 afterField.isAccessible = true
-                val afterValue = afterField.get(newBaseData)
+                val afterValue = afterField.get(after)
                 if (consumer.notifyOnChanged && beforeValue !== afterValue) {
                     consumer.anyLiveData.postValue(afterValue)
                 } else if (!consumer.notifyOnChanged) {
