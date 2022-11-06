@@ -28,7 +28,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private data class Consumer(
         val consumeField: String,
-        val anyLiveData: MutableLiveData<Any?>,
+        val liveData: MutableLiveData<Any?>,
         val notifyOnChanged: Boolean = false
     )
 
@@ -37,6 +37,31 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
 
+    @Volatile
+    private var lastState: T = initState
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            state.collect { newState ->
+                val before = lastState
+                consumers.forEach { consumer ->
+                    val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
+                    beforeField.isAccessible = true
+                    val beforeValue = beforeField.get(before)
+                    val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
+                    afterField.isAccessible = true
+                    val afterValue = afterField.get(newState)
+                    if (consumer.notifyOnChanged && beforeValue !== afterValue) {
+                        consumer.liveData.postValue(afterValue)
+                    } else if (!consumer.notifyOnChanged) {
+                        consumer.liveData.postValue(afterValue)
+                    }
+                }
+                lastState = newState
+            }
+        }
+    }
+
     protected fun setState(block: T.() -> T) {
         setStateQueue.add(block)
         flushSetStateQueue()
@@ -44,33 +69,12 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private fun flushSetStateQueue() {
         val block = setStateQueue.poll() ?: return
-        setStateInternal(block)
+        _state.value = block.invoke(state.value)
     }
 
     private fun flushAllSetStateQueue() {
         while (!setStateQueue.isEmpty()) {
             flushSetStateQueue()
-        }
-    }
-
-    private fun setStateInternal(block: T.() -> T) = viewModelScope.launch(Dispatchers.Main) {
-        val before = state.value
-        val after = block.invoke(before)
-        _state.value = after
-        withContext(Dispatchers.IO) {
-            consumers.forEach { consumer ->
-                val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
-                beforeField.isAccessible = true
-                val beforeValue = beforeField.get(before)
-                val afterField = after::class.java.getDeclaredField(consumer.consumeField)
-                afterField.isAccessible = true
-                val afterValue = afterField.get(after)
-                if (consumer.notifyOnChanged && beforeValue !== afterValue) {
-                    consumer.anyLiveData.postValue(afterValue)
-                } else if (!consumer.notifyOnChanged) {
-                    consumer.anyLiveData.postValue(afterValue)
-                }
-            }
         }
     }
 

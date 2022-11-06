@@ -16,14 +16,14 @@ class HomeModelViewsFactory(
             LoadingModelView.addTo(this)
             return@withState
         }
-        data.folders.map { folder ->
+        data.folders.forEach { folder ->
             FolderListModelView(
                 "folder_${folder.id}",
                 folder.name,
                 folder.desc,
                 folder.updatedAt,
                 !folder.password.isNullOrEmpty()
-            )
-        }.forEach { it.addTo(this) }
+            ).addTo(this)
+        }
     }
 }
