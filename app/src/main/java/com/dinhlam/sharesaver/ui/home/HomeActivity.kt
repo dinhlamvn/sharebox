@@ -21,6 +21,11 @@ import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.databinding.ActivityHomeBinding
 import com.dinhlam.sharesaver.databinding.MenuItemIconWithTextBinding
+import com.dinhlam.sharesaver.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
+import com.dinhlam.sharesaver.dialog.folder.creator.FolderCreatorDialogFragment
+import com.dinhlam.sharesaver.dialog.folder.detail.FolderDetailDialogFragment
+import com.dinhlam.sharesaver.dialog.folder.rename.RenameFolderDialogFragment
+import com.dinhlam.sharesaver.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.dp
 import com.dinhlam.sharesaver.extensions.dpF
@@ -29,15 +34,11 @@ import com.dinhlam.sharesaver.extensions.showAlert
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.router.AppRouter
-import com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.folder.detail.FolderDetailDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.folder.rename.RenameFolderDialogFragment
 import com.dinhlam.sharesaver.utils.ExtraUtils
+import com.dinhlam.sharesaver.utils.Tags
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.Integer.max
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -45,7 +46,8 @@ import kotlin.math.min
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     FolderCreatorDialogFragment.OnFolderCreatorCallback,
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
-    RenameFolderDialogFragment.OnConfirmRenameCallback {
+    RenameFolderDialogFragment.OnConfirmRenameCallback,
+    ChoiceTagDialogFragment.OnTagSelectedListener {
 
     private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
 
@@ -104,9 +106,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         startActivity(appRouter.shareList(folder.id))
     }
 
-    override fun onStateChanged(data: HomeState) {
+    override fun onStateChanged(state: HomeState) {
         modelViewsFactory.requestBuildModelViews()
-        viewBinding.frameProgress.frameContainer.isVisible = data.showProgress
+        viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -177,6 +179,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
         popupView.addView(bindingItemRename.root, layoutParams)
 
+        val bindingItemTag = MenuItemIconWithTextBinding.inflate(layoutInflater)
+        bindingItemTag.imageIcon.setImageResource(R.drawable.ic_tag_blue)
+        bindingItemTag.textView.text = getString(R.string.tag)
+        bindingItemTag.root.setOnClickListener {
+            dismissPopup()
+            viewModel.processFolderForTag(folder)
+        }
+        popupView.addView(bindingItemTag.root, layoutParams)
+
         val bindingItemInfo = MenuItemIconWithTextBinding.inflate(layoutInflater)
         bindingItemInfo.imageIcon.setImageResource(R.drawable.ic_detail)
         bindingItemInfo.textView.text = getString(R.string.details)
@@ -191,7 +202,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         clickedView.post {
             val bottom = clickedView.bottom
             val parentBottom = viewBinding.recyclerView.bottom
-            val yOffset = min(0, parentBottom - (bottom + 150.dp(this)))
+            val yOffset = min(0, parentBottom - (bottom + 200.dp(this)))
             popupWindow.showAsDropDown(clickedView, 0, yOffset)
         }
     }
@@ -211,7 +222,19 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> maybeShowConfirmPasswordToViewDetailFolder(
                 nonNull
             )
+            HomeState.FolderActionConfirmation.FolderActionType.TAG -> showTagChoose(nonNull)
         }
+    }
+
+    private fun showTagChoose(confirmation: HomeState.FolderActionConfirmation) {
+        val folder = confirmation.folder
+        val selectedPosition = Tags.tags.indexOfFirst { tag -> tag.id == folder.tag }
+        val dialog = ChoiceTagDialogFragment()
+        dialog.arguments = Bundle().apply {
+            putString(ExtraUtils.EXTRA_TITLE, "Choose tag")
+            putInt(ExtraUtils.EXTRA_POSITION, selectedPosition)
+        }
+        dialog.show(supportFragmentManager, "dialog")
     }
 
     private fun maybeShowConfirmPasswordToOpenFolder(confirmation: HomeState.FolderActionConfirmation) {
@@ -301,6 +324,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             HomeState.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
             HomeState.FolderActionConfirmation.FolderActionType.RENAME -> viewModel.renameFolderAfterPasswordVerified()
             HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> viewModel.showDetailFolderAfterPasswordVerified()
+            else -> {}
         }
     }
 
@@ -314,5 +338,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onCancelRename() {
         viewModel.clearFolderActionConfirmation()
+    }
+
+    override fun onTagSelected(tagId: Int) {
+        viewModel.setFolderTag(tagId)
     }
 }

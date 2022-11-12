@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.detail
+package com.dinhlam.sharesaver.dialog.folder.detail
 
 import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.repository.FolderRepository

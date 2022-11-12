@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.text
+package com.dinhlam.sharesaver.dialog.text
 
 import android.content.Intent
 import android.os.Bundle

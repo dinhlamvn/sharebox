@@ -1,9 +1,10 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimary">@color/primaryDarkColor</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
-        <item name="colorOnPrimary">@color/primaryLightColor</item>
+        <item name="colorOnPrimary">@color/primaryColor</item>
+        <item name="colorAccent">@color/primaryDarkColor</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
 

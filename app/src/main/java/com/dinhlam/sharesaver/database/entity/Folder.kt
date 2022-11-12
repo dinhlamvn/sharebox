@@ -11,6 +11,7 @@ data class Folder(
     @ColumnInfo(name = "desc") val desc: String? = null,
     @ColumnInfo(name = "password") val password: String? = null,
     @ColumnInfo(name = "password_alias") val passwordAlias: String? = null,
+    @ColumnInfo(name = "tag") val tag: Int? = null,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updated_at") val updatedAt: Long = System.currentTimeMillis()
 )

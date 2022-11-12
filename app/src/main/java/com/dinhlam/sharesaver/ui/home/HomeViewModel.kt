@@ -5,6 +5,7 @@ import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.repository.FolderRepository
 import com.dinhlam.sharesaver.repository.ShareRepository
+import com.dinhlam.sharesaver.utils.Tags
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -93,6 +94,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun processFolderForTag(folder: Folder) = executeJob {
+        val shareCount = shareRepository.countByFolder(folder.id)
+        setState {
+            copy(
+                folderActionConfirmation = HomeState.FolderActionConfirmation(
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.TAG
+                )
+            )
+        }
+    }
+
     fun clearFolderActionConfirmation() = setState {
         copy(folderActionConfirmation = null)
     }
@@ -128,5 +140,18 @@ class HomeViewModel @Inject constructor(
 
     fun clearOpenFolder() = setState {
         copy(folderToOpen = null)
+    }
+
+    fun setFolderTag(tagId: Int) = execute { state ->
+        if (tagId > 0) {
+            val folder = state.folderActionConfirmation?.folder ?: return@execute setState {
+                copy(folderActionConfirmation = null)
+            }
+            folderRepository.update(Tags.setFolderTag(tagId, folder))
+            loadFolders()
+            clearFolderActionConfirmation()
+        } else {
+            clearFolderActionConfirmation()
+        }
     }
 }

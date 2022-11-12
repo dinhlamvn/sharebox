@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword
+package com.dinhlam.sharesaver.dialog.folder.confirmpassword
 
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseViewModel

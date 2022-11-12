@@ -12,7 +12,7 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
 
     abstract val viewModel: VM
 
-    abstract fun onStateChanged(data: T)
+    abstract fun onStateChanged(state: T)
 
     fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
 

@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.rename
+package com.dinhlam.sharesaver.dialog.folder.rename
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -31,7 +31,7 @@ class RenameFolderDialogFragment :
 
     override val viewModel: RenameFolderDialogViewModel by viewModels()
 
-    override fun onStateChanged(data: RenameFolderDialogState) {
+    override fun onStateChanged(state: RenameFolderDialogState) {
 
     }
 

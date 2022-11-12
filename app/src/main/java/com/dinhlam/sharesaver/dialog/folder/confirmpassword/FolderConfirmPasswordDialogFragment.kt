@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.confirmpassword
+package com.dinhlam.sharesaver.dialog.folder.confirmpassword
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -34,7 +34,7 @@ class FolderConfirmPasswordDialogFragment :
 
     override val viewModel: FolderConfirmPasswordDialogViewModel by viewModels()
 
-    override fun onStateChanged(data: FolderConfirmPasswordDialogState) {
+    override fun onStateChanged(state: FolderConfirmPasswordDialogState) {
 
     }
 

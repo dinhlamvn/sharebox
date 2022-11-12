@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.rename
+package com.dinhlam.sharesaver.dialog.folder.rename
 
 import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseViewModel

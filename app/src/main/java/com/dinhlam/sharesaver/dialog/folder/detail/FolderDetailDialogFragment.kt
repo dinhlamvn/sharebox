@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.detail
+package com.dinhlam.sharesaver.dialog.folder.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,7 +26,7 @@ class FolderDetailDialogFragment :
 
     override val viewModel: FolderDetailDialogViewModel by viewModels()
 
-    override fun onStateChanged(data: FolderDetailDialogState) {
+    override fun onStateChanged(state: FolderDetailDialogState) {
 
     }
 

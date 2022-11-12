@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.creator
+package com.dinhlam.sharesaver.dialog.folder.creator
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,7 +31,7 @@ class FolderCreatorDialogFragment :
 
     override val viewModel: FolderCreatorDialogViewModel by viewModels()
 
-    override fun onStateChanged(data: FolderCreatorDialogState) {
+    override fun onStateChanged(state: FolderCreatorDialogState) {
 
     }
 

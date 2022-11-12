@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.creator
+package com.dinhlam.sharesaver.dialog.folder.creator
 
 import androidx.annotation.StringRes
 import com.dinhlam.sharesaver.base.BaseViewModel

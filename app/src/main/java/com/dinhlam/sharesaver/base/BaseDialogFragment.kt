@@ -1,6 +1,7 @@
 package com.dinhlam.sharesaver.base
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -16,6 +17,10 @@ import com.dinhlam.sharesaver.extensions.screenWidth
 import kotlin.reflect.KClass
 
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
+
+    fun interface OnDialogDismissListener {
+        fun onDismiss()
+    }
 
     companion object {
         fun <T : BaseDialogFragment<*>> showDialog(
@@ -37,6 +42,8 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
     protected val viewBinding: VB
         get() = binding!!
+
+    var dismissListener: OnDialogDismissListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -75,6 +82,11 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
             wd.setLayout(dialogWidth, dialogHeight)
             wd.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        dismissListener?.onDismiss()
     }
 
     open fun getSpacing(): Int {

@@ -66,5 +66,6 @@
     <string name="login_facebook_success">Login to Facebook successfully with profile: %s</string>
     <string name="share_list_activity_title">Shares</string>
     <string name="error_require_folder">No folder found.</string>
+    <string name="tag">Tags</string>
 
 </resources>

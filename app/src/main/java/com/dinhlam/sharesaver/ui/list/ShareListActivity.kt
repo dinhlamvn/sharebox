@@ -10,7 +10,7 @@ import com.dinhlam.sharesaver.databinding.ActivityShareListBinding
 import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.helper.ShareHelper
-import com.dinhlam.sharesaver.ui.dialog.text.TextViewerDialogFragment
+import com.dinhlam.sharesaver.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView
@@ -93,8 +93,8 @@ class ShareListActivity :
         }
     }
 
-    override fun onStateChanged(data: ShareListState) {
+    override fun onStateChanged(state: ShareListState) {
         modelViewsFactory.requestBuildModelViews()
-        supportActionBar?.title = data.title
+        supportActionBar?.title = state.title
     }
 }

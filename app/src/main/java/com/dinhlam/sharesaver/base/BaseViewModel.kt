@@ -1,7 +1,6 @@
 package com.dinhlam.sharesaver.base
 
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,22 +8,25 @@ import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharesaver.extensions.cast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.Queue
-import java.util.concurrent.ConcurrentLinkedQueue
+import kotlinx.coroutines.selects.select
+import java.util.concurrent.Executors
 import kotlin.reflect.KProperty
 
 abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewModel() {
 
     interface BaseState
 
-    private val mainHandler = Handler(Looper.getMainLooper())
+    private val stateScope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
 
-    private val setStateQueue: Queue<T.() -> T> = ConcurrentLinkedQueue()
+    private val setStateChannel = Channel<T.() -> T>(capacity = Channel.UNLIMITED)
+    private val withStateChannel = Channel<(T) -> Unit>(capacity = Channel.UNLIMITED)
 
     private data class Consumer(
         val consumeField: String,
@@ -37,64 +39,64 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
 
-    @Volatile
-    private var lastState: T = initState
-
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            state.collect { newState ->
-                val before = lastState
-                consumers.forEach { consumer ->
-                    val beforeField = before::class.java.getDeclaredField(consumer.consumeField)
-                    beforeField.isAccessible = true
-                    val beforeValue = beforeField.get(before)
-                    val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
-                    afterField.isAccessible = true
-                    val afterValue = afterField.get(newState)
-                    if (consumer.notifyOnChanged && beforeValue !== afterValue) {
-                        consumer.liveData.postValue(afterValue)
-                    } else if (!consumer.notifyOnChanged) {
-                        consumer.liveData.postValue(afterValue)
-                    }
-                }
-                lastState = newState
+        stateScope.launch(Dispatchers.IO) {
+            while (isActive) {
+                flushQueue()
             }
         }
     }
 
     protected fun setState(block: T.() -> T) {
-        setStateQueue.add(block)
-        flushSetStateQueue()
+        setStateChannel.trySend(block)
     }
 
-    private fun flushSetStateQueue() {
-        val block = setStateQueue.poll() ?: return
-        _state.value = block.invoke(state.value)
-    }
+    private suspend fun flushQueue() {
+        select<Unit> {
+            setStateChannel.onReceive { reducer ->
+                val beforeState = state.value
+                val newState = reducer.invoke(beforeState)
+                if (newState != beforeState) {
+                    _state.value = newState
+                    consumers.forEach { consumer ->
+                        val beforeField =
+                            beforeState::class.java.getDeclaredField(consumer.consumeField)
+                        beforeField.isAccessible = true
+                        val beforeValue = beforeField.get(beforeState)
+                        val afterField =
+                            newState::class.java.getDeclaredField(consumer.consumeField)
+                        afterField.isAccessible = true
+                        val afterValue = afterField.get(newState)
+                        if (consumer.notifyOnChanged && beforeValue !== afterValue) {
+                            consumer.liveData.postValue(afterValue)
+                        } else if (!consumer.notifyOnChanged) {
+                            consumer.liveData.postValue(afterValue)
+                        }
+                    }
+                }
+            }
 
-    private fun flushAllSetStateQueue() {
-        while (!setStateQueue.isEmpty()) {
-            flushSetStateQueue()
+            withStateChannel.onReceive { block ->
+                block.invoke(state.value)
+            }
         }
     }
 
     protected fun withState(block: (T) -> Unit) {
-        viewModelScope.launch(Dispatchers.Main) {
-            flushAllSetStateQueue()
-            block(state.value)
-        }
+        withStateChannel.trySend(block)
     }
 
     protected fun execute(
         onError: ((Throwable) -> Unit)? = null,
         block: suspend (T) -> Unit,
-    ) = viewModelScope.launch(Dispatchers.Main) {
-        flushAllSetStateQueue()
-        withContext(Dispatchers.IO) {
-            try {
-                block.invoke(state.value)
-            } catch (e: Exception) {
-                onError?.invoke(e)
+    ) {
+        withState { state ->
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    block.invoke(state)
+                } catch (e: Exception) {
+                    onError?.invoke(e)
+                }
             }
         }
     }

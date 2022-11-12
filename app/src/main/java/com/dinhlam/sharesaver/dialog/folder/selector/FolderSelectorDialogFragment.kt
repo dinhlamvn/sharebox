@@ -1,4 +1,4 @@
-package com.dinhlam.sharesaver.ui.dialog.folder.selector
+package com.dinhlam.sharesaver.dialog.folder.selector
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -64,8 +64,8 @@ class FolderSelectorDialogFragment :
 
     override val viewModel: FolderSelectorDialogViewModel by viewModels()
 
-    override fun onStateChanged(data: FolderSelectorDialogState) {
-        if (data.selectedFolder != null || data.requestCreateFolder) {
+    override fun onStateChanged(state: FolderSelectorDialogState) {
+        if (state.selectedFolder != null || state.requestCreateFolder) {
             return
         }
         modelViewsFactory.requestBuildModelViews()

@@ -28,8 +28,8 @@ import com.dinhlam.sharesaver.extensions.getTrimmedText
 import com.dinhlam.sharesaver.extensions.isWebLink
 import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.router.AppRouter
-import com.dinhlam.sharesaver.ui.dialog.folder.creator.FolderCreatorDialogFragment
-import com.dinhlam.sharesaver.ui.dialog.folder.selector.FolderSelectorDialogFragment
+import com.dinhlam.sharesaver.dialog.folder.creator.FolderCreatorDialogFragment
+import com.dinhlam.sharesaver.dialog.folder.selector.FolderSelectorDialogFragment
 import com.dinhlam.sharesaver.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareMultipleImageModelView
@@ -98,9 +98,9 @@ class ShareActivity :
         }
     }
 
-    override fun onStateChanged(data: ShareState) {
+    override fun onStateChanged(state: ShareState) {
         modelViewsFactory.requestBuildModelViews()
-        viewBinding.textViewFolder.text = data.selectedFolder?.name
+        viewBinding.textViewFolder.text = state.selectedFolder?.name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

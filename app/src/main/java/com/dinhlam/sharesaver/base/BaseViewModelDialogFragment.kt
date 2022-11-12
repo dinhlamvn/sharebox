@@ -2,9 +2,7 @@ package com.dinhlam.sharesaver.base
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.launch
 
@@ -13,15 +11,13 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
 
     abstract val viewModel: VM
 
-    abstract fun onStateChanged(data: T)
+    abstract fun onStateChanged(state: T)
 
-    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
+    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect(::onStateChanged)
-            }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.state.collect(::onStateChanged)
         }
         super.onViewCreated(view, savedInstanceState)
     }

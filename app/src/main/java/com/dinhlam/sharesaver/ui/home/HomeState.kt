@@ -25,7 +25,8 @@ data class HomeState(
             OPEN,
             DELETE,
             RENAME,
-            DETAIL
+            DETAIL,
+            TAG
         }
     }
 }
