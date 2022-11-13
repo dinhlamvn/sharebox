@@ -20,4 +20,9 @@ object Tags {
         }
         return folder.copy(tag = id)
     }
+
+    fun getTag(tag: Int?): Tag? {
+        val tagId = tag ?: return null
+        return tags.firstOrNull { it.id == tagId }
+    }
 }

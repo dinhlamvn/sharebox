@@ -3,6 +3,7 @@ package com.dinhlam.sharesaver.ui.home
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.modelview.LoadingModelView
+import com.dinhlam.sharesaver.utils.Tags
 import com.google.gson.Gson
 
 class HomeModelViewsFactory(
@@ -22,7 +23,8 @@ class HomeModelViewsFactory(
                 folder.name,
                 folder.desc,
                 folder.updatedAt,
-                !folder.password.isNullOrEmpty()
+                !folder.password.isNullOrEmpty(),
+                Tags.getTag(folder.tag)
             ).addTo(this)
         }
     }

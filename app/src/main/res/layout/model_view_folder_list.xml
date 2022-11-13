@@ -83,6 +83,16 @@
         app:barrierMargin="8dp"
         app:constraint_referenced_ids="image_view,text_view_folder_desc" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_tag"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <View
         android:id="@+id/view_divider"
         android:layout_width="0dp"

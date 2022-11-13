@@ -89,7 +89,6 @@ class ChoiceTagDialogFragment :
             fun onClick(position: Int)
         }
 
-
         override fun onCreateViewBinding(view: View): SingleChooseTagBinding {
             return SingleChooseTagBinding.bind(view)
         }
