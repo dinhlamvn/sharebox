@@ -5,22 +5,25 @@ import com.dinhlam.sharesaver.base.BaseViewModel
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.repository.FolderRepository
 import com.dinhlam.sharesaver.repository.ShareRepository
-import com.dinhlam.sharesaver.utils.Tags
+import com.dinhlam.sharesaver.utils.TagUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val folderRepository: FolderRepository,
-    private val shareRepository: ShareRepository
+    private val folderRepository: FolderRepository, private val shareRepository: ShareRepository
 ) : BaseViewModel<HomeState>(HomeState()) {
 
     init {
         loadFolders()
     }
 
-    fun loadFolders() = executeJob {
-        val folders = folderRepository.getAll()
+    fun loadFolders() = execute { state ->
+        val folders = if (state.tag == null) {
+            folderRepository.getAll()
+        } else {
+            folderRepository.getByTag(state.tag)
+        }
         setState { copy(folders = folders, isRefreshing = false) }
     }
 
@@ -143,15 +146,36 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setFolderTag(tagId: Int) = execute { state ->
-        if (tagId > 0) {
+        if (tagId != 0) {
             val folder = state.folderActionConfirmation?.folder ?: return@execute setState {
                 copy(folderActionConfirmation = null)
             }
-            folderRepository.update(Tags.setFolderTag(tagId, folder))
+            folderRepository.update(TagUtil.setFolderTag(tagId, folder))
             loadFolders()
             clearFolderActionConfirmation()
         } else {
             clearFolderActionConfirmation()
         }
+    }
+
+    fun isHandleByTagSelected(itemId: Int): Boolean {
+        if (itemId !in listOf(
+                R.id.tag_red, R.id.tag_green, R.id.tag_blue, R.id.tag_yellow, R.id.tag_gray
+            )
+        ) {
+            return false
+        }
+        loadFolderByTag(itemId)
+        return true
+    }
+
+    private fun loadFolderByTag(tagId: Int) = executeJob {
+        val folders = folderRepository.getByTag(tagId)
+        setState { copy(folders = folders, tag = tagId) }
+    }
+
+    fun clearSelectedTag() {
+        setState { copy(tag = null) }
+        loadFolders()
     }
 }

@@ -40,4 +40,8 @@ class FolderRepository @Inject constructor(
     override fun getAll(): List<Folder> {
         return folderDao.getAll()
     }
+
+    fun getByTag(tagId: Int): List<Folder> {
+        return folderDao.getByTag(tagId)
+    }
 }

@@ -20,7 +20,7 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.database.entity.Folder
 import com.dinhlam.sharesaver.databinding.ActivityHomeBinding
-import com.dinhlam.sharesaver.databinding.MenuItemIconWithTextBinding
+import com.dinhlam.sharesaver.databinding.MenuItemWithTextBinding
 import com.dinhlam.sharesaver.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharesaver.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharesaver.dialog.folder.detail.FolderDetailDialogFragment
@@ -35,7 +35,6 @@ import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.utils.ExtraUtils
-import com.dinhlam.sharesaver.utils.Tags
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,6 +99,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 openFolder(it)
             }
         }
+
+        viewModel.consume(this, HomeState::tag) {
+            invalidateOptionsMenu()
+        }
     }
 
     private fun openFolder(folder: Folder) {
@@ -109,6 +112,11 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onStateChanged(state: HomeState) {
         modelViewsFactory.requestBuildModelViews()
         viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.item_clear_tag)?.isVisible = withState(viewModel) { it.tag != null }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -125,6 +133,16 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             startActivity(appRouter.setting())
             return true
         }
+
+        if (viewModel.isHandleByTagSelected(item.itemId)) {
+            return true
+        }
+
+        if (item.itemId == R.id.item_clear_tag) {
+            viewModel.clearSelectedTag()
+            return true
+        }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -161,8 +179,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams
 
-        val bindingItemDelete = MenuItemIconWithTextBinding.inflate(layoutInflater)
-        bindingItemDelete.imageIcon.setImageResource(R.drawable.ic_delete)
+        val bindingItemDelete = MenuItemWithTextBinding.inflate(layoutInflater)
         bindingItemDelete.textView.text = getString(R.string.delete)
         bindingItemDelete.root.setOnClickListener {
             dismissPopup()
@@ -170,8 +187,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
         popupView.addView(bindingItemDelete.root, layoutParams)
 
-        val bindingItemRename = MenuItemIconWithTextBinding.inflate(layoutInflater)
-        bindingItemRename.imageIcon.setImageResource(R.drawable.ic_rename)
+        val bindingItemRename = MenuItemWithTextBinding.inflate(layoutInflater)
         bindingItemRename.textView.text = getString(R.string.rename)
         bindingItemRename.root.setOnClickListener {
             dismissPopup()
@@ -179,17 +195,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
         popupView.addView(bindingItemRename.root, layoutParams)
 
-        val bindingItemTag = MenuItemIconWithTextBinding.inflate(layoutInflater)
-        bindingItemTag.imageIcon.setImageResource(R.drawable.ic_tag_blue)
-        bindingItemTag.textView.text = getString(R.string.tag)
+        val bindingItemTag = MenuItemWithTextBinding.inflate(layoutInflater)
+        bindingItemTag.textView.text = getString(R.string.add_tag)
         bindingItemTag.root.setOnClickListener {
             dismissPopup()
             viewModel.processFolderForTag(folder)
         }
         popupView.addView(bindingItemTag.root, layoutParams)
 
-        val bindingItemInfo = MenuItemIconWithTextBinding.inflate(layoutInflater)
-        bindingItemInfo.imageIcon.setImageResource(R.drawable.ic_detail)
+        val bindingItemInfo = MenuItemWithTextBinding.inflate(layoutInflater)
         bindingItemInfo.textView.text = getString(R.string.details)
         bindingItemInfo.root.setOnClickListener {
             dismissPopup()
@@ -202,7 +216,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         clickedView.post {
             val bottom = clickedView.bottom
             val parentBottom = viewBinding.recyclerView.bottom
-            val yOffset = min(0, parentBottom - (bottom + 200.dp(this)))
+            val yOffset = min(0, parentBottom - (bottom + 220.dp(this)))
             popupWindow.showAsDropDown(clickedView, 0, yOffset)
         }
     }
@@ -228,11 +242,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun showTagChoose(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
-        val selectedPosition = Tags.tags.indexOfFirst { tag -> tag.id == folder.tag }
         val dialog = ChoiceTagDialogFragment()
         dialog.arguments = Bundle().apply {
             putString(ExtraUtils.EXTRA_TITLE, "Choose tag")
-            putInt(ExtraUtils.EXTRA_POSITION, selectedPosition)
+            putInt(ExtraUtils.EXTRA_POSITION, folder.tag ?: 0)
         }
         dialog.show(supportFragmentManager, "dialog")
     }

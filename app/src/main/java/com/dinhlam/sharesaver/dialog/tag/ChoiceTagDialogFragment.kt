@@ -3,7 +3,6 @@ package com.dinhlam.sharesaver.dialog.tag
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import com.dinhlam.sharesaver.databinding.SingleChooseTagBinding
 import com.dinhlam.sharesaver.extensions.cast
 import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.utils.ExtraUtils
-import com.dinhlam.sharesaver.utils.Tags
+import com.dinhlam.sharesaver.utils.TagUtil
 
 class ChoiceTagDialogFragment :
     BaseViewModelDialogFragment<ChoiceTagState, ChoiceTagViewModel, DialogListBinding>() {
@@ -28,16 +27,18 @@ class ChoiceTagDialogFragment :
 
     private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
         override fun buildModelViews() = withState(viewModel) { state ->
-            Tags.tags.forEachIndexed { index, tag ->
-                TagModelView(tag.name, tag.color, index == state.selectedPosition).addTo(this)
+            TagUtil.tags.forEach { tag ->
+                TagModelView(
+                    tag.id.toLong(), tag.name, tag.color, tag.id == state.selectedTagId
+                ).addTo(this)
             }
         }
     }
 
     private val adapter = BaseListAdapter.createAdapter {
         withViewType(R.layout.single_choose_tag) {
-            TagViewHolder(this) { position ->
-                viewModel.selectedPosition(position)
+            TagViewHolder(this) { selectedTagId ->
+                viewModel.selectedTag(selectedTagId)
             }
         }
     }
@@ -54,8 +55,8 @@ class ChoiceTagDialogFragment :
 
         arguments?.let { bundle ->
             val title = bundle.getString(ExtraUtils.EXTRA_TITLE)
-            val position = bundle.getInt(ExtraUtils.EXTRA_POSITION, -1)
-            viewModel.setTitleAndSelectedPosition(title, position)
+            val selectedTag = bundle.getInt(ExtraUtils.EXTRA_POSITION, 0)
+            viewModel.setTitleAndSelectedTag(title, selectedTag)
         }
     }
 
@@ -68,13 +69,13 @@ class ChoiceTagDialogFragment :
     }
 
     private data class TagModelView(
-        val name: String, val color: Int, val selected: Boolean = false
-    ) : BaseListAdapter.BaseModelView(name) {
+        val id: Long, val name: String, val color: Int, val selected: Boolean = false
+    ) : BaseListAdapter.BaseModelView(id) {
         override val modelLayoutRes: Int
             get() = R.layout.single_choose_tag
 
         override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other is TagModelView && other.name == this.name
+            return other is TagModelView && other.id == this.id
         }
 
         override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
@@ -86,7 +87,7 @@ class ChoiceTagDialogFragment :
         BaseListAdapter.BaseViewHolder<TagModelView, SingleChooseTagBinding>(view) {
 
         fun interface OnClickListener {
-            fun onClick(position: Int)
+            fun onClick(tagId: Int)
         }
 
         override fun onCreateViewBinding(view: View): SingleChooseTagBinding {
@@ -104,7 +105,7 @@ class ChoiceTagDialogFragment :
                 }
             )
             binding.root.setOnClickListener {
-                clickListener.onClick(position)
+                clickListener.onClick(item.id.toInt())
             }
         }
 
@@ -116,7 +117,7 @@ class ChoiceTagDialogFragment :
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         withState(viewModel) { state ->
-            activity?.cast<OnTagSelectedListener>()?.onTagSelected(state.selectedPosition + 1)
+            activity?.cast<OnTagSelectedListener>()?.onTagSelected(state.selectedTagId)
         }
     }
 

@@ -4,11 +4,11 @@ import com.dinhlam.sharesaver.base.BaseViewModel
 
 class ChoiceTagViewModel : BaseViewModel<ChoiceTagState>(ChoiceTagState()) {
 
-    fun setTitleAndSelectedPosition(title: String?, position: Int) {
-        setState { copy(title = title, selectedPosition = position) }
+    fun setTitleAndSelectedTag(title: String?, selectedTag: Int) {
+        setState { copy(title = title, selectedTagId = selectedTag) }
     }
 
-    fun selectedPosition(position: Int) {
-        setState { copy(selectedPosition = position) }
+    fun selectedTag(tagId: Int) {
+        setState { copy(selectedTagId = tagId) }
     }
 }

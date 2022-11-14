@@ -13,7 +13,8 @@ data class HomeState(
     val folderToOpen: Folder? = null,
     @StringRes val toastRes: Int = 0,
     val folderActionConfirmation: FolderActionConfirmation? = null,
-    val folderPasswordConfirmRemind: Set<String> = emptySet()
+    val folderPasswordConfirmRemind: Set<String> = emptySet(),
+    val tag: Int? = null
 ) : BaseViewModel.BaseState {
     data class FolderActionConfirmation(
         val folder: Folder,

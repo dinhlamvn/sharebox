@@ -67,5 +67,13 @@
     <string name="share_list_activity_title">Shares</string>
     <string name="error_require_folder">No folder found.</string>
     <string name="tag">Tags</string>
+    <string name="tag_red">Red</string>
+    <string name="tag_yellow">Yellow</string>
+    <string name="tag_green">Green</string>
+    <string name="tag_blue">Blue</string>
+    <string name="tag_gray">Gray</string>
+    <string name="add_tag">Add tag</string>
+    <string name="clear_tag">Clear tag</string>
+    <string name="menu_filter_tag">Filter tag</string>
 
 </resources>

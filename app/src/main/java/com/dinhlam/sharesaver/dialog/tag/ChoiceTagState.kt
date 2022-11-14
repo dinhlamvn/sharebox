@@ -4,5 +4,5 @@ import com.dinhlam.sharesaver.base.BaseViewModel
 
 data class ChoiceTagState(
     val title: String? = null,
-    val selectedPosition: Int = -1
+    val selectedTagId: Int = -1
 ) : BaseViewModel.BaseState

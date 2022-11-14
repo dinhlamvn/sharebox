@@ -24,4 +24,7 @@ interface FolderDao {
 
     @Query("SELECT * FROM folder WHERE id = :id")
     fun getById(id: String): Folder
+
+    @Query("SELECT * FROM folder WHERE tag = :tagId")
+    fun getByTag(tagId: Int): List<Folder>
 }
