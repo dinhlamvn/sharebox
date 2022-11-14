@@ -42,7 +42,8 @@ import javax.inject.Inject
 import kotlin.math.min
 
 @AndroidEntryPoint
-class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
+class HomeActivity :
+    BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     FolderCreatorDialogFragment.OnFolderCreatorCallback,
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
     RenameFolderDialogFragment.OnConfirmRenameCallback,
@@ -65,7 +66,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         withViewType(R.layout.model_view_folder_list) {
             FolderListModelView.FolderListViewHolder(
-                this, viewModel::onFolderClick, ::onFolderLongClick
+                this,
+                viewModel::onFolderClick,
+                ::onFolderLongClick
             )
         }
     }
@@ -174,7 +177,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
-            width, height
+            width,
+            height
         )
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams
@@ -263,14 +267,20 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         val folder = confirmation.folder
         val title = getString(R.string.confirmation)
         val numberOfShare = resources.getQuantityString(
-            R.plurals.share_count_text, confirmation.shareCount, confirmation.shareCount
+            R.plurals.share_count_text,
+            confirmation.shareCount,
+            confirmation.shareCount
         )
         val message = HtmlCompat.fromHtml(
             getString(
-                R.string.delete_folder_confirmation_message, folder.name, numberOfShare
-            ), HtmlCompat.FROM_HTML_MODE_LEGACY
+                R.string.delete_folder_confirmation_message,
+                folder.name,
+                numberOfShare
+            ),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        showAlert(title,
+        showAlert(
+            title,
             message,
             getString(R.string.delete),
             getString(R.string.cancel),
@@ -280,14 +290,16 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 } else {
                     showConfirmPasswordDialog(folder.id)
                 }
-            })
+            }
+        )
     }
 
     private fun maybeShowConfirmPasswordToRenameFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
-                RenameFolderDialogFragment::class, supportFragmentManager
+                RenameFolderDialogFragment::class,
+                supportFragmentManager
             ) {
                 arguments = Bundle().apply {
                     putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
@@ -302,7 +314,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
-                FolderDetailDialogFragment::class, supportFragmentManager
+                FolderDetailDialogFragment::class,
+                supportFragmentManager
             ) {
                 arguments = Bundle().apply {
                     putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
@@ -318,7 +331,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             return@withState onPasswordVerified(false)
         }
         BaseDialogFragment.showDialog(
-            FolderConfirmPasswordDialogFragment::class, supportFragmentManager
+            FolderConfirmPasswordDialogFragment::class,
+            supportFragmentManager
         ) {
             arguments = Bundle().apply {
                 putString(ExtraUtils.EXTRA_FOLDER_ID, id)

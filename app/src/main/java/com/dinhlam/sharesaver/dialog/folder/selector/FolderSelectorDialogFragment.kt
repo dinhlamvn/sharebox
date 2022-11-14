@@ -57,7 +57,8 @@ class FolderSelectorDialogFragment :
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogFolderSelectorBinding {
         return DialogFolderSelectorBinding.inflate(inflater, container, false)
     }

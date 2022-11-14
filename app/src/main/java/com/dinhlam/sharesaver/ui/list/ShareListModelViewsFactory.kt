@@ -38,7 +38,8 @@ class ShareListModelViewsFactory constructor(
             when (share.shareType) {
                 "web-link" -> {
                     val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
+                        share.shareInfo,
+                        ShareState.ShareInfo.ShareWebLink::class.java
                     )
                     HomeWebLinkModelView(
                         id = "${share.id}",
@@ -51,15 +52,21 @@ class ShareListModelViewsFactory constructor(
                 }
                 "image" -> {
                     val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareState.ShareInfo.ShareImage::class.java
+                        share.shareInfo,
+                        ShareState.ShareInfo.ShareImage::class.java
                     )
                     HomeImageModelView(
-                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote, share.id
+                        "${share.id}",
+                        shareInfo.uri,
+                        share.createdAt,
+                        share.shareNote,
+                        share.id
                     )
                 }
                 "text" -> {
                     val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareState.ShareInfo.ShareText::class.java
+                        share.shareInfo,
+                        ShareState.ShareInfo.ShareText::class.java
                     )
                     HomeTextModelView(
                         id = "${share.id}",

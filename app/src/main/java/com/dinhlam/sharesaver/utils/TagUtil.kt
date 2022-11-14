@@ -6,7 +6,11 @@ import com.dinhlam.sharesaver.model.Tag
 object TagUtil {
 
     val tags = listOf(
-        Tag.Red, Tag.Green, Tag.Blue, Tag.Yellow, Tag.Gray
+        Tag.Red,
+        Tag.Green,
+        Tag.Blue,
+        Tag.Yellow,
+        Tag.Gray
     )
 
     fun setFolderTag(id: Int, folder: Folder): Folder {

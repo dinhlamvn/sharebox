@@ -6,12 +6,14 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    foreignKeys = [ForeignKey(
-        onDelete = ForeignKey.CASCADE,
-        entity = Folder::class,
-        parentColumns = ["id"],
-        childColumns = ["folder_id"]
-    )]
+    foreignKeys = [
+        ForeignKey(
+            onDelete = ForeignKey.CASCADE,
+            entity = Folder::class,
+            parentColumns = ["id"],
+            childColumns = ["folder_id"]
+        )
+    ]
 )
 data class Share(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

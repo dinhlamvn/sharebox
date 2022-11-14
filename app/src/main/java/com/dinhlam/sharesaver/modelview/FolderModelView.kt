@@ -7,7 +7,10 @@ import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.databinding.ModelViewFolderBinding
 
 data class FolderModelView(
-    val id: String, val name: String, val desc: String?, val hasPassword: Boolean = false
+    val id: String,
+    val name: String,
+    val desc: String?,
+    val hasPassword: Boolean = false
 ) : BaseListAdapter.BaseModelView(id) {
     override val modelLayoutRes: Int
         get() = R.layout.model_view_folder
@@ -46,7 +49,6 @@ data class FolderModelView(
         }
 
         override fun onUnBind() {
-
         }
     }
 }

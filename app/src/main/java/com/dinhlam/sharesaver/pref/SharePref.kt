@@ -6,7 +6,8 @@ import androidx.core.content.edit
 import com.dinhlam.sharesaver.extensions.cast
 
 abstract class SharePref constructor(
-    context: Context, sharePrefName: String
+    context: Context,
+    sharePrefName: String
 ) {
 
     protected val sharePref: SharedPreferences =
@@ -36,16 +37,20 @@ abstract class SharePref constructor(
         return when {
             typeOf.isAssignableFrom(Int::class.java) -> sharePref.getInt(key, default.cast()!!) as T
             typeOf.isAssignableFrom(Float::class.java) -> sharePref.getFloat(
-                key, default.cast()!!
+                key,
+                default.cast()!!
             ) as T
             typeOf.isAssignableFrom(Long::class.java) -> sharePref.getLong(
-                key, default.cast()!!
+                key,
+                default.cast()!!
             ) as T
             typeOf.isAssignableFrom(String::class.java) -> sharePref.getString(
-                key, default.cast()!!
+                key,
+                default.cast()!!
             ) as T
             typeOf.isAssignableFrom(Set::class.java) -> sharePref.getStringSet(
-                key, default.cast()!!
+                key,
+                default.cast()!!
             ) as T
             else -> error("Not value for key: $key")
         }

@@ -1,6 +1,5 @@
 package com.dinhlam.sharesaver.base
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -88,7 +87,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     protected fun execute(
         onError: ((Throwable) -> Unit)? = null,
-        block: suspend (T) -> Unit,
+        block: suspend (T) -> Unit
     ) {
         withState { state ->
             viewModelScope.launch(Dispatchers.IO) {
@@ -103,7 +102,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     protected fun executeJob(
         onError: ((Throwable) -> Unit)? = null,
-        block: suspend CoroutineScope.() -> Unit,
+        block: suspend CoroutineScope.() -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
         try {
             block.invoke(this)

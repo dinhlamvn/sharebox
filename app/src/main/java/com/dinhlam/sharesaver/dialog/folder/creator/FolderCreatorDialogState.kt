@@ -9,5 +9,5 @@ data class FolderCreatorDialogState(
     val folderDesc: String = "",
     val folderPassword: String = "",
     @StringRes val error: Int = 0,
-    @StringRes val toastRes: Int = 0,
+    @StringRes val toastRes: Int = 0
 ) : BaseViewModel.BaseState

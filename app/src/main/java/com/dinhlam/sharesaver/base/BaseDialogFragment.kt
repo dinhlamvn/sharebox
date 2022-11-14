@@ -46,7 +46,9 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     var dismissListener: OnDialogDismissListener? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         onViewPreLoad(savedInstanceState)
         binding = onCreateViewBinding(inflater, container)

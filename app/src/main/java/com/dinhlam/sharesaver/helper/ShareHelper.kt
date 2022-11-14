@@ -14,7 +14,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ShareHelper @Inject constructor(
-    @ApplicationContext private val context: Context, private val gson: Gson
+    @ApplicationContext private val context: Context,
+    private val gson: Gson
 ) {
 
     @Suppress("DEPRECATION")
@@ -49,10 +50,10 @@ class ShareHelper @Inject constructor(
             chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
             context.startActivity(chooser)
         } else {
-
             val resolveInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 context.packageManager.queryIntentActivities(
-                    intent, PackageManager.ResolveInfoFlags.of(0)
+                    intent,
+                    PackageManager.ResolveInfoFlags.of(0)
                 )
             } else {
                 context.packageManager.queryIntentActivities(intent, 0)
@@ -62,7 +63,8 @@ class ShareHelper @Inject constructor(
                 resolveInfoList.forEach { resolveInfo ->
                     val newIntent = Intent(intent)
                     if (!resolveInfo.activityInfo.packageName.equals(
-                            BuildConfig.APPLICATION_ID, true
+                            BuildConfig.APPLICATION_ID,
+                            true
                         )
                     ) {
                         newIntent.setPackage(resolveInfo.activityInfo.packageName)

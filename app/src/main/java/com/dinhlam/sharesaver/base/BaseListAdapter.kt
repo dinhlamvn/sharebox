@@ -95,7 +95,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     override fun onCreateViewHolder(
-        parent: ViewGroup, viewType: Int
+        parent: ViewGroup,
+        viewType: Int
     ): BaseViewHolder<T, ViewBinding> {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(viewType, parent, false)
@@ -109,7 +110,9 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     override fun onBindViewHolder(
-        holder: BaseViewHolder<T, ViewBinding>, position: Int, payloads: MutableList<Any>
+        holder: BaseViewHolder<T, ViewBinding>,
+        position: Int,
+        payloads: MutableList<Any>
     ) {
         holder.onBind(getItem(position), position)
     }

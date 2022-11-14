@@ -58,7 +58,6 @@ data class FolderListModelView(
         }
 
         override fun onUnBind() {
-
         }
     }
 }

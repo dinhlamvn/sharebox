@@ -12,7 +12,8 @@ import com.dinhlam.sharesaver.databinding.DialogTextViewerBinding
 class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogTextViewerBinding {
         return DialogTextViewerBinding.inflate(inflater, container, false)
     }

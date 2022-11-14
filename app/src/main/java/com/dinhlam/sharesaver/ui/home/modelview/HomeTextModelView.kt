@@ -16,7 +16,7 @@ data class HomeTextModelView(
     val content: String?,
     val createdAt: Long,
     val note: String?,
-    val shareId: Int,
+    val shareId: Int
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
@@ -50,7 +50,11 @@ data class HomeTextModelView(
             }
 
             ImageLoader.load(
-                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
+                context,
+                item.iconUrl,
+                binding.imageView,
+                R.drawable.ic_share_text,
+                true
             )
             binding.textViewContent.text = item.content
             binding.textViewCreatedDate.text = item.createdAt.format("H:mm")
@@ -59,7 +63,6 @@ data class HomeTextModelView(
         }
 
         override fun onUnBind() {
-
         }
 
         override fun onCreateViewBinding(view: View): ModelViewHomeShareTextBinding {

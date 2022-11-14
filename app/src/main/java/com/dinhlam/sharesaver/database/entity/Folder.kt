@@ -6,7 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Folder(
-    @PrimaryKey @ColumnInfo(name = "id") val id: String,
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: String,
     @ColumnInfo(name = "name", index = true) val name: String,
     @ColumnInfo(name = "desc") val desc: String? = null,
     @ColumnInfo(name = "password") val password: String? = null,

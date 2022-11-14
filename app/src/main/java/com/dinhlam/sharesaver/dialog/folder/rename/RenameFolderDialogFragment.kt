@@ -24,7 +24,8 @@ class RenameFolderDialogFragment :
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogFolderInputRenameBinding {
         return DialogFolderInputRenameBinding.inflate(inflater, container, false)
     }
@@ -32,7 +33,6 @@ class RenameFolderDialogFragment :
     override val viewModel: RenameFolderDialogViewModel by viewModels()
 
     override fun onStateChanged(state: RenameFolderDialogState) {
-
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {

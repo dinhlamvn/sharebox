@@ -7,7 +7,8 @@ import com.dinhlam.sharesaver.base.BaseSpanSizeLookup
 import com.dinhlam.sharesaver.databinding.ModelViewHomeDateBinding
 
 data class HomeDateModelView(
-    val id: String, val date: String
+    val id: String,
+    val date: String
 ) : BaseListAdapter.BaseModelView(id) {
     override val modelLayoutRes: Int
         get() = R.layout.model_view_home_date
@@ -35,7 +36,6 @@ data class HomeDateModelView(
         }
 
         override fun onUnBind() {
-
         }
     }
 }

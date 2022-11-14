@@ -9,7 +9,8 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
-class ShareWebLinkJsonSerializerDeserializer : JsonSerializer<ShareState.ShareInfo.ShareWebLink>,
+class ShareWebLinkJsonSerializerDeserializer :
+    JsonSerializer<ShareState.ShareInfo.ShareWebLink>,
     JsonDeserializer<ShareState.ShareInfo.ShareWebLink> {
     override fun serialize(
         src: ShareState.ShareInfo.ShareWebLink,

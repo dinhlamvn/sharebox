@@ -11,7 +11,8 @@ import androidx.annotation.StringRes
 fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         onBackInvokedDispatcher.registerOnBackInvokedCallback(
-            OnBackInvokedDispatcher.PRIORITY_DEFAULT, handler
+            OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+            handler
         )
     } else {
         onBackPressedDispatcher.addCallback(this) {

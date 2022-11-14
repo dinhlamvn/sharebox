@@ -24,7 +24,8 @@ class FolderCreatorDialogFragment :
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogFolderCreatorBinding {
         return DialogFolderCreatorBinding.inflate(inflater, container, false)
     }
@@ -32,7 +33,6 @@ class FolderCreatorDialogFragment :
     override val viewModel: FolderCreatorDialogViewModel by viewModels()
 
     override fun onStateChanged(state: FolderCreatorDialogState) {
-
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {

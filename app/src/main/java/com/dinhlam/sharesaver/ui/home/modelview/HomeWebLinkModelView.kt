@@ -37,7 +37,8 @@ data class HomeWebLinkModelView(
     }
 
     class HomeWebLinkViewHolder(
-        view: View, val shareToOther: (Int) -> Unit
+        view: View,
+        val shareToOther: (Int) -> Unit
     ) : BaseListAdapter.BaseViewHolder<HomeWebLinkModelView, ModelViewHomeShareWebLinkBinding>(view) {
 
         override fun onBind(item: HomeWebLinkModelView, position: Int) {
@@ -48,7 +49,11 @@ data class HomeWebLinkModelView(
                 shareToOther(item.shareId)
             }
             ImageLoader.load(
-                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
+                context,
+                item.iconUrl,
+                binding.imageView,
+                R.drawable.ic_share_text,
+                true
             )
             binding.textViewUrl.text = item.url
             binding.textViewCreatedDate.text = item.createdAt.format("H:mm")
@@ -57,7 +62,6 @@ data class HomeWebLinkModelView(
         }
 
         override fun onUnBind() {
-
         }
 
         override fun onCreateViewBinding(view: View): ModelViewHomeShareWebLinkBinding {

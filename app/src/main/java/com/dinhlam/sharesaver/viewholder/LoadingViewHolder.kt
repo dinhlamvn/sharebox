@@ -12,10 +12,8 @@ class LoadingViewHolder(view: View) :
     }
 
     override fun onBind(item: LoadingModelView, position: Int) {
-        
     }
 
     override fun onUnBind() {
-
     }
 }

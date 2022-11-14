@@ -29,7 +29,10 @@ class ChoiceTagDialogFragment :
         override fun buildModelViews() = withState(viewModel) { state ->
             TagUtil.tags.forEach { tag ->
                 TagModelView(
-                    tag.id.toLong(), tag.name, tag.color, tag.id == state.selectedTagId
+                    tag.id.toLong(),
+                    tag.name,
+                    tag.color,
+                    tag.id == state.selectedTagId
                 ).addTo(this)
             }
         }
@@ -43,9 +46,9 @@ class ChoiceTagDialogFragment :
         }
     }
 
-
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogListBinding {
         return DialogListBinding.inflate(layoutInflater, container, false)
     }
@@ -69,7 +72,10 @@ class ChoiceTagDialogFragment :
     }
 
     private data class TagModelView(
-        val id: Long, val name: String, val color: Int, val selected: Boolean = false
+        val id: Long,
+        val name: String,
+        val color: Int,
+        val selected: Boolean = false
     ) : BaseListAdapter.BaseModelView(id) {
         override val modelLayoutRes: Int
             get() = R.layout.single_choose_tag
@@ -110,7 +116,6 @@ class ChoiceTagDialogFragment :
         }
 
         override fun onUnBind() {
-
         }
     }
 

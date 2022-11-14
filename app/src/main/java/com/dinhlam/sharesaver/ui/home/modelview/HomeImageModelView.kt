@@ -13,7 +13,11 @@ import com.dinhlam.sharesaver.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharesaver.loader.ImageLoader
 
 data class HomeImageModelView(
-    val id: String, val uri: Uri, val createdAt: Long, val note: String?, val shareId: Int
+    val id: String,
+    val uri: Uri,
+    val createdAt: Long,
+    val note: String?,
+    val shareId: Int
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
@@ -50,7 +54,6 @@ data class HomeImageModelView(
         }
 
         override fun onUnBind() {
-
         }
 
         override fun onCreateViewBinding(view: View): ModelViewHomeShareImageBinding {

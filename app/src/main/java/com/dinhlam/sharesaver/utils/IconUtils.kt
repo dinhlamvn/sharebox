@@ -12,7 +12,6 @@ object IconUtils {
     private const val YOUTUBE_ICON_URL =
         "https://img.icons8.com/color/144/000000/youtube-play.png"
 
-
     fun getIconUrl(shareContent: String?): String? {
         if (isFacebookShare(shareContent)) {
             return FB_ICON_URL

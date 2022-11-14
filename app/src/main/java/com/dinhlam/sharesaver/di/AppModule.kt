@@ -22,13 +22,16 @@ object AppModule {
     fun provideGson(): Gson {
         val gsonBuilder = GsonBuilder()
         gsonBuilder.registerTypeAdapter(
-            ShareState.ShareInfo.ShareText::class.java, ShareTextJsonSerializerDeserializer()
+            ShareState.ShareInfo.ShareText::class.java,
+            ShareTextJsonSerializerDeserializer()
         )
         gsonBuilder.registerTypeAdapter(
-            ShareState.ShareInfo.ShareImage::class.java, ShareImageJsonSerializerDeserializer()
+            ShareState.ShareInfo.ShareImage::class.java,
+            ShareImageJsonSerializerDeserializer()
         )
         gsonBuilder.registerTypeAdapter(
-            ShareState.ShareInfo.ShareWebLink::class.java, ShareWebLinkJsonSerializerDeserializer()
+            ShareState.ShareInfo.ShareWebLink::class.java,
+            ShareWebLinkJsonSerializerDeserializer()
         )
         return gsonBuilder.create()
     }

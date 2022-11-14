@@ -27,7 +27,8 @@ class FolderConfirmPasswordDialogFragment :
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogFolderConfirmPasswordBinding {
         return DialogFolderConfirmPasswordBinding.inflate(inflater, container, false)
     }
@@ -35,7 +36,6 @@ class FolderConfirmPasswordDialogFragment :
     override val viewModel: FolderConfirmPasswordDialogViewModel by viewModels()
 
     override fun onStateChanged(state: FolderConfirmPasswordDialogState) {
-
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +47,8 @@ class FolderConfirmPasswordDialogFragment :
             nonNull.passwordAlias.takeIfNotNullOrBlank()?.let { alias ->
                 viewBinding.textPasswordAlias.visibility = View.VISIBLE
                 viewBinding.textPasswordAlias.text = HtmlCompat.fromHtml(
-                    getString(R.string.password_alias, alias), HtmlCompat.FROM_HTML_MODE_LEGACY
+                    getString(R.string.password_alias, alias),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             } ?: viewBinding.textPasswordAlias.run {
                 text = null

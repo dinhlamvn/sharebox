@@ -24,7 +24,6 @@ class FolderRepository @Inject constructor(
     }
 
     override fun updateMany(vararg items: Folder) {
-
     }
 
     override fun updateById(id: String, block: (Folder) -> Folder) {

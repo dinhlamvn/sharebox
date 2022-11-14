@@ -8,7 +8,8 @@ import com.dinhlam.sharesaver.ui.share.modelview.ShareTextModelView
 import com.dinhlam.sharesaver.ui.share.modelview.ShareWebLinkModelView
 
 class ShareModelViewsFactory(
-    private val shareShareActivity: ShareActivity, private val viewModel: ShareViewModel
+    private val shareShareActivity: ShareActivity,
+    private val viewModel: ShareViewModel
 ) : BaseListAdapter.ModelViewsFactory() {
 
     override fun buildModelViews() = shareShareActivity.withState(viewModel) { data ->
@@ -40,7 +41,8 @@ class ShareModelViewsFactory(
     private fun renderShareMultipleImageContent(shareMultipleImage: ShareState.ShareInfo.ShareMultipleImage) {
         shareMultipleImage.uris.mapIndexed { index, uri ->
             ShareMultipleImageModelView(
-                "shareMultipleImage$index", uri
+                "shareMultipleImage$index",
+                uri
             )
         }.forEach { it.addTo(this) }
     }

@@ -24,11 +24,9 @@ class ShareRepository @Inject constructor(
     }
 
     override fun updateMany(vararg items: Share) {
-
     }
 
     override fun updateById(id: Int, block: (Share) -> Share) {
-
     }
 
     override fun get(id: Int): Share {

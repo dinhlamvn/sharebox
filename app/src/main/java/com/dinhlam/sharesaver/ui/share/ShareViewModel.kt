@@ -20,7 +20,7 @@ class ShareViewModel @Inject constructor(
     private val folderRepository: FolderRepository,
     private val shareRepository: ShareRepository,
     private val gson: Gson,
-    private val appSharePref: AppSharePref,
+    private val appSharePref: AppSharePref
 ) : BaseViewModel<ShareState>(ShareState()) {
 
     fun setShareInfo(shareInfo: ShareState.ShareInfo) = executeJob {
@@ -57,7 +57,9 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun saveWebLink(
-        folderId: String, note: String, shareWebLink: ShareState.ShareInfo.ShareWebLink
+        folderId: String,
+        note: String,
+        shareWebLink: ShareState.ShareInfo.ShareWebLink
     ) {
         val json = gson.toJson(shareWebLink)
         val share = Share(
@@ -71,18 +73,26 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun saveShareText(
-        folderId: String, note: String, shareText: ShareState.ShareInfo.ShareText
+        folderId: String,
+        note: String,
+        shareText: ShareState.ShareInfo.ShareText
     ) {
         val json = gson.toJson(shareText)
         val share = Share(
-            folderId = folderId, shareType = shareText.shareType, shareInfo = json, shareNote = note
+            folderId = folderId,
+            shareType = shareText.shareType,
+            shareInfo = json,
+            shareNote = note
         )
         shareRepository.insert(share)
         setState { copy(isSaveSuccess = true) }
     }
 
     private fun saveShareImage(
-        context: Context, folderId: String, note: String, shareImage: ShareState.ShareInfo.ShareImage
+        context: Context,
+        folderId: String,
+        note: String,
+        shareImage: ShareState.ShareInfo.ShareImage
     ) {
         val bitmap = ImageLoader.get(context, shareImage.uri)
         val imagePath = context.getExternalFilesDir("share_images")!!
@@ -93,7 +103,9 @@ class ShareViewModel @Inject constructor(
         imageFile.createNewFile()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
         val newUri = FileProvider.getUriForFile(
-            context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
+            context,
+            "${BuildConfig.APPLICATION_ID}.file_provider",
+            imageFile
         )
         val saveShareImage = shareImage.copy(uri = newUri)
         val json = gson.toJson(saveShareImage)

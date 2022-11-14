@@ -7,10 +7,10 @@ import com.dinhlam.sharesaver.R
 import com.dinhlam.sharesaver.base.BaseListAdapter
 import com.dinhlam.sharesaver.base.BaseViewModelActivity
 import com.dinhlam.sharesaver.databinding.ActivityShareListBinding
+import com.dinhlam.sharesaver.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharesaver.extensions.setupWith
 import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.helper.ShareHelper
-import com.dinhlam.sharesaver.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharesaver.ui.home.modelview.HomeDateModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeImageModelView
 import com.dinhlam.sharesaver.ui.home.modelview.HomeTextModelView

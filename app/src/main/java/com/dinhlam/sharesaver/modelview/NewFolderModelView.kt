@@ -29,7 +29,6 @@ object NewFolderModelView : BaseListAdapter.BaseModelView("model_view_new_folder
         }
 
         override fun onUnBind() {
-
         }
     }
 }

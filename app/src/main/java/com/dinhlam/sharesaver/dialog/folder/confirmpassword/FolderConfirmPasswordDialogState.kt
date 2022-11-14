@@ -8,5 +8,5 @@ data class FolderConfirmPasswordDialogState(
     val folder: Folder? = null,
     @StringRes val error: Int = 0,
     @StringRes val toastRes: Int = 0,
-    val verifyPasswordSuccess: Boolean = false,
+    val verifyPasswordSuccess: Boolean = false
 ) : BaseViewModel.BaseState

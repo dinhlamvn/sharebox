@@ -9,5 +9,5 @@ data class RenameFolderDialogState(
     @StringRes val error: Int = 0,
     @StringRes val toastRes: Int = 0,
     val renameFolderSuccess: Boolean = false,
-    val isIgnoreRename: Boolean = false,
+    val isIgnoreRename: Boolean = false
 ) : BaseViewModel.BaseState

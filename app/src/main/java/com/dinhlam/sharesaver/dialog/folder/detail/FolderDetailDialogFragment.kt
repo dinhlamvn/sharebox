@@ -19,7 +19,8 @@ class FolderDetailDialogFragment :
     BaseViewModelDialogFragment<FolderDetailDialogState, FolderDetailDialogViewModel, DialogFolderDetailBinding>() {
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
+        inflater: LayoutInflater,
+        container: ViewGroup?
     ): DialogFolderDetailBinding {
         return DialogFolderDetailBinding.inflate(inflater, container, false)
     }
@@ -27,7 +28,6 @@ class FolderDetailDialogFragment :
     override val viewModel: FolderDetailDialogViewModel by viewModels()
 
     override fun onStateChanged(state: FolderDetailDialogState) {
-
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
