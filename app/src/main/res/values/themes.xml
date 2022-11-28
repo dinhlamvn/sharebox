@@ -6,6 +6,7 @@
         <item name="colorOnPrimary">@color/primaryColor</item>
         <item name="colorAccent">@color/primaryDarkColor</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="editTextStyle">@style/AppEditText</item>
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">
@@ -61,6 +62,13 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">20dp</item>
         <item name="cornerSizeTopLeft">20dp</item>
+    </style>
+
+    <style name="AppEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">0dp</item>
+        <item name="boxCornerRadiusTopEnd">0dp</item>
+        <item name="boxCornerRadiusBottomStart">0dp</item>
+        <item name="boxCornerRadiusBottomEnd">0dp</item>
     </style>
 
 </resources>

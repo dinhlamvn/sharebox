@@ -53,17 +53,11 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_layout_note"
+            style="@style/AppEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
             android:layout_marginTop="8dp"
-            android:textColorHint="@color/colorTextHint"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="@color/primaryColor"
-            app:boxStrokeWidth="1dp"
-            app:hintEnabled="true"
-            app:hintTextColor="@color/colorTextHint"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:placeholderText="@string/text_input_note_hint_desc"
             app:placeholderTextAppearance="@style/TextAppearance.Caption"
