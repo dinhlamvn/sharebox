@@ -6,13 +6,25 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10"
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // Hilt dependencies
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task installDebug() {
+    println("Starting build debug APK")
+    dependsOn(":app:clean")
+    dependsOn(":app:assembleDebug")
+
+    doLast {
+        println("Installing debug APK")
+        def process = "adb install app/build/outputs/apk/debug/app-debug.apk".execute()
+        process.waitForProcessOutput()
+    }
 }

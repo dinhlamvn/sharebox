@@ -1,7 +1,79 @@
 <resources>
-    <string name="app_name">Keep My Share</string>
+    <string name="app_name">Share Saver</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_saamplemodule">Module Title</string>
+    <string name="button_save">Save</string>
+    <string name="share_activity_title">Save share</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="text_input_note_hint">Your note</string>
+    <string name="share_empty_content">Share\'s content is empty</string>
+    <string name="save_share_successfully">Save successfully</string>
+    <string name="text_input_note_hint_desc">Type somethings like: title, description,…</string>
+    <string name="view_more">View more</string>
+    <string name="create_new_folder">New Folder</string>
+    <string name="create_new_folder_desc">With your customize</string>
+    <string name="text_input_folder_name_hint_desc">Type your favourite name</string>
+    <string name="text_input_folder_name_hint">Folder\'s name</string>
+    <string name="text_input_folder_desc_hint_desc">Type somethings about this folder</string>
+    <string name="text_input_folder_desc_hint">Folder\'s description (Optional)</string>
+    <string name="error_require_folder_name">Please input the folder\'s name</string>
+    <string name="text_input_folder_password_hint_desc">Type password here</string>
+    <string name="text_input_folder_password_hint">Password (Optional)</string>
+    <string name="check_box_create_folder_password">Encrypt with password</string>
+    <string name="text_input_folder_password_alias_hint_desc">Your alias</string>
+    <string name="text_input_folder_password_alias_hint">Password alias (Optional)</string>
+    <string name="error_create_folder_try_again">Has an error until create folder, please try again!</string>
+    <string name="remove">Remove</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="delete_folder_error">Has an error until delete this folder, please try again!</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="delete_folder_confirmation_message"><![CDATA[Are you sure delete folder <b>%s</b> (%s)?]]></string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_folder_success">Folder deleted</string>
+    <string name="text_input_folder_password_confirm_hint">Password</string>
+    <string name="button_done">Done</string>
+    <string name="password_incorrect">Password is incorrect</string>
+    <string name="error_require_password">Please input password</string>
+    <string name="password_alias"><![CDATA[Password alias: <b>%s</b>]]></string>
+    <string name="error_folder_rename">Has an error when change name</string>
+    <string name="check_box_save_password_next_session">Save password for next session</string>
+    <string name="details">Details</string>
+    <string name="created_date_title">Created date:</string>
+    <string name="updated_date_title">Updated date:</string>
+    <string name="share_count_title">Share count:</string>
+    <string name="button_close">Close</string>
+    <string name="description_title">Description:</string>
+    <string name="folder_desc_empty">No desc</string>
+    <string name="has_password_title">Has password:</string>
+
+    <plurals name="share_count_text">
+        <item quantity="one">%d share</item>
+        <item quantity="other">%d shares</item>
+    </plurals>
+
+    <!-- Facebook declare -->
+    <string name="facebook_app_id">647232403661006</string>
+    <string name="fb_login_protocol_scheme">fb647232403661006</string>
+    <string name="facebook_client_token">58f30ca9da7ab64f6e8b147f7fd4cf9b</string>
+    <!-- End of facebook -->
+
+    <string name="setting_activity_title">Settings</string>
+    <string name="setting">Settings</string>
+    <string name="request_login_facebook">You need login to your Facebook account to use some feature in app.</string>
+    <string name="login_facebook_error">Has error until login Facebook, try again!</string>
+    <string name="login_facebook_success">Login to Facebook successfully with profile: %s</string>
+    <string name="share_list_activity_title">Shares</string>
+    <string name="error_require_folder">No folder found.</string>
+    <string name="tag">Tags</string>
+    <string name="tag_red">Red</string>
+    <string name="tag_yellow">Yellow</string>
+    <string name="tag_green">Green</string>
+    <string name="tag_blue">Blue</string>
+    <string name="tag_gray">Gray</string>
+    <string name="add_tag">Add tag</string>
+    <string name="clear_tag">Clear tag</string>
+    <string name="menu_filter_tag">Filter tag</string>
+
 </resources>

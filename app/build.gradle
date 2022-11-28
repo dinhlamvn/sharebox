@@ -2,19 +2,24 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.dinhlam.keepmyshare"
+        applicationId "com.dinhlam.sharesaver"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                APPLICATION_ID: "$applicationId"
+        ]
     }
 
     buildTypes {
@@ -39,16 +44,48 @@ android {
 dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.6.1'
+    def androidx_core_ktx_version = "1.9.0"
+    implementation "androidx.core:core-ktx:$androidx_core_ktx_version"
+
+    def appcompat_version = "1.5.1"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+
+    def material_version = "1.7.0"
+    implementation "com.google.android.material:material:$material_version"
+
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
+
+    def ktx_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$ktx_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$ktx_version"
+    //noinspection GradleDependency
+    implementation "androidx.navigation:navigation-fragment-ktx:$ktx_version"
+    //noinspection GradleDependency
+    implementation "androidx.navigation:navigation-ui-ktx:$ktx_version"
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
+
+    // Room
+    def room_version = "2.4.3"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Hilt
+    def hilt_version = "2.38.1"
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+
+    // Gson
+    def gson_version = "2.9.1"
+    implementation "com.google.code.gson:gson:$gson_version"
+
+    // Facebook
+    def facebook_version = "8.2.0"
+    implementation "com.facebook.android:facebook-android-sdk:$facebook_version"
+}
+
+kapt {
+    correctErrorTypes = true
 }
