@@ -35,6 +35,7 @@ import com.dinhlam.sharesaver.extensions.showToast
 import com.dinhlam.sharesaver.modelview.FolderListModelView
 import com.dinhlam.sharesaver.router.AppRouter
 import com.dinhlam.sharesaver.utils.ExtraUtils
+import com.dinhlam.sharesaver.utils.FolderUtils
 import com.dinhlam.sharesaver.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,10 @@ class HomeActivity :
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
     RenameFolderDialogFragment.OnConfirmRenameCallback,
     ChoiceTagDialogFragment.OnTagSelectedListener {
+
+    companion object {
+        private const val POPUP_ITEM_SPACING = 60
+    }
 
     private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
 
@@ -161,6 +166,8 @@ class HomeActivity :
     private fun onFolderLongClick(clickedView: View, position: Int) {
         val folder =
             withState(viewModel) { homeData -> homeData.folders.getOrNull(position) } ?: return
+        var popupSpacing = if (folder.tag == null) 0 else POPUP_ITEM_SPACING
+
         val width = 150.dp(this)
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this)
@@ -183,21 +190,25 @@ class HomeActivity :
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams
 
-        val bindingItemDelete = MenuItemWithTextBinding.inflate(layoutInflater)
-        bindingItemDelete.textView.text = getString(R.string.delete)
-        bindingItemDelete.root.setOnClickListener {
-            dismissPopup()
-            viewModel.processFolderForDelete(folder)
-        }
-        popupView.addView(bindingItemDelete.root, layoutParams)
+        if (!FolderUtils.isProtectedFolder(folder.id)) {
+            val bindingItemDelete = MenuItemWithTextBinding.inflate(layoutInflater)
+            bindingItemDelete.textView.text = getString(R.string.delete)
+            bindingItemDelete.root.setOnClickListener {
+                dismissPopup()
+                viewModel.processFolderForDelete(folder)
+            }
+            popupView.addView(bindingItemDelete.root, layoutParams)
+            popupSpacing += POPUP_ITEM_SPACING
 
-        val bindingItemRename = MenuItemWithTextBinding.inflate(layoutInflater)
-        bindingItemRename.textView.text = getString(R.string.rename)
-        bindingItemRename.root.setOnClickListener {
-            dismissPopup()
-            viewModel.processFolderForRename(folder)
+            val bindingItemRename = MenuItemWithTextBinding.inflate(layoutInflater)
+            bindingItemRename.textView.text = getString(R.string.rename)
+            bindingItemRename.root.setOnClickListener {
+                dismissPopup()
+                viewModel.processFolderForRename(folder)
+            }
+            popupView.addView(bindingItemRename.root, layoutParams)
+            popupSpacing += POPUP_ITEM_SPACING
         }
-        popupView.addView(bindingItemRename.root, layoutParams)
 
         val bindingItemTag = MenuItemWithTextBinding.inflate(layoutInflater)
         bindingItemTag.textView.text = getString(R.string.add_tag)
@@ -206,6 +217,18 @@ class HomeActivity :
             viewModel.processFolderForTag(folder)
         }
         popupView.addView(bindingItemTag.root, layoutParams)
+        popupSpacing += POPUP_ITEM_SPACING
+
+        if (folder.tag != null) {
+            val bindingItemRemoveTag = MenuItemWithTextBinding.inflate(layoutInflater)
+            bindingItemRemoveTag.textView.text = getString(R.string.remove_tag)
+            bindingItemRemoveTag.root.setOnClickListener {
+                dismissPopup()
+                viewModel.removeTag(folder)
+            }
+            popupView.addView(bindingItemRemoveTag.root, layoutParams)
+            popupSpacing += POPUP_ITEM_SPACING
+        }
 
         val bindingItemInfo = MenuItemWithTextBinding.inflate(layoutInflater)
         bindingItemInfo.textView.text = getString(R.string.details)
@@ -214,13 +237,14 @@ class HomeActivity :
             viewModel.processFolderForDetail(folder)
         }
         popupView.addView(bindingItemInfo.root, layoutParams)
+        popupSpacing += POPUP_ITEM_SPACING
 
         popupWindow.contentView = popupView
 
         clickedView.post {
             val bottom = clickedView.bottom
             val parentBottom = viewBinding.recyclerView.bottom
-            val yOffset = min(0, parentBottom - (bottom + 220.dp(this)))
+            val yOffset = min(0, parentBottom - (bottom + popupSpacing.dp(this)))
             popupWindow.showAsDropDown(clickedView, 0, yOffset)
         }
     }

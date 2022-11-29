@@ -193,4 +193,10 @@ class HomeViewModel @Inject constructor(
         setState { copy(tag = null) }
         loadFolders()
     }
+
+    fun removeTag(folder: Folder) = execute {
+        val newFolder = folder.copy(tag = null)
+        folderRepository.update(newFolder)
+        loadFolders()
+    }
 }
