@@ -51,7 +51,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     private suspend fun flushQueue() {
-        select<Unit> {
+        select {
             setStateChannel.onReceive { reducer ->
                 val beforeState = state.value
                 val newState = reducer.invoke(beforeState)
