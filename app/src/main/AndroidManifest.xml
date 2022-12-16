@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.dinhlam.sharesaver">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <queries>
         <intent>
@@ -21,9 +20,8 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name="com.dinhlam.sharesaver.App"
+        android:name="com.dinhlam.sharebox.App"
         android:allowBackup="true"
-        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -57,7 +55,7 @@
 
         <activity
             android:label="@string/home_activity_title"
-            android:name=".ui.home.HomeActivity"
+            android:name="com.dinhlam.sharebox.ui.home.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,7 +65,7 @@
         </activity>
 
         <activity
-            android:name="com.dinhlam.sharesaver.ui.share.ShareActivity"
+            android:name="com.dinhlam.sharebox.ui.share.ShareActivity"
             android:exported="true"
             android:label="@string/share_activity_title"
             android:screenOrientation="portrait"
@@ -104,7 +102,7 @@
             tools:ignore="LockedOrientationActivity" />
 
         <provider
-            android:name="com.dinhlam.sharesaver.provider.ShareSaverFileProvider"
+            android:name="com.dinhlam.sharebox.provider.ShareSaverFileProvider"
             android:authorities="${APPLICATION_ID}.file_provider"
             android:exported="false"
             android:grantUriPermissions="true">
