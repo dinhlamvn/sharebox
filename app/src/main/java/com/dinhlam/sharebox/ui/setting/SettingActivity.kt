@@ -33,7 +33,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>(), FacebookCallback
     }
 
     override fun onSuccess(result: LoginResult?) {
-        val profile = Profile.getCurrentProfile()
+        val profile = Profile.getCurrentProfile() ?: return
         val text = getString(
             R.string.login_facebook_success,
             "${profile.firstName} ${profile.lastName}"

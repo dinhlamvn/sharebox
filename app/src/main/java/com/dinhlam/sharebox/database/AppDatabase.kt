@@ -9,7 +9,8 @@ import com.dinhlam.sharebox.database.entity.Share
 
 @Database(
     entities = [Share::class, Folder::class],
-    version = 1
+    version = 1,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shareDao(): ShareDao

@@ -20,6 +20,14 @@ android {
         manifestPlaceholders = [
                 APPLICATION_ID: "$applicationId"
         ]
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                compilerArgumentProviders(
+                        new RoomSchemaArgProvider(new File(projectDir, "schemas"))
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -39,7 +47,7 @@ android {
         viewBinding true
     }
     dynamicFeatures = []
-    namespace 'com.dinhlam.sharesaver'
+    namespace 'com.dinhlam.sharebox'
 }
 
 dependencies {
@@ -93,4 +101,20 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+}
+
+class RoomSchemaArgProvider implements CommandLineArgumentProvider {
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    File schemaDir
+
+    RoomSchemaArgProvider(File schemaDir) {
+        this.schemaDir = schemaDir
+    }
+
+    @Override
+    Iterable<String> asArguments() {
+        return ["-Aroom.schemaLocation=${schemaDir.path}".toString()]
+    }
 }

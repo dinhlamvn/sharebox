@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-class App : Application() {
+class ShareBoxApp : Application() {
 
     private val applicationScope = MainScope()
 

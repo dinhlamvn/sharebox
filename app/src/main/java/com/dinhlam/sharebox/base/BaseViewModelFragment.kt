@@ -15,7 +15,7 @@ abstract class BaseViewModelFragment<T : BaseViewModel.BaseState, VM : BaseViewM
 
     abstract fun onStateChanged(state: T)
 
-    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value!!)
+    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

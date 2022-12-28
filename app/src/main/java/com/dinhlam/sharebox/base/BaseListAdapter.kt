@@ -31,8 +31,6 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         private val coroutineScope = CoroutineScope(Dispatchers.IO)
         private var job: Job? = null
 
-        private val mainHandler = Handler(Looper.getMainLooper())
-
         private val modelViews = mutableListOf<BaseModelView>()
 
         private var adapter: BaseListAdapter<BaseModelView>? = null
