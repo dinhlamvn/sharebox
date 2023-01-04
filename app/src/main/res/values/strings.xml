@@ -73,7 +73,7 @@
     <string name="tag_blue">Blue</string>
     <string name="tag_gray">Gray</string>
     <string name="add_tag">Add tag</string>
-    <string name="clear_tag">Clear tag</string>
+    <string name="clear_filter">Clear filter</string>
     <string name="menu_filter_tag">Filter tag</string>
     <string name="remove_tag">Remove tag</string>
     <string name="home_activity_title">Home</string>

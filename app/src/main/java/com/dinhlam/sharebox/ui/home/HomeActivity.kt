@@ -345,6 +345,7 @@ class HomeActivity :
                     putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
                 }
             }
+            viewModel.clearFolderActionConfirmation()
         } else {
             showConfirmPasswordDialog(folder.id)
         }
