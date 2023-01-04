@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.text.HtmlCompat
@@ -29,10 +31,13 @@ import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
+import com.dinhlam.sharebox.extensions.getSerializableExtraCompat
 import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.extensions.showAlert
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.modelview.FolderListModelView
+import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.utils.FolderUtils
@@ -50,6 +55,15 @@ class HomeActivity :
     RenameFolderDialogFragment.OnConfirmRenameCallback,
     ChoiceTagDialogFragment.OnTagSelectedListener {
 
+    private val settingLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val sortType = result.data?.getSerializableExtraCompat<SortType>("sort-type")
+                    ?: return@registerForActivityResult
+                viewModel.setSortType(sortType)
+            }
+        }
+
     companion object {
         private const val POPUP_ITEM_SPACING = 60
     }
@@ -61,6 +75,9 @@ class HomeActivity :
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var appSharePref: AppSharePref
 
     override val viewModel: HomeViewModel by viewModels()
 
@@ -86,6 +103,8 @@ class HomeActivity :
         super.onCreate(savedInstanceState)
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         viewBinding.recyclerView.setupWith(homeAdapter, modelViewsFactory)
+
+        viewModel.setSortType(appSharePref.getSortType())
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadFolders()
@@ -138,7 +157,7 @@ class HomeActivity :
             return true
         }
         if (item.itemId == R.id.item_setting) {
-            startActivity(appRouter.setting())
+            settingLauncher.launch(appRouter.setting())
             return true
         }
 

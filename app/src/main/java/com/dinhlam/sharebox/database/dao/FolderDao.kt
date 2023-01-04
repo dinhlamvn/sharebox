@@ -13,6 +13,12 @@ interface FolderDao {
     @Query("SELECT * FROM folder")
     fun getAll(): List<Folder>
 
+    @Query("SELECT * FROM folder ORDER BY created_at DESC")
+    fun getAllNewest(): List<Folder>
+
+    @Query("SELECT * FROM folder ORDER BY created_at ASC")
+    fun getAllOldest(): List<Folder>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     fun insertAll(vararg folders: Folder)
 

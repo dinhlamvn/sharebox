@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.repository.FolderRepository
 import com.dinhlam.sharebox.repository.ShareRepository
@@ -24,7 +25,7 @@ class ShareViewModel @Inject constructor(
 ) : BaseViewModel<ShareState>(ShareState()) {
 
     fun setShareInfo(shareInfo: ShareState.ShareInfo) = executeJob {
-        val folders = folderRepository.getAll()
+        val folders = folderRepository.getAll(SortType.NONE)
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
         val folderId = when {
             historySelectedFolder.isNotBlank() -> historySelectedFolder
@@ -116,7 +117,7 @@ class ShareViewModel @Inject constructor(
     }
 
     fun setSelectedFolderAfterCreate(folderId: String) = executeJob {
-        val folders = folderRepository.getAll()
+        val folders = folderRepository.getAll(SortType.NONE)
         val folder = folders.firstOrNull { it.id == folderId }
         setState { copy(folders = folders, selectedFolder = folder) }
     }

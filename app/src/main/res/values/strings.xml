@@ -77,5 +77,8 @@
     <string name="menu_filter_tag">Filter tag</string>
     <string name="remove_tag">Remove tag</string>
     <string name="home_activity_title">Home</string>
+    <string name="no_sort">No sort</string>
+    <string name="sort_by_newest">Sort by newest</string>
+    <string name="sort_by_oldest">Sort by oldest</string>
 
 </resources>

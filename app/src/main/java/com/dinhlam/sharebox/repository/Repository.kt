@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.repository
 
+import com.dinhlam.sharebox.model.SortType
+
 interface Repository<T, in R> {
     fun insert(item: T)
     fun update(item: T): Boolean
@@ -8,5 +10,5 @@ interface Repository<T, in R> {
     fun updateMany(vararg items: T)
     fun updateById(id: R, block: (T) -> T)
     fun get(id: R): T
-    fun getAll(): List<T>
+    fun getAll(sortType: SortType = SortType.NONE): List<T>
 }

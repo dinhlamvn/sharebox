@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.repository
 
 import com.dinhlam.sharebox.database.dao.FolderDao
 import com.dinhlam.sharebox.database.entity.Folder
+import com.dinhlam.sharebox.model.SortType
 import javax.inject.Inject
 
 class FolderRepository @Inject constructor(
@@ -36,8 +37,12 @@ class FolderRepository @Inject constructor(
         return folderDao.getById(id)
     }
 
-    override fun getAll(): List<Folder> {
-        return folderDao.getAll()
+    override fun getAll(sortType: SortType): List<Folder> {
+        return when (sortType) {
+            SortType.NEWEST -> folderDao.getAllNewest()
+            SortType.OLDEST -> folderDao.getAllOldest()
+            else -> folderDao.getAll()
+        }
     }
 
     fun getByTag(tagId: Int): List<Folder> {

@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.repository
 
 import com.dinhlam.sharebox.database.dao.ShareDao
 import com.dinhlam.sharebox.database.entity.Share
+import com.dinhlam.sharebox.model.SortType
 import javax.inject.Inject
 
 class ShareRepository @Inject constructor(
@@ -33,7 +34,7 @@ class ShareRepository @Inject constructor(
         return shareDao.getById(id)
     }
 
-    override fun getAll(): List<Share> {
+    override fun getAll(sortType: SortType): List<Share> {
         return shareDao.getAll()
     }
 

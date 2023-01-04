@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.ui.home
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Folder
+import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.repository.FolderRepository
 import com.dinhlam.sharebox.repository.ShareRepository
 import com.dinhlam.sharebox.utils.TagUtil
@@ -21,7 +22,7 @@ class HomeViewModel @Inject constructor(
 
     fun loadFolders() = execute { state ->
         val folders = if (state.tag == null) {
-            folderRepository.getAll()
+            folderRepository.getAll(state.sortType)
         } else {
             folderRepository.getByTag(state.tag)
         }
@@ -198,5 +199,14 @@ class HomeViewModel @Inject constructor(
         val newFolder = folder.copy(tag = null)
         folderRepository.update(newFolder)
         loadFolders()
+    }
+
+    fun setSortType(sortType: SortType) {
+        setState {
+            copy(sortType = sortType)
+        }
+        withState {
+            loadFolders()
+        }
     }
 }

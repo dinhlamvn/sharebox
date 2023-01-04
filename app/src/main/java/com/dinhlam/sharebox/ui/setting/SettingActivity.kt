@@ -1,21 +1,22 @@
 package com.dinhlam.sharebox.ui.setting
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
-import com.dinhlam.sharebox.extensions.showToast
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.Profile
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.model.SortType
+import com.dinhlam.sharebox.pref.AppSharePref
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class SettingActivity : BaseActivity<ActivitySettingBinding>(), FacebookCallback<LoginResult> {
+@AndroidEntryPoint
+class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
-    private val facebookCallback = CallbackManager.Factory.create()
+    @Inject
+    lateinit var appSharePref: AppSharePref
 
     override fun onCreateViewBinding(): ActivitySettingBinding {
         return ActivitySettingBinding.inflate(layoutInflater)
@@ -23,29 +24,27 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>(), FacebookCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        LoginManager.getInstance().registerCallback(facebookCallback, this)
-    }
 
-    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        facebookCallback.onActivityResult(requestCode, resultCode, data)
-        super.onActivityResult(requestCode, resultCode, data)
-    }
+        registerOnBackPressHandler {
+            finish()
+        }
 
-    override fun onSuccess(result: LoginResult?) {
-        val profile = Profile.getCurrentProfile() ?: return
-        val text = getString(
-            R.string.login_facebook_success,
-            "${profile.firstName} ${profile.lastName}"
-        )
-        showToast(text)
-    }
+        when (appSharePref.getSortType()) {
+            SortType.NEWEST -> viewBinding.radioButtonSortByNewest.isChecked = true
+            SortType.OLDEST -> viewBinding.radioButtonSortByOldest.isChecked = true
+            else -> viewBinding.radioButtonNoSort.isChecked = true
+        }
 
-    override fun onCancel() {
-        showToast(R.string.request_login_facebook)
-    }
-
-    override fun onError(error: FacebookException?) {
-        showToast(R.string.login_facebook_error)
+        viewBinding.radioButtonGroup.setOnCheckedChangeListener { _, buttonId ->
+            val sortType = when (buttonId) {
+                R.id.radio_button_sort_by_newest -> SortType.NEWEST
+                R.id.radio_button_sort_by_oldest -> SortType.OLDEST
+                else -> SortType.NONE
+            }
+            appSharePref.setSortType(sortType)
+            setResult(Activity.RESULT_OK, Intent().apply {
+                putExtra("sort-type", sortType)
+            })
+        }
     }
 }

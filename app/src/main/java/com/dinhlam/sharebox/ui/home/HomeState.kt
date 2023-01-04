@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Folder
 import com.dinhlam.sharebox.database.entity.Share
+import com.dinhlam.sharebox.model.SortType
 
 data class HomeState(
     val showProgress: Boolean = false,
@@ -14,7 +15,8 @@ data class HomeState(
     @StringRes val toastRes: Int = 0,
     val folderActionConfirmation: FolderActionConfirmation? = null,
     val folderPasswordConfirmRemind: Set<String> = emptySet(),
-    val tag: Int? = null
+    val tag: Int? = null,
+    val sortType: SortType = SortType.NONE
 ) : BaseViewModel.BaseState {
     data class FolderActionConfirmation(
         val folder: Folder,
