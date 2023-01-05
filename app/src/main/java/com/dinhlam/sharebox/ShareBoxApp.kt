@@ -4,7 +4,6 @@ import android.app.Application
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.repository.FolderRepository
 import com.dinhlam.sharebox.utils.FolderUtils
-import com.facebook.appevents.AppEventsLogger
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -24,12 +23,7 @@ class ShareBoxApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initializeFacebook()
         createDefaultFoldersOnFirstLaunch()
-    }
-
-    private fun initializeFacebook() {
-        AppEventsLogger.activateApp(this)
     }
 
     private fun createDefaultFoldersOnFirstLaunch() {
