@@ -1,0 +1,84 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Share Box</string>
+    <string name="title_home">Trang chủ</string>
+    <string name="title_dashboard">Bảng điểm</string>
+    <string name="title_notifications">Thông báo</string>
+    <string name="button_save">Lưu</string>
+    <string name="share_activity_title">Lưu chia sẻ</string>
+    <string name="button_cancel">Hủy</string>
+    <string name="text_input_note_hint">Mô tả của bạn</string>
+    <string name="share_empty_content">Nội dung chia sẻ trống</string>
+    <string name="save_share_successfully">Lưu thành công</string>
+    <string name="text_input_note_hint_desc">Viết một vài thứ như: tiêu đề, mô tả,…</string>
+    <string name="view_more">Xem thêm</string>
+    <string name="create_new_folder">Thư mục mới</string>
+    <string name="create_new_folder_desc">Với tùy chỉnh của bạn</string>
+    <string name="text_input_folder_name_hint_desc">Nhập tên bạn thích</string>
+    <string name="text_input_folder_name_hint">Tên thư mục</string>
+    <string name="text_input_folder_desc_hint_desc">Viết gì đó về thư mục này</string>
+    <string name="text_input_folder_desc_hint">Mô tả thư mục (không bắt buộc)</string>
+    <string name="error_require_folder_name">Vui lòng nhập tên của thư mục</string>
+    <string name="text_input_folder_password_hint_desc">Nhập mật khẩu ở đây</string>
+    <string name="text_input_folder_password_hint">Mật khẩu (Không bắt buộc)</string>
+    <string name="check_box_create_folder_password">Bảo vệ thư mục với mật khẩu</string>
+    <string name="text_input_folder_password_alias_hint_desc">Gợi nhớ mật khẩu</string>
+    <string name="text_input_folder_password_alias_hint">Gợi nhớ mật khẩu (không bắt buộc)</string>
+    <string name="error_create_folder_try_again">Có lỗi xảy ra khi tạo thư mục mới, vui lòng thử lại sau.</string>
+    <string name="remove">Loại trừ</string>
+    <string name="rename">Đổi tên</string>
+    <string name="delete">Xóa</string>
+    <string name="delete_folder_error">Có lỗi xảy ra khi xóa thư mục này, vui lòng thử lại.</string>
+    <string name="confirmation">Xác nhận</string>
+    <string name="delete_folder_confirmation_message"><![CDATA[Bạn có chắc muốn xóa thư mục <b>%s</b> (%s)?]]></string>
+    <string name="cancel">Hủy</string>
+    <string name="delete_folder_success">Đã xóa thư mục</string>
+    <string name="text_input_folder_password_confirm_hint">Mật khẩu</string>
+    <string name="button_done">Xong</string>
+    <string name="password_incorrect">Sai mật khẩu</string>
+    <string name="error_require_password">Vui lòng nhập mật khẩu</string>
+    <string name="password_alias"><![CDATA[Gợi nhớ mật khẩu: <b>%s</b>]]></string>
+    <string name="error_folder_rename">Có lỗi xảy ra khi đổi tên thư mục</string>
+    <string name="check_box_save_password_next_session">Lưu mật khẩu cho lần mở kế tiếp (hủy khi thoát ứng dụng)</string>
+    <string name="details">Chi tiết</string>
+    <string name="created_date_title">Ngày tạo:</string>
+    <string name="updated_date_title">Ngày chỉnh sửa:</string>
+    <string name="share_count_title">Số lượng chia sẻ:</string>
+    <string name="button_close">Đóng</string>
+    <string name="description_title">Mô tả:</string>
+    <string name="folder_desc_empty">Không có mô tả</string>
+    <string name="has_password_title">Có mật khẩu:</string>
+
+    <plurals name="share_count_text" tools:ignore="UnusedQuantity">
+        <item quantity="one">%d chia sẻ</item>
+        <item quantity="other">%d chia sẻ</item>
+    </plurals>
+
+    <!-- Facebook declare -->
+    <string name="facebook_app_id">647232403661006</string>
+    <string name="fb_login_protocol_scheme">fb647232403661006</string>
+    <string name="facebook_client_token">58f30ca9da7ab64f6e8b147f7fd4cf9b</string>
+    <!-- End of facebook -->
+
+    <string name="setting_activity_title">Cài đặt</string>
+    <string name="setting">Cài đặt</string>
+    <string name="request_login_facebook">You need login to your Facebook account to use some feature in app.</string>
+    <string name="login_facebook_error">Has error until login Facebook, try again!</string>
+    <string name="login_facebook_success">Login to Facebook successfully with profile: %s</string>
+    <string name="share_list_activity_title">Danh sách chia sẻ</string>
+    <string name="error_require_folder">Không tìm thấy thư mục.</string>
+    <string name="tag">Nhãn</string>
+    <string name="tag_red">Đỏ</string>
+    <string name="tag_yellow">Vàng</string>
+    <string name="tag_green">Xanh lục</string>
+    <string name="tag_blue">Xanh</string>
+    <string name="tag_gray">Nâu</string>
+    <string name="add_tag">Đánh nhãn</string>
+    <string name="clear_filter">Xóa lọc</string>
+    <string name="menu_filter_tag">Lọc theo nhãn</string>
+    <string name="remove_tag">Bỏ nhãn</string>
+    <string name="home_activity_title">Trang chủ</string>
+    <string name="no_sort">Mặc định</string>
+    <string name="sort_by_newest">Sắp xếp ưu tiên mới nhất</string>
+    <string name="sort_by_oldest">Sắp xếp ưu tiên cũ nhất</string>
+
+</resources>
