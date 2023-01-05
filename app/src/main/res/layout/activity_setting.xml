@@ -24,6 +24,7 @@
             android:id="@+id/radio_button_sort_by_newest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/sort_by_newest"
             android:textAppearance="@style/TextAppearance.Body1" />
 
@@ -31,6 +32,7 @@
             android:id="@+id/radio_button_sort_by_oldest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/sort_by_oldest"
             android:textAppearance="@style/TextAppearance.Body1" />
 
