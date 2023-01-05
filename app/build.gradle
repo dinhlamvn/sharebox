@@ -9,7 +9,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.dinhlam.sharesaver"
+        applicationId "com.dinhlam.sharebox"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -20,6 +20,14 @@ android {
         manifestPlaceholders = [
                 APPLICATION_ID: "$applicationId"
         ]
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                compilerArgumentProviders(
+                        new RoomSchemaArgProvider(new File(projectDir, "schemas"))
+                )
+            }
+        }
     }
 
     buildTypes {
@@ -39,6 +47,7 @@ android {
         viewBinding true
     }
     dynamicFeatures = []
+    namespace 'com.dinhlam.sharebox'
 }
 
 dependencies {
@@ -82,10 +91,30 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
 
     // Facebook
-    def facebook_version = "8.2.0"
+    def facebook_version = "11.3.0"
     implementation "com.facebook.android:facebook-android-sdk:$facebook_version"
+
+    // Paging v3
+    def paging_version = "3.1.1"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 }
 
 kapt {
     correctErrorTypes = true
+}
+
+class RoomSchemaArgProvider implements CommandLineArgumentProvider {
+
+    @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
+    File schemaDir
+
+    RoomSchemaArgProvider(File schemaDir) {
+        this.schemaDir = schemaDir
+    }
+
+    @Override
+    Iterable<String> asArguments() {
+        return ["-Aroom.schemaLocation=${schemaDir.path}".toString()]
+    }
 }

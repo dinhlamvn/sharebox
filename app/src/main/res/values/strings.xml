@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Share Saver</string>
+    <string name="app_name">Share Box</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -73,7 +73,12 @@
     <string name="tag_blue">Blue</string>
     <string name="tag_gray">Gray</string>
     <string name="add_tag">Add tag</string>
-    <string name="clear_tag">Clear tag</string>
+    <string name="clear_filter">Clear filter</string>
     <string name="menu_filter_tag">Filter tag</string>
+    <string name="remove_tag">Remove tag</string>
+    <string name="home_activity_title">Home</string>
+    <string name="no_sort">No sort</string>
+    <string name="sort_by_newest">Sort by newest</string>
+    <string name="sort_by_oldest">Sort by oldest</string>
 
 </resources>
