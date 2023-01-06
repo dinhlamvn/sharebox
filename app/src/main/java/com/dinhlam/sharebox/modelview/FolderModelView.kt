@@ -20,7 +20,7 @@ data class FolderModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderModelView && this == other
+        return other is FolderModelView && this === other
     }
 
     class FolderViewHolder(

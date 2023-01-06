@@ -31,7 +31,7 @@ data class HomeTextModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeTextModelView && other == this
+        return other is HomeTextModelView && other === this
     }
 
     class HomeTextViewHolder(

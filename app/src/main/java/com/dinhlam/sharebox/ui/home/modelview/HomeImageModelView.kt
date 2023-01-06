@@ -32,7 +32,7 @@ data class HomeImageModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeImageModelView && other == this
+        return other is HomeImageModelView && other === this
     }
 
     class HomeImageViewHolder(view: View, private val block: (Int) -> Unit) :

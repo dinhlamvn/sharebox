@@ -15,7 +15,7 @@ object NewFolderModelView : BaseListAdapter.BaseModelView("model_view_new_folder
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is NewFolderModelView && this == other
+        return other is NewFolderModelView && this === other
     }
 
     class NewFolderViewHolder(view: View, private val listener: OnClickListener) :

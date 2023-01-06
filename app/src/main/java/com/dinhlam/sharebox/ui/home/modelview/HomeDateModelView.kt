@@ -18,7 +18,7 @@ data class HomeDateModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeDateModelView && this == other
+        return other is HomeDateModelView && this === other
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {

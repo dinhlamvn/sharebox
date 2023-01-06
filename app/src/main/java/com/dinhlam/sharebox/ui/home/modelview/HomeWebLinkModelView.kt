@@ -33,7 +33,7 @@ data class HomeWebLinkModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeWebLinkModelView && other == this
+        return other is HomeWebLinkModelView && other === this
     }
 
     class HomeWebLinkViewHolder(
