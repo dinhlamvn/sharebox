@@ -38,6 +38,12 @@
             android:icon="@drawable/ic_setting_blue"
             android:title="@string/setting"
             app:showAsAction="never" />
+
+        <item
+            android:id="@+id/item_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/about"
+            app:showAsAction="never" />
     </group>
 
     <item

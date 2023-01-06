@@ -80,5 +80,8 @@
     <string name="no_sort">Mặc định</string>
     <string name="sort_by_newest">Sắp xếp ưu tiên mới nhất</string>
     <string name="sort_by_oldest">Sắp xếp ưu tiên cũ nhất</string>
+    <string name="about">Thông tin</string>
+    <string name="developer_title">Nhà phát triển:</string>
+    <string name="contact_title">Liên hệ:</string>
 
 </resources>

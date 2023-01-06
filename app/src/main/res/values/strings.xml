@@ -80,5 +80,10 @@
     <string name="no_sort">No sort</string>
     <string name="sort_by_newest">Sort by newest</string>
     <string name="sort_by_oldest">Sort by oldest</string>
+    <string name="about">About</string>
+    <string name="developer_title">Developer:</string>
+    <string name="developer_name" translatable="false">Lam Cong Dinh</string>
+    <string name="contact_title">Contact:</string>
+    <string name="developer_email" translatable="false">dinhlamvn353@gmail.com</string>
 
 </resources>

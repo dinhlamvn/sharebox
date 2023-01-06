@@ -12,8 +12,11 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.text.HtmlCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
@@ -167,6 +170,11 @@ class HomeActivity :
 
         if (item.itemId == R.id.item_clear_tag) {
             viewModel.clearSelectedTag()
+            return true
+        }
+
+        if (item.itemId == R.id.item_about) {
+            showAbout()
             return true
         }
 
@@ -414,4 +422,22 @@ class HomeActivity :
     override fun onTagSelected(tagId: Int) {
         viewModel.setFolderTag(tagId)
     }
+
+    private fun showAbout() = AlertDialog.Builder(this)
+        .setTitle(R.string.app_name)
+        .setMessage(buildSpannedString {
+            append("\n")
+            bold {
+                append(getString(R.string.developer_title))
+            }
+            append(" ${getString(R.string.developer_name)}")
+            append("\n\n")
+            bold {
+                append(getString(R.string.contact_title))
+            }
+            append(" ${getString(R.string.developer_email)}")
+        })
+        .setPositiveButton(R.string.button_close, null)
+        .setCancelable(true)
+        .show()
 }
