@@ -9,12 +9,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty
 
@@ -23,9 +22,6 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     interface BaseState
 
     private val stateScope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
-
-    private val setStateChannel = Channel<T.() -> T>(capacity = Channel.UNLIMITED)
-    private val withStateChannel = Channel<(T) -> Unit>(capacity = Channel.UNLIMITED)
 
     private data class Consumer(
         val consumeField: String,
@@ -38,25 +34,15 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
 
+    @Volatile
+    private var latestState: T = state.value
+
     init {
         stateScope.launch(Dispatchers.IO) {
-            while (isActive) {
-                flushQueue()
-            }
-        }
-    }
-
-    protected fun setState(block: T.() -> T) {
-        setStateChannel.trySend(block)
-    }
-
-    private suspend fun flushQueue() {
-        select {
-            setStateChannel.onReceive { reducer ->
-                val beforeState = state.value
-                val newState = reducer.invoke(beforeState)
+            state.collectLatest { newState ->
+                val beforeState = latestState
                 if (newState != beforeState) {
-                    _state.value = newState
+                    latestState = newState
                     consumers.forEach { consumer ->
                         val beforeField =
                             beforeState::class.java.getDeclaredField(consumer.consumeField)
@@ -74,15 +60,16 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
                     }
                 }
             }
-
-            withStateChannel.onReceive { block ->
-                block.invoke(state.value)
-            }
         }
     }
 
+    protected fun setState(block: T.() -> T) {
+        val newState = block.invoke(state.value)
+        _state.compareAndSet(state.value, newState)
+    }
+
     protected fun withState(block: (T) -> Unit) {
-        withStateChannel.trySend(block)
+        block.invoke(state.value)
     }
 
     protected fun execute(
