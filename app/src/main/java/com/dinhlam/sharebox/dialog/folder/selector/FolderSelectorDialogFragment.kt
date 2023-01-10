@@ -29,11 +29,11 @@ class FolderSelectorDialogFragment :
     }
 
     private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-        override fun buildModelViews() = withState(viewModel) { data ->
-            if (data.isFirstLoad) {
-                return@withState LoadingModelView.addTo(this)
+        override fun buildModelViews() = getState(viewModel) { state ->
+            if (state.isFirstLoad) {
+                return@getState LoadingModelView.addTo(this)
             }
-            data.folders.forEach {
+            state.folders.forEach {
                 FolderModelView("folder_${it.id}", it.name, it.desc).addTo(this)
             }
             NewFolderModelView.addTo(this)

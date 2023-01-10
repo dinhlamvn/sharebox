@@ -12,12 +12,12 @@ class ShareModelViewsFactory(
     private val viewModel: ShareViewModel
 ) : BaseListAdapter.ModelViewsFactory() {
 
-    override fun buildModelViews() = shareShareActivity.withState(viewModel) { data ->
-        when (data.shareInfo) {
-            is ShareState.ShareInfo.ShareText -> renderShareTextContent(data.shareInfo)
-            is ShareState.ShareInfo.ShareWebLink -> renderShareWebLinkContent(data.shareInfo)
-            is ShareState.ShareInfo.ShareImage -> renderShareImageContent(data.shareInfo)
-            is ShareState.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(data.shareInfo)
+    override fun buildModelViews() = shareShareActivity.getState(viewModel) { state ->
+        when (state.shareInfo) {
+            is ShareState.ShareInfo.ShareText -> renderShareTextContent(state.shareInfo)
+            is ShareState.ShareInfo.ShareWebLink -> renderShareWebLinkContent(state.shareInfo)
+            is ShareState.ShareInfo.ShareImage -> renderShareImageContent(state.shareInfo)
+            is ShareState.ShareInfo.ShareMultipleImage -> renderShareMultipleImageContent(state.shareInfo)
             else -> renderShareContentDefault()
         }
     }

@@ -29,8 +29,8 @@ class HomeViewModel @Inject constructor(
         setState { copy(folders = folders, isRefreshing = false) }
     }
 
-    fun onFolderClick(position: Int) = execute { data ->
-        val folder = data.folders.getOrNull(position) ?: return@execute
+    fun onFolderClick(position: Int) = execute { state ->
+        val folder = state.folders.getOrNull(position) ?: return@execute
         val shareCount = shareRepository.countByFolder(folder.id)
         setState {
             copy(
@@ -62,8 +62,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun clearToast() = withState { data ->
-        if (data.toastRes != 0) {
+    fun clearToast() = getState { state ->
+        if (state.toastRes != 0) {
             setState { copy(toastRes = 0) }
         }
     }
@@ -124,29 +124,29 @@ class HomeViewModel @Inject constructor(
         copy(folderActionConfirmation = null)
     }
 
-    fun deleteFolderAfterPasswordVerified() = withState { data ->
-        val folder = data.folderActionConfirmation?.folder
-            ?: return@withState clearFolderActionConfirmation()
+    fun deleteFolderAfterPasswordVerified() = getState { state ->
+        val folder = state.folderActionConfirmation?.folder
+            ?: return@getState clearFolderActionConfirmation()
         deleteFolder(folder)
     }
 
-    fun renameFolderAfterPasswordVerified() = withState { data ->
+    fun renameFolderAfterPasswordVerified() = getState { state ->
         val confirmation =
-            data.folderActionConfirmation ?: return@withState clearFolderActionConfirmation()
+            state.folderActionConfirmation ?: return@getState clearFolderActionConfirmation()
         val newConfirmation = confirmation.copy(ignorePassword = true)
         setState { copy(folderActionConfirmation = newConfirmation) }
     }
 
-    fun showDetailFolderAfterPasswordVerified() = withState { data ->
+    fun showDetailFolderAfterPasswordVerified() = getState { state ->
         val confirmation =
-            data.folderActionConfirmation ?: return@withState clearFolderActionConfirmation()
+            state.folderActionConfirmation ?: return@getState clearFolderActionConfirmation()
         val newConfirmation = confirmation.copy(ignorePassword = true)
         setState { copy(folderActionConfirmation = newConfirmation) }
     }
 
-    fun openFolderAfterPasswordVerified(isRemindPassword: Boolean) = withState { data ->
-        val folder = data.folderActionConfirmation?.folder
-            ?: return@withState clearFolderActionConfirmation()
+    fun openFolderAfterPasswordVerified(isRemindPassword: Boolean) = getState { state ->
+        val folder = state.folderActionConfirmation?.folder
+            ?: return@getState clearFolderActionConfirmation()
         if (isRemindPassword) {
             setState { copy(folderPasswordConfirmRemind = folderPasswordConfirmRemind.plus(folder.id)) }
         }
@@ -205,7 +205,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(sortType = sortType)
         }
-        withState {
+        getState {
             loadFolders()
         }
     }

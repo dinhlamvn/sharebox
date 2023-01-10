@@ -17,11 +17,11 @@ class FolderConfirmPasswordDialogViewModel @Inject constructor(
         setState { copy(folder = folder) }
     }
 
-    fun confirmPassword(password: String) = withState { data ->
+    fun confirmPassword(password: String) = getState { state ->
         if (password.isBlank()) {
-            return@withState setState { copy(error = R.string.error_require_password) }
+            return@getState setState { copy(error = R.string.error_require_password) }
         }
-        val folder = data.folder ?: return@withState
+        val folder = state.folder ?: return@getState
         val folderPassword = folder.password
         val inputPassword = password.md5()
         if (folderPassword != inputPassword) {
@@ -31,8 +31,8 @@ class FolderConfirmPasswordDialogViewModel @Inject constructor(
         }
     }
 
-    fun clearError() = withState { data ->
-        if (data.error != 0) {
+    fun clearError() = getState { state ->
+        if (state.error != 0) {
             setState { copy(error = 0) }
         }
     }

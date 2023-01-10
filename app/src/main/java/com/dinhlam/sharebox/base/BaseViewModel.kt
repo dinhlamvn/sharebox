@@ -9,11 +9,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.selects.select
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty
 
@@ -29,54 +30,63 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         val notifyOnChanged: Boolean = false
     )
 
+    private val setStateChannel = Channel<T.() -> T>(Channel.UNLIMITED)
+    private val getStateChannel = Channel<(T) -> Unit>(Channel.UNLIMITED)
+
     private val consumers = mutableSetOf<Consumer>()
 
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
 
-    @Volatile
-    private var latestState: T = state.value
-
     init {
-        stateScope.launch(Dispatchers.IO) {
-            state.collectLatest { newState ->
-                val beforeState = latestState
-                if (newState != beforeState) {
-                    latestState = newState
-                    consumers.forEach { consumer ->
-                        val beforeField =
-                            beforeState::class.java.getDeclaredField(consumer.consumeField)
-                        beforeField.isAccessible = true
-                        val beforeValue = beforeField.get(beforeState)
-                        val afterField =
-                            newState::class.java.getDeclaredField(consumer.consumeField)
-                        afterField.isAccessible = true
-                        val afterValue = afterField.get(newState)
-                        if (consumer.notifyOnChanged && beforeValue !== afterValue) {
-                            consumer.liveData.postValue(afterValue)
-                        } else if (!consumer.notifyOnChanged) {
-                            consumer.liveData.postValue(afterValue)
+        stateScope.launch {
+            while (isActive) {
+                val currentState = state.value
+                select {
+                    setStateChannel.onReceive { reducer ->
+                        val newState = reducer.invoke(currentState)
+                        if (newState != currentState) {
+                            _state.emit(newState)
+                            notifyConsumer(currentState, newState)
                         }
+                    }
+
+                    getStateChannel.onReceive { block ->
+                        block(currentState)
                     }
                 }
             }
         }
     }
 
-    protected fun setState(block: T.() -> T) {
-        val newState = block.invoke(state.value)
-        _state.compareAndSet(state.value, newState)
+    private fun notifyConsumer(oldState: T, newState: T) = viewModelScope.launch(Dispatchers.IO) {
+        consumers.forEach { consumer ->
+            val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
+            beforeField.isAccessible = true
+            val beforeValue = beforeField.get(oldState)
+            val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
+            afterField.isAccessible = true
+            val afterValue = afterField.get(newState)
+            if (consumer.notifyOnChanged && beforeValue !== afterValue) {
+                consumer.liveData.postValue(afterValue)
+            } else if (!consumer.notifyOnChanged) {
+                consumer.liveData.postValue(afterValue)
+            }
+        }
     }
 
-    protected fun withState(block: (T) -> Unit) {
-        block.invoke(state.value)
+    protected fun setState(block: T.() -> T) {
+        setStateChannel.trySend(block)
+    }
+
+    protected fun getState(block: (T) -> Unit) {
+        getStateChannel.trySend(block)
     }
 
     protected fun execute(
-        onError: ((Throwable) -> Unit)? = null,
-        block: suspend (T) -> Unit
+        onError: ((Throwable) -> Unit)? = null, block: suspend (T) -> Unit
     ) {
-        withState { state ->
+        getState { state ->
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     block.invoke(state)
@@ -88,8 +98,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     protected fun executeJob(
-        onError: ((Throwable) -> Unit)? = null,
-        block: suspend CoroutineScope.() -> Unit
+        onError: ((Throwable) -> Unit)? = null, block: suspend CoroutineScope.() -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
         try {
             block.invoke(this)

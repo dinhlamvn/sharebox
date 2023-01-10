@@ -26,7 +26,7 @@ class ChoiceTagDialogFragment :
     }
 
     private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-        override fun buildModelViews() = withState(viewModel) { state ->
+        override fun buildModelViews() = getState(viewModel) { state ->
             TagUtil.tags.forEach { tag ->
                 TagModelView(
                     tag.id.toLong(),
@@ -121,7 +121,7 @@ class ChoiceTagDialogFragment :
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        withState(viewModel) { state ->
+        getState(viewModel) { state ->
             activity?.cast<OnTagSelectedListener>()?.onTagSelected(state.selectedTagId)
         }
     }

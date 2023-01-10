@@ -93,7 +93,7 @@ class FolderConfirmPasswordDialogFragment :
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        val isVerified = withState(viewModel) { it.verifyPasswordSuccess }
+        val isVerified = getState(viewModel) { it.verifyPasswordSuccess }
         if (!isVerified) {
             getCallback()?.onCancelConfirmPassword()
         }

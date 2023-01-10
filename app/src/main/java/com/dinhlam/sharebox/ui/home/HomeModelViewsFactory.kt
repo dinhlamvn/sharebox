@@ -12,12 +12,12 @@ class HomeModelViewsFactory(
     private val gson: Gson
 ) : BaseListAdapter.ModelViewsFactory() {
 
-    override fun buildModelViews() = homeActivity.withState(viewModel) { data ->
-        if (data.isRefreshing) {
+    override fun buildModelViews() = homeActivity.getState(viewModel) { state ->
+        if (state.isRefreshing) {
             LoadingModelView.addTo(this)
-            return@withState
+            return@getState
         }
-        data.folders.forEach { folder ->
+        state.folders.forEach { folder ->
             FolderListModelView(
                 "folder_${folder.id}",
                 folder.name,

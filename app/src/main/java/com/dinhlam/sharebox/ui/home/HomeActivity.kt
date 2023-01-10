@@ -154,7 +154,7 @@ class HomeActivity :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.item_clear_tag)?.isVisible = withState(viewModel) { it.tag != null }
+        menu?.findItem(R.id.item_clear_tag)?.isVisible = getState(viewModel) { it.tag != null }
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -201,7 +201,7 @@ class HomeActivity :
 
     private fun onFolderLongClick(clickedView: View, position: Int) {
         val folder =
-            withState(viewModel) { homeData -> homeData.folders.getOrNull(position) } ?: return
+            getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
         var popupSpacing = if (folder.tag == null) 0 else POPUP_ITEM_SPACING
 
         val width = 150.dp(this)
@@ -387,9 +387,9 @@ class HomeActivity :
         }
     }
 
-    private fun showConfirmPasswordDialog(id: String) = withState(viewModel) { data ->
-        if (data.folderPasswordConfirmRemind.contains(id)) {
-            return@withState onPasswordVerified(false)
+    private fun showConfirmPasswordDialog(id: String) = getState(viewModel) { state ->
+        if (state.folderPasswordConfirmRemind.contains(id)) {
+            return@getState onPasswordVerified(false)
         }
         BaseDialogFragment.showDialog(
             FolderConfirmPasswordDialogFragment::class,
@@ -403,7 +403,7 @@ class HomeActivity :
 
     override fun onPasswordVerified(isRemindPassword: Boolean) {
         val actionType =
-            withState(viewModel) { data -> data.folderActionConfirmation?.folderActionType }
+            getState(viewModel) { state -> state.folderActionConfirmation?.folderActionType }
                 ?: return viewModel.clearFolderActionConfirmation()
         when (actionType) {
             HomeState.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified(

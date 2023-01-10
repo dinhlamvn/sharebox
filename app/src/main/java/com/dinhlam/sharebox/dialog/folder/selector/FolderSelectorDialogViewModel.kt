@@ -11,8 +11,8 @@ class FolderSelectorDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
 ) : BaseViewModel<FolderSelectorDialogState>(FolderSelectorDialogState()) {
 
-    fun onSelectedFolder(position: Int) = withState { data ->
-        val selectedFolder = data.folders.getOrNull(position) ?: return@withState
+    fun onSelectedFolder(position: Int) = getState { state ->
+        val selectedFolder = state.folders.getOrNull(position) ?: return@getState
         setState { copy(selectedFolder = selectedFolder) }
     }
 

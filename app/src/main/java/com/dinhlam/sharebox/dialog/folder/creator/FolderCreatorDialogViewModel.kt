@@ -37,14 +37,14 @@ class FolderCreatorDialogViewModel @Inject constructor(
         }
     }
 
-    fun clearError() = withState { data ->
-        if (data.error != 0) {
+    fun clearError() = getState { state ->
+        if (state.error != 0) {
             setState { copy(error = 0) }
         }
     }
 
-    fun clearToast() = withState { data ->
-        if (data.toastRes != 0) {
+    fun clearToast() = getState { state ->
+        if (state.toastRes != 0) {
             setState { copy(toastRes = 0) }
         }
     }

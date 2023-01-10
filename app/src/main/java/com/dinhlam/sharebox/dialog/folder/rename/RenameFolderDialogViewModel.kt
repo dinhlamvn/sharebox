@@ -16,11 +16,11 @@ class RenameFolderDialogViewModel @Inject constructor(
         setState { copy(folder = folder) }
     }
 
-    fun confirmName(newName: String) = execute { data ->
+    fun confirmName(newName: String) = execute { state ->
         if (newName.isBlank()) {
             return@execute setState { copy(error = R.string.error_require_folder_name) }
         }
-        val folder = data.folder ?: return@execute
+        val folder = state.folder ?: return@execute
         if (newName == folder.name) {
             return@execute setState { copy(isIgnoreRename = true) }
         }
@@ -33,8 +33,8 @@ class RenameFolderDialogViewModel @Inject constructor(
         }
     }
 
-    fun clearError() = withState { data ->
-        if (data.error != 0) {
+    fun clearError() = getState { state ->
+        if (state.error != 0) {
             setState { copy(error = 0) }
         }
     }

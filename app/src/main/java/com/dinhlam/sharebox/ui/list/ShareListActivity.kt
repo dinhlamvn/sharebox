@@ -56,8 +56,8 @@ class ShareListActivity :
     }
 
     private fun showDialogShareToOther(shareId: Int) {
-        val shareData = withState(viewModel) { data ->
-            data.shareList.firstOrNull { share ->
+        val shareData = getState(viewModel) { state ->
+            state.shareList.firstOrNull { share ->
                 share.id == shareId
             }
         } ?: return

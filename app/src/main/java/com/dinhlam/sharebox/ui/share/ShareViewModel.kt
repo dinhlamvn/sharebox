@@ -38,22 +38,22 @@ class ShareViewModel @Inject constructor(
         setSelectedFolder(folderId)
     }
 
-    fun setSelectedFolder(folderId: String) = withState { data ->
-        val folder = data.folders.firstOrNull { it.id == folderId }
-            ?: data.folders.sortedByDescending { it.createdAt }.getOrNull(0)
+    fun setSelectedFolder(folderId: String) = getState { state ->
+        val folder = state.folders.firstOrNull { it.id == folderId }
+            ?: state.folders.sortedByDescending { it.createdAt }.getOrNull(0)
         setState { copy(selectedFolder = folder) }
     }
 
-    fun saveShare(note: String, context: Context) = execute { data ->
-        val folderId: String = data.selectedFolder?.id ?: return@execute
-        if (data.shareInfo is ShareState.ShareInfo.ShareWebLink) {
-            return@execute saveWebLink(folderId, note, data.shareInfo)
+    fun saveShare(note: String, context: Context) = execute { state ->
+        val folderId: String = state.selectedFolder?.id ?: return@execute
+        if (state.shareInfo is ShareState.ShareInfo.ShareWebLink) {
+            return@execute saveWebLink(folderId, note, state.shareInfo)
         }
-        if (data.shareInfo is ShareState.ShareInfo.ShareText) {
-            return@execute saveShareText(folderId, note, data.shareInfo)
+        if (state.shareInfo is ShareState.ShareInfo.ShareText) {
+            return@execute saveShareText(folderId, note, state.shareInfo)
         }
-        if (data.shareInfo is ShareState.ShareInfo.ShareImage) {
-            return@execute saveShareImage(context, folderId, note, data.shareInfo)
+        if (state.shareInfo is ShareState.ShareInfo.ShareImage) {
+            return@execute saveShareImage(context, folderId, note, state.shareInfo)
         }
     }
 

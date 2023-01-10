@@ -13,7 +13,7 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
 
     abstract fun onStateChanged(state: T)
 
-    fun <R> withState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value)
+    fun <R> getState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {

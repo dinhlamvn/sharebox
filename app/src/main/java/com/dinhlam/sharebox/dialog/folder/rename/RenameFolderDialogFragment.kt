@@ -87,7 +87,7 @@ class RenameFolderDialogFragment :
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        val isVerified = withState(viewModel) { it.renameFolderSuccess }
+        val isVerified = getState(viewModel) { it.renameFolderSuccess }
         if (!isVerified) {
             getCallback()?.onCancelRename()
         }

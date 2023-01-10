@@ -189,7 +189,7 @@ class ShareActivity :
         behavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
-    private fun showFloatingPopupFolderPicker(view: View) = withState(viewModel) { data ->
+    private fun showFloatingPopupFolderPicker(view: View) = getState(viewModel) { state ->
         val width = 150.dp(this)
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this)
@@ -204,7 +204,7 @@ class ShareActivity :
             }
         }
 
-        val takeFolders = data.folders.filterNot { folder -> folder.id == data.selectedFolder?.id }
+        val takeFolders = state.folders.filterNot { folder -> folder.id == state.selectedFolder?.id }
             .sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
@@ -224,7 +224,7 @@ class ShareActivity :
             popupView.addView(binding.root, layoutParams)
         }
 
-        if (takeFolders.size < data.folders.size) {
+        if (takeFolders.size < state.folders.size) {
             val binding = MenuItemMoreBinding.inflate(layoutInflater)
             binding.root.setOnClickListener {
                 dismissPopup()
