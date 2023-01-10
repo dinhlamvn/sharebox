@@ -36,15 +36,16 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getSerializableExtraCompat
-import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.extensions.showAlert
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.modelview.FolderListModelView
+import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.utils.FolderUtils
+import com.dinhlam.sharebox.utils.TagUtil
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,8 +53,7 @@ import javax.inject.Inject
 import kotlin.math.min
 
 @AndroidEntryPoint
-class HomeActivity :
-    BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
+class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     FolderCreatorDialogFragment.OnFolderCreatorCallback,
     FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback,
     RenameFolderDialogFragment.OnConfirmRenameCallback,
@@ -72,8 +72,6 @@ class HomeActivity :
         private const val POPUP_ITEM_SPACING = 60
     }
 
-    private val modelViewsFactory by lazy { HomeModelViewsFactory(this, viewModel, gson) }
-
     @Inject
     lateinit var gson: Gson
 
@@ -85,16 +83,35 @@ class HomeActivity :
 
     override val viewModel: HomeViewModel by viewModels()
 
-    private val homeAdapter = BaseListAdapter.createAdapter {
+    private val homeAdapter = BaseListAdapter.createAdapter({
+        mutableListOf<BaseListAdapter.BaseModelView>().apply {
+            getState(viewModel) { state ->
+                if (state.isRefreshing) {
+                    add(LoadingModelView)
+                    return@getState
+                }
+                state.folders.forEach { folder ->
+                    add(
+                        FolderListModelView(
+                            "folder_${folder.id}",
+                            folder.name,
+                            folder.desc,
+                            folder.updatedAt,
+                            !folder.password.isNullOrEmpty(),
+                            TagUtil.getTag(folder.tag)
+                        )
+                    )
+                }
+            }
+        }
+    }) {
         withViewType(R.layout.model_view_loading) {
             LoadingViewHolder(this)
         }
 
         withViewType(R.layout.model_view_folder_list) {
             FolderListModelView.FolderListViewHolder(
-                this,
-                viewModel::onFolderClick,
-                ::onFolderLongClick
+                this, viewModel::onFolderClick, ::onFolderLongClick
             )
         }
     }
@@ -106,7 +123,7 @@ class HomeActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
-        viewBinding.recyclerView.setupWith(homeAdapter, modelViewsFactory)
+        viewBinding.recyclerView.adapter = homeAdapter
 
         viewModel.setSortType(appSharePref.getSortType())
 
@@ -149,7 +166,7 @@ class HomeActivity :
     }
 
     override fun onStateChanged(state: HomeState) {
-        modelViewsFactory.requestBuildModelViews()
+        homeAdapter.requestBuildModelViews()
         viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
     }
 
@@ -200,8 +217,7 @@ class HomeActivity :
     }
 
     private fun onFolderLongClick(clickedView: View, position: Int) {
-        val folder =
-            getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
+        val folder = getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
         var popupSpacing = if (folder.tag == null) 0 else POPUP_ITEM_SPACING
 
         val width = 150.dp(this)
@@ -220,8 +236,7 @@ class HomeActivity :
 
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
-            width,
-            height
+            width, height
         )
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams
@@ -327,20 +342,14 @@ class HomeActivity :
         val folder = confirmation.folder
         val title = getString(R.string.confirmation)
         val numberOfShare = resources.getQuantityString(
-            R.plurals.share_count_text,
-            confirmation.shareCount,
-            confirmation.shareCount
+            R.plurals.share_count_text, confirmation.shareCount, confirmation.shareCount
         )
         val message = HtmlCompat.fromHtml(
             getString(
-                R.string.delete_folder_confirmation_message,
-                folder.name,
-                numberOfShare
-            ),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
+                R.string.delete_folder_confirmation_message, folder.name, numberOfShare
+            ), HtmlCompat.FROM_HTML_MODE_LEGACY
         )
-        showAlert(
-            title,
+        showAlert(title,
             message,
             getString(R.string.delete),
             getString(R.string.cancel),
@@ -350,16 +359,14 @@ class HomeActivity :
                 } else {
                     showConfirmPasswordDialog(folder.id)
                 }
-            }
-        )
+            })
     }
 
     private fun maybeShowConfirmPasswordToRenameFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
-                RenameFolderDialogFragment::class,
-                supportFragmentManager
+                RenameFolderDialogFragment::class, supportFragmentManager
             ) {
                 arguments = Bundle().apply {
                     putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
@@ -374,8 +381,7 @@ class HomeActivity :
         val folder = confirmation.folder
         if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
-                FolderDetailDialogFragment::class,
-                supportFragmentManager
+                FolderDetailDialogFragment::class, supportFragmentManager
             ) {
                 arguments = Bundle().apply {
                     putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
@@ -392,8 +398,7 @@ class HomeActivity :
             return@getState onPasswordVerified(false)
         }
         BaseDialogFragment.showDialog(
-            FolderConfirmPasswordDialogFragment::class,
-            supportFragmentManager
+            FolderConfirmPasswordDialogFragment::class, supportFragmentManager
         ) {
             arguments = Bundle().apply {
                 putString(ExtraUtils.EXTRA_FOLDER_ID, id)
@@ -432,9 +437,8 @@ class HomeActivity :
         viewModel.setFolderTag(tagId)
     }
 
-    private fun showAbout() = AlertDialog.Builder(this)
-        .setTitle(R.string.app_name)
-        .setMessage(buildSpannedString {
+    private fun showAbout() =
+        AlertDialog.Builder(this).setTitle(R.string.app_name).setMessage(buildSpannedString {
             append("\n")
             bold {
                 append(getString(R.string.developer_title))
@@ -445,8 +449,5 @@ class HomeActivity :
                 append(getString(R.string.contact_title))
             }
             append(" ${getString(R.string.developer_email)}")
-        })
-        .setPositiveButton(R.string.button_close, null)
-        .setCancelable(true)
-        .show()
+        }).setPositiveButton(R.string.button_close, null).setCancelable(true).show()
 }

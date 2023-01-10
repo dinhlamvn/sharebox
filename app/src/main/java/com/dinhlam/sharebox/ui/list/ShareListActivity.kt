@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
-import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.ui.home.modelview.HomeDateModelView
@@ -25,9 +24,9 @@ import javax.inject.Inject
 class ShareListActivity :
     BaseViewModelActivity<ShareListState, ShareListViewModel, ActivityShareListBinding>() {
 
-    private val modelViewsFactory by lazy { ShareListModelViewsFactory(this, viewModel, gson) }
+    private val modelViewsBuilder by lazy { SharesModelViewsBuilder(this, viewModel, gson) }
 
-    private val shareListAdapter = BaseListAdapter.createAdapter {
+    private val shareListAdapter = BaseListAdapter.createAdapter(modelViewsBuilder) {
         withViewType(R.layout.model_view_loading) {
             LoadingViewHolder(this)
         }
@@ -78,8 +77,7 @@ class ShareListActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewBinding.recyclerView.setupWith(shareListAdapter, modelViewsFactory)
+        viewBinding.recyclerView.adapter = shareListAdapter
 
         val folderId = intent.getStringExtra(ExtraUtils.EXTRA_FOLDER_ID) ?: return run {
             showToast(R.string.error_require_folder)
@@ -94,7 +92,7 @@ class ShareListActivity :
     }
 
     override fun onStateChanged(state: ShareListState) {
-        modelViewsFactory.requestBuildModelViews()
+        shareListAdapter.requestBuildModelViews()
         supportActionBar?.title = state.title
     }
 }

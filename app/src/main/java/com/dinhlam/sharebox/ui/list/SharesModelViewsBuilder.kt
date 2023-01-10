@@ -12,29 +12,33 @@ import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.gson.Gson
 
-class ShareListModelViewsFactory constructor(
+class SharesModelViewsBuilder constructor(
     private val activity: ShareListActivity,
     private val viewModel: ShareListViewModel,
     private val gson: Gson
-) : BaseListAdapter.ModelViewsFactory() {
+) : () -> List<BaseListAdapter.BaseModelView> {
 
-    override fun buildModelViews() = activity.getState(viewModel) { state ->
-        if (state.isRefreshing) {
-            LoadingModelView.addTo(this)
-            return@getState
-        }
+    override fun invoke(): List<BaseListAdapter.BaseModelView> {
+        return mutableListOf<BaseListAdapter.BaseModelView>().apply {
+            activity.getState(viewModel) { state ->
+                if (state.isRefreshing) {
+                    add(LoadingModelView)
+                    return@getState
+                }
 
-        val map = state.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }
-        map.forEach { entry ->
-            val date = entry.key
-            val shares = entry.value
-            HomeDateModelView("date$date", date).addTo(this)
-            buildShares(shares)
+                val map = state.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }
+                map.forEach { entry ->
+                    val date = entry.key
+                    val shares = entry.value
+                    add(HomeDateModelView("date$date", date))
+                    addAll(buildShares(shares))
+                }
+            }
         }
     }
 
-    private fun buildShares(shares: List<Share>) {
-        shares.mapNotNull { share ->
+    private fun buildShares(shares: List<Share>): List<BaseListAdapter.BaseModelView> {
+        return shares.mapNotNull { share ->
             when (share.shareType) {
                 "web-link" -> {
                     val shareInfo = gson.fromJson(
@@ -81,6 +85,6 @@ class ShareListModelViewsFactory constructor(
                     null
                 }
             }
-        }.forEach { it.addTo(this) }
+        }
     }
 }

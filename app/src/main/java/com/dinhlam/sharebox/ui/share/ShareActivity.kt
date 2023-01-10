@@ -28,7 +28,6 @@ import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.isWebLink
-import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareImageModelView
@@ -48,8 +47,6 @@ class ShareActivity :
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
     }
-
-    private val modelViewsFactory by lazy { ShareModelViewsFactory(this, viewModel) }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -75,7 +72,35 @@ class ShareActivity :
 
     override val viewModel: ShareViewModel by viewModels()
 
-    private val shareContentAdapter = BaseListAdapter.createAdapter {
+    private val shareContentAdapter = BaseListAdapter.createAdapter({
+        mutableListOf<BaseListAdapter.BaseModelView>().apply {
+            getState(viewModel) { state ->
+                when (val shareInfo = state.shareInfo) {
+                    is ShareState.ShareInfo.ShareText -> add(
+                        ShareTextModelView(
+                            "shareText", shareInfo.text
+                        )
+                    )
+                    is ShareState.ShareInfo.ShareWebLink -> add(
+                        ShareWebLinkModelView(
+                            "shareText", shareInfo.url
+                        )
+                    )
+                    is ShareState.ShareInfo.ShareImage -> add(
+                        ShareImageModelView(
+                            "shareImage", shareInfo.uri
+                        )
+                    )
+                    is ShareState.ShareInfo.ShareMultipleImage -> addAll(shareInfo.uris.mapIndexed { index, uri ->
+                        ShareMultipleImageModelView(
+                            "shareMultipleImage$index", uri
+                        )
+                    })
+                    else -> add(ShareDefaultModelView())
+                }
+            }
+        }
+    }) {
         withViewType(R.layout.share_item_default) {
             ShareDefaultModelView.ShareDefaultViewHolder(this)
         }
@@ -98,13 +123,14 @@ class ShareActivity :
     }
 
     override fun onStateChanged(state: ShareState) {
-        modelViewsFactory.requestBuildModelViews()
+        shareContentAdapter.requestBuildModelViews()
         viewBinding.textViewFolder.text = state.selectedFolder?.name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding.recyclerView.setupWith(shareContentAdapter, modelViewsFactory)
+
+        viewBinding.recyclerView.adapter = shareContentAdapter
 
         behavior.addBottomSheetCallback(bottomSheetCallback)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -204,12 +230,12 @@ class ShareActivity :
             }
         }
 
-        val takeFolders = state.folders.filterNot { folder -> folder.id == state.selectedFolder?.id }
-            .sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
+        val takeFolders =
+            state.folders.filterNot { folder -> folder.id == state.selectedFolder?.id }
+                .sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
-            width,
-            height
+            width, height
         )
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams

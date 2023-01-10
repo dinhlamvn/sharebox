@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
 import com.dinhlam.sharebox.databinding.DialogFolderSelectorBinding
 import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.modelview.FolderModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.NewFolderModelView
@@ -28,19 +27,19 @@ class FolderSelectorDialogFragment :
         fun onCreateNewFolder()
     }
 
-    private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-        override fun buildModelViews() = getState(viewModel) { state ->
-            if (state.isFirstLoad) {
-                return@getState LoadingModelView.addTo(this)
+    private val folderAdapter = BaseListAdapter.createAdapter({
+        mutableListOf<BaseListAdapter.BaseModelView>().apply {
+            getState(viewModel) { state ->
+                if (state.isFirstLoad) {
+                    return@getState add(0, LoadingModelView)
+                }
+                state.folders.forEach {
+                    add(FolderModelView("folder_${it.id}", it.name, it.desc))
+                }
+                add(NewFolderModelView)
             }
-            state.folders.forEach {
-                FolderModelView("folder_${it.id}", it.name, it.desc).addTo(this)
-            }
-            NewFolderModelView.addTo(this)
         }
-    }
-
-    private val folderAdapter = BaseListAdapter.createAdapter {
+    }) {
         withViewType(R.layout.model_view_folder) {
             FolderModelView.FolderViewHolder(this, viewModel::onSelectedFolder)
         }
@@ -57,8 +56,7 @@ class FolderSelectorDialogFragment :
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+        inflater: LayoutInflater, container: ViewGroup?
     ): DialogFolderSelectorBinding {
         return DialogFolderSelectorBinding.inflate(inflater, container, false)
     }
@@ -69,14 +67,14 @@ class FolderSelectorDialogFragment :
         if (state.selectedFolder != null || state.requestCreateFolder) {
             return
         }
-        modelViewsFactory.requestBuildModelViews()
+        folderAdapter.requestBuildModelViews()
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
         viewBinding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3).apply {
             spanSizeLookup = BaseSpanSizeLookup(folderAdapter, this)
         }
-        viewBinding.recyclerView.setupWith(folderAdapter, modelViewsFactory)
+        viewBinding.recyclerView.adapter = folderAdapter
 
         viewModel.consume(viewLifecycleOwner, FolderSelectorDialogState::selectedFolder) {
             val folderId = it?.id ?: return@consume
@@ -86,8 +84,7 @@ class FolderSelectorDialogFragment :
         }
 
         viewModel.consume(
-            viewLifecycleOwner,
-            FolderSelectorDialogState::requestCreateFolder
+            viewLifecycleOwner, FolderSelectorDialogState::requestCreateFolder
         ) { isCreateNewFolder ->
             if (isCreateNewFolder) {
                 getCallback()?.onCreateNewFolder()?.also {
