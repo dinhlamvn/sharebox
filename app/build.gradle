@@ -90,9 +90,9 @@ dependencies {
     def gson_version = "2.9.1"
     implementation "com.google.code.gson:gson:$gson_version"
 
-    // Paging v3
-    def paging_version = "3.1.1"
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+    // Webkit support
+    def webkit_version = "1.5.0"
+    implementation "androidx.webkit:webkit:$webkit_version"
 }
 
 kapt {

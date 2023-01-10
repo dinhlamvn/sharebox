@@ -30,6 +30,7 @@ import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordD
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.detail.FolderDetailDialogFragment
 import com.dinhlam.sharebox.dialog.folder.rename.RenameFolderDialogFragment
+import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
@@ -133,6 +134,14 @@ class HomeActivity :
         viewModel.consume(this, HomeState::tag) {
             invalidateOptionsMenu()
         }
+
+        viewBinding.buttonGuideLine.setOnClickListener {
+            openGuideLineDialog()
+        }
+    }
+
+    private fun openGuideLineDialog() {
+        BaseDialogFragment.showDialog(GuidelineDialogFragment::class, supportFragmentManager)
     }
 
     private fun openFolder(folder: Folder) {
