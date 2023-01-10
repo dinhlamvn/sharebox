@@ -12,7 +12,7 @@ import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.gson.Gson
 
-class SharesModelViewsBuilder constructor(
+class ShareListModelViewsBuilder constructor(
     private val activity: ShareListActivity,
     private val viewModel: ShareListViewModel,
     private val gson: Gson

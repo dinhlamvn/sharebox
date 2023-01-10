@@ -24,33 +24,35 @@ import javax.inject.Inject
 class ShareListActivity :
     BaseViewModelActivity<ShareListState, ShareListViewModel, ActivityShareListBinding>() {
 
-    private val modelViewsBuilder by lazy { SharesModelViewsBuilder(this, viewModel, gson) }
+    private val modelViewsBuilder by lazy { ShareListModelViewsBuilder(this, viewModel, gson) }
 
-    private val shareListAdapter = BaseListAdapter.createAdapter(modelViewsBuilder) {
-        withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(this)
-        }
+    private val shareListAdapter by lazy {
+        BaseListAdapter.createAdapter(modelViewsBuilder) {
+            withViewType(R.layout.model_view_loading) {
+                LoadingViewHolder(this)
+            }
 
-        withViewType(R.layout.model_view_home_date) {
-            HomeDateModelView.HomeDateViewHolder(this)
-        }
+            withViewType(R.layout.model_view_home_date) {
+                HomeDateModelView.HomeDateViewHolder(this)
+            }
 
-        withViewType(R.layout.model_view_home_share_text) {
-            HomeTextModelView.HomeTextViewHolder(this, { textContent ->
-                val dialog = TextViewerDialogFragment()
-                dialog.arguments = Bundle().apply {
-                    putString(Intent.EXTRA_TEXT, textContent)
-                }
-                dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-            }, ::showDialogShareToOther)
-        }
+            withViewType(R.layout.model_view_home_share_text) {
+                HomeTextModelView.HomeTextViewHolder(this, { textContent ->
+                    val dialog = TextViewerDialogFragment()
+                    dialog.arguments = Bundle().apply {
+                        putString(Intent.EXTRA_TEXT, textContent)
+                    }
+                    dialog.show(supportFragmentManager, "TextViewerDialogFragment")
+                }, ::showDialogShareToOther)
+            }
 
-        withViewType(R.layout.model_view_home_share_web_link) {
-            HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
-        }
+            withViewType(R.layout.model_view_home_share_web_link) {
+                HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
+            }
 
-        withViewType(R.layout.model_view_home_share_image) {
-            HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
+            withViewType(R.layout.model_view_home_share_image) {
+                HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.home
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -18,6 +19,7 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
@@ -32,17 +34,23 @@ import com.dinhlam.sharebox.dialog.folder.detail.FolderDetailDialogFragment
 import com.dinhlam.sharebox.dialog.folder.rename.RenameFolderDialogFragment
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
+import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getSerializableExtraCompat
+import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.showAlert
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.modelview.FolderListModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.ui.home.modelview.HomeImageModelView
+import com.dinhlam.sharebox.ui.home.modelview.HomeTextModelView
+import com.dinhlam.sharebox.ui.home.modelview.HomeWebLinkModelView
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.utils.FolderUtils
 import com.dinhlam.sharebox.utils.TagUtil
@@ -81,7 +89,41 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     @Inject
     lateinit var appSharePref: AppSharePref
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
     override val viewModel: HomeViewModel by viewModels()
+
+    private val shareListAdapter by lazy {
+        BaseListAdapter.createAdapter(HomeShareListModelViewsBuilder(this, viewModel, gson)) {
+            withViewType(R.layout.model_view_loading) {
+                LoadingViewHolder(this)
+            }
+
+            withViewType(R.layout.model_view_home_share_text) {
+                HomeTextModelView.HomeTextViewHolder(this, { textContent ->
+                    val dialog = TextViewerDialogFragment()
+                    dialog.arguments = Bundle().apply {
+                        putString(Intent.EXTRA_TEXT, textContent)
+                    }
+                    dialog.show(supportFragmentManager, "TextViewerDialogFragment")
+                }, ::showDialogShareToOther)
+            }
+
+            withViewType(R.layout.model_view_home_share_web_link) {
+                HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
+                    .apply {
+                        updateLayoutParams {
+                            width = screenWidth().times(0.8f).toInt()
+                        }
+                    }
+            }
+
+            withViewType(R.layout.model_view_home_share_image) {
+                HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
+            }
+        }
+    }
 
     private val homeAdapter = BaseListAdapter.createAdapter({
         mutableListOf<BaseListAdapter.BaseModelView>().apply {
@@ -125,6 +167,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         viewBinding.recyclerView.adapter = homeAdapter
 
+        viewBinding.recyclerViewShareRecent.adapter = shareListAdapter
+
         viewModel.setSortType(appSharePref.getSortType())
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
@@ -167,6 +211,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onStateChanged(state: HomeState) {
         homeAdapter.requestBuildModelViews()
+        shareListAdapter.requestBuildModelViews()
         viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
     }
 
@@ -450,4 +495,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
             append(" ${getString(R.string.developer_email)}")
         }).setPositiveButton(R.string.button_close, null).setCancelable(true).show()
+
+    private fun showDialogShareToOther(shareId: Int) {
+        val shareData = getState(viewModel) { state ->
+            state.shareList.firstOrNull { share ->
+                share.id == shareId
+            }
+        } ?: return
+        shareHelper.shareToOther(shareData)
+    }
 }

@@ -12,6 +12,9 @@ interface ShareDao {
     @Query("SELECT * FROM share")
     fun getAll(): List<Share>
 
+    @Query("SELECT * FROM share ORDER BY id DESC LIMIT 10")
+    fun getRecentList(): List<Share>
+
     @Query("SELECT * FROM share WHERE folder_id = :folderId ORDER BY id DESC")
     fun getByFolder(folderId: String): List<Share>
 

@@ -12,12 +12,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val folderRepository: FolderRepository,
-    private val shareRepository: ShareRepository
+    private val folderRepository: FolderRepository, private val shareRepository: ShareRepository
 ) : BaseViewModel<HomeState>(HomeState()) {
 
     init {
         loadFolders()
+        loadShareList()
     }
 
     fun loadFolders() = execute { state ->
@@ -29,15 +29,18 @@ class HomeViewModel @Inject constructor(
         setState { copy(folders = folders, isRefreshing = false) }
     }
 
+    private fun loadShareList() = executeJob {
+        val shares = shareRepository.getRecentList()
+        setState { copy(shareList = shares) }
+    }
+
     fun onFolderClick(position: Int) = execute { state ->
         val folder = state.folders.getOrNull(position) ?: return@execute
         val shareCount = shareRepository.countByFolder(folder.id)
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.OPEN
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.OPEN
                 )
             )
         }
@@ -73,9 +76,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.DELETE
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.DELETE
                 )
             )
         }
@@ -86,9 +87,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.RENAME
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.RENAME
                 )
             )
         }
@@ -99,9 +98,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.DETAIL
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.DETAIL
                 )
             )
         }
@@ -112,9 +109,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.TAG
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.TAG
                 )
             )
         }
@@ -172,11 +167,7 @@ class HomeViewModel @Inject constructor(
 
     fun isHandleByTagSelected(itemId: Int): Boolean {
         if (itemId !in listOf(
-                R.id.tag_red,
-                R.id.tag_green,
-                R.id.tag_blue,
-                R.id.tag_yellow,
-                R.id.tag_gray
+                R.id.tag_red, R.id.tag_green, R.id.tag_blue, R.id.tag_yellow, R.id.tag_gray
             )
         ) {
             return false

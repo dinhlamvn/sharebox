@@ -12,6 +12,8 @@ object IconUtils {
     private const val YOUTUBE_ICON_URL =
         "https://img.icons8.com/color/144/000000/youtube-play.png"
 
+    private const val WEB_LINK_ICON = "https://img.icons8.com/3d-fluency/94/null/domain.png"
+
     fun getIconUrl(shareContent: String?): String? {
         if (isFacebookShare(shareContent)) {
             return FB_ICON_URL
@@ -25,7 +27,7 @@ object IconUtils {
         if (isTiktokShare(shareContent)) {
             return TIKTOK_ICON_URL
         }
-        return null
+        return WEB_LINK_ICON
     }
 
     private fun isFacebookShare(content: String?): Boolean {
