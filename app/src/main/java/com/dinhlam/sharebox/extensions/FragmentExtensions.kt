@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 
 fun Fragment.screenWidth() = resources.displayMetrics.widthPixels
 
+fun Fragment.screenHeight() = resources.displayMetrics.heightPixels
+
 fun Fragment.showToast(@StringRes text: Int, duration: Int = Toast.LENGTH_SHORT) {
     showToast(getString(text, duration))
 }
