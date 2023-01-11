@@ -41,7 +41,7 @@ data class FolderListModelView(
             }
 
             binding.imageViewOption.setOnClickListener { view ->
-                folderOptionClick?.invoke(binding.root, position)
+                folderOptionClick?.invoke(view, position)
             }
 
             binding.textViewFolderName.text = item.name

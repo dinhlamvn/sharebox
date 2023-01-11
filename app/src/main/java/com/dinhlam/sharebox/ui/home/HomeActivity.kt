@@ -22,6 +22,8 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -167,7 +169,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         withViewType(R.layout.model_view_folder_list) {
             FolderListModelView.FolderListViewHolder(
-                this, viewModel::onFolderClick, ::onFolderLongClick
+                this, viewModel::onFolderClick, ::onFolderOptionClick
             )
         }
     }
@@ -180,6 +182,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         super.onCreate(savedInstanceState)
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         viewBinding.recyclerView.adapter = homeAdapter
+
+        viewBinding.recyclerView.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                viewBinding.buttonGuideLine.translationY += dy * 1f
+            }
+        })
 
         viewBinding.recyclerViewShareRecently.adapter = shareListAdapter
 
@@ -280,7 +289,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewModel.loadFolders()
     }
 
-    private fun onFolderLongClick(clickedView: View, position: Int) {
+    private fun onFolderOptionClick(clickedView: View, position: Int) {
         val folder = getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
         var popupSpacing = if (folder.tag == null) 0 else POPUP_ITEM_SPACING
 
@@ -357,7 +366,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         popupWindow.contentView = popupView
 
         clickedView.post {
-            val bottom = clickedView.bottom
+            val array = IntArray(4) { 0 }
+            clickedView.getLocationInWindow(array)
+            val bottom = array[3]
             val parentBottom = viewBinding.recyclerView.bottom
             val yOffset = min(0, parentBottom - (bottom + popupSpacing.dp(this)))
             popupWindow.showAsDropDown(clickedView, 0, yOffset)
