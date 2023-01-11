@@ -23,11 +23,9 @@ class HomeViewModel @Inject constructor(
     fun loadFolders() = execute { state ->
         setState { copy(isRefreshing = true) }
 
-        val folders = if (state.tag == null) {
-            folderRepository.getAll(state.sortType)
-        } else {
-            folderRepository.getByTag(state.tag)
-        }
+        val folders = state.tag?.let { tag ->
+            folderRepository.getByTag(tag)
+        } ?: folderRepository.getAll(state.sortType)
 
         setState { copy(folders = folders, isRefreshing = false) }
     }
