@@ -184,9 +184,21 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewBinding.recyclerView.adapter = homeAdapter
 
         viewBinding.recyclerView.addOnScrollListener(object : OnScrollListener() {
+            private var scrolled = 0
+            private val rangeToHideGuideButton = 100
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                viewBinding.buttonGuideLine.translationY += dy * 1f
+
+                scrolled += dy
+
+                if (scrolled > rangeToHideGuideButton) {
+                    viewBinding.buttonGuideLine.isVisible = false
+                    scrolled = 0
+                } else if (scrolled < -rangeToHideGuideButton) {
+                    viewBinding.buttonGuideLine.isVisible = true
+                    scrolled = 0
+                }
             }
         })
 
