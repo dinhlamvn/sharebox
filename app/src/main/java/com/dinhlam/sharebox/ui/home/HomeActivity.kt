@@ -48,9 +48,9 @@ import com.dinhlam.sharebox.modelview.FolderListModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyImageModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTextModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyWebLinkModelView
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.utils.FolderUtils
 import com.dinhlam.sharebox.utils.TagUtil
@@ -102,37 +102,38 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 LoadingViewHolder(this)
             }
 
-            withViewType(R.layout.model_view_share_list_text) {
-                ShareListTextModelView.ShareListTextViewHolder(this, { textContent ->
+            withViewType(R.layout.model_view_share_recently_text) {
+                ShareRecentlyTextModelView.ShareRecentlyTextViewHolder(this, { textContent ->
                     val dialog = TextViewerDialogFragment()
                     dialog.arguments = Bundle().apply {
                         putString(Intent.EXTRA_TEXT, textContent)
                     }
                     dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-                }, ::showDialogShareToOther)
-                    .apply {
-                        updateLayoutParams {
-                            width = percentWidth
-                        }
+                }, ::showDialogShareToOther).apply {
+                    updateLayoutParams {
+                        width = percentWidth
                     }
+                }
             }
 
-            withViewType(R.layout.model_view_share_list_web_link) {
-                ShareListWebLinkModelView.ShareListWebLinkViewHolder(this, ::showDialogShareToOther)
-                    .apply {
-                        updateLayoutParams {
-                            width = percentWidth
-                        }
+            withViewType(R.layout.model_view_share_recently_web_link) {
+                ShareRecentlyWebLinkModelView.ShareRecentlyWebLinkWebHolder(
+                    this, ::showDialogShareToOther
+                ).apply {
+                    updateLayoutParams {
+                        width = percentWidth
                     }
+                }
             }
 
-            withViewType(R.layout.model_view_share_list_image) {
-                ShareListImageModelView.ShareListImageViewHolder(this, ::showDialogShareToOther)
-                    .apply {
-                        updateLayoutParams {
-                            width = percentWidth
-                        }
+            withViewType(R.layout.model_view_share_recently_image) {
+                ShareRecentlyImageModelView.ShareRecentlyImageViewHolder(
+                    this, ::showDialogShareToOther
+                ).apply {
+                    updateLayoutParams {
+                        width = percentWidth
                     }
+                }
             }
         }
     }

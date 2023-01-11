@@ -4,9 +4,9 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyImageModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTextModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyWebLinkModelView
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.gson.Gson
@@ -38,7 +38,7 @@ class HomeShareListModelViewsBuilder constructor(
                         share.shareInfo,
                         ShareState.ShareInfo.ShareWebLink::class.java
                     )
-                    ShareListWebLinkModelView(
+                    ShareRecentlyWebLinkModelView(
                         id = "${share.id}",
                         iconUrl = IconUtils.getIconUrl(shareInfo.url),
                         url = shareInfo.url,
@@ -52,7 +52,7 @@ class HomeShareListModelViewsBuilder constructor(
                         share.shareInfo,
                         ShareState.ShareInfo.ShareImage::class.java
                     )
-                    ShareListImageModelView(
+                    ShareRecentlyImageModelView(
                         "${share.id}",
                         shareInfo.uri,
                         share.createdAt,
@@ -65,7 +65,7 @@ class HomeShareListModelViewsBuilder constructor(
                         share.shareInfo,
                         ShareState.ShareInfo.ShareText::class.java
                     )
-                    ShareListTextModelView(
+                    ShareRecentlyTextModelView(
                         id = "${share.id}",
                         iconUrl = IconUtils.getIconUrl(shareInfo.text),
                         content = shareInfo.text,
