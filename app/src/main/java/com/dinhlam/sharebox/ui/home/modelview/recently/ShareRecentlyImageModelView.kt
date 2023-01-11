@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home.modelview.recently
 
-import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.core.view.isInvisible
@@ -31,17 +30,18 @@ data class ShareRecentlyImageModelView(
         return other is ShareRecentlyImageModelView && other === this
     }
 
-    class ShareRecentlyImageViewHolder(view: View, private val block: (Int) -> Unit) :
-        BaseListAdapter.BaseViewHolder<ShareRecentlyImageModelView, ModelViewShareRecentlyImageBinding>(
-            view
-        ) {
+    class ShareRecentlyImageViewHolder(
+        view: View, private val block: (Int) -> Unit, private val blockViewImage: (Uri) -> Unit
+    ) : BaseListAdapter.BaseViewHolder<ShareRecentlyImageModelView, ModelViewShareRecentlyImageBinding>(
+        view
+    ) {
 
         override fun onBind(item: ShareRecentlyImageModelView, position: Int) {
             binding.imageShare.setOnClickListener {
                 block.invoke(item.shareId)
             }
-            binding.imageShareContent.setOnClickListener {
-                startViewImage(item.uri)
+            binding.root.setOnClickListener {
+                blockViewImage(item.uri)
             }
             ImageLoader.load(context, item.uri, binding.imageShareContent)
             binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
@@ -54,15 +54,6 @@ data class ShareRecentlyImageModelView(
 
         override fun onCreateViewBinding(view: View): ModelViewShareRecentlyImageBinding {
             return ModelViewShareRecentlyImageBinding.bind(view)
-        }
-
-        private fun startViewImage(uri: Uri) {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.setDataAndType(uri, "image/*")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            context.startActivity(intent)
         }
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -128,7 +129,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
             withViewType(R.layout.model_view_share_recently_image) {
                 ShareRecentlyImageModelView.ShareRecentlyImageViewHolder(
-                    this, ::showDialogShareToOther
+                    this, ::showDialogShareToOther, ::viewImage
                 ).apply {
                     updateLayoutParams {
                         width = percentWidth
@@ -186,6 +187,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadFolders()
+            viewModel.loadShareListRecently()
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
@@ -520,5 +522,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         } ?: return
         shareHelper.shareToOther(shareData)
+    }
+
+    private fun viewImage(uri: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uri, "image/*")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        startActivity(intent)
     }
 }

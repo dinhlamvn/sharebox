@@ -17,19 +17,22 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadFolders()
-        loadShareList()
+        loadShareListRecently()
     }
 
     fun loadFolders() = execute { state ->
+        setState { copy(isRefreshing = true) }
+
         val folders = if (state.tag == null) {
             folderRepository.getAll(state.sortType)
         } else {
             folderRepository.getByTag(state.tag)
         }
+
         setState { copy(folders = folders, isRefreshing = false) }
     }
 
-    private fun loadShareList() = executeJob {
+    fun loadShareListRecently() = executeJob {
         val shares = shareRepository.getRecentList()
         setState { copy(shareList = shares) }
     }
