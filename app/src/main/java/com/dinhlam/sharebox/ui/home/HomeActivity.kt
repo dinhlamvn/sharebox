@@ -180,7 +180,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         viewBinding.recyclerView.adapter = homeAdapter
 
-        viewBinding.recyclerViewShareRecent.adapter = shareListAdapter
+        viewBinding.recyclerViewShareRecently.adapter = shareListAdapter
 
         viewModel.setSortType(appSharePref.getSortType())
 
@@ -207,6 +207,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         viewModel.consume(this, HomeState::tag) {
             invalidateOptionsMenu()
+        }
+
+        viewModel.consume(this, HomeState::shareList, true) { shares ->
+            viewBinding.recyclerViewShareRecently.isVisible = shares.isNotEmpty()
         }
 
         viewBinding.buttonGuideLine.setOnClickListener {
