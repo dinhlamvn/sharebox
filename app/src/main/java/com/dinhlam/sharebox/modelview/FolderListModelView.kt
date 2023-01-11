@@ -5,7 +5,6 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewFolderListBinding
-import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.model.Tag
 
 data class FolderListModelView(
@@ -30,7 +29,7 @@ data class FolderListModelView(
     class FolderListViewHolder(
         view: View,
         private val folderClick: (Int) -> Unit,
-        private val folderLongClick: ((View, Int) -> Unit)? = null
+        private val folderOptionClick: ((View, Int) -> Unit)? = null
     ) : BaseListAdapter.BaseViewHolder<FolderListModelView, ModelViewFolderListBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewFolderListBinding {
             return ModelViewFolderListBinding.bind(view)
@@ -40,14 +39,11 @@ data class FolderListModelView(
             binding.root.setOnClickListener {
                 folderClick(position)
             }
-            folderLongClick?.let {
-                binding.root.setOnLongClickListener { clickedView ->
-                    it(clickedView, position)
-                    return@setOnLongClickListener true
-                }
+
+            binding.imageViewOption.setOnClickListener { view ->
+                folderOptionClick?.invoke(binding.root, position)
             }
 
-            binding.textViewFolderUpdatedDate.text = item.updatedAt.format("MMM d H:m")
             binding.textViewFolderName.text = item.name
             binding.textViewFolderDesc.text = item.desc
             binding.imageViewKey.isVisible = item.hasPassword

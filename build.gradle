@@ -26,5 +26,9 @@ task installDebug() {
         println("Installing debug APK")
         def process = "adb install app/build/outputs/apk/debug/app-debug.apk".execute()
         process.waitForProcessOutput()
+
+        println("Starting app...")
+        def processOpenApp = "adb shell am start -a android.intent.action.VIEW -d \"sharebox://home\"".execute()
+        processOpenApp.waitForProcessOutput()
     }
 }
