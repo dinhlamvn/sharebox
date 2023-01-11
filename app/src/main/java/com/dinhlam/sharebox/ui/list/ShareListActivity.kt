@@ -10,10 +10,10 @@ import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.ui.home.modelview.HomeDateModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeImageModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeTextModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeWebLinkModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -32,12 +32,12 @@ class ShareListActivity :
                 LoadingViewHolder(this)
             }
 
-            withViewType(R.layout.model_view_home_date) {
-                HomeDateModelView.HomeDateViewHolder(this)
+            withViewType(R.layout.model_view_share_list_date) {
+                ShareListDateModelView.ShareListDateViewHolder(this)
             }
 
-            withViewType(R.layout.model_view_home_share_text) {
-                HomeTextModelView.HomeTextViewHolder(this, { textContent ->
+            withViewType(R.layout.model_view_share_list_text) {
+                ShareListTextModelView.ShareListTextViewHolder(this, { textContent ->
                     val dialog = TextViewerDialogFragment()
                     dialog.arguments = Bundle().apply {
                         putString(Intent.EXTRA_TEXT, textContent)
@@ -46,12 +46,12 @@ class ShareListActivity :
                 }, ::showDialogShareToOther)
             }
 
-            withViewType(R.layout.model_view_home_share_web_link) {
-                HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
+            withViewType(R.layout.model_view_share_list_web_link) {
+                ShareListWebLinkModelView.ShareListWebLinkViewHolder(this, ::showDialogShareToOther)
             }
 
-            withViewType(R.layout.model_view_home_share_image) {
-                HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
+            withViewType(R.layout.model_view_share_list_image) {
+                ShareListImageModelView.ShareListImageViewHolder(this, ::showDialogShareToOther)
             }
         }
     }

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.database.entity.Share
+import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.ui.share.ShareActivity
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.google.gson.Gson
@@ -22,19 +23,19 @@ class ShareHelper @Inject constructor(
     fun shareToOther(share: Share) {
         val intent = Intent(Intent.ACTION_SEND)
         when (share.shareType) {
-            "web-link" -> {
+            ShareType.WEB.type -> {
                 val shareData =
                     gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java)
                 intent.putExtra(Intent.EXTRA_TEXT, shareData.url)
                 intent.type = "text/*"
             }
-            "text" -> {
+            ShareType.TEXT.type -> {
                 val shareData =
                     gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareText::class.java)
                 intent.putExtra(Intent.EXTRA_TEXT, shareData.text)
                 intent.type = "text/*"
             }
-            "image" -> {
+            ShareType.IMAGE.type -> {
                 val shareData =
                     gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareImage::class.java)
                 intent.putExtra(Intent.EXTRA_STREAM, shareData.uri)

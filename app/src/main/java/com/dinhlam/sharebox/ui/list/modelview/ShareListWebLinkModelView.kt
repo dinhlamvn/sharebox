@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.modelview
+package com.dinhlam.sharebox.ui.list.modelview
 
 import android.content.Intent
 import android.net.Uri
@@ -7,12 +7,12 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ModelViewHomeShareWebLinkBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListWebLinkBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 
-data class HomeWebLinkModelView(
+data class ShareListWebLinkModelView(
     val id: String,
     val iconUrl: String?,
     val url: String?,
@@ -22,10 +22,10 @@ data class HomeWebLinkModelView(
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
-        get() = R.layout.model_view_home_share_web_link
+        get() = R.layout.model_view_share_list_web_link
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeWebLinkModelView && other.id == this.id
+        return other is ShareListWebLinkModelView && other.id == this.id
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -33,15 +33,17 @@ data class HomeWebLinkModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeWebLinkModelView && other === this
+        return other is ShareListWebLinkModelView && other === this
     }
 
-    class HomeWebLinkViewHolder(
+    class ShareListWebLinkViewHolder(
         view: View,
         val shareToOther: (Int) -> Unit
-    ) : BaseListAdapter.BaseViewHolder<HomeWebLinkModelView, ModelViewHomeShareWebLinkBinding>(view) {
+    ) : BaseListAdapter.BaseViewHolder<ShareListWebLinkModelView, ModelViewShareListWebLinkBinding>(
+        view
+    ) {
 
-        override fun onBind(item: HomeWebLinkModelView, position: Int) {
+        override fun onBind(item: ShareListWebLinkModelView, position: Int) {
             binding.root.setOnClickListener {
                 startView(item)
             }
@@ -64,11 +66,11 @@ data class HomeWebLinkModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewHomeShareWebLinkBinding {
-            return ModelViewHomeShareWebLinkBinding.bind(view)
+        override fun onCreateViewBinding(view: View): ModelViewShareListWebLinkBinding {
+            return ModelViewShareListWebLinkBinding.bind(view)
         }
 
-        private fun startView(item: HomeWebLinkModelView) {
+        private fun startView(item: ShareListWebLinkModelView) {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
             intent.addCategory(Intent.CATEGORY_DEFAULT)
             intent.addCategory(Intent.CATEGORY_BROWSABLE)

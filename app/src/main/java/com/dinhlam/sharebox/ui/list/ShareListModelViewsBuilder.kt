@@ -3,11 +3,12 @@ package com.dinhlam.sharebox.ui.list
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.extensions.format
+import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeDateModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeImageModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeTextModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeWebLinkModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.gson.Gson
@@ -30,7 +31,7 @@ class ShareListModelViewsBuilder constructor(
                 map.forEach { entry ->
                     val date = entry.key
                     val shares = entry.value
-                    add(HomeDateModelView("date$date", date))
+                    add(ShareListDateModelView("date$date", date))
                     addAll(buildShares(shares))
                 }
             }
@@ -40,12 +41,12 @@ class ShareListModelViewsBuilder constructor(
     private fun buildShares(shares: List<Share>): List<BaseListAdapter.BaseModelView> {
         return shares.mapNotNull { share ->
             when (share.shareType) {
-                "web-link" -> {
+                ShareType.WEB.type -> {
                     val shareInfo = gson.fromJson(
                         share.shareInfo,
                         ShareState.ShareInfo.ShareWebLink::class.java
                     )
-                    HomeWebLinkModelView(
+                    ShareListWebLinkModelView(
                         id = "${share.id}",
                         iconUrl = IconUtils.getIconUrl(shareInfo.url),
                         url = shareInfo.url,
@@ -54,12 +55,12 @@ class ShareListModelViewsBuilder constructor(
                         shareId = share.id
                     )
                 }
-                "image" -> {
+                ShareType.IMAGE.type -> {
                     val shareInfo = gson.fromJson(
                         share.shareInfo,
                         ShareState.ShareInfo.ShareImage::class.java
                     )
-                    HomeImageModelView(
+                    ShareListImageModelView(
                         "${share.id}",
                         shareInfo.uri,
                         share.createdAt,
@@ -67,12 +68,12 @@ class ShareListModelViewsBuilder constructor(
                         share.id
                     )
                 }
-                "text" -> {
+                ShareType.TEXT.type -> {
                     val shareInfo = gson.fromJson(
                         share.shareInfo,
                         ShareState.ShareInfo.ShareText::class.java
                     )
-                    HomeTextModelView(
+                    ShareListTextModelView(
                         id = "${share.id}",
                         iconUrl = IconUtils.getIconUrl(shareInfo.text),
                         content = shareInfo.text,

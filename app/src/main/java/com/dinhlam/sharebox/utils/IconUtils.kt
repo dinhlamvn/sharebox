@@ -14,7 +14,7 @@ object IconUtils {
 
     private const val WEB_LINK_ICON = "https://img.icons8.com/3d-fluency/94/null/domain.png"
 
-    fun getIconUrl(shareContent: String?): String? {
+    fun getIconUrl(shareContent: String?): String {
         if (isFacebookShare(shareContent)) {
             return FB_ICON_URL
         }

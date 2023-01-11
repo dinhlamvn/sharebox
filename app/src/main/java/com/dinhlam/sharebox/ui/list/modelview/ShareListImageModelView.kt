@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.modelview
+package com.dinhlam.sharebox.ui.list.modelview
 
 import android.content.Intent
 import android.net.Uri
@@ -7,12 +7,12 @@ import androidx.core.view.isInvisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ModelViewHomeShareImageBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 
-data class HomeImageModelView(
+data class ShareListImageModelView(
     val id: String,
     val uri: Uri,
     val createdAt: Long,
@@ -21,10 +21,10 @@ data class HomeImageModelView(
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
-        get() = R.layout.model_view_home_share_image
+        get() = R.layout.model_view_share_list_image
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeImageModelView && other.id == this.id
+        return other is ShareListImageModelView && other.id == this.id
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -32,15 +32,15 @@ data class HomeImageModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeImageModelView && other === this
+        return other is ShareListImageModelView && other === this
     }
 
-    class HomeImageViewHolder(view: View, private val block: (Int) -> Unit) :
-        BaseListAdapter.BaseViewHolder<HomeImageModelView, ModelViewHomeShareImageBinding>(
+    class ShareListImageViewHolder(view: View, private val block: (Int) -> Unit) :
+        BaseListAdapter.BaseViewHolder<ShareListImageModelView, ModelViewShareListImageBinding>(
             view
         ) {
 
-        override fun onBind(item: HomeImageModelView, position: Int) {
+        override fun onBind(item: ShareListImageModelView, position: Int) {
             binding.imageShare.setOnClickListener {
                 block.invoke(item.shareId)
             }
@@ -56,8 +56,8 @@ data class HomeImageModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewHomeShareImageBinding {
-            return ModelViewHomeShareImageBinding.bind(view)
+        override fun onCreateViewBinding(view: View): ModelViewShareListImageBinding {
+            return ModelViewShareListImageBinding.bind(view)
         }
 
         private fun startViewImage(uri: Uri) {

@@ -101,19 +101,19 @@ class ShareActivity :
             }
         }
     }) {
-        withViewType(R.layout.share_item_default) {
+        withViewType(R.layout.model_view_share_default) {
             ShareDefaultModelView.ShareDefaultViewHolder(this)
         }
 
-        withViewType(R.layout.share_item_text) {
+        withViewType(R.layout.model_view_share_text) {
             ShareTextModelView.ShareTextViewHolder(this)
         }
 
-        withViewType(R.layout.share_item_image) {
+        withViewType(R.layout.model_view_share_image) {
             ShareImageModelView.ShareImageViewHolder(this)
         }
 
-        withViewType(R.layout.share_item_multiple_image) {
+        withViewType(R.layout.model_view_share_multiple_image) {
             ShareMultipleImageModelView.ShareMultipleImageViewHolder(this)
         }
 

@@ -1,16 +1,16 @@
-package com.dinhlam.sharebox.ui.home.modelview
+package com.dinhlam.sharebox.ui.list.modelview
 
 import android.view.View
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ModelViewHomeShareTextBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 
-data class HomeTextModelView(
+data class ShareListTextModelView(
     val id: String,
     val iconUrl: String?,
     val content: String?,
@@ -20,10 +20,10 @@ data class HomeTextModelView(
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
-        get() = R.layout.model_view_home_share_text
+        get() = R.layout.model_view_share_list_text
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeTextModelView && other.id == this.id
+        return other is ShareListTextModelView && other.id == this.id
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -31,16 +31,16 @@ data class HomeTextModelView(
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is HomeTextModelView && other === this
+        return other is ShareListTextModelView && other === this
     }
 
-    class HomeTextViewHolder(
+    class ShareListTextViewHolder(
         view: View,
         private val onClick: (String?) -> Unit,
         private val onShareToOther: (Int) -> Unit
-    ) : BaseListAdapter.BaseViewHolder<HomeTextModelView, ModelViewHomeShareTextBinding>(view) {
+    ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(view) {
 
-        override fun onBind(item: HomeTextModelView, position: Int) {
+        override fun onBind(item: ShareListTextModelView, position: Int) {
             binding.imageShare.setOnClickListener {
                 onShareToOther.invoke(item.shareId)
             }
@@ -65,8 +65,8 @@ data class HomeTextModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewHomeShareTextBinding {
-            return ModelViewHomeShareTextBinding.bind(view)
+        override fun onCreateViewBinding(view: View): ModelViewShareListTextBinding {
+            return ModelViewShareListTextBinding.bind(view)
         }
     }
 }
