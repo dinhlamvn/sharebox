@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
@@ -32,7 +33,7 @@ class ChoiceTagDialogFragment :
                         TagModelView(
                             tag.id.toLong(),
                             tag.name,
-                            tag.color,
+                            tag.tagResource,
                             tag.id == state.selectedTagId
                         )
                     )
@@ -75,18 +76,18 @@ class ChoiceTagDialogFragment :
     private data class TagModelView(
         val id: Long,
         val name: String,
-        val color: Int,
+        @DrawableRes val tagResource: Int,
         val selected: Boolean = false
     ) : BaseListAdapter.BaseModelView(id) {
         override val modelLayoutRes: Int
             get() = R.layout.single_choose_tag
 
         override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other is TagModelView && other.id == this.id
+            return other.modelId == this.modelId
         }
 
         override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other is TagModelView && other == this
+            return other === this
         }
     }
 
@@ -103,7 +104,7 @@ class ChoiceTagDialogFragment :
 
         override fun onBind(item: TagModelView, position: Int) {
             binding.textView.text = item.name
-            binding.cardView.setCardBackgroundColor(item.color)
+            binding.imageViewTag.setImageResource(item.tagResource)
             binding.viewBackground.setBackgroundColor(
                 if (item.selected) {
                     Color.LTGRAY

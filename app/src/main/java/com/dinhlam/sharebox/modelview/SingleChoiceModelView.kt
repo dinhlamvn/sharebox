@@ -1,12 +1,14 @@
 package com.dinhlam.sharebox.modelview
 
 import android.view.View
+import androidx.annotation.DrawableRes
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewSingleChoiceBinding
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 
 data class SingleChoiceModelView(
-    val id: String, val text: String?
+    val id: String, val text: String?, @DrawableRes val icon: Int
 ) : BaseListAdapter.BaseModelView("single_choice_$id") {
 
     override val modelLayoutRes: Int
@@ -33,6 +35,7 @@ data class SingleChoiceModelView(
                 listener?.invoke(position)
             }
             binding.textView.text = item.text
+            binding.textView.setDrawableCompat(start = item.icon)
         }
 
         override fun onUnBind() {

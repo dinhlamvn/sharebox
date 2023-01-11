@@ -43,6 +43,7 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.modelview.FolderListModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyImageModelView
@@ -141,23 +142,36 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     add(LoadingModelView)
                     return@getState
                 }
-                state.folders.forEach { folder ->
-                    add(
-                        FolderListModelView(
-                            "folder_${folder.id}",
-                            folder.name,
-                            folder.desc,
-                            folder.updatedAt,
-                            !folder.password.isNullOrEmpty(),
-                            TagUtil.getTag(folder.tag)
+                val folders = state.folders
+
+                if (folders.isEmpty()) {
+                    add(SingleTextModelView(getString(R.string.home_folder_list_empty)))
+                } else {
+                    folders.forEach { folder ->
+                        add(
+                            FolderListModelView(
+                                "folder_${folder.id}",
+                                folder.name,
+                                folder.desc,
+                                folder.updatedAt,
+                                !folder.password.isNullOrEmpty(),
+                                TagUtil.getTag(folder.tag)
+                            )
                         )
-                    )
+                    }
                 }
+
+
+
             }
         }
     }) {
         withViewType(R.layout.model_view_loading) {
             LoadingViewHolder(this)
+        }
+
+        withViewType(R.layout.model_view_single_text) {
+            SingleTextModelView.SingleTextViewHolder(this)
         }
 
         withViewType(R.layout.model_view_folder_list) {
@@ -173,6 +187,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.setSortType(appSharePref.getSortType())
+
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         viewBinding.recyclerView.adapter = homeAdapter
 
@@ -197,7 +214,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         viewBinding.recyclerViewShareRecently.adapter = shareListAdapter
 
-        viewModel.setSortType(appSharePref.getSortType())
+
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadFolders()
@@ -297,29 +314,36 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     private fun onFolderOptionClick(clickedView: View, position: Int) {
         val folder = getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
         val items = mutableMapOf<String, () -> Unit>()
+        val icons = mutableListOf<Int>()
 
         if (!FolderUtils.isProtectedFolder(folder.id)) {
             items[getString(R.string.delete)] = {
                 viewModel.processFolderForDelete(folder)
             }
+            icons.add(R.drawable.ic_delete)
+
             items[getString(R.string.rename)] = {
                 viewModel.processFolderForRename(folder)
             }
+            icons.add(R.drawable.ic_rename)
         }
 
         items[getString(R.string.add_tag)] = {
             viewModel.processFolderForTag(folder)
         }
+        icons.add(R.drawable.ic_tag)
 
         if (folder.tag != null) {
             items[getString(R.string.remove_tag)] = {
                 viewModel.removeTag(folder)
             }
+            icons.add(R.drawable.ic_tag_remove)
         }
 
         items[getString(R.string.details)] = {
             viewModel.processFolderForDetail(folder)
         }
+        icons.add(R.drawable.ic_detail)
 
         BaseBottomSheetDialogFragment.showDialog(
             SingleChoiceDialogFragment::class, supportFragmentManager
@@ -328,6 +352,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 putStringArray(
                     SingleChoiceDialogFragment.EXTRA_ITEM, items.keys.toTypedArray()
                 )
+                putIntArray(SingleChoiceDialogFragment.EXTRA_ICON, icons.toIntArray())
             }
             listener = SingleChoiceDialogFragment.OnItemSelectedListener { position ->
                 val key = items.keys.toList()[position]

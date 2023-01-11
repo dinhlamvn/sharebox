@@ -85,6 +85,7 @@
     <string name="developer_name" translatable="false">Lam Cong Dinh</string>
     <string name="contact_title">Contact:</string>
     <string name="developer_email" translatable="false">dinhlamvn353@gmail.com</string>
-    <string name="content_desc_button_guide_line">Guide line button</string>
+    <string name="content_desc_button_guide_line">Guideline button</string>
+    <string name="home_folder_list_empty">No results</string>
 
 </resources>

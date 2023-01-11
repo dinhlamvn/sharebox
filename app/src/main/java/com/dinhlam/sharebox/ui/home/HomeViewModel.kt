@@ -16,7 +16,6 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel<HomeState>(HomeState()) {
 
     init {
-        loadFolders()
         loadShareListRecently()
     }
 
@@ -105,14 +104,19 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForTag(folder: Folder) = executeJob {
-        val shareCount = shareRepository.countByFolder(folder.id)
-        setState {
-            copy(
-                folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.TAG
+    fun processFolderForTag(folder: Folder) = execute { state ->
+        if (state.folderActionConfirmation != null) {
+            setState { copy(folderActionConfirmation = null) }
+        }
+        getState {
+            val shareCount = shareRepository.countByFolder(folder.id)
+            setState {
+                copy(
+                    folderActionConfirmation = HomeState.FolderActionConfirmation(
+                        folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.TAG
+                    )
                 )
-            )
+            }
         }
     }
 

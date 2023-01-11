@@ -18,16 +18,19 @@ class SingleChoiceDialogFragment : BaseBottomSheetDialogFragment<DialogSingleCho
 
     companion object {
         const val EXTRA_ITEM = "extra-items"
+        const val EXTRA_ICON = "extra-icons"
     }
 
     private val items by lazy { arguments?.getStringArray(EXTRA_ITEM) ?: emptyArray() }
+
+    private val icons by lazy { arguments?.getIntArray(EXTRA_ICON) ?: intArrayOf() }
 
     var listener: OnItemSelectedListener? = null
 
     private val adapter by lazy {
         BaseListAdapter.createAdapter({
-            items.map { choice ->
-                SingleChoiceModelView("choice_$choice", choice)
+            items.mapIndexed { index, choice ->
+                SingleChoiceModelView("choice_$choice", choice, icons.getOrNull(index) ?: 0)
             }
         }) {
 

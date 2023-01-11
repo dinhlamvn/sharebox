@@ -19,11 +19,11 @@ data class FolderListModelView(
         get() = R.layout.model_view_folder_list
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderListModelView && this.id == other.id
+        return this.modelId == other.modelId
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderListModelView && this === other
+        return this === other
     }
 
     class FolderListViewHolder(
@@ -48,9 +48,9 @@ data class FolderListModelView(
             binding.textViewFolderDesc.text = item.desc
             binding.imageViewKey.isVisible = item.hasPassword
 
-            val tag = item.tag ?: return binding.cardViewTag.run { isVisible = false }
-            binding.cardViewTag.isVisible = true
-            binding.cardViewTag.setCardBackgroundColor(tag.color)
+            val tag = item.tag ?: return binding.imageViewTag.run { isVisible = false }
+            binding.imageViewTag.isVisible = true
+            binding.imageViewTag.setImageResource(tag.tagResource)
         }
 
         override fun onUnBind() {
