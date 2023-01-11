@@ -2,16 +2,11 @@ package com.dinhlam.sharebox.ui.home
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -25,22 +20,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.database.entity.Folder
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
-import com.dinhlam.sharebox.databinding.MenuItemWithTextBinding
 import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.detail.FolderDetailDialogFragment
 import com.dinhlam.sharebox.dialog.folder.rename.RenameFolderDialogFragment
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
+import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getSerializableExtraCompat
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.showAlert
@@ -61,7 +55,6 @@ import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.math.min
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
@@ -303,87 +296,43 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun onFolderOptionClick(clickedView: View, position: Int) {
         val folder = getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
-        var popupSpacing = if (folder.tag == null) 0 else POPUP_ITEM_SPACING
-
-        val width = 150.dp(this)
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        val popupWindow = PopupWindow(this)
-        popupWindow.width = width
-        popupWindow.height = height
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 10.dpF(this)
-        popupWindow.isOutsideTouchable = true
-        fun dismissPopup() {
-            if (popupWindow.isShowing) {
-                popupWindow.dismiss()
-            }
-        }
-
-        val popupView = LinearLayout(this)
-        val layoutParams = LinearLayout.LayoutParams(
-            width, height
-        )
-        popupView.orientation = LinearLayout.VERTICAL
-        popupView.layoutParams = layoutParams
+        val items = mutableMapOf<String, () -> Unit>()
 
         if (!FolderUtils.isProtectedFolder(folder.id)) {
-            val bindingItemDelete = MenuItemWithTextBinding.inflate(layoutInflater)
-            bindingItemDelete.textView.text = getString(R.string.delete)
-            bindingItemDelete.root.setOnClickListener {
-                dismissPopup()
+            items[getString(R.string.delete)] = {
                 viewModel.processFolderForDelete(folder)
             }
-            popupView.addView(bindingItemDelete.root, layoutParams)
-            popupSpacing += POPUP_ITEM_SPACING
-
-            val bindingItemRename = MenuItemWithTextBinding.inflate(layoutInflater)
-            bindingItemRename.textView.text = getString(R.string.rename)
-            bindingItemRename.root.setOnClickListener {
-                dismissPopup()
+            items[getString(R.string.rename)] = {
                 viewModel.processFolderForRename(folder)
             }
-            popupView.addView(bindingItemRename.root, layoutParams)
-            popupSpacing += POPUP_ITEM_SPACING
         }
 
-        val bindingItemTag = MenuItemWithTextBinding.inflate(layoutInflater)
-        bindingItemTag.textView.text = getString(R.string.add_tag)
-        bindingItemTag.root.setOnClickListener {
-            dismissPopup()
+        items[getString(R.string.add_tag)] = {
             viewModel.processFolderForTag(folder)
         }
-        popupView.addView(bindingItemTag.root, layoutParams)
-        popupSpacing += POPUP_ITEM_SPACING
 
         if (folder.tag != null) {
-            val bindingItemRemoveTag = MenuItemWithTextBinding.inflate(layoutInflater)
-            bindingItemRemoveTag.textView.text = getString(R.string.remove_tag)
-            bindingItemRemoveTag.root.setOnClickListener {
-                dismissPopup()
+            items[getString(R.string.remove_tag)] = {
                 viewModel.removeTag(folder)
             }
-            popupView.addView(bindingItemRemoveTag.root, layoutParams)
-            popupSpacing += POPUP_ITEM_SPACING
         }
 
-        val bindingItemInfo = MenuItemWithTextBinding.inflate(layoutInflater)
-        bindingItemInfo.textView.text = getString(R.string.details)
-        bindingItemInfo.root.setOnClickListener {
-            dismissPopup()
+        items[getString(R.string.details)] = {
             viewModel.processFolderForDetail(folder)
         }
-        popupView.addView(bindingItemInfo.root, layoutParams)
-        popupSpacing += POPUP_ITEM_SPACING
 
-        popupWindow.contentView = popupView
-
-        clickedView.post {
-            val array = IntArray(4) { 0 }
-            clickedView.getLocationInWindow(array)
-            val bottom = array[3]
-            val parentBottom = viewBinding.recyclerView.bottom
-            val yOffset = min(0, parentBottom - (bottom + popupSpacing.dp(this)))
-            popupWindow.showAsDropDown(clickedView, 0, yOffset)
+        BaseBottomSheetDialogFragment.showDialog(
+            SingleChoiceDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putStringArray(
+                    SingleChoiceDialogFragment.EXTRA_ITEM, items.keys.toTypedArray()
+                )
+            }
+            listener = SingleChoiceDialogFragment.OnItemSelectedListener { position ->
+                val key = items.keys.toList()[position]
+                items[key]?.invoke()
+            }
         }
     }
 
