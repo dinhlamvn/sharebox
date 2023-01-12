@@ -39,7 +39,7 @@
     <string name="password_alias"><![CDATA[Password alias: <b>%s</b>]]></string>
     <string name="error_folder_rename">Has an error when change name</string>
     <string name="check_box_save_password_next_session">Save password for next session</string>
-    <string name="details">Details</string>
+    <string name="detail">Detail</string>
     <string name="created_date_title">Created date:</string>
     <string name="updated_date_title">Updated date:</string>
     <string name="share_count_title">Share count:</string>
@@ -72,9 +72,8 @@
     <string name="tag_green">Green</string>
     <string name="tag_blue">Blue</string>
     <string name="tag_gray">Gray</string>
-    <string name="add_tag">Add tag</string>
     <string name="clear_filter">Clear filter</string>
-    <string name="menu_filter_tag">Filter tag</string>
+    <string name="menu_filter_tag">Tags</string>
     <string name="remove_tag">Remove tag</string>
     <string name="home_activity_title">Home</string>
     <string name="no_sort">No sort</string>

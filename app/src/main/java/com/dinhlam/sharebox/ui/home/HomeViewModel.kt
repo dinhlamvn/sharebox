@@ -158,14 +158,16 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setFolderTag(tagId: Int) = execute { state ->
-        if (tagId != 0) {
-            val folder = state.folderActionConfirmation?.folder ?: return@execute setState {
-                copy(folderActionConfirmation = null)
-            }
+        val folder = state.folderActionConfirmation?.folder ?: return@execute setState {
+            copy(folderActionConfirmation = null)
+        }
+
+        if (tagId != -1) {
             folderRepository.update(TagUtil.setFolderTag(tagId, folder))
             loadFolders()
             clearFolderActionConfirmation()
         } else {
+            removeTag(folder)
             clearFolderActionConfirmation()
         }
     }

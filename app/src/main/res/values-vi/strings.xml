@@ -39,7 +39,7 @@
     <string name="password_alias"><![CDATA[Gợi nhớ mật khẩu: <b>%s</b>]]></string>
     <string name="error_folder_rename">Có lỗi xảy ra khi đổi tên thư mục</string>
     <string name="check_box_save_password_next_session">Lưu mật khẩu cho lần mở kế tiếp (hủy khi thoát ứng dụng)</string>
-    <string name="details">Chi tiết</string>
+    <string name="detail">Chi tiết</string>
     <string name="created_date_title">Ngày tạo:</string>
     <string name="updated_date_title">Ngày chỉnh sửa:</string>
     <string name="share_count_title">Số lượng chia sẻ:</string>
@@ -72,9 +72,8 @@
     <string name="tag_green">Xanh lục</string>
     <string name="tag_blue">Xanh</string>
     <string name="tag_gray">Nâu</string>
-    <string name="add_tag">Đánh nhãn</string>
     <string name="clear_filter">Xóa lọc</string>
-    <string name="menu_filter_tag">Lọc theo nhãn</string>
+    <string name="menu_filter_tag">Nhãn</string>
     <string name="remove_tag">Bỏ nhãn</string>
     <string name="home_activity_title">Trang chủ</string>
     <string name="no_sort">Mặc định</string>

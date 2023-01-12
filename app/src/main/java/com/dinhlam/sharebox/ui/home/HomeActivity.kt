@@ -328,19 +328,12 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             icons.add(R.drawable.ic_rename)
         }
 
-        items[getString(R.string.add_tag)] = {
+        items[getString(R.string.tag)] = {
             viewModel.processFolderForTag(folder)
         }
         icons.add(R.drawable.ic_tag)
 
-        if (folder.tag != null) {
-            items[getString(R.string.remove_tag)] = {
-                viewModel.removeTag(folder)
-            }
-            icons.add(R.drawable.ic_tag_remove)
-        }
-
-        items[getString(R.string.details)] = {
+        items[getString(R.string.detail)] = {
             viewModel.processFolderForDetail(folder)
         }
         icons.add(R.drawable.ic_detail)
