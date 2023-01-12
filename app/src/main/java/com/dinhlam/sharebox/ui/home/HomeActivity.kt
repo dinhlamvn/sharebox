@@ -162,7 +162,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 }
 
 
-
             }
         }
     }) {
@@ -203,18 +202,16 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 scrolled += dy
 
                 if (scrolled > rangeToHideGuideButton) {
-                    viewBinding.buttonGuideLine.isVisible = false
+                    viewBinding.buttonCreateFolder.isVisible = false
                     scrolled = 0
                 } else if (scrolled < -rangeToHideGuideButton) {
-                    viewBinding.buttonGuideLine.isVisible = true
+                    viewBinding.buttonCreateFolder.isVisible = true
                     scrolled = 0
                 }
             }
         })
 
         viewBinding.recyclerViewShareRecently.adapter = shareListAdapter
-
-
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadFolders()
@@ -246,8 +243,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             viewBinding.recyclerViewShareRecently.isVisible = shares.isNotEmpty()
         }
 
-        viewBinding.buttonGuideLine.setOnClickListener {
+        viewBinding.buttonCreateFolder.setOnClickListener {
+            showDialogCreateFolder()
+        }
+
+        if (appSharePref.isShowGuideLine()) {
             openGuideLineDialog()
+            appSharePref.turnOffShowGuideline()
         }
     }
 
@@ -276,10 +278,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.item_create_folder) {
-            showDialogCreateFolder()
-            return true
-        }
         if (item.itemId == R.id.item_setting) {
             settingLauncher.launch(appRouter.setting())
             return true

@@ -52,10 +52,4 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/item_create_folder"
-        android:icon="@drawable/ic_new_folder_white"
-        android:title="@string/create_new_folder"
-        app:showAsAction="ifRoom" />
-
 </menu>

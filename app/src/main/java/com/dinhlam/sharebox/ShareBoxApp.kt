@@ -29,7 +29,7 @@ class ShareBoxApp : Application() {
     private fun createDefaultFoldersOnFirstLaunch() {
         if (!appSharePref.isAppFirstLaunch()) {
             applicationScope.launch(Dispatchers.IO) {
-                folderRepository.insertMany(*FolderUtils.getDefaultFolders().toTypedArray())
+                folderRepository.insertMany(*FolderUtils.getDefaultFolders(this@ShareBoxApp).toTypedArray())
                 appSharePref.commitAppFirstLaunch()
             }
         }

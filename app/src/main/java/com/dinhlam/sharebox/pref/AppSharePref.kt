@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.pref
 
 import android.content.Context
 import androidx.core.content.edit
+import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.model.SortType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -17,6 +18,8 @@ class AppSharePref @Inject constructor(
         private const val PREF_LAST_FOLDER_SELECTED = "last-folder-selected"
 
         private const val SORT_SELECTED_OPTION = "sort-selected-option"
+
+        private const val SHOW_GUIDELINE = "show-guide-line"
     }
 
     fun isAppFirstLaunch(): Boolean = sharePref.getBoolean(PREF_APP_FIRST_LAUNCH, false)
@@ -46,5 +49,13 @@ class AppSharePref @Inject constructor(
             2 -> SortType.OLDEST
             else -> SortType.NONE
         }
+    }
+
+    fun isShowGuideLine(): Boolean {
+        return BuildConfig.DEBUG || sharePref.getBoolean(SHOW_GUIDELINE, true)
+    }
+
+    fun turnOffShowGuideline() {
+        sharePref.edit { putBoolean(SHOW_GUIDELINE, false) }
     }
 }
