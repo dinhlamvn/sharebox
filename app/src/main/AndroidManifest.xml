@@ -63,7 +63,7 @@
             android:label="@string/share_activity_title"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

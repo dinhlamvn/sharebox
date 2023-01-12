@@ -6,10 +6,10 @@
     <string name="button_save">Save</string>
     <string name="share_activity_title">Save share</string>
     <string name="button_cancel">Cancel</string>
-    <string name="text_input_note_hint">Your note</string>
+    <string name="text_input_note_hint">Note</string>
     <string name="share_empty_content">Share\'s content is empty</string>
     <string name="save_share_successfully">Save successfully</string>
-    <string name="text_input_note_hint_desc">Type somethings like: title, description,…</string>
+    <string name="text_input_note_hint_desc">What\'s this?</string>
     <string name="view_more">View more</string>
     <string name="create_new_folder">New Folder</string>
     <string name="create_new_folder_desc">With your customize</string>

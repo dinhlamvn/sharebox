@@ -12,6 +12,8 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
@@ -28,6 +30,7 @@ import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.isWebLink
+import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareImageModelView
@@ -114,7 +117,11 @@ class ShareActivity :
         }
 
         withViewType(R.layout.model_view_share_multiple_image) {
-            ShareMultipleImageModelView.ShareMultipleImageViewHolder(this)
+            ShareMultipleImageModelView.ShareMultipleImageViewHolder(this).apply {
+                updateLayoutParams {
+                    width = screenWidth().times(0.8f).toInt()
+                }
+            }
         }
 
         withViewType(R.layout.model_view_share_web_link) {
@@ -168,10 +175,6 @@ class ShareActivity :
             }
         }
 
-        viewBinding.buttonCancel.setOnClickListener {
-            dismiss()
-        }
-
         viewBinding.buttonSave.setOnClickListener {
             viewModel.saveShare(viewBinding.textInputNote.getTrimmedText(), this)
         }
@@ -198,6 +201,9 @@ class ShareActivity :
     }
 
     private fun handleSendMultipleImage(intent: Intent) {
+        viewBinding.recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
         intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
             val data = list.mapNotNull { it.cast<Uri>() }
             viewModel.setShareInfo(ShareState.ShareInfo.ShareMultipleImage(data))
