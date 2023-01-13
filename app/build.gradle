@@ -6,6 +6,8 @@ plugins {
 
     // Google service plugin
     id 'com.google.gms.google-services'
+
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -59,7 +61,7 @@ dependencies {
     def androidx_core_ktx_version = "1.9.0"
     implementation "androidx.core:core-ktx:$androidx_core_ktx_version"
 
-    def appcompat_version = "1.5.1"
+    def appcompat_version = "1.6.0"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
     def material_version = "1.7.0"
@@ -80,7 +82,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     // Room
-    def room_version = "2.4.3"
+    def room_version = "2.5.0"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
@@ -101,6 +103,13 @@ dependencies {
     // Firebase service
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Firebase crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Messaging
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 }
 
 kapt {

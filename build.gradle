@@ -12,7 +12,12 @@ buildscript {
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.42'
 
         // Google service
-        classpath 'com.google.gms:google-services:4.3.13'
+        def google_service_version = "4.3.14"
+        classpath "com.google.gms:google-services:$google_service_version"
+
+        // Firebase crashlytics service
+        def crashlytics_version = "2.9.2"
+        classpath "com.google.firebase:firebase-crashlytics-gradle:$crashlytics_version"
     }
 }
 

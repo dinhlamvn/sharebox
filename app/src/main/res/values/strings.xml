@@ -89,5 +89,6 @@
     <string name="default_folder_name">Home</string>
     <string name="default_folder_desc">Home</string>
     <string name="button_confirm">Confirm</string>
+    <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
 
 </resources>
