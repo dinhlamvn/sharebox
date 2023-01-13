@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
@@ -15,6 +16,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.ExtraUtils
+import com.dinhlam.sharebox.utils.KeyboardUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,8 +29,7 @@ class FolderConfirmPasswordDialogFragment :
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+        inflater: LayoutInflater, container: ViewGroup?
     ): DialogFolderConfirmPasswordBinding {
         return DialogFolderConfirmPasswordBinding.inflate(inflater, container, false)
     }
@@ -42,13 +43,15 @@ class FolderConfirmPasswordDialogFragment :
         val folderId: String = arguments?.getString(ExtraUtils.EXTRA_FOLDER_ID) ?: return dismiss()
         viewModel.loadFolderData(folderId)
 
+        viewBinding.checkboxSavePassword.isVisible =
+            arguments?.getBoolean(ExtraUtils.EXTRA_SHOW_REMIND_PASSWORD, true) ?: true
+
         viewModel.consume(viewLifecycleOwner, FolderConfirmPasswordDialogState::folder) { folder ->
             val nonNull = folder ?: return@consume
             nonNull.passwordAlias.takeIfNotNullOrBlank()?.let { alias ->
                 viewBinding.textPasswordAlias.visibility = View.VISIBLE
                 viewBinding.textPasswordAlias.text = HtmlCompat.fromHtml(
-                    getString(R.string.password_alias, alias),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                    getString(R.string.password_alias, alias), HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             } ?: viewBinding.textPasswordAlias.run {
                 text = null
@@ -64,7 +67,9 @@ class FolderConfirmPasswordDialogFragment :
             }
         }
 
-        viewModel.consume(viewLifecycleOwner, FolderConfirmPasswordDialogState::verifyPasswordSuccess) { isPasswordVerified ->
+        viewModel.consume(
+            viewLifecycleOwner, FolderConfirmPasswordDialogState::verifyPasswordSuccess
+        ) { isPasswordVerified ->
             if (isPasswordVerified) {
                 dismiss()
                 getCallback()?.onPasswordVerified(viewBinding.checkboxSavePassword.isChecked)
@@ -81,7 +86,8 @@ class FolderConfirmPasswordDialogFragment :
             viewModel.clearError()
         }
 
-        viewBinding.buttonDone.setOnClickListener {
+        viewBinding.buttonConfirm.setOnClickListener {
+            KeyboardUtil.hideKeyboard(viewBinding.textInputFolderPassword)
             val password = viewBinding.textInputFolderPassword.getTrimmedText()
             viewModel.confirmPassword(password)
         }

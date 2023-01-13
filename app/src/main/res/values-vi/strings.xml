@@ -86,5 +86,6 @@
     <string name="home_folder_list_empty">Không có kết quả</string>
     <string name="default_folder_name">Mục chung</string>
     <string name="default_folder_desc">Thư mục mặc định</string>
+    <string name="button_confirm">Xác nhận</string>
 
 </resources>

@@ -36,6 +36,7 @@ import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.getSerializableExtraCompat
+import com.dinhlam.sharebox.extensions.isHasPassword
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.showAlert
 import com.dinhlam.sharebox.extensions.showToast
@@ -154,7 +155,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                                 folder.name,
                                 folder.desc,
                                 folder.updatedAt,
-                                !folder.password.isNullOrEmpty(),
+                                folder.isHasPassword(),
                                 TagUtil.getTag(folder.tag)
                             )
                         )
@@ -383,7 +384,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun maybeShowConfirmPasswordToOpenFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
-        if (folder.password.isNullOrEmpty()) {
+        if (!folder.isHasPassword()) {
             viewModel.openFolderAfterPasswordVerified(false)
         } else {
             showConfirmPasswordDialog(folder.id)
@@ -406,7 +407,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             getString(R.string.delete),
             getString(R.string.cancel),
             onPosClickListener = { _, _ ->
-                if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
+                if (folder.isHasPassword().not() || confirmation.ignorePassword) {
                     viewModel.deleteFolder(folder)
                 } else {
                     showConfirmPasswordDialog(folder.id)
@@ -416,7 +417,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun maybeShowConfirmPasswordToRenameFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
-        if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
+        if (folder.isHasPassword().not() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
                 RenameFolderDialogFragment::class, supportFragmentManager
             ) {
@@ -431,7 +432,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun maybeShowConfirmPasswordToViewDetailFolder(confirmation: HomeState.FolderActionConfirmation) {
         val folder = confirmation.folder
-        if (folder.password.isNullOrEmpty() || confirmation.ignorePassword) {
+        if (folder.isHasPassword().not() || confirmation.ignorePassword) {
             BaseDialogFragment.showDialog(
                 FolderDetailDialogFragment::class, supportFragmentManager
             ) {

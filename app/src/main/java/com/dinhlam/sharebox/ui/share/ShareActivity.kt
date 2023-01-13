@@ -15,12 +15,14 @@ import androidx.activity.viewModels
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemAddBinding
 import com.dinhlam.sharebox.databinding.MenuItemFolderSelectorBinding
 import com.dinhlam.sharebox.databinding.MenuItemMoreBinding
+import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.selector.FolderSelectorDialogFragment
 import com.dinhlam.sharebox.extensions.cast
@@ -31,12 +33,14 @@ import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.screenWidth
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareMultipleImageModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareTextModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareWebLinkModelView
+import com.dinhlam.sharebox.utils.ExtraUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -45,7 +49,8 @@ import javax.inject.Inject
 class ShareActivity :
     BaseViewModelActivity<ShareState, ShareViewModel, ActivityShareReceiveBinding>(),
     FolderSelectorDialogFragment.OnFolderSelectorCallback,
-    FolderCreatorDialogFragment.OnFolderCreatorCallback {
+    FolderCreatorDialogFragment.OnFolderCreatorCallback,
+    FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback {
 
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
@@ -176,8 +181,36 @@ class ShareActivity :
         }
 
         viewBinding.buttonSave.setOnClickListener {
-            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText(), this)
+            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText(), this, true)
         }
+
+        viewModel.consume(this, ShareState::requestPassword) { requestPassword ->
+            if (requestPassword) {
+                showDialogInputPassword()
+            }
+        }
+    }
+
+    private fun showDialogInputPassword() = getState(viewModel) { state ->
+        val selectedFolderId = state.selectedFolder?.id ?: return@getState
+        BaseDialogFragment.showDialog(
+            FolderConfirmPasswordDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putString(ExtraUtils.EXTRA_FOLDER_ID, selectedFolderId)
+                putBoolean(ExtraUtils.EXTRA_SHOW_REMIND_PASSWORD, false)
+            }
+        }
+    }
+
+    override fun onPasswordVerified(isRemindPassword: Boolean) {
+        viewModel.resetRequestPassword()
+        viewModel.saveShareAfterPasswordConfirm(this)
+    }
+
+    override fun onCancelConfirmPassword() {
+        viewModel.resetRequestPassword()
+        showToast(R.string.error_require_password)
     }
 
     private fun handleSendNoThing() {

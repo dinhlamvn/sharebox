@@ -9,7 +9,9 @@ data class ShareState(
     val shareInfo: ShareInfo = ShareInfo.None,
     val isSaveSuccess: Boolean = false,
     val folders: List<Folder> = emptyList(),
-    val selectedFolder: Folder? = null
+    val selectedFolder: Folder? = null,
+    val note: String? = null,
+    val requestPassword: Boolean = false
 ) : BaseViewModel.BaseState {
 
     sealed class ShareInfo(val shareType: String) {
