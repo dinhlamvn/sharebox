@@ -3,6 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+
+    // Google service plugin
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -93,6 +96,11 @@ dependencies {
     // Webkit support
     def webkit_version = "1.5.0"
     implementation "androidx.webkit:webkit:$webkit_version"
+
+
+    // Firebase service
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
 
 kapt {
