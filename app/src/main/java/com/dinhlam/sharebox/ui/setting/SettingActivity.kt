@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
@@ -89,5 +90,6 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         }
         appSharePref.setRecoveryPassword(recoveryHash)
         showToast(R.string.password_recovery_generated, duration = Toast.LENGTH_LONG)
+        viewBinding.textViewNotification.isVisible = true
     }
 }

@@ -88,15 +88,24 @@
     <string name="default_folder_desc">Thư mục mặc định</string>
     <string name="button_confirm">Xác nhận</string>
     <string name="sort_option_title">Sắp xếp theo</string>
-    <string name="password_recovery_title">Password recovery (un-generate)</string>
-    <string name="password_recovery_desc_no_generate">* Setting your password recovery to reset folder\'s password (click section above to generate).</string>
-    <string name="password_recovery_desc_generated">* Setting your password recovery to reset folder\'s password (generated).</string>
-    <string name="password_recovery_has_generated_error">Your password recovery has been generated.</string>
-    <string name="password_recovery_generated">Password recovery generated, please copy and keep it in protected place.</string>
-    <string name="copied">Copied!</string>
-    <string name="reset_password">Reset password</string>
-    <string name="error_require_password_confirm">Please input password confirm</string>
-    <string name="error_confirm_password_not_same">Password confirm is not same</string>
-    <string name="change_folder_password_success">Change folder\'s password successfully.</string>
+    <string name="password_recovery_title">Mã khôi phục mật khẩu (chưa tạo)</string>
+    <string name="password_recovery_desc_no_generate">* Cài đặt mã khôi phục mật khẩu để lấy lại mật khẩu khi mất (táp vào dòng trên).</string>
+    <string name="password_recovery_desc_generated">* Cài đặt mã khôi phục mật khẩu để lấy lại mật khẩu khi mất (đã tạo).</string>
+    <string name="password_recovery_has_generated_error">Mã khôi phục mật khẩu đã được tạo.</string>
+    <string name="password_recovery_generated">Mã khôi phục mật khẩu được tạo, vui lòng sao chép và lưu nó ở nơi an toàn.</string>
+    <string name="copied">Đã sao chép</string>
+    <string name="reset_password">Khôi phục mật khẩu</string>
+    <string name="error_require_password_confirm">Vui lòng nhập lại mật khẩu</string>
+    <string name="error_confirm_password_not_same">Mật khẩu không khớp</string>
+    <string name="change_folder_password_success">Phục hồi mật khẩu thành công.</string>
+    <string name="text_input_recovery_password_hint">Mã khôi phục mật khẩu</string>
+    <string name="text_input_folder_password_hint_confirm">Nhập lại mật khẩu</string>
+    <string name="text_input_folder_password_hint_confirm_desc">Xác nhận mật khẩu</string>
+    <string name="text_input_folder_new_password">Mật khẩu</string>
+    <string name="error_require_password_recovery_hash">Vui lòng nhập mã khôi phục mật khẩu</string>
+    <string name="error_password_recovery_incorrect">Mã khôi phục mật khẩu không chính xác</string>
+    <string name="error_password_recovery_empty">Mã khôi phục trống, vui lòng thử lại.</string>
+    <string name="error_change_password_unknown">Lỗi không xác định, thử lại sau.</string>
+    <string name="guideline">Hướng dẫn</string>
 
 </resources>

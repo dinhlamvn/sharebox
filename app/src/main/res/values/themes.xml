@@ -51,7 +51,7 @@
 
     <style name="TextAppearance.Caption.Italic" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">13sp</item>
-        <item name="fontFamily">@font/roboto</item>
+        <item name="fontFamily">@font/roboto_italic</item>
     </style>
 
     <style name="AppTheme.CheckBox" parent="AppTheme">
