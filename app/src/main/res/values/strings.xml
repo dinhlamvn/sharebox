@@ -91,7 +91,11 @@
     <string name="button_confirm">Confirm</string>
     <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
     <string name="sort_option_title">Sort by</string>
-    <string name="password_recovery_title">Password recovery</string>
-    <string name="password_recovery_desc">* Setting your password recovery to reset folder\'s password.</string>
+    <string name="password_recovery_title">Password recovery (un-generate)</string>
+    <string name="password_recovery_desc_no_generate">* Setting your password recovery to reset folder\'s password (click section above to generate)</string>
+    <string name="password_recovery_desc_generated">* Setting your password recovery to reset folder\'s password (generated).</string>
+    <string name="password_recovery_has_generated_error">Your password recovery has been generated.</string>
+    <string name="password_recovery_generated">Password recovery generated, please copy and keep it in protected place.</string>
+    <string name="copied">Copied!</string>
 
 </resources>

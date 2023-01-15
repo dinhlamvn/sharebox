@@ -70,7 +70,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
-        android:text="@string/password_recovery_desc"
+        android:text="@string/password_recovery_desc_no_generate"
         android:textAppearance="@style/TextAppearance.Caption.Italic"
         app:fontFamily="@font/roboto_italic"
         app:layout_constraintEnd_toEndOf="parent"

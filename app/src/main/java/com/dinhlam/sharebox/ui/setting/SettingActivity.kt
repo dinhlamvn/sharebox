@@ -3,13 +3,20 @@ package com.dinhlam.sharebox.ui.setting
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
+import com.dinhlam.sharebox.utils.KeyboardUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,5 +53,41 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                 putExtra("sort-type", sortType)
             })
         }
+
+        val recoveryPassword = appSharePref.getRecoveryPassword()
+
+        if (recoveryPassword.isNotBlank()) {
+            viewBinding.textViewPasswordRecoveryTitle.text = "***-***-***"
+            viewBinding.textViewPasswordRecoveryDesc.setText(R.string.password_recovery_desc_generated)
+            viewBinding.textViewPasswordRecoveryTitle.setDrawableCompat(end = R.drawable.ic_backup_on)
+        }
+
+        viewBinding.textViewPasswordRecoveryTitle.setOnClickListener {
+            if (recoveryPassword.isNotBlank()) {
+                showToast(R.string.password_recovery_has_generated_error)
+            } else {
+                generateRecoveryPasswordHash()
+            }
+        }
+    }
+
+    private fun generateRecoveryPasswordHash() {
+        val uuid = UUID.randomUUID()
+        val recoveryHash = uuid.toString()
+
+        viewBinding.textViewPasswordRecoveryTitle.setDrawableCompat(end = R.drawable.ic_copy)
+        viewBinding.textViewPasswordRecoveryTitle.text = buildSpannedString {
+            bold {
+                append(recoveryHash)
+            }
+        }
+        viewBinding.textViewPasswordRecoveryDesc.setText(R.string.password_recovery_desc_generated)
+        viewBinding.textViewPasswordRecoveryTitle.setOnClickListener {
+            KeyboardUtil.copyTextToClipboard(this, recoveryHash)
+            appSharePref.setRecoveryPassword(recoveryHash)
+            showToast(R.string.copied)
+        }
+        appSharePref.setRecoveryPassword(recoveryHash)
+        showToast(R.string.password_recovery_generated, duration = Toast.LENGTH_LONG)
     }
 }
