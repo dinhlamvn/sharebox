@@ -12,13 +12,17 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemAddBinding
 import com.dinhlam.sharebox.databinding.MenuItemFolderSelectorBinding
 import com.dinhlam.sharebox.databinding.MenuItemMoreBinding
+import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.selector.FolderSelectorDialogFragment
 import com.dinhlam.sharebox.extensions.cast
@@ -28,13 +32,15 @@ import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.isWebLink
-import com.dinhlam.sharebox.extensions.setupWith
+import com.dinhlam.sharebox.extensions.screenWidth
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.share.modelview.ShareDefaultModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareMultipleImageModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareTextModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareWebLinkModelView
+import com.dinhlam.sharebox.utils.ExtraUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -43,13 +49,12 @@ import javax.inject.Inject
 class ShareActivity :
     BaseViewModelActivity<ShareState, ShareViewModel, ActivityShareReceiveBinding>(),
     FolderSelectorDialogFragment.OnFolderSelectorCallback,
-    FolderCreatorDialogFragment.OnFolderCreatorCallback {
+    FolderCreatorDialogFragment.OnFolderCreatorCallback,
+    FolderConfirmPasswordDialogFragment.OnConfirmPasswordCallback {
 
     companion object {
         private const val LIMIT_SHOWED_FOLDER = 3
     }
-
-    private val modelViewsFactory by lazy { ShareModelViewsFactory(this, viewModel) }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -75,21 +80,53 @@ class ShareActivity :
 
     override val viewModel: ShareViewModel by viewModels()
 
-    private val shareContentAdapter = BaseListAdapter.createAdapter {
-        withViewType(R.layout.share_item_default) {
+    private val shareContentAdapter = BaseListAdapter.createAdapter({
+        mutableListOf<BaseListAdapter.BaseModelView>().apply {
+            getState(viewModel) { state ->
+                when (val shareInfo = state.shareInfo) {
+                    is ShareState.ShareInfo.ShareText -> add(
+                        ShareTextModelView(
+                            "shareText", shareInfo.text
+                        )
+                    )
+                    is ShareState.ShareInfo.ShareWebLink -> add(
+                        ShareWebLinkModelView(
+                            "shareText", shareInfo.url
+                        )
+                    )
+                    is ShareState.ShareInfo.ShareImage -> add(
+                        ShareImageModelView(
+                            "shareImage", shareInfo.uri
+                        )
+                    )
+                    is ShareState.ShareInfo.ShareMultipleImage -> addAll(shareInfo.uris.mapIndexed { index, uri ->
+                        ShareMultipleImageModelView(
+                            "shareMultipleImage$index", uri
+                        )
+                    })
+                    else -> add(ShareDefaultModelView())
+                }
+            }
+        }
+    }) {
+        withViewType(R.layout.model_view_share_default) {
             ShareDefaultModelView.ShareDefaultViewHolder(this)
         }
 
-        withViewType(R.layout.share_item_text) {
+        withViewType(R.layout.model_view_share_text) {
             ShareTextModelView.ShareTextViewHolder(this)
         }
 
-        withViewType(R.layout.share_item_image) {
+        withViewType(R.layout.model_view_share_image) {
             ShareImageModelView.ShareImageViewHolder(this)
         }
 
-        withViewType(R.layout.share_item_multiple_image) {
-            ShareMultipleImageModelView.ShareMultipleImageViewHolder(this)
+        withViewType(R.layout.model_view_share_multiple_image) {
+            ShareMultipleImageModelView.ShareMultipleImageViewHolder(this).apply {
+                updateLayoutParams {
+                    width = screenWidth().times(0.8f).toInt()
+                }
+            }
         }
 
         withViewType(R.layout.model_view_share_web_link) {
@@ -98,13 +135,14 @@ class ShareActivity :
     }
 
     override fun onStateChanged(state: ShareState) {
-        modelViewsFactory.requestBuildModelViews()
+        shareContentAdapter.requestBuildModelViews()
         viewBinding.textViewFolder.text = state.selectedFolder?.name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding.recyclerView.setupWith(shareContentAdapter, modelViewsFactory)
+
+        viewBinding.recyclerView.adapter = shareContentAdapter
 
         behavior.addBottomSheetCallback(bottomSheetCallback)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -142,13 +180,37 @@ class ShareActivity :
             }
         }
 
-        viewBinding.buttonCancel.setOnClickListener {
-            dismiss()
+        viewBinding.buttonSave.setOnClickListener {
+            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText(), this, true)
         }
 
-        viewBinding.buttonSave.setOnClickListener {
-            viewModel.saveShare(viewBinding.textInputNote.getTrimmedText(), this)
+        viewModel.consume(this, ShareState::requestPassword) { requestPassword ->
+            if (requestPassword) {
+                showDialogInputPassword()
+            }
         }
+    }
+
+    private fun showDialogInputPassword() = getState(viewModel) { state ->
+        val selectedFolderId = state.selectedFolder?.id ?: return@getState
+        BaseDialogFragment.showDialog(
+            FolderConfirmPasswordDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putString(ExtraUtils.EXTRA_FOLDER_ID, selectedFolderId)
+                putBoolean(ExtraUtils.EXTRA_SHOW_REMIND_PASSWORD, false)
+            }
+        }
+    }
+
+    override fun onPasswordVerified(isRemindPassword: Boolean) {
+        viewModel.resetRequestPassword()
+        viewModel.saveShareAfterPasswordConfirm(this)
+    }
+
+    override fun onCancelConfirmPassword() {
+        viewModel.resetRequestPassword()
+        showToast(R.string.error_require_password)
     }
 
     private fun handleSendNoThing() {
@@ -172,6 +234,9 @@ class ShareActivity :
     }
 
     private fun handleSendMultipleImage(intent: Intent) {
+        viewBinding.recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
         intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
             val data = list.mapNotNull { it.cast<Uri>() }
             viewModel.setShareInfo(ShareState.ShareInfo.ShareMultipleImage(data))
@@ -204,12 +269,12 @@ class ShareActivity :
             }
         }
 
-        val takeFolders = state.folders.filterNot { folder -> folder.id == state.selectedFolder?.id }
-            .sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
+        val takeFolders =
+            state.folders.filterNot { folder -> folder.id == state.selectedFolder?.id }
+                .sortedByDescending { folder -> folder.createdAt }.take(LIMIT_SHOWED_FOLDER)
         val popupView = LinearLayout(this)
         val layoutParams = LinearLayout.LayoutParams(
-            width,
-            height
+            width, height
         )
         popupView.orientation = LinearLayout.VERTICAL
         popupView.layoutParams = layoutParams

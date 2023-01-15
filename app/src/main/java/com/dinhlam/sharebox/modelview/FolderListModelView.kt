@@ -5,7 +5,6 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewFolderListBinding
-import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.model.Tag
 
 data class FolderListModelView(
@@ -20,17 +19,17 @@ data class FolderListModelView(
         get() = R.layout.model_view_folder_list
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderListModelView && this.id == other.id
+        return this.modelId == other.modelId
     }
 
     override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderListModelView && this === other
+        return this === other
     }
 
     class FolderListViewHolder(
         view: View,
         private val folderClick: (Int) -> Unit,
-        private val folderLongClick: ((View, Int) -> Unit)? = null
+        private val folderOptionClick: ((View, Int) -> Unit)? = null
     ) : BaseListAdapter.BaseViewHolder<FolderListModelView, ModelViewFolderListBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewFolderListBinding {
             return ModelViewFolderListBinding.bind(view)
@@ -40,21 +39,18 @@ data class FolderListModelView(
             binding.root.setOnClickListener {
                 folderClick(position)
             }
-            folderLongClick?.let {
-                binding.root.setOnLongClickListener { clickedView ->
-                    it(clickedView, position)
-                    return@setOnLongClickListener true
-                }
+
+            binding.imageViewOption.setOnClickListener { view ->
+                folderOptionClick?.invoke(view, position)
             }
 
-            binding.textViewFolderUpdatedDate.text = item.updatedAt.format("MMM d H:m")
             binding.textViewFolderName.text = item.name
             binding.textViewFolderDesc.text = item.desc
             binding.imageViewKey.isVisible = item.hasPassword
 
-            val tag = item.tag ?: return binding.cardViewTag.run { isVisible = false }
-            binding.cardViewTag.isVisible = true
-            binding.cardViewTag.setCardBackgroundColor(tag.color)
+            val tag = item.tag ?: return binding.imageViewTag.run { isVisible = false }
+            binding.imageViewTag.isVisible = true
+            binding.imageViewTag.setImageResource(tag.tagResource)
         }
 
         override fun onUnBind() {

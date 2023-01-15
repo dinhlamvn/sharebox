@@ -49,4 +49,8 @@ class ShareRepository @Inject constructor(
     fun deleteByFolder(folderId: String) {
         shareDao.deleteByFolder(folderId)
     }
+
+    fun getRecentList(): List<Share> {
+        return shareDao.getRecentList()
+    }
 }

@@ -37,7 +37,7 @@
         android:ellipsize="end"
         android:gravity="start"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Body1"
+        android:textAppearance="@style/TextAppearance.Header"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@id/text_view_folder_desc"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,31 +49,17 @@
         android:id="@+id/text_view_folder_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:gravity="start"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Caption"
-        app:layout_constraintBottom_toBottomOf="@id/image_view"
-        app:layout_constraintEnd_toStartOf="@id/text_view_folder_updated_date"
-        app:layout_constraintStart_toStartOf="@id/text_view_folder_name"
-        app:layout_constraintTop_toBottomOf="@id/text_view_folder_name"
-        tools:text="This is description of folder" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_folder_updated_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:gravity="start"
-        android:maxLines="1"
+        android:maxLines="2"
         android:textAppearance="@style/TextAppearance.Caption"
-        app:layout_constraintBottom_toBottomOf="@id/image_view"
+        app:fontFamily="sans-serif-condensed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/text_view_folder_desc"
+        app:layout_constraintStart_toStartOf="@id/text_view_folder_name"
         app:layout_constraintTop_toBottomOf="@id/text_view_folder_name"
-        tools:text="2020/09" />
+        tools:text="This is description of folder" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -83,13 +69,24 @@
         app:barrierMargin="8dp"
         app:constraint_referenced_ids="image_view,text_view_folder_desc" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view_tag"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_marginTop="8dp"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_view_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
-        app:cardCornerRadius="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_tag_red" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_view_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vertical_32"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

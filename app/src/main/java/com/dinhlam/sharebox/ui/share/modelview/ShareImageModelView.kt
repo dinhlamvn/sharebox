@@ -4,13 +4,13 @@ import android.net.Uri
 import android.view.View
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.databinding.ShareItemImageBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareImageBinding
 import com.dinhlam.sharebox.loader.ImageLoader
 
 data class ShareImageModelView(val id: String, val uri: Uri) :
     BaseListAdapter.BaseModelView("share_image_$id") {
     override val modelLayoutRes: Int
-        get() = R.layout.share_item_image
+        get() = R.layout.model_view_share_image
 
     override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
         return other is ShareImageModelView && other.id == this.id
@@ -21,9 +21,9 @@ data class ShareImageModelView(val id: String, val uri: Uri) :
     }
 
     class ShareImageViewHolder(view: View) :
-        BaseListAdapter.BaseViewHolder<ShareImageModelView, ShareItemImageBinding>(view) {
-        override fun onCreateViewBinding(view: View): ShareItemImageBinding {
-            return ShareItemImageBinding.bind(view)
+        BaseListAdapter.BaseViewHolder<ShareImageModelView, ModelViewShareImageBinding>(view) {
+        override fun onCreateViewBinding(view: View): ModelViewShareImageBinding {
+            return ModelViewShareImageBinding.bind(view)
         }
 
         override fun onBind(item: ShareImageModelView, position: Int) {

@@ -16,7 +16,7 @@ data class HomeState(
     val folderActionConfirmation: FolderActionConfirmation? = null,
     val folderPasswordConfirmRemind: Set<String> = emptySet(),
     val tag: Int? = null,
-    val sortType: SortType = SortType.NONE
+    val sortType: SortType = SortType.NONE,
 ) : BaseViewModel.BaseState {
     data class FolderActionConfirmation(
         val folder: Folder,
@@ -28,6 +28,7 @@ data class HomeState(
             OPEN,
             DELETE,
             RENAME,
+            RESET_PASSWORD,
             DETAIL,
             TAG
         }

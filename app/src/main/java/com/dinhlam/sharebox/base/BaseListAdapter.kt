@@ -13,59 +13,50 @@ import com.dinhlam.sharebox.utils.Ids
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.Executors
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
-    private val viewHolderManager: ViewHolderManager
+    private val viewHolderManager: ViewHolderManager, private val modelViewsBuilder: (() -> List<T>)
 ) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
+
+    private val buildModelViewsScope =
+        CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+    private var buildModelViewsJob: Job? = null
+
+    private val modelViews = mutableListOf<T>()
+
+    override fun submitList(list: MutableList<T>?) {
+        error("No support direct call method")
+    }
+
+    override fun submitList(list: MutableList<T>?, commitCallback: Runnable?) {
+        error("No support direct call method")
+    }
+
+    fun requestBuildModelViews() {
+        if (buildModelViewsJob?.isActive == true && buildModelViewsJob?.isCompleted == false) {
+            buildModelViewsJob?.cancel()
+        }
+
+        buildModelViewsJob = buildModelViewsScope.launch {
+            buildModelViewsInternal()
+        }
+    }
+
+    private suspend fun buildModelViewsInternal() {
+        modelViews.clear()
+        modelViews.addAll(modelViewsBuilder.invoke())
+        withContext(Dispatchers.Main) {
+            super.submitList(modelViews.toList())
+        }
+    }
+
 
     init {
         setHasStableIds(true)
-    }
-
-    abstract class ModelViewsFactory {
-
-        private val coroutineScope = CoroutineScope(Dispatchers.IO)
-        private var job: Job? = null
-
-        private val modelViews = mutableListOf<BaseModelView>()
-
-        private var adapter: BaseListAdapter<BaseModelView>? = null
-
-        fun attach(adapter: BaseListAdapter<BaseModelView>) {
-            this.adapter = adapter
-            requestBuildModelViews()
-        }
-
-        fun detach() {
-            this.adapter = null
-        }
-
-        protected abstract fun buildModelViews()
-
-        fun addModelView(modelView: BaseModelView) {
-            modelViews.add(modelView)
-        }
-
-        private fun buildModelViewsInternal(coroutineScope: CoroutineScope) {
-            modelViews.clear()
-            buildModelViews()
-            coroutineScope.launch(Dispatchers.Main) {
-                adapter?.submitList(modelViews.toList())
-            }
-        }
-
-        fun requestBuildModelViews(delayMills: Long = 0L) {
-            if (job?.isActive == true && job?.isCompleted == false) {
-                job?.cancel()
-                job = null
-            }
-            job = coroutineScope.launch {
-                delay(delayMills)
-                buildModelViewsInternal(this)
-            }
-        }
     }
 
     class ViewHolderManager internal constructor() {
@@ -83,16 +74,15 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     companion object {
         @JvmStatic
         fun createAdapter(
-            block: ViewHolderManager.() -> Unit
+            modelViewsBuilder: () -> List<BaseModelView>, block: ViewHolderManager.() -> Unit
         ): BaseListAdapter<BaseModelView> {
             val viewHolderManager = ViewHolderManager().apply(block)
-            return BaseListAdapter(viewHolderManager)
+            return BaseListAdapter(viewHolderManager, modelViewsBuilder)
         }
     }
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): BaseViewHolder<T, ViewBinding> {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(viewType, parent, false)
@@ -106,9 +96,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     override fun onBindViewHolder(
-        holder: BaseViewHolder<T, ViewBinding>,
-        position: Int,
-        payloads: MutableList<Any>
+        holder: BaseViewHolder<T, ViewBinding>, position: Int, payloads: MutableList<Any>
     ) {
         holder.onBind(getItem(position), position)
     }
@@ -150,16 +138,6 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
         open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =
             BaseSpanSizeLookup.SpanSizeConfig.Normal
-
-        fun addTo(factory: ModelViewsFactory) {
-            factory.addModelView(this)
-        }
-
-        fun addToIf(block: () -> Boolean, factory: ModelViewsFactory) {
-            if (block.invoke()) {
-                factory.addModelView(this)
-            }
-        }
     }
 
     abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(view: View) :

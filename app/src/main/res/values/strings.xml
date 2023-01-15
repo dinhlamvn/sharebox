@@ -6,10 +6,10 @@
     <string name="button_save">Save</string>
     <string name="share_activity_title">Save share</string>
     <string name="button_cancel">Cancel</string>
-    <string name="text_input_note_hint">Your note</string>
+    <string name="text_input_note_hint">Note</string>
     <string name="share_empty_content">Share\'s content is empty</string>
     <string name="save_share_successfully">Save successfully</string>
-    <string name="text_input_note_hint_desc">Type somethings like: title, description,…</string>
+    <string name="text_input_note_hint_desc">What\'s this?</string>
     <string name="view_more">View more</string>
     <string name="create_new_folder">New Folder</string>
     <string name="create_new_folder_desc">With your customize</string>
@@ -39,7 +39,7 @@
     <string name="password_alias"><![CDATA[Password alias: <b>%s</b>]]></string>
     <string name="error_folder_rename">Has an error when change name</string>
     <string name="check_box_save_password_next_session">Save password for next session</string>
-    <string name="details">Details</string>
+    <string name="detail">Detail</string>
     <string name="created_date_title">Created date:</string>
     <string name="updated_date_title">Updated date:</string>
     <string name="share_count_title">Share count:</string>
@@ -72,9 +72,8 @@
     <string name="tag_green">Green</string>
     <string name="tag_blue">Blue</string>
     <string name="tag_gray">Gray</string>
-    <string name="add_tag">Add tag</string>
     <string name="clear_filter">Clear filter</string>
-    <string name="menu_filter_tag">Filter tag</string>
+    <string name="menu_filter_tag">Tags</string>
     <string name="remove_tag">Remove tag</string>
     <string name="home_activity_title">Home</string>
     <string name="no_sort">No sort</string>
@@ -85,6 +84,31 @@
     <string name="developer_name" translatable="false">Lam Cong Dinh</string>
     <string name="contact_title">Contact:</string>
     <string name="developer_email" translatable="false">dinhlamvn353@gmail.com</string>
-    <string name="content_desc_button_guide_line">Guide line button</string>
+    <string name="content_desc_button_guide_line">Guideline button</string>
+    <string name="home_folder_list_empty">No results</string>
+    <string name="default_folder_name">Home</string>
+    <string name="default_folder_desc">Home</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
+    <string name="sort_option_title">Sort by</string>
+    <string name="password_recovery_title">Password recovery (un-generate)</string>
+    <string name="password_recovery_desc_no_generate">* Setting your password recovery to reset folder\'s password (click section above to generate)</string>
+    <string name="password_recovery_desc_generated">* Setting your password recovery to reset folder\'s password (generated).</string>
+    <string name="password_recovery_has_generated_error">Your password recovery has been generated.</string>
+    <string name="password_recovery_generated">Password recovery generated, please copy and keep it in protected place.</string>
+    <string name="copied">Copied!</string>
+    <string name="reset_password">Reset password</string>
+    <string name="text_input_recovery_password_hint">Password recovery hash</string>
+    <string name="text_input_folder_password_hint_confirm">Type password again</string>
+    <string name="text_input_folder_password_hint_confirm_desc">Confirm password</string>
+    <string name="text_input_folder_new_password">Password</string>
+    <string name="error_require_password_recovery_hash">Please input the password recovery hash</string>
+    <string name="error_require_password_confirm">Please input password confirm</string>
+    <string name="error_password_recovery_incorrect">Password recovery is incorrect</string>
+    <string name="error_confirm_password_not_same">Password confirm is not same</string>
+    <string name="error_password_recovery_empty">Password recovery is empty, please try again.</string>
+    <string name="error_change_password_unknown">Unknown error, please try again!</string>
+    <string name="change_folder_password_success">Change folder\'s password successfully.</string>
+    <string name="guideline">Guideline</string>
 
 </resources>

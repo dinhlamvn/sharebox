@@ -8,7 +8,11 @@ class ChoiceTagViewModel : BaseViewModel<ChoiceTagState>(ChoiceTagState()) {
         setState { copy(title = title, selectedTagId = selectedTag) }
     }
 
-    fun selectedTag(tagId: Int) {
-        setState { copy(selectedTagId = tagId) }
+    fun selectedTag(tagId: Int) = getState { state ->
+        if (state.selectedTagId == -1 || state.selectedTagId != tagId) {
+            setState { copy(selectedTagId = tagId) }
+        } else {
+            setState { copy(selectedTagId = -1) }
+        }
     }
 }

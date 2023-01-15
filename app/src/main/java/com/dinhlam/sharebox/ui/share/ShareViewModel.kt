@@ -6,6 +6,7 @@ import androidx.core.content.FileProvider
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Share
+import com.dinhlam.sharebox.extensions.isHasPassword
 import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -29,9 +30,6 @@ class ShareViewModel @Inject constructor(
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
         val folderId = when {
             historySelectedFolder.isNotBlank() -> historySelectedFolder
-            shareInfo is ShareState.ShareInfo.ShareText -> "folder_text"
-            shareInfo is ShareState.ShareInfo.ShareWebLink -> "folder_web"
-            shareInfo is ShareState.ShareInfo.ShareImage -> "folder_image"
             else -> "folder_home"
         }
         setState { copy(folders = folders, shareInfo = shareInfo) }
@@ -44,23 +42,30 @@ class ShareViewModel @Inject constructor(
         setState { copy(selectedFolder = folder) }
     }
 
-    fun saveShare(note: String, context: Context) = execute { state ->
-        val folderId: String = state.selectedFolder?.id ?: return@execute
-        if (state.shareInfo is ShareState.ShareInfo.ShareWebLink) {
-            return@execute saveWebLink(folderId, note, state.shareInfo)
+    fun saveShare(note: String?, context: Context, requirePassword: Boolean = false) =
+        execute { state ->
+            val folderId: String = state.selectedFolder?.id ?: return@execute
+            val folder =
+                folderRepository.runCatching { get(folderId) }.getOrNull() ?: return@execute
+            if (requirePassword && folder.isHasPassword()) {
+                setState { copy(requestPassword = true, note = note) }
+            } else {
+                if (state.shareInfo is ShareState.ShareInfo.ShareWebLink) {
+                    return@execute saveWebLink(folderId, note, state.shareInfo)
+                }
+                if (state.shareInfo is ShareState.ShareInfo.ShareText) {
+                    return@execute saveShareText(folderId, note, state.shareInfo)
+                }
+                if (state.shareInfo is ShareState.ShareInfo.ShareImage) {
+                    return@execute saveShareImage(context, folderId, note, state.shareInfo)
+                }
+            }
         }
-        if (state.shareInfo is ShareState.ShareInfo.ShareText) {
-            return@execute saveShareText(folderId, note, state.shareInfo)
-        }
-        if (state.shareInfo is ShareState.ShareInfo.ShareImage) {
-            return@execute saveShareImage(context, folderId, note, state.shareInfo)
-        }
-    }
+
+    fun resetRequestPassword() = setState { copy(requestPassword = false) }
 
     private fun saveWebLink(
-        folderId: String,
-        note: String,
-        shareWebLink: ShareState.ShareInfo.ShareWebLink
+        folderId: String, note: String?, shareWebLink: ShareState.ShareInfo.ShareWebLink
     ) {
         val json = gson.toJson(shareWebLink)
         val share = Share(
@@ -74,16 +79,11 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun saveShareText(
-        folderId: String,
-        note: String,
-        shareText: ShareState.ShareInfo.ShareText
+        folderId: String, note: String?, shareText: ShareState.ShareInfo.ShareText
     ) {
         val json = gson.toJson(shareText)
         val share = Share(
-            folderId = folderId,
-            shareType = shareText.shareType,
-            shareInfo = json,
-            shareNote = note
+            folderId = folderId, shareType = shareText.shareType, shareInfo = json, shareNote = note
         )
         shareRepository.insert(share)
         setState { copy(isSaveSuccess = true) }
@@ -92,7 +92,7 @@ class ShareViewModel @Inject constructor(
     private fun saveShareImage(
         context: Context,
         folderId: String,
-        note: String,
+        note: String?,
         shareImage: ShareState.ShareInfo.ShareImage
     ) {
         val bitmap = ImageLoader.get(context, shareImage.uri)
@@ -104,9 +104,7 @@ class ShareViewModel @Inject constructor(
         imageFile.createNewFile()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
         val newUri = FileProvider.getUriForFile(
-            context,
-            "${BuildConfig.APPLICATION_ID}.file_provider",
-            imageFile
+            context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
         )
         val saveShareImage = shareImage.copy(uri = newUri)
         val json = gson.toJson(saveShareImage)
@@ -123,4 +121,8 @@ class ShareViewModel @Inject constructor(
     }
 
     fun saveLastSelectedFolder(folderId: String) = appSharePref.setLastSelectedFolder(folderId)
+
+    fun saveShareAfterPasswordConfirm(context: Context) = getState { state ->
+        saveShare(state.note, context)
+    }
 }

@@ -8,13 +8,12 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
-import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.ui.home.modelview.HomeDateModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeImageModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeTextModelView
-import com.dinhlam.sharebox.ui.home.modelview.HomeWebLinkModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
+import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -25,33 +24,35 @@ import javax.inject.Inject
 class ShareListActivity :
     BaseViewModelActivity<ShareListState, ShareListViewModel, ActivityShareListBinding>() {
 
-    private val modelViewsFactory by lazy { ShareListModelViewsFactory(this, viewModel, gson) }
+    private val modelViewsBuilder by lazy { ShareListModelViewsBuilder(this, viewModel, gson) }
 
-    private val shareListAdapter = BaseListAdapter.createAdapter {
-        withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(this)
-        }
+    private val shareListAdapter by lazy {
+        BaseListAdapter.createAdapter(modelViewsBuilder) {
+            withViewType(R.layout.model_view_loading) {
+                LoadingViewHolder(this)
+            }
 
-        withViewType(R.layout.model_view_home_date) {
-            HomeDateModelView.HomeDateViewHolder(this)
-        }
+            withViewType(R.layout.model_view_share_list_date) {
+                ShareListDateModelView.ShareListDateViewHolder(this)
+            }
 
-        withViewType(R.layout.model_view_home_share_text) {
-            HomeTextModelView.HomeTextViewHolder(this, { textContent ->
-                val dialog = TextViewerDialogFragment()
-                dialog.arguments = Bundle().apply {
-                    putString(Intent.EXTRA_TEXT, textContent)
-                }
-                dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-            }, ::showDialogShareToOther)
-        }
+            withViewType(R.layout.model_view_share_list_text) {
+                ShareListTextModelView.ShareListTextViewHolder(this, { textContent ->
+                    val dialog = TextViewerDialogFragment()
+                    dialog.arguments = Bundle().apply {
+                        putString(Intent.EXTRA_TEXT, textContent)
+                    }
+                    dialog.show(supportFragmentManager, "TextViewerDialogFragment")
+                }, ::showDialogShareToOther)
+            }
 
-        withViewType(R.layout.model_view_home_share_web_link) {
-            HomeWebLinkModelView.HomeWebLinkViewHolder(this, ::showDialogShareToOther)
-        }
+            withViewType(R.layout.model_view_share_list_web_link) {
+                ShareListWebLinkModelView.ShareListWebLinkViewHolder(this, ::showDialogShareToOther)
+            }
 
-        withViewType(R.layout.model_view_home_share_image) {
-            HomeImageModelView.HomeImageViewHolder(this, ::showDialogShareToOther)
+            withViewType(R.layout.model_view_share_list_image) {
+                ShareListImageModelView.ShareListImageViewHolder(this, ::showDialogShareToOther)
+            }
         }
     }
 
@@ -78,8 +79,7 @@ class ShareListActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewBinding.recyclerView.setupWith(shareListAdapter, modelViewsFactory)
+        viewBinding.recyclerView.adapter = shareListAdapter
 
         val folderId = intent.getStringExtra(ExtraUtils.EXTRA_FOLDER_ID) ?: return run {
             showToast(R.string.error_require_folder)
@@ -94,7 +94,7 @@ class ShareListActivity :
     }
 
     override fun onStateChanged(state: ShareListState) {
-        modelViewsFactory.requestBuildModelViews()
+        shareListAdapter.requestBuildModelViews()
         supportActionBar?.title = state.title
     }
 }

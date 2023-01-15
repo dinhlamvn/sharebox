@@ -5,7 +5,7 @@
     <group android:id="@+id/action_group">
         <item
             android:id="@+id/item_tag"
-            android:icon="@drawable/ic_filter"
+            android:icon="@drawable/ic_tag"
             android:title="@string/menu_filter_tag"
             app:showAsAction="never">
 
@@ -35,13 +35,13 @@
 
         <item
             android:id="@+id/item_setting"
-            android:icon="@drawable/ic_setting_blue"
+            android:icon="@drawable/ic_setting"
             android:title="@string/setting"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/item_about"
-            android:icon="@drawable/ic_about"
+            android:icon="@drawable/ic_detail"
             android:title="@string/about"
             app:showAsAction="never" />
     </group>
@@ -53,9 +53,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/item_create_folder"
-        android:icon="@drawable/ic_new_folder_white"
-        android:title="@string/create_new_folder"
+        android:id="@+id/item_guideline"
+        android:icon="@drawable/ic_question_white"
+        android:title="@string/guideline"
         app:showAsAction="ifRoom" />
 
 </menu>

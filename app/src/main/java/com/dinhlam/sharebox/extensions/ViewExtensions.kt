@@ -1,15 +1,10 @@
 package com.dinhlam.sharebox.extensions
 
 import android.widget.EditText
-import androidx.recyclerview.widget.RecyclerView
-import com.dinhlam.sharebox.base.BaseListAdapter
+import android.widget.TextView
 
 fun EditText.getTrimmedText() = text.toString().trim()
 
-fun RecyclerView.setupWith(
-    adapter: BaseListAdapter<BaseListAdapter.BaseModelView>,
-    modelViewsFactory: BaseListAdapter.ModelViewsFactory
-) {
-    this.adapter = adapter
-    modelViewsFactory.attach(adapter)
+fun TextView.setDrawableCompat(start: Int = 0, top: Int = 0, end: Int = 0, bottom: Int = 0) {
+    setCompoundDrawablesWithIntrinsicBounds(start, top, end, bottom)
 }

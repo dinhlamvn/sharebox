@@ -6,10 +6,10 @@
     <string name="button_save">Lưu</string>
     <string name="share_activity_title">Lưu chia sẻ</string>
     <string name="button_cancel">Hủy</string>
-    <string name="text_input_note_hint">Mô tả của bạn</string>
+    <string name="text_input_note_hint">Ghi chú</string>
     <string name="share_empty_content">Nội dung chia sẻ trống</string>
     <string name="save_share_successfully">Lưu thành công</string>
-    <string name="text_input_note_hint_desc">Viết một vài thứ như: tiêu đề, mô tả,…</string>
+    <string name="text_input_note_hint_desc">text_input_note_hint</string>
     <string name="view_more">Xem thêm</string>
     <string name="create_new_folder">Thư mục mới</string>
     <string name="create_new_folder_desc">Với tùy chỉnh của bạn</string>
@@ -39,7 +39,7 @@
     <string name="password_alias"><![CDATA[Gợi nhớ mật khẩu: <b>%s</b>]]></string>
     <string name="error_folder_rename">Có lỗi xảy ra khi đổi tên thư mục</string>
     <string name="check_box_save_password_next_session">Lưu mật khẩu cho lần mở kế tiếp (hủy khi thoát ứng dụng)</string>
-    <string name="details">Chi tiết</string>
+    <string name="detail">Chi tiết</string>
     <string name="created_date_title">Ngày tạo:</string>
     <string name="updated_date_title">Ngày chỉnh sửa:</string>
     <string name="share_count_title">Số lượng chia sẻ:</string>
@@ -72,9 +72,8 @@
     <string name="tag_green">Xanh lục</string>
     <string name="tag_blue">Xanh</string>
     <string name="tag_gray">Nâu</string>
-    <string name="add_tag">Đánh nhãn</string>
     <string name="clear_filter">Xóa lọc</string>
-    <string name="menu_filter_tag">Lọc theo nhãn</string>
+    <string name="menu_filter_tag">Nhãn</string>
     <string name="remove_tag">Bỏ nhãn</string>
     <string name="home_activity_title">Trang chủ</string>
     <string name="no_sort">Mặc định</string>
@@ -83,5 +82,21 @@
     <string name="about">Thông tin</string>
     <string name="developer_title">Nhà phát triển:</string>
     <string name="contact_title">Liên hệ:</string>
+    <string name="content_desc_button_guide_line">Nút hướng dẫn</string>
+    <string name="home_folder_list_empty">Không có kết quả</string>
+    <string name="default_folder_name">Mục chung</string>
+    <string name="default_folder_desc">Thư mục mặc định</string>
+    <string name="button_confirm">Xác nhận</string>
+    <string name="sort_option_title">Sắp xếp theo</string>
+    <string name="password_recovery_title">Password recovery (un-generate)</string>
+    <string name="password_recovery_desc_no_generate">* Setting your password recovery to reset folder\'s password (click section above to generate).</string>
+    <string name="password_recovery_desc_generated">* Setting your password recovery to reset folder\'s password (generated).</string>
+    <string name="password_recovery_has_generated_error">Your password recovery has been generated.</string>
+    <string name="password_recovery_generated">Password recovery generated, please copy and keep it in protected place.</string>
+    <string name="copied">Copied!</string>
+    <string name="reset_password">Reset password</string>
+    <string name="error_require_password_confirm">Please input password confirm</string>
+    <string name="error_confirm_password_not_same">Password confirm is not same</string>
+    <string name="change_folder_password_success">Change folder\'s password successfully.</string>
 
 </resources>

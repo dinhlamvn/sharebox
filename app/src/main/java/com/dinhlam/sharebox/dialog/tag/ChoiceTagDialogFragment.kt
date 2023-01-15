@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
@@ -14,7 +15,6 @@ import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
 import com.dinhlam.sharebox.databinding.DialogListBinding
 import com.dinhlam.sharebox.databinding.SingleChooseTagBinding
 import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.setupWith
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.utils.TagUtil
 
@@ -25,20 +25,22 @@ class ChoiceTagDialogFragment :
         fun onTagSelected(tagId: Int)
     }
 
-    private val modelViewsFactory = object : BaseListAdapter.ModelViewsFactory() {
-        override fun buildModelViews() = getState(viewModel) { state ->
-            TagUtil.tags.forEach { tag ->
-                TagModelView(
-                    tag.id.toLong(),
-                    tag.name,
-                    tag.color,
-                    tag.id == state.selectedTagId
-                ).addTo(this)
+    private val adapter = BaseListAdapter.createAdapter({
+        mutableListOf<BaseListAdapter.BaseModelView>().apply {
+            getState(viewModel) { state ->
+                TagUtil.tags.forEach { tag ->
+                    add(
+                        TagModelView(
+                            tag.id.toLong(),
+                            tag.name,
+                            tag.tagResource,
+                            tag.id == state.selectedTagId
+                        )
+                    )
+                }
             }
         }
-    }
-
-    private val adapter = BaseListAdapter.createAdapter {
+    }) {
         withViewType(R.layout.single_choose_tag) {
             TagViewHolder(this) { selectedTagId ->
                 viewModel.selectedTag(selectedTagId)
@@ -54,7 +56,7 @@ class ChoiceTagDialogFragment :
     }
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
-        viewBinding.recyclerView.setupWith(adapter, modelViewsFactory)
+        viewBinding.recyclerView.adapter = adapter
 
         arguments?.let { bundle ->
             val title = bundle.getString(ExtraUtils.EXTRA_TITLE)
@@ -66,7 +68,7 @@ class ChoiceTagDialogFragment :
     override val viewModel: ChoiceTagViewModel by viewModels()
 
     override fun onStateChanged(state: ChoiceTagState) {
-        modelViewsFactory.requestBuildModelViews()
+        adapter.requestBuildModelViews()
         viewBinding.textView.text = state.title
         viewBinding.textView.isVisible = !state.title.isNullOrEmpty()
     }
@@ -74,18 +76,18 @@ class ChoiceTagDialogFragment :
     private data class TagModelView(
         val id: Long,
         val name: String,
-        val color: Int,
+        @DrawableRes val tagResource: Int,
         val selected: Boolean = false
     ) : BaseListAdapter.BaseModelView(id) {
         override val modelLayoutRes: Int
             get() = R.layout.single_choose_tag
 
         override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other is TagModelView && other.id == this.id
+            return other.modelId == this.modelId
         }
 
         override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other is TagModelView && other == this
+            return other === this
         }
     }
 
@@ -102,7 +104,7 @@ class ChoiceTagDialogFragment :
 
         override fun onBind(item: TagModelView, position: Int) {
             binding.textView.text = item.name
-            binding.cardView.setCardBackgroundColor(item.color)
+            binding.imageViewTag.setImageResource(item.tagResource)
             binding.viewBackground.setBackgroundColor(
                 if (item.selected) {
                     Color.LTGRAY

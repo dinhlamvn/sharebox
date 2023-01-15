@@ -35,15 +35,23 @@
     <style name="TextAppearance.Header" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="android:textColor">@color/colorTextBlack</item>
         <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/roboto</item>
     </style>
 
     <style name="TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/colorTextBlack</item>
         <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/roboto</item>
     </style>
 
     <style name="TextAppearance.Caption" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="TextAppearance.Caption.Italic" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">13sp</item>
+        <item name="fontFamily">@font/roboto</item>
     </style>
 
     <style name="AppTheme.CheckBox" parent="AppTheme">
@@ -69,6 +77,12 @@
         <item name="boxCornerRadiusTopEnd">0dp</item>
         <item name="boxCornerRadiusBottomStart">0dp</item>
         <item name="boxCornerRadiusBottomEnd">0dp</item>
+    </style>
+
+    <style name="Theme.AppBottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
     </style>
 
 </resources>

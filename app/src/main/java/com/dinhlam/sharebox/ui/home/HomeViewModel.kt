@@ -12,21 +12,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val folderRepository: FolderRepository,
-    private val shareRepository: ShareRepository
+    private val folderRepository: FolderRepository, private val shareRepository: ShareRepository
 ) : BaseViewModel<HomeState>(HomeState()) {
 
     init {
-        loadFolders()
+        loadShareListRecently()
     }
 
     fun loadFolders() = execute { state ->
-        val folders = if (state.tag == null) {
-            folderRepository.getAll(state.sortType)
-        } else {
-            folderRepository.getByTag(state.tag)
-        }
+        setState { copy(isRefreshing = true) }
+
+        val folders = state.tag?.let { tag ->
+            folderRepository.getByTag(tag)
+        } ?: folderRepository.getAll(state.sortType)
+
         setState { copy(folders = folders, isRefreshing = false) }
+    }
+
+    fun loadShareListRecently() = executeJob {
+        val shares = shareRepository.getRecentList()
+        setState { copy(shareList = shares) }
     }
 
     fun onFolderClick(position: Int) = execute { state ->
@@ -35,9 +40,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.OPEN
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.OPEN
                 )
             )
         }
@@ -73,9 +76,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.DELETE
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.DELETE
                 )
             )
         }
@@ -86,9 +87,7 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.RENAME
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.RENAME
                 )
             )
         }
@@ -99,24 +98,25 @@ class HomeViewModel @Inject constructor(
         setState {
             copy(
                 folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.DETAIL
+                    folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.DETAIL
                 )
             )
         }
     }
 
-    fun processFolderForTag(folder: Folder) = executeJob {
-        val shareCount = shareRepository.countByFolder(folder.id)
-        setState {
-            copy(
-                folderActionConfirmation = HomeState.FolderActionConfirmation(
-                    folder,
-                    shareCount,
-                    HomeState.FolderActionConfirmation.FolderActionType.TAG
+    fun processFolderForTag(folder: Folder) = execute { state ->
+        if (state.folderActionConfirmation != null) {
+            setState { copy(folderActionConfirmation = null) }
+        }
+        getState {
+            val shareCount = shareRepository.countByFolder(folder.id)
+            setState {
+                copy(
+                    folderActionConfirmation = HomeState.FolderActionConfirmation(
+                        folder, shareCount, HomeState.FolderActionConfirmation.FolderActionType.TAG
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -158,25 +158,23 @@ class HomeViewModel @Inject constructor(
     }
 
     fun setFolderTag(tagId: Int) = execute { state ->
-        if (tagId != 0) {
-            val folder = state.folderActionConfirmation?.folder ?: return@execute setState {
-                copy(folderActionConfirmation = null)
-            }
+        val folder = state.folderActionConfirmation?.folder ?: return@execute setState {
+            copy(folderActionConfirmation = null)
+        }
+
+        if (tagId != -1) {
             folderRepository.update(TagUtil.setFolderTag(tagId, folder))
             loadFolders()
             clearFolderActionConfirmation()
         } else {
+            removeTag(folder)
             clearFolderActionConfirmation()
         }
     }
 
     fun isHandleByTagSelected(itemId: Int): Boolean {
         if (itemId !in listOf(
-                R.id.tag_red,
-                R.id.tag_green,
-                R.id.tag_blue,
-                R.id.tag_yellow,
-                R.id.tag_gray
+                R.id.tag_red, R.id.tag_green, R.id.tag_blue, R.id.tag_yellow, R.id.tag_gray
             )
         ) {
             return false
@@ -195,7 +193,7 @@ class HomeViewModel @Inject constructor(
         loadFolders()
     }
 
-    fun removeTag(folder: Folder) = execute {
+    private fun removeTag(folder: Folder) = execute {
         val newFolder = folder.copy(tag = null)
         folderRepository.update(newFolder)
         loadFolders()
@@ -208,5 +206,13 @@ class HomeViewModel @Inject constructor(
         getState {
             loadFolders()
         }
+    }
+
+    fun processFolderForResetPassword(folder: Folder) = setState {
+        copy(
+            folderActionConfirmation = HomeState.FolderActionConfirmation(
+                folder, 0, HomeState.FolderActionConfirmation.FolderActionType.RESET_PASSWORD
+            )
+        )
     }
 }

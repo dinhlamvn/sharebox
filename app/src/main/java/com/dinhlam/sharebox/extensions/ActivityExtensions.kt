@@ -7,6 +7,12 @@ import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+
+fun AppCompatActivity.screenWidth() = resources.displayMetrics.widthPixels
+
+fun AppCompatActivity.screenHeight() = resources.displayMetrics.heightPixels
 
 fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
