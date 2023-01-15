@@ -193,7 +193,7 @@ class HomeViewModel @Inject constructor(
         loadFolders()
     }
 
-    fun removeTag(folder: Folder) = execute {
+    private fun removeTag(folder: Folder) = execute {
         val newFolder = folder.copy(tag = null)
         folderRepository.update(newFolder)
         loadFolders()
@@ -206,5 +206,13 @@ class HomeViewModel @Inject constructor(
         getState {
             loadFolders()
         }
+    }
+
+    fun processFolderForResetPassword(folder: Folder) = setState {
+        copy(
+            folderActionConfirmation = HomeState.FolderActionConfirmation(
+                folder, 0, HomeState.FolderActionConfirmation.FolderActionType.RESET_PASSWORD
+            )
+        )
     }
 }

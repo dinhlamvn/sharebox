@@ -97,5 +97,17 @@
     <string name="password_recovery_has_generated_error">Your password recovery has been generated.</string>
     <string name="password_recovery_generated">Password recovery generated, please copy and keep it in protected place.</string>
     <string name="copied">Copied!</string>
+    <string name="reset_password">Reset password</string>
+    <string name="text_input_recovery_password_hint">Password recovery hash</string>
+    <string name="text_input_folder_password_hint_confirm">Type password again</string>
+    <string name="text_input_folder_password_hint_confirm_desc">Confirm password</string>
+    <string name="text_input_folder_new_password">Password</string>
+    <string name="error_require_password_recovery_hash">Please input the password recovery hash</string>
+    <string name="error_require_password_confirm">Please input password confirm</string>
+    <string name="error_password_recovery_incorrect">Password recovery is incorrect</string>
+    <string name="error_confirm_password_not_same">Password confirm is not same</string>
+    <string name="error_password_recovery_empty">Password recovery is empty, please try again.</string>
+    <string name="error_change_password_unknown">Unknown error, please try again!</string>
+    <string name="change_folder_password_success">Change folder\'s password successfully.</string>
 
 </resources>

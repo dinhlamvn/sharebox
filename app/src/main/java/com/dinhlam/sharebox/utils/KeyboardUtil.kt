@@ -26,4 +26,18 @@ object KeyboardUtil {
         }
         clipboardManager.setPrimaryClip(ClipData.newPlainText("share_box_recovery_password", text))
     }
+
+    fun getTextFromClipboard(context: Context): String {
+        val clipboardManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            context.getSystemService(ClipboardManager::class.java)
+        } else {
+            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        }
+        val primaryClip = clipboardManager.primaryClip ?: return ""
+        return if (primaryClip.itemCount > 0) {
+            primaryClip.getItemAt(0).text.toString()
+        } else {
+            ""
+        }
+    }
 }

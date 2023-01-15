@@ -28,6 +28,7 @@ data class HomeState(
             OPEN,
             DELETE,
             RENAME,
+            RESET_PASSWORD,
             DETAIL,
             TAG
         }

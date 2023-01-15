@@ -30,6 +30,7 @@ import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordD
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.detail.FolderDetailDialogFragment
 import com.dinhlam.sharebox.dialog.folder.rename.RenameFolderDialogFragment
+import com.dinhlam.sharebox.dialog.folder.resetpassword.ResetPasswordFolderDialogFragment
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
@@ -327,6 +328,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             icons.add(R.drawable.ic_rename)
         }
 
+        if (folder.isHasPassword()) {
+            items[getString(R.string.reset_password)] = {
+                viewModel.processFolderForResetPassword(folder)
+            }
+            icons.add(R.drawable.ic_reset_password)
+        }
+
         items[getString(R.string.tag)] = {
             viewModel.processFolderForTag(folder)
         }
@@ -363,6 +371,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 nonNull
             )
             HomeState.FolderActionConfirmation.FolderActionType.RENAME -> maybeShowConfirmPasswordToRenameFolder(
+                nonNull
+            )
+            HomeState.FolderActionConfirmation.FolderActionType.RESET_PASSWORD -> showDialogToResetPassword(
                 nonNull
             )
             HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> maybeShowConfirmPasswordToViewDetailFolder(
@@ -428,6 +439,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         } else {
             showConfirmPasswordDialog(folder.id)
         }
+    }
+
+    private fun showDialogToResetPassword(confirmation: HomeState.FolderActionConfirmation) {
+        val folder = confirmation.folder
+        BaseDialogFragment.showDialog(
+            ResetPasswordFolderDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putString(ExtraUtils.EXTRA_FOLDER_ID, folder.id)
+            }
+        }
+        viewModel.clearFolderActionConfirmation()
     }
 
     private fun maybeShowConfirmPasswordToViewDetailFolder(confirmation: HomeState.FolderActionConfirmation) {

@@ -94,5 +94,9 @@
     <string name="password_recovery_has_generated_error">Your password recovery has been generated.</string>
     <string name="password_recovery_generated">Password recovery generated, please copy and keep it in protected place.</string>
     <string name="copied">Copied!</string>
+    <string name="reset_password">Reset password</string>
+    <string name="error_require_password_confirm">Please input password confirm</string>
+    <string name="error_confirm_password_not_same">Password confirm is not same</string>
+    <string name="change_folder_password_success">Change folder\'s password successfully.</string>
 
 </resources>
