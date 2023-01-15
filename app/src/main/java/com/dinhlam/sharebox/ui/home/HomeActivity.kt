@@ -299,6 +299,11 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             return true
         }
 
+        if (item.itemId == R.id.item_guideline) {
+            openGuideLineDialog()
+            return true
+        }
+
         return super.onOptionsItemSelected(item)
     }
 

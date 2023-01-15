@@ -52,4 +52,10 @@
         android:visible="false"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/item_guideline"
+        android:icon="@drawable/ic_question_white"
+        android:title="@string/guideline"
+        app:showAsAction="ifRoom" />
+
 </menu>

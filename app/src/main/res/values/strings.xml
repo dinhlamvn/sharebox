@@ -109,5 +109,6 @@
     <string name="error_password_recovery_empty">Password recovery is empty, please try again.</string>
     <string name="error_change_password_unknown">Unknown error, please try again!</string>
     <string name="change_folder_password_success">Change folder\'s password successfully.</string>
+    <string name="guideline">Guideline</string>
 
 </resources>
