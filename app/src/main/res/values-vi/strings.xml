@@ -87,5 +87,8 @@
     <string name="default_folder_name">Mục chung</string>
     <string name="default_folder_desc">Thư mục mặc định</string>
     <string name="button_confirm">Xác nhận</string>
+    <string name="sort_option_title">Sắp xếp theo</string>
+    <string name="password_recovery_title">Password recovery</string>
+    <string name="password_recovery_desc">* Setting your password recovery to reset folder\'s password.</string>
 
 </resources>

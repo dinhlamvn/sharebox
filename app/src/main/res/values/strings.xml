@@ -90,5 +90,8 @@
     <string name="default_folder_desc">Home</string>
     <string name="button_confirm">Confirm</string>
     <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
+    <string name="sort_option_title">Sort by</string>
+    <string name="password_recovery_title">Password recovery</string>
+    <string name="password_recovery_desc">* Setting your password recovery to reset folder\'s password.</string>
 
 </resources>
