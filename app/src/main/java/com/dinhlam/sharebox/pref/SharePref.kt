@@ -10,7 +10,7 @@ abstract class SharePref constructor(
     sharePrefName: String
 ) {
 
-    protected val sharePref: SharedPreferences =
+    private val sharePref: SharedPreferences =
         context.getSharedPreferences(sharePrefName, Context.MODE_PRIVATE)
 
     fun put(key: String, value: Any, sync: Boolean = false) {
@@ -23,6 +23,7 @@ abstract class SharePref constructor(
                 is Float -> putFloat(key, value)
                 is Long -> putLong(key, value)
                 is String -> putString(key, value)
+                is Boolean -> putBoolean(key, value)
                 is Set<*> -> putStringSet(key, value.cast())
                 else -> error("Not support put for value: $value")
             }
@@ -52,7 +53,7 @@ abstract class SharePref constructor(
                 key,
                 default.cast()!!
             ) as T
-            else -> error("Not value for key: $key")
+            else -> default
         }
     }
 }

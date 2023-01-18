@@ -24,29 +24,24 @@ class AppSharePref @Inject constructor(
         private const val KEY_PASSWORD_RECOVERY = "recovery-password"
     }
 
-    fun isAppFirstLaunch(): Boolean = sharePref.getBoolean(KEY_APP_FIRST_LAUNCH, false)
+    fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, Boolean::class.java, false)
 
-    fun commitAppFirstLaunch() = sharePref.edit(true) { putBoolean(KEY_APP_FIRST_LAUNCH, true) }
+    fun commitAppFirstLaunch() = put(KEY_APP_FIRST_LAUNCH, true)
 
-    fun getLastSelectedFolder(): String = sharePref.getString(KEY_LAST_FOLDER_SELECTED, "") ?: ""
+    fun getLastSelectedFolder(): String = get(KEY_LAST_FOLDER_SELECTED, String::class.java, "")
 
     fun setLastSelectedFolder(folderId: String) = put(KEY_LAST_FOLDER_SELECTED, folderId)
 
     fun setSortType(sortType: SortType) {
-        sharePref.edit {
-            putInt(
-                KEY_SORT_SELECTED_OPTION, when (sortType) {
-                    SortType.NEWEST -> 1
-                    SortType.OLDEST -> 2
-                    else -> 0
-                }
-            )
-        }
-
+        put(KEY_SORT_SELECTED_OPTION, when (sortType) {
+            SortType.NEWEST -> 1
+            SortType.OLDEST -> 2
+            else -> 0
+        })
     }
 
     fun getSortType(): SortType {
-        return when (sharePref.getInt(KEY_SORT_SELECTED_OPTION, 0)) {
+        return when (get(KEY_SORT_SELECTED_OPTION, Int::class.java, 0)) {
             1 -> SortType.NEWEST
             2 -> SortType.OLDEST
             else -> SortType.NONE
@@ -54,16 +49,16 @@ class AppSharePref @Inject constructor(
     }
 
     fun isShowGuideLine(): Boolean {
-        return BuildConfig.DEBUG || sharePref.getBoolean(KEY_SHOW_GUIDELINE, true)
+        return BuildConfig.DEBUG || get(KEY_SHOW_GUIDELINE, Boolean::class.java, true)
     }
 
     fun turnOffShowGuideline() {
-        sharePref.edit { putBoolean(KEY_SHOW_GUIDELINE, false) }
+        put(KEY_SHOW_GUIDELINE, false)
     }
 
     fun setRecoveryPassword(recoveryPasswordHash: String) =
-        sharePref.edit { putString(KEY_PASSWORD_RECOVERY, recoveryPasswordHash) }
+        put(KEY_PASSWORD_RECOVERY, recoveryPasswordHash)
 
     fun getRecoveryPassword(): String =
-        sharePref.getString(KEY_PASSWORD_RECOVERY, "") ?: ""
+        get(KEY_PASSWORD_RECOVERY, String::class.java, "")
 }
