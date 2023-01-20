@@ -47,8 +47,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
                         val newState = reducer.invoke(currentState)
                         if (newState != currentState) {
                             _state.emit(newState)
-                            notifyConsumer(currentState, newState)
                         }
+                        notifyConsumer(currentState, newState)
                     }
 
                     getStateChannel.onReceive { block ->
@@ -60,7 +60,9 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     private fun notifyConsumer(oldState: T, newState: T) = viewModelScope.launch(Dispatchers.IO) {
-        consumers.forEach { consumer ->
+        val consumerIterator = consumers.iterator()
+        while (consumerIterator.hasNext()) {
+            val consumer = consumerIterator.next()
             val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
             beforeField.isAccessible = true
             val beforeValue = beforeField.get(oldState)
