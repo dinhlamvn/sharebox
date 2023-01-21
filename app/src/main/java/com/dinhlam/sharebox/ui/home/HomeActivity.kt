@@ -35,13 +35,9 @@ import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
-import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.getSerializableExtraCompat
-import com.dinhlam.sharebox.extensions.isHasPassword
-import com.dinhlam.sharebox.extensions.screenWidth
-import com.dinhlam.sharebox.extensions.showAlert
-import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.*
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.modelview.FolderListModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -51,6 +47,7 @@ import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyImageModelView
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTextModelView
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyWebLinkModelView
+import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.utils.FolderUtils
 import com.dinhlam.sharebox.utils.TagUtil
@@ -117,7 +114,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
             withViewType(R.layout.model_view_share_recently_web_link) {
                 ShareRecentlyWebLinkModelView.ShareRecentlyWebLinkWebHolder(
-                    this, ::showDialogShareToOther
+                    this, ::openRecentlyShareWebLink, ::showDialogShareToOther
                 ).apply {
                     updateLayoutParams {
                         width = percentWidth
@@ -548,5 +545,21 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.addCategory(Intent.CATEGORY_DEFAULT)
         startActivity(intent)
+    }
+
+    private fun openRecentlyShareWebLink(position: Int) = getState(viewModel) { state ->
+        val data = state.shareList.getOrNull(position) ?: return@getState
+        val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
+        gson.runCatching {
+            fromJson(
+                share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
+            )
+        }.getOrNull()?.url?.let { url ->
+            if (appSharePref.isCustomTabEnabled()) {
+                appRouter.moveToChromeCustomTab(this, url)
+            } else {
+                appRouter.moveToBrowser(url)
+            }
+        }
     }
 }

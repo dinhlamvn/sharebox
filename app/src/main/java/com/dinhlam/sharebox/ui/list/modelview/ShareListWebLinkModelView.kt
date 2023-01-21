@@ -1,7 +1,5 @@
 package com.dinhlam.sharebox.ui.list.modelview
 
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
@@ -38,14 +36,15 @@ data class ShareListWebLinkModelView(
 
     class ShareListWebLinkViewHolder(
         view: View,
-        val shareToOther: (Int) -> Unit
+        private val openAction: (String?) -> Unit,
+        private val shareToOther: (Int) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListWebLinkModelView, ModelViewShareListWebLinkBinding>(
         view
     ) {
 
         override fun onBind(item: ShareListWebLinkModelView, position: Int) {
             binding.root.setOnClickListener {
-                startView(item)
+                openAction.invoke(item.url)
             }
             binding.imageShare.setOnClickListener {
                 shareToOther(item.shareId)
@@ -68,14 +67,6 @@ data class ShareListWebLinkModelView(
 
         override fun onCreateViewBinding(view: View): ModelViewShareListWebLinkBinding {
             return ModelViewShareListWebLinkBinding.bind(view)
-        }
-
-        private fun startView(item: ShareListWebLinkModelView) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            intent.addCategory(Intent.CATEGORY_BROWSABLE)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
         }
     }
 }

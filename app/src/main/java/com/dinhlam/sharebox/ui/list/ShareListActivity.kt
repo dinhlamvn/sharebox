@@ -10,6 +10,8 @@ import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.pref.AppSharePref
+import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
 import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
 import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
@@ -47,7 +49,9 @@ class ShareListActivity :
             }
 
             withViewType(R.layout.model_view_share_list_web_link) {
-                ShareListWebLinkModelView.ShareListWebLinkViewHolder(this, ::showDialogShareToOther)
+                ShareListWebLinkModelView.ShareListWebLinkViewHolder(
+                    this, ::openShareWeb, ::showDialogShareToOther
+                )
             }
 
             withViewType(R.layout.model_view_share_list_image) {
@@ -70,6 +74,12 @@ class ShareListActivity :
 
     @Inject
     lateinit var shareHelper: ShareHelper
+
+    @Inject
+    lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var appSharePref: AppSharePref
 
     override fun onCreateViewBinding(): ActivityShareListBinding {
         return ActivityShareListBinding.inflate(layoutInflater)
@@ -96,5 +106,15 @@ class ShareListActivity :
     override fun onStateChanged(state: ShareListState) {
         shareListAdapter.requestBuildModelViews()
         supportActionBar?.title = state.title
+    }
+
+    private fun openShareWeb(url: String?) {
+        url?.let { nonNull ->
+            if (appSharePref.isCustomTabEnabled()) {
+                appRouter.moveToChromeCustomTab(this, nonNull)
+            } else {
+                appRouter.moveToBrowser(nonNull)
+            }
+        }
     }
 }

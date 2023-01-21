@@ -17,7 +17,7 @@ import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.utils.KeyboardUtil
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.UUID
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -53,6 +53,13 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             setResult(Activity.RESULT_OK, Intent().apply {
                 putExtra("sort-type", sortType)
             })
+        }
+
+        val isCustomTabEnabled = appSharePref.isCustomTabEnabled()
+        viewBinding.checkboxCustomTab.isChecked = isCustomTabEnabled
+
+        viewBinding.checkboxCustomTab.setOnCheckedChangeListener { _, isChecked ->
+            appSharePref.toggleCustomTab(isChecked)
         }
 
         val recoveryPassword = appSharePref.getRecoveryPassword()

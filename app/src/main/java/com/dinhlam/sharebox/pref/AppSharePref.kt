@@ -22,11 +22,13 @@ class AppSharePref @Inject constructor(
         private const val KEY_SHOW_GUIDELINE = "show-guide-line"
 
         private const val KEY_PASSWORD_RECOVERY = "recovery-password"
+
+        private const val KEY_CUSTOM_TAB_ENABLED = "custom-tab-enabled"
     }
 
-    fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, Boolean::class.java, false)
+    fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, Boolean::class.java, true)
 
-    fun commitAppFirstLaunch() = put(KEY_APP_FIRST_LAUNCH, true)
+    fun commitAppFirstLaunch() = put(KEY_APP_FIRST_LAUNCH, value = false, sync = true)
 
     fun getLastSelectedFolder(): String = get(KEY_LAST_FOLDER_SELECTED, String::class.java, "")
 
@@ -61,4 +63,8 @@ class AppSharePref @Inject constructor(
 
     fun getRecoveryPassword(): String =
         get(KEY_PASSWORD_RECOVERY, String::class.java, "")
+
+    fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, Boolean::class.java, true)
+
+    fun toggleCustomTab(isOn: Boolean) = put(KEY_CUSTOM_TAB_ENABLED, isOn)
 }

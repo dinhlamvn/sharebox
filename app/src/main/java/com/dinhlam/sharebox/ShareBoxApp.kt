@@ -28,13 +28,16 @@ class ShareBoxApp : Application() {
     }
 
     private fun createDefaultFoldersOnFirstLaunch() {
-        if (!appSharePref.isAppFirstLaunch()) {
+        if (appSharePref.isAppFirstLaunch()) {
             applicationScope.launch(Dispatchers.IO) {
-                folderRepository.insertMany(
-                    *FolderUtils.getDefaultFolders(this@ShareBoxApp).toTypedArray()
-                )
-                appSharePref.commitAppFirstLaunch()
+                val count = folderRepository.getAll().size
+                if (count == 0) {
+                    folderRepository.insertMany(
+                        *FolderUtils.getDefaultFolders(this@ShareBoxApp).toTypedArray()
+                    )
+                }
             }
+            appSharePref.commitAppFirstLaunch()
         }
     }
 }

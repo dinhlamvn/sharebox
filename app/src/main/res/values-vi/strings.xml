@@ -107,5 +107,6 @@
     <string name="error_password_recovery_empty">Mã khôi phục trống, vui lòng thử lại.</string>
     <string name="error_change_password_unknown">Lỗi không xác định, thử lại sau.</string>
     <string name="guideline">Hướng dẫn</string>
+    <string name="check_box_on_off_custom_tab">Open web page inside app</string>
 
 </resources>

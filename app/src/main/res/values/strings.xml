@@ -110,5 +110,6 @@
     <string name="error_change_password_unknown">Unknown error, please try again!</string>
     <string name="change_folder_password_success">Change folder\'s password successfully.</string>
     <string name="guideline">Guideline</string>
+    <string name="check_box_on_off_custom_tab">Open web page inside app</string>
 
 </resources>

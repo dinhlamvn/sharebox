@@ -1,7 +1,5 @@
 package com.dinhlam.sharebox.ui.home.modelview.recently
 
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
@@ -38,14 +36,15 @@ data class ShareRecentlyWebLinkModelView(
 
     class ShareRecentlyWebLinkWebHolder(
         view: View,
-        val shareToOther: (Int) -> Unit
+        private val openAction: (Int) -> Unit,
+        private val shareToOther: (Int) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareRecentlyWebLinkModelView, ModelViewShareRecentlyWebLinkBinding>(
         view
     ) {
 
         override fun onBind(item: ShareRecentlyWebLinkModelView, position: Int) {
             binding.root.setOnClickListener {
-                startView(item)
+                openAction.invoke(position)
             }
             binding.imageShare.setOnClickListener {
                 shareToOther(item.shareId)
@@ -68,14 +67,6 @@ data class ShareRecentlyWebLinkModelView(
 
         override fun onCreateViewBinding(view: View): ModelViewShareRecentlyWebLinkBinding {
             return ModelViewShareRecentlyWebLinkBinding.bind(view)
-        }
-
-        private fun startView(item: ShareRecentlyWebLinkModelView) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            intent.addCategory(Intent.CATEGORY_BROWSABLE)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
         }
     }
 }

@@ -45,6 +45,10 @@ abstract class SharePref constructor(
                 key,
                 default.cast()!!
             ) as T
+            typeOf.isAssignableFrom(Boolean::class.java) -> sharePref.getBoolean(
+                key,
+                default.cast()!!
+            ) as T
             typeOf.isAssignableFrom(String::class.java) -> sharePref.getString(
                 key,
                 default.cast()!!
@@ -53,7 +57,7 @@ abstract class SharePref constructor(
                 key,
                 default.cast()!!
             ) as T
-            else -> default
+            else -> error("No support get for type $typeOf")
         }
     }
 }

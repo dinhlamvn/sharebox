@@ -110,6 +110,10 @@ dependencies {
 
     // Messaging
     implementation 'com.google.firebase:firebase-messaging-ktx'
+
+    // Browser
+    def browser_version = "1.4.0"
+    implementation "androidx.browser:browser:$browser_version"
 }
 
 kapt {
