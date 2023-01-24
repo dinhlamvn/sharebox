@@ -38,7 +38,7 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
     protected val viewBinding: VB
         get() = binding!!
 
-    var dismissListener: OnDialogDismissListener? = null
+    private var dismissListener: OnDialogDismissListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

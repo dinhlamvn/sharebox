@@ -29,9 +29,9 @@ class SingleChoiceDialogFragment : BaseBottomSheetDialogFragment<DialogSingleCho
 
     private val adapter by lazy {
         BaseListAdapter.createAdapter({
-            items.mapIndexed { index, choice ->
+            addAll(items.mapIndexed { index, choice ->
                 SingleChoiceModelView("choice_$choice", choice, icons.getOrNull(index) ?: 0)
-            }
+            })
         }) {
 
             withViewType(R.layout.model_view_single_choice) {

@@ -26,18 +26,16 @@ class ChoiceTagDialogFragment :
     }
 
     private val adapter = BaseListAdapter.createAdapter({
-        mutableListOf<BaseListAdapter.BaseModelView>().apply {
-            getState(viewModel) { state ->
-                TagUtil.tags.forEach { tag ->
-                    add(
-                        TagModelView(
-                            tag.id.toLong(),
-                            tag.name,
-                            tag.tagResource,
-                            tag.id == state.selectedTagId
-                        )
+        getState(viewModel) { state ->
+            TagUtil.tags.forEach { tag ->
+                add(
+                    TagModelView(
+                        tag.id.toLong(),
+                        tag.name,
+                        tag.tagResource,
+                        tag.id == state.selectedTagId
                     )
-                }
+                )
             }
         }
     }) {

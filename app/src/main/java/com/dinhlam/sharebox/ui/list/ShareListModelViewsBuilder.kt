@@ -17,23 +17,21 @@ class ShareListModelViewsBuilder constructor(
     private val activity: ShareListActivity,
     private val viewModel: ShareListViewModel,
     private val gson: Gson
-) : () -> List<BaseListAdapter.BaseModelView> {
+) : (MutableList<BaseListAdapter.BaseModelView>) -> Unit {
 
-    override fun invoke(): List<BaseListAdapter.BaseModelView> {
-        return mutableListOf<BaseListAdapter.BaseModelView>().apply {
-            activity.getState(viewModel) { state ->
-                if (state.isRefreshing) {
-                    add(LoadingModelView)
-                    return@getState
-                }
+    override fun invoke(list: MutableList<BaseListAdapter.BaseModelView>) {
+        activity.getState(viewModel) { state ->
+            if (state.isRefreshing) {
+                list.add(LoadingModelView)
+                return@getState
+            }
 
-                val map = state.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }
-                map.forEach { entry ->
-                    val date = entry.key
-                    val shares = entry.value
-                    add(ShareListDateModelView("date$date", date))
-                    addAll(buildShares(shares))
-                }
+            val map = state.shareList.groupBy { it.createdAt.format("yyyy-MM-dd") }
+            map.forEach { entry ->
+                val date = entry.key
+                val shares = entry.value
+                list.add(ShareListDateModelView("date$date", date))
+                list.addAll(buildShares(shares))
             }
         }
     }

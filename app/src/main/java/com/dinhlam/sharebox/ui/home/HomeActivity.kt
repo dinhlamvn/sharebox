@@ -135,32 +135,28 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     private val homeAdapter = BaseListAdapter.createAdapter({
-        mutableListOf<BaseListAdapter.BaseModelView>().apply {
-            getState(viewModel) { state ->
-                if (state.isRefreshing) {
-                    add(LoadingModelView)
-                    return@getState
-                }
-                val folders = state.folders
+        getState(viewModel) { state ->
+            if (state.isRefreshing) {
+                add(LoadingModelView)
+                return@getState
+            }
+            val folders = state.folders
 
-                if (folders.isEmpty()) {
-                    add(SingleTextModelView(getString(R.string.home_folder_list_empty)))
-                } else {
-                    folders.forEach { folder ->
-                        add(
-                            FolderListModelView(
-                                "folder_${folder.id}",
-                                folder.name,
-                                folder.desc,
-                                folder.updatedAt,
-                                folder.isHasPassword(),
-                                TagUtil.getTag(folder.tag)
-                            )
+            if (folders.isEmpty()) {
+                add(SingleTextModelView(getString(R.string.home_folder_list_empty)))
+            } else {
+                folders.forEach { folder ->
+                    add(
+                        FolderListModelView(
+                            "folder_${folder.id}",
+                            folder.name,
+                            folder.desc,
+                            folder.updatedAt,
+                            folder.isHasPassword(),
+                            TagUtil.getTag(folder.tag)
                         )
-                    }
+                    )
                 }
-
-
             }
         }
     }) {

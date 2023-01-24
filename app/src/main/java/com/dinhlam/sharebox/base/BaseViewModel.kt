@@ -54,7 +54,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    private fun notifyConsumer(oldState: T, newState: T) = viewModelScope.launch(Dispatchers.IO) {
+    private fun notifyConsumer(oldState: T, newState: T) {
         val consumerIterator = consumers.iterator()
         while (consumerIterator.hasNext()) {
             val consumer = consumerIterator.next()
@@ -114,10 +114,14 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         liveData.observe(lifecycleOwner, block)
         consumers.add(Consumer(property.name, liveData.cast()!!, notifyOnChanged))
     }
-    
+
     override fun onCleared() {
         super.onCleared()
+        val consumerIterator = consumers.iterator()
+        while (consumerIterator.hasNext()) {
+            consumerIterator.next()
+            consumerIterator.remove()
+        }
         viewModelScope.cancel()
-        consumers.clear()
     }
 }

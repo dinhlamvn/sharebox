@@ -15,18 +15,16 @@ class HomeShareListModelViewsBuilder constructor(
     private val activity: HomeActivity,
     private val viewModel: HomeViewModel,
     private val gson: Gson
-) : () -> List<BaseListAdapter.BaseModelView> {
+) : (MutableList<BaseListAdapter.BaseModelView>) -> Unit {
 
-    override fun invoke(): List<BaseListAdapter.BaseModelView> {
-        return mutableListOf<BaseListAdapter.BaseModelView>().apply {
-            activity.getState(viewModel) { state ->
-                if (state.isRefreshing) {
-                    add(LoadingModelView)
-                    return@getState
-                }
-
-                addAll(buildShares(state.shareList))
+    override fun invoke(list: MutableList<BaseListAdapter.BaseModelView>) {
+        activity.getState(viewModel) { state ->
+            if (state.isRefreshing) {
+                list.add(LoadingModelView)
+                return@getState
             }
+
+            list.addAll(buildShares(state.shareList))
         }
     }
 

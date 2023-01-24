@@ -10,20 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.utils.Ids
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
-    private val viewHolderManager: ViewHolderManager, private val modelViewsBuilder: (() -> List<T>)
+    private val viewHolderManager: ViewHolderManager,
+    private val modelViewsBuilder: MutableList<T>.() -> Unit
 ) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
 
     private val buildModelViewsScope =
         CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+
     private var buildModelViewsJob: Job? = null
 
     private val modelViews = mutableListOf<T>()
@@ -48,7 +45,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
     private suspend fun buildModelViewsInternal() {
         modelViews.clear()
-        modelViews.addAll(modelViewsBuilder.invoke())
+        modelViewsBuilder.invoke(modelViews)
         withContext(Dispatchers.Main) {
             super.submitList(modelViews.toList())
         }
@@ -74,7 +71,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     companion object {
         @JvmStatic
         fun createAdapter(
-            modelViewsBuilder: () -> List<BaseModelView>, block: ViewHolderManager.() -> Unit
+            modelViewsBuilder: MutableList<BaseModelView>.() -> Unit,
+            block: ViewHolderManager.() -> Unit
         ): BaseListAdapter<BaseModelView> {
             val viewHolderManager = ViewHolderManager().apply(block)
             return BaseListAdapter(viewHolderManager, modelViewsBuilder)

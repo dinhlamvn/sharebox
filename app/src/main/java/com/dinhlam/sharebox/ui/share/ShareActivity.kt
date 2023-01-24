@@ -69,31 +69,29 @@ class ShareActivity :
     override val viewModel: ShareViewModel by viewModels()
 
     private val shareContentAdapter = BaseListAdapter.createAdapter({
-        mutableListOf<BaseListAdapter.BaseModelView>().apply {
-            getState(viewModel) { state ->
-                when (val shareInfo = state.shareInfo) {
-                    is ShareState.ShareInfo.ShareText -> add(
-                        ShareTextModelView(
-                            "shareText", shareInfo.text
-                        )
+        getState(viewModel) { state ->
+            when (val shareInfo = state.shareInfo) {
+                is ShareState.ShareInfo.ShareText -> add(
+                    ShareTextModelView(
+                        "shareText", shareInfo.text
                     )
-                    is ShareState.ShareInfo.ShareWebLink -> add(
-                        ShareWebLinkModelView(
-                            "shareText", shareInfo.url
-                        )
+                )
+                is ShareState.ShareInfo.ShareWebLink -> add(
+                    ShareWebLinkModelView(
+                        "shareText", shareInfo.url
                     )
-                    is ShareState.ShareInfo.ShareImage -> add(
-                        ShareImageModelView(
-                            "shareImage", shareInfo.uri
-                        )
+                )
+                is ShareState.ShareInfo.ShareImage -> add(
+                    ShareImageModelView(
+                        "shareImage", shareInfo.uri
                     )
-                    is ShareState.ShareInfo.ShareMultipleImage -> addAll(shareInfo.uris.mapIndexed { index, uri ->
-                        ShareMultipleImageModelView(
-                            "shareMultipleImage$index", uri
-                        )
-                    })
-                    else -> add(ShareDefaultModelView())
-                }
+                )
+                is ShareState.ShareInfo.ShareMultipleImage -> addAll(shareInfo.uris.mapIndexed { index, uri ->
+                    ShareMultipleImageModelView(
+                        "shareMultipleImage$index", uri
+                    )
+                })
+                else -> add(ShareDefaultModelView())
             }
         }
     }) {

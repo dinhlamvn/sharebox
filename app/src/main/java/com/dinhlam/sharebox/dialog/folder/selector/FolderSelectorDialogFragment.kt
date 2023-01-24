@@ -28,16 +28,14 @@ class FolderSelectorDialogFragment :
     }
 
     private val folderAdapter = BaseListAdapter.createAdapter({
-        mutableListOf<BaseListAdapter.BaseModelView>().apply {
-            getState(viewModel) { state ->
-                if (state.isFirstLoad) {
-                    return@getState add(0, LoadingModelView)
-                }
-                state.folders.forEach {
-                    add(FolderModelView("folder_${it.id}", it.name, it.desc))
-                }
-                add(NewFolderModelView)
+        getState(viewModel) { state ->
+            if (state.isFirstLoad) {
+                return@getState add(0, LoadingModelView)
             }
+            state.folders.forEach {
+                add(FolderModelView("folder_${it.id}", it.name, it.desc))
+            }
+            add(NewFolderModelView)
         }
     }) {
         withViewType(R.layout.model_view_folder) {
