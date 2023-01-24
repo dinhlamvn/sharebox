@@ -25,9 +25,4 @@ abstract class BaseViewModelFragment<T : BaseViewModel.BaseState, VM : BaseViewM
             }
         }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.onClearConsumers()
-    }
 }

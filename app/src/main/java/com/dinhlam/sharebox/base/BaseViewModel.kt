@@ -5,15 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharebox.extensions.cast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty
@@ -119,13 +114,10 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         liveData.observe(lifecycleOwner, block)
         consumers.add(Consumer(property.name, liveData.cast()!!, notifyOnChanged))
     }
-
-    fun onClearConsumers() {
-        consumers.clear()
-    }
-
+    
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
+        consumers.clear()
     }
 }

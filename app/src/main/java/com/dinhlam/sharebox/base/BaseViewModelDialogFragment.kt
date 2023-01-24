@@ -21,9 +21,4 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
         }
         super.onViewCreated(view, savedInstanceState)
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.onClearConsumers()
-    }
 }
