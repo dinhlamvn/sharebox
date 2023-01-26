@@ -12,14 +12,6 @@ data class ShareImageModelView(val id: String, val uri: Uri) :
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_image
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareImageModelView && other.id == this.id
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareImageModelView && other == this
-    }
-
     class ShareImageViewHolder(view: View) :
         BaseListAdapter.BaseViewHolder<ShareImageModelView, ModelViewShareImageBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewShareImageBinding {

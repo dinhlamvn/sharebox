@@ -130,9 +130,13 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
         abstract val modelLayoutRes: Int
 
-        abstract fun areItemsTheSame(other: BaseModelView): Boolean
+        open fun areItemsTheSame(other: BaseModelView): Boolean {
+            return this.modelId == other.modelId
+        }
 
-        abstract fun areContentsTheSame(other: BaseModelView): Boolean
+        open fun areContentsTheSame(other: BaseModelView): Boolean {
+            return this === other
+        }
 
         open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =
             BaseSpanSizeLookup.SpanSizeConfig.Normal

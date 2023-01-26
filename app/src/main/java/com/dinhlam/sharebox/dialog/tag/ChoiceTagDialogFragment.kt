@@ -79,14 +79,6 @@ class ChoiceTagDialogFragment :
     ) : BaseListAdapter.BaseModelView(id) {
         override val modelLayoutRes: Int
             get() = R.layout.single_choose_tag
-
-        override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other.modelId == this.modelId
-        }
-
-        override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-            return other === this
-        }
     }
 
     private class TagViewHolder(view: View, val clickListener: OnClickListener) :

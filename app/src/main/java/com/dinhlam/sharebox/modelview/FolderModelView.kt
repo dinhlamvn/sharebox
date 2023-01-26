@@ -15,14 +15,6 @@ data class FolderModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_folder
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderModelView && this.id == other.id
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is FolderModelView && this === other
-    }
-
     class FolderViewHolder(
         view: View,
         private val folderClick: (Int) -> Unit,

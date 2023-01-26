@@ -18,14 +18,6 @@ data class SingleChoiceModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_single_choice
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other.modelId == this.modelId
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other == this
-    }
-
     class SingleChoiceViewHolder(
         view: View, private val listener: ((Int) -> Unit)?
     ) : BaseListAdapter.BaseViewHolder<SingleChoiceModelView, ModelViewSingleChoiceBinding>(view) {

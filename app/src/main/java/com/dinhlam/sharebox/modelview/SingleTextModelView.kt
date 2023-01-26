@@ -11,14 +11,6 @@ data class SingleTextModelView(val text: String) :
     override val modelLayoutRes: Int
         get() = R.layout.model_view_single_text
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is SingleTextModelView
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is SingleTextModelView
-    }
-
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }

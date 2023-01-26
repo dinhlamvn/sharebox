@@ -22,16 +22,8 @@ data class ShareListTextModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_text
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListTextModelView && other.id == this.id
-    }
-
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListTextModelView && other === this
     }
 
     class ShareListTextViewHolder(

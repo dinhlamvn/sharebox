@@ -23,16 +23,8 @@ data class ShareListImageModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_image
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListImageModelView && other.id == this.id
-    }
-
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListImageModelView && other === this
     }
 
     class ShareListImageViewHolder(view: View, private val block: (Int) -> Unit) :

@@ -22,16 +22,8 @@ data class ShareRecentlyWebLinkModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_recently_web_link
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareRecentlyWebLinkModelView && other.id == this.id
-    }
-
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareRecentlyWebLinkModelView && other === this
     }
 
     class ShareRecentlyWebLinkWebHolder(

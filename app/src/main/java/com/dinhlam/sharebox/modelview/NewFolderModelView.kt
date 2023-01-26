@@ -10,14 +10,6 @@ object NewFolderModelView : BaseListAdapter.BaseModelView("model_view_new_folder
     override val modelLayoutRes: Int
         get() = R.layout.model_view_new_folder
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is NewFolderModelView
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is NewFolderModelView && this === other
-    }
-
     class NewFolderViewHolder(view: View, private val listener: OnClickListener) :
         BaseListAdapter.BaseViewHolder<NewFolderModelView, ModelViewNewFolderBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewNewFolderBinding {

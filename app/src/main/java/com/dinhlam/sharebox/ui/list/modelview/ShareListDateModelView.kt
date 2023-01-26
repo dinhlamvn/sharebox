@@ -13,14 +13,6 @@ data class ShareListDateModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_date
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListDateModelView && this.date == other.date
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListDateModelView && this === other
-    }
-
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }

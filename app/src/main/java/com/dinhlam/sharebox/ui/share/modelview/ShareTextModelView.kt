@@ -10,14 +10,6 @@ data class ShareTextModelView(val id: String, val text: String?) :
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_text
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareTextModelView && other.id == this.id
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareTextModelView && other == this
-    }
-
     class ShareTextViewHolder(view: View) :
         BaseListAdapter.BaseViewHolder<ShareTextModelView, ModelViewShareTextBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewShareTextBinding {

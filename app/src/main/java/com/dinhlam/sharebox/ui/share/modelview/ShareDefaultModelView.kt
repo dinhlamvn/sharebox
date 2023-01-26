@@ -9,14 +9,6 @@ class ShareDefaultModelView : BaseListAdapter.BaseModelView("share_default") {
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_default
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareDefaultModelView
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareDefaultModelView
-    }
-
     class ShareDefaultViewHolder(view: View) :
         BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseModelView, ModelViewShareDefaultBinding>(
             view

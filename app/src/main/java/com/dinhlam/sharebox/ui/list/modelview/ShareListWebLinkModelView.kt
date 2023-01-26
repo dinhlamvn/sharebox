@@ -22,16 +22,8 @@ data class ShareListWebLinkModelView(
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_web_link
 
-    override fun areItemsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListWebLinkModelView && other.id == this.id
-    }
-
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
-    }
-
-    override fun areContentsTheSame(other: BaseListAdapter.BaseModelView): Boolean {
-        return other is ShareListWebLinkModelView && other === this
     }
 
     class ShareListWebLinkViewHolder(
