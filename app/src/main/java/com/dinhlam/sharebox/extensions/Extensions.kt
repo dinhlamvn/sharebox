@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
@@ -31,4 +32,12 @@ inline fun <reified T : Parcelable> Intent.getParcelableArrayListExtraCompat(key
         return getParcelableArrayListExtra(key, T::class.java)
     }
     return getParcelableArrayListExtra(key)
+}
+
+inline fun <reified T> Context.getSystemServiceCompat(name: String, clazz: Class<T>): T {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        getSystemService(T::class.java)
+    } else {
+        getSystemService(name) as T
+    }
 }

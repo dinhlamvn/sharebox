@@ -28,12 +28,12 @@ class FolderRepository @Inject constructor(
     }
 
     override fun updateById(id: String, block: (Folder) -> Folder) {
-        val folder = folderDao.getById(id)
+        val folder = folderDao.getById(id) ?: return
         val newData = block.invoke(folder)
         update(newData.copy(updatedAt = System.currentTimeMillis()))
     }
 
-    override fun get(id: String): Folder {
+    override fun get(id: String): Folder? {
         return folderDao.getById(id)
     }
 
@@ -47,5 +47,9 @@ class FolderRepository @Inject constructor(
 
     fun getByTag(tagId: Int): List<Folder> {
         return folderDao.getByTag(tagId)
+    }
+
+    override fun search(query: String): List<Folder> {
+        return emptyList()
     }
 }

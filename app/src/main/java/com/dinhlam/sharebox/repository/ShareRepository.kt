@@ -30,7 +30,7 @@ class ShareRepository @Inject constructor(
     override fun updateById(id: Int, block: (Share) -> Share) {
     }
 
-    override fun get(id: Int): Share {
+    override fun get(id: Int): Share? {
         return shareDao.getById(id)
     }
 
@@ -52,5 +52,9 @@ class ShareRepository @Inject constructor(
 
     fun getRecentList(): List<Share> {
         return shareDao.getRecentList()
+    }
+
+    override fun search(query: String): List<Share> {
+        return shareDao.search(query)
     }
 }

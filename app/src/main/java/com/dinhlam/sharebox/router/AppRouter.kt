@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.router
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,6 +25,12 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
     fun shareList(folderId: String): Intent {
         return Intent(context, ShareListActivity::class.java).apply {
             putExtra(ExtraUtils.EXTRA_FOLDER_ID, folderId)
+        }
+    }
+
+    fun shareListSearch(searchQuery: String): Intent {
+        return Intent(context, ShareListActivity::class.java).apply {
+            putExtra(SearchManager.QUERY, searchQuery)
         }
     }
 

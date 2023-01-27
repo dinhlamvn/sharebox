@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.SearchView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -175,12 +179,24 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
     }
 
+    private fun performSearch() {
+        if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                val intent = appRouter.shareListSearch(query)
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
+
     override fun onCreateViewBinding(): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        performSearch()
 
         viewModel.setSortType(appSharePref.getSortType())
 
@@ -269,9 +285,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    @SuppressLint("RestrictedApi")
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.home_menu, menu)
         menu.cast<MenuBuilder>()?.setOptionalIconsVisible(true)
-        return menuInflater.inflate(R.menu.home_menu, menu).let { true }
+        val searchManager =
+            getSystemServiceCompat(Context.SEARCH_SERVICE, SearchManager::class.java)
+        menu.findItem(R.id.search).actionView.cast<SearchView>()
+            ?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -13,9 +13,17 @@ class ShareListViewModel @Inject constructor(
 ) : BaseViewModel<ShareListState>(ShareListState()) {
 
     fun setFolderId(folderId: String) = executeJob {
-        val folder = folderRepository.get(folderId)
+        val folder = folderRepository.get(folderId) ?: return@executeJob
         setState { copy(folderId = folder.id, title = folder.name) }
         loadShareList()
+    }
+
+    fun setSearchQuery(searchQuery: String) {
+        setState { copy(searchQuery = searchQuery) }
+        execute { state ->
+            val list = shareRepository.search(state.searchQuery)
+            setState { copy(shareList = list, isRefreshing = false) }
+        }
     }
 
     fun loadShareList() = execute { state ->

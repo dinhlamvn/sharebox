@@ -29,7 +29,7 @@ interface FolderDao {
     fun delete(folder: Folder): Int
 
     @Query("SELECT * FROM folder WHERE id = :id")
-    fun getById(id: String): Folder
+    fun getById(id: String): Folder?
 
     @Query("SELECT * FROM folder WHERE tag = :tagId")
     fun getByTag(tagId: Int): List<Folder>

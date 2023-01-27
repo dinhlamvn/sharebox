@@ -112,7 +112,14 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     ) {
         val liveData = OneTimeLiveData<T>(null)
         liveData.observe(lifecycleOwner, block)
-        consumers.add(Consumer(property.name, liveData.cast()!!, notifyOnChanged))
+        val consumer = Consumer(property.name, liveData.cast()!!, notifyOnChanged)
+        consumers.add(consumer)
+        state.value.runCatching {
+            val valueField = this::class.java.getDeclaredField(property.name)
+            valueField.isAccessible = true
+            val value = valueField.get(this)
+            consumer.liveData.postValue(value)
+        }
     }
 
     override fun onCleared() {

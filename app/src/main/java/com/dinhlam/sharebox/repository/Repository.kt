@@ -9,6 +9,8 @@ interface Repository<T, in R> {
     fun insertMany(vararg items: T)
     fun updateMany(vararg items: T)
     fun updateById(id: R, block: (T) -> T)
-    fun get(id: R): T
+    fun get(id: R): T?
     fun getAll(sortType: SortType = SortType.NONE): List<T>
+
+    fun search(query: String): List<T>
 }

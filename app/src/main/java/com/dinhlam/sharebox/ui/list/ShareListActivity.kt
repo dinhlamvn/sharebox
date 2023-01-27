@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.list
 
+import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -8,7 +9,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
-import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
@@ -91,21 +92,34 @@ class ShareListActivity :
         super.onCreate(savedInstanceState)
         viewBinding.recyclerView.adapter = shareListAdapter
 
-        val folderId = intent.getStringExtra(ExtraUtils.EXTRA_FOLDER_ID) ?: return run {
-            showToast(R.string.error_require_folder)
-            finish()
-        }
+        val folderId = intent.getStringExtra(ExtraUtils.EXTRA_FOLDER_ID) ?: ""
         viewModel.setFolderId(folderId)
+
+        val searchQuery = intent.getStringExtra(SearchManager.QUERY) ?: ""
+        searchQuery.takeIfNotNullOrBlank()?.let { nonNullQuery ->
+            viewModel.setSearchQuery(nonNullQuery)
+        }
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadShareList()
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
+
+        viewModel.consume(this, ShareListState::folderName) { folderName ->
+            if (folderName.isNotBlank()) {
+                supportActionBar?.title = folderName
+            }
+        }
+
+        viewModel.consume(this, ShareListState::searchQuery) { query ->
+            if (query.isNotBlank()) {
+                supportActionBar?.title = getString(R.string.title_share_list_search, query)
+            }
+        }
     }
 
     override fun onStateChanged(state: ShareListState) {
         shareListAdapter.requestBuildModelViews()
-        supportActionBar?.title = state.title
     }
 
     private fun openShareWeb(url: String?) {

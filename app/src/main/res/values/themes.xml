@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/primaryDarkColor</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="editTextStyle">@style/AppEditText</item>
+        <item name="autoCompleteTextViewStyle">@style/Theme.AppAutoCompleteTextView</item>
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">
@@ -83,6 +84,10 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.AppAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
 </resources>
