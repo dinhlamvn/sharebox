@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
@@ -31,6 +32,11 @@ class ShareListActivity :
 
     private val shareListAdapter by lazy {
         BaseListAdapter.createAdapter(modelViewsBuilder) {
+            withViewType(R.layout.model_view_single_text) {
+                SingleTextModelView.SingleTextViewHolder(this)
+            }
+
+
             withViewType(R.layout.model_view_loading) {
                 LoadingViewHolder(this)
             }

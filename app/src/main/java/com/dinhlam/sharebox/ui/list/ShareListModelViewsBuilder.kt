@@ -1,10 +1,12 @@
 package com.dinhlam.sharebox.ui.list
 
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
 import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
 import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
@@ -23,6 +25,11 @@ class ShareListModelViewsBuilder constructor(
         activity.getState(viewModel) { state ->
             if (state.isRefreshing) {
                 list.add(LoadingModelView)
+                return@getState
+            }
+
+            if (state.shareList.isEmpty()) {
+                list.add(SingleTextModelView(activity.getString(R.string.no_result)))
                 return@getState
             }
 

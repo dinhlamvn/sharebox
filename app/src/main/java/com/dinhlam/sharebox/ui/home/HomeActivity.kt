@@ -147,7 +147,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             val folders = state.folders
 
             if (folders.isEmpty()) {
-                add(SingleTextModelView(getString(R.string.home_folder_list_empty)))
+                add(SingleTextModelView(getString(R.string.no_result)))
             } else {
                 folders.forEach { folder ->
                     add(

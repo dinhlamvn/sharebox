@@ -85,7 +85,7 @@
     <string name="contact_title">Contact:</string>
     <string name="developer_email" translatable="false">dinhlamvn353@gmail.com</string>
     <string name="content_desc_button_guide_line">Guideline button</string>
-    <string name="home_folder_list_empty">No results</string>
+    <string name="no_result">No results</string>
     <string name="default_folder_name">Home</string>
     <string name="default_folder_desc">Home</string>
     <string name="button_confirm">Confirm</string>
