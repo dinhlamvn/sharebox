@@ -235,7 +235,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
 
         viewModel.consume(this, HomeState::shareList, true) { shares ->
-            viewBinding.recyclerViewShareRecently.isVisible = shares.isNotEmpty()
+            val isShowRecently = shares.isNotEmpty()
+            viewBinding.textViewTitleRecently.isVisible = isShowRecently
+            viewBinding.recyclerViewShareRecently.isVisible = isShowRecently
         }
 
         viewBinding.buttonCreateFolder.setOnClickListener {

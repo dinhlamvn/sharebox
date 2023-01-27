@@ -108,5 +108,6 @@
     <string name="error_change_password_unknown">Lỗi không xác định, thử lại sau.</string>
     <string name="guideline">Hướng dẫn</string>
     <string name="check_box_on_off_custom_tab">Open web page inside app</string>
+    <string name="recently">Gần đây</string>
 
 </resources>
