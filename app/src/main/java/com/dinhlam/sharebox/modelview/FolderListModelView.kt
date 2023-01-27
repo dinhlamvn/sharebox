@@ -21,7 +21,7 @@ data class FolderListModelView(
     class FolderListViewHolder(
         view: View,
         private val folderClick: (Int) -> Unit,
-        private val folderOptionClick: ((View, Int) -> Unit)? = null
+        private val folderOptionClick: ((Int) -> Unit)? = null
     ) : BaseListAdapter.BaseViewHolder<FolderListModelView, ModelViewFolderListBinding>(view) {
         override fun onCreateViewBinding(view: View): ModelViewFolderListBinding {
             return ModelViewFolderListBinding.bind(view)
@@ -32,8 +32,8 @@ data class FolderListModelView(
                 folderClick(position)
             }
 
-            binding.imageViewOption.setOnClickListener { view ->
-                folderOptionClick?.invoke(view, position)
+            binding.imageViewOption.setOnClickListener {
+                folderOptionClick?.invoke(position)
             }
 
             binding.textViewFolderName.text = item.name

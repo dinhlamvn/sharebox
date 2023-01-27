@@ -34,7 +34,7 @@ inline fun <reified T : Parcelable> Intent.getParcelableArrayListExtraCompat(key
     return getParcelableArrayListExtra(key)
 }
 
-inline fun <reified T> Context.getSystemServiceCompat(name: String, clazz: Class<T>): T {
+inline fun <reified T> Context.getSystemServiceCompat(name: String): T {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         getSystemService(T::class.java)
     } else {

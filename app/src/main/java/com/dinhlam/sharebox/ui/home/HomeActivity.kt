@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -289,8 +288,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.home_menu, menu)
         menu.cast<MenuBuilder>()?.setOptionalIconsVisible(true)
-        val searchManager =
-            getSystemServiceCompat(Context.SEARCH_SERVICE, SearchManager::class.java)
+        val searchManager = getSystemServiceCompat<SearchManager>(Context.SEARCH_SERVICE)
         menu.findItem(R.id.search).actionView.cast<SearchView>()
             ?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         return true
@@ -333,7 +331,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewModel.loadFolders()
     }
 
-    private fun onFolderOptionClick(clickedView: View, position: Int) {
+    private fun onFolderOptionClick(position: Int) {
         val folder = getState(viewModel) { state -> state.folders.getOrNull(position) } ?: return
         val items = mutableMapOf<String, () -> Unit>()
         val icons = mutableListOf<Int>()
