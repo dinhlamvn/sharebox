@@ -57,7 +57,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private fun notifyConsumer(oldState: T, newState: T) {
         val consumerIterator = consumers.iterator()
-        while (consumerIterator.hasNext() && stateScope.isActive) {
+        while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
             val consumer = consumerIterator.next()
             val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
             beforeField.isAccessible = true

@@ -36,7 +36,6 @@ class ShareListActivity :
                 SingleTextModelView.SingleTextViewHolder(this)
             }
 
-
             withViewType(R.layout.model_view_loading) {
                 LoadingViewHolder(this)
             }
