@@ -10,6 +10,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.selects.select
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty
 
@@ -28,7 +29,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     private val setStateChannel = Channel<T.() -> T>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(T) -> Unit>(Channel.UNLIMITED)
 
-    private val consumers = mutableSetOf<Consumer>()
+    private val consumers = CopyOnWriteArraySet<Consumer>()
 
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
@@ -56,7 +57,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private fun notifyConsumer(oldState: T, newState: T) {
         val consumerIterator = consumers.iterator()
-        while (consumerIterator.hasNext()) {
+        while (consumerIterator.hasNext() && stateScope.isActive) {
             val consumer = consumerIterator.next()
             val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
             beforeField.isAccessible = true
@@ -124,11 +125,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     override fun onCleared() {
         super.onCleared()
-        val consumerIterator = consumers.iterator()
-        while (consumerIterator.hasNext()) {
-            consumerIterator.next()
-            consumerIterator.remove()
-        }
         viewModelScope.cancel()
+        stateScope.cancel()
+        consumers.clear()
     }
 }
