@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.view
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.loader.ImageLoader
@@ -71,6 +72,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     fun setLink(url: String?, block: () -> Style = { Style() }) {
         url?.let { nonNullUrl ->
             val style = block.invoke()
+            binding.progressBar.isVisible = true
             binding.textViewTitle.maxLines = style.maxLineTitle
             binding.textViewDescription.maxLines = style.maxLineDesc
             binding.textViewUrl.maxLines = style.maxLineUrl
@@ -91,6 +93,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 
     private suspend fun handleResult(openGraphResult: OpenGraphResult) =
         withContext(Dispatchers.Main) {
+            binding.progressBar.isVisible = false
             ImageLoader.load(context, openGraphResult.image, binding.imageView)
             binding.textViewUrl.text = openGraphResult.url
             binding.textViewTitle.text = openGraphResult.title
@@ -100,6 +103,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 
     private suspend fun handleErrorResult(url: String) =
         withContext(Dispatchers.Main) {
+            binding.progressBar.isVisible = false
             ImageLoader.load(context, R.drawable.no_image, binding.imageView)
             binding.textViewUrl.text = url
         }
