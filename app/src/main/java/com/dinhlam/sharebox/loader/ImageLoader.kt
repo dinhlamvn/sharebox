@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.loader
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
@@ -16,6 +17,10 @@ object ImageLoader {
         imageView: ImageView,
         @DrawableRes error: Int = R.drawable.no_image
     ) {
+        if (context is Activity && context.isFinishing) {
+            return
+        }
+
         Glide.with(context)
             .load(url)
             .error(error)
@@ -23,6 +28,10 @@ object ImageLoader {
     }
 
     fun load(context: Context, uri: Uri?, imageView: ImageView) {
+        if (context is Activity && context.isFinishing) {
+            return
+        }
+
         Glide.with(context)
             .load(uri)
             .fitCenter()
@@ -36,6 +45,10 @@ object ImageLoader {
         circle: Boolean = false,
         @DrawableRes error: Int = R.drawable.no_image
     ) {
+        if (context is Activity && context.isFinishing) {
+            return
+        }
+
         var req = Glide.with(context)
             .load(res)
         if (circle) req = req.circleCrop()
@@ -49,6 +62,10 @@ object ImageLoader {
         @DrawableRes error: Int = 0,
         circle: Boolean = false
     ) {
+        if (context is Activity && context.isFinishing) {
+            return
+        }
+
         var req = Glide.with(context)
             .load(url)
         if (circle) req = req.circleCrop()
