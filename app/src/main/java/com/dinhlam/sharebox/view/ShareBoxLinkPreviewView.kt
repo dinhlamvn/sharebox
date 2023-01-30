@@ -15,6 +15,12 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
 ) : ConstraintLayout(context, attrs, defStyle) {
 
+    data class Style(
+        val maxLineTitle: Int = 2,
+        val maxLineDesc: Int = 3,
+        val maxLineUrl: Int = 2
+    )
+
     companion object {
         private const val REFERRER = "http://www.google.com"
         private const val TIMEOUT = 100000
@@ -54,7 +60,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         var type: String? = null
     )
 
-    private lateinit var binding: ViewShareBoxLinkPreviewBinding
+    private var binding: ViewShareBoxLinkPreviewBinding
 
     init {
         inflate(context, R.layout.view_share_box_link_preview, this).apply {
@@ -62,8 +68,12 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
     }
 
-    fun setLink(url: String?) {
+    fun setLink(url: String?, block: () -> Style = { Style() }) {
         url?.let { nonNullUrl ->
+            val style = block.invoke()
+            binding.textViewTitle.maxLines = style.maxLineTitle
+            binding.textViewDescription.maxLines = style.maxLineDesc
+            binding.textViewUrl.maxLines = style.maxLineUrl
             linkPreviewScope.launch {
                 AGENTS.forEach { agent ->
                     val openGraphResult = getLinkInfo(nonNullUrl, agent)

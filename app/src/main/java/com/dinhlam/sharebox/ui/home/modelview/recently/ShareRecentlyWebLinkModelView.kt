@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.databinding.ModelViewShareRecentlyWebLinkBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class ShareRecentlyWebLinkModelView(
     val id: String,
@@ -48,13 +49,16 @@ data class ShareRecentlyWebLinkModelView(
                 R.drawable.ic_share_text,
                 true
             )
-            binding.textViewUrl.text = item.url
+            binding.textViewUrl.setLink(item.url) {
+                ShareBoxLinkPreviewView.Style(1, 1, 1)
+            }
             binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
             binding.textViewNote.isVisible = !item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
         }
 
         override fun onUnBind() {
+            binding.textViewUrl.destroy()
         }
 
         override fun onCreateViewBinding(view: View): ModelViewShareRecentlyWebLinkBinding {
