@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.dialog.guideline
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +13,7 @@ import androidx.webkit.WebViewClientCompat
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.databinding.DialogGuidelineBinding
 import com.dinhlam.sharebox.extensions.screenHeight
+import java.util.*
 
 class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
@@ -25,8 +25,7 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+        inflater: LayoutInflater, container: ViewGroup?
     ): DialogGuidelineBinding {
         return DialogGuidelineBinding.inflate(inflater, container, false)
     }
@@ -46,25 +45,18 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
         }
 
         viewBinding.webView.webViewClient = object : WebViewClientCompat() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                viewBinding.contentLoadingProgress.show()
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                viewBinding.contentLoadingProgress.hide()
-            }
-
             override fun shouldInterceptRequest(
-                view: WebView?,
-                request: WebResourceRequest?
+                view: WebView?, request: WebResourceRequest?
             ): WebResourceResponse? {
                 return webViewAssetLoader.shouldInterceptRequest(request!!.url)
             }
         }
 
-        viewBinding.webView.loadUrl("https://appassets.androidplatform.net/assets/guideline/guide.html")
+        if (Locale.getDefault().language == "vi") {
+            viewBinding.webView.loadUrl("https://appassets.androidplatform.net/assets/guideline/vi/guide.html")
+        } else {
+            viewBinding.webView.loadUrl("https://appassets.androidplatform.net/assets/guideline/en/guide.html")
+        }
     }
 
     override fun getSpacing(): Int {

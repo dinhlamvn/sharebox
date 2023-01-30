@@ -29,14 +29,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/content_loading_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/web_view"
-        app:layout_constraintEnd_toEndOf="@id/web_view"
-        app:layout_constraintStart_toStartOf="@id/web_view"
-        app:layout_constraintTop_toTopOf="@id/web_view" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
