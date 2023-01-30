@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.utils
 
+import com.dinhlam.sharebox.extensions.isWebLink
+
 object IconUtils {
     private const val FB_ICON_URL = "https://img.icons8.com/fluency/144/000000/facebook-new.png"
 
@@ -37,7 +39,7 @@ object IconUtils {
 
     private fun isWebShare(content: String?): Boolean {
         val nonNull = content ?: return false
-        return Regex("^(http:|https:).+").matches(nonNull)
+        return nonNull.isWebLink()
     }
 
     private fun isFacebookShare(content: String?): Boolean {
