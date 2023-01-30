@@ -64,7 +64,7 @@ dependencies {
     def appcompat_version = "1.6.0"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
-    def material_version = "1.7.0"
+    def material_version = "1.8.0"
     implementation "com.google.android.material:material:$material_version"
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -96,7 +96,7 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
 
     // Webkit support
-    def webkit_version = "1.5.0"
+    def webkit_version = "1.6.0"
     implementation "androidx.webkit:webkit:$webkit_version"
 
 
@@ -114,6 +114,10 @@ dependencies {
     // Browser
     def browser_version = "1.4.0"
     implementation "androidx.browser:browser:$browser_version"
+
+    // Jsoup for link preview
+    def jsoup_version = "1.8.3"
+    implementation "org.jsoup:jsoup:$jsoup_version"
 }
 
 kapt {

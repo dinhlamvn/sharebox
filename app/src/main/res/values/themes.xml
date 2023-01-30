@@ -39,6 +39,10 @@
         <item name="fontFamily">@font/roboto</item>
     </style>
 
+    <style name="TextAppearance.HeaderMedium" parent="TextAppearance.Header">
+        <item name="fontFamily">@font/roboto_medium</item>
+    </style>
+
     <style name="TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/colorTextBlack</item>
         <item name="android:textSize">14sp</item>
@@ -48,6 +52,10 @@
     <style name="TextAppearance.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">13sp</item>
         <item name="fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="TextAppearance.CaptionMedium" parent="TextAppearance.Caption">
+        <item name="fontFamily">@font/roboto_medium</item>
     </style>
 
     <style name="TextAppearance.Caption.Italic" parent="TextAppearance.MaterialComponents.Caption">

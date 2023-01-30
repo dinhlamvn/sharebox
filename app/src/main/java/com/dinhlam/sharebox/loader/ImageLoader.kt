@@ -6,6 +6,7 @@ import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
+import com.dinhlam.sharebox.R
 
 object ImageLoader {
 
@@ -26,12 +27,13 @@ object ImageLoader {
         context: Context,
         @DrawableRes res: Int,
         imageView: ImageView,
-        circle: Boolean = false
+        circle: Boolean = false,
+        @DrawableRes error: Int = R.drawable.no_image
     ) {
         var req = Glide.with(context)
             .load(res)
         if (circle) req = req.circleCrop()
-        req.into(imageView)
+        req.error(error).into(imageView)
     }
 
     fun load(

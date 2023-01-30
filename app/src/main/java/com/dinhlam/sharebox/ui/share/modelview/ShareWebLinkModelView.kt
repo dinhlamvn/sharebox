@@ -17,10 +17,11 @@ data class ShareWebLinkModelView(val id: String, val url: String?) :
         }
 
         override fun onBind(item: ShareWebLinkModelView, position: Int) {
-            binding.textViewUrl.text = item.url
+            binding.linkPreview.setLink(item.url)
         }
 
         override fun onUnBind() {
+            binding.linkPreview.destroy()
         }
     }
 }
