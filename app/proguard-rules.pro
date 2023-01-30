@@ -22,3 +22,5 @@
 -keepclassmembers class * implements com.dinhlam.sharebox.base.BaseViewModel$BaseState {
     *;
 }
+
+-keeppackagenames org.jsoup.nodes
