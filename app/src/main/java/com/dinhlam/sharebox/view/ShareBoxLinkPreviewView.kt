@@ -152,8 +152,4 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
             null
         }
     }
-
-    fun destroy() {
-        job.cancel()
-    }
 }

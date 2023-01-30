@@ -58,7 +58,6 @@ data class ShareRecentlyWebLinkModelView(
         }
 
         override fun onUnBind() {
-            binding.textViewUrl.destroy()
         }
 
         override fun onCreateViewBinding(view: View): ModelViewShareRecentlyWebLinkBinding {

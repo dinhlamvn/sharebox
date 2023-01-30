@@ -10,9 +10,15 @@ import com.dinhlam.sharebox.R
 
 object ImageLoader {
 
-    fun load(context: Context, url: String?, imageView: ImageView) {
+    fun load(
+        context: Context,
+        url: String?,
+        imageView: ImageView,
+        @DrawableRes error: Int = R.drawable.no_image
+    ) {
         Glide.with(context)
             .load(url)
+            .error(error)
             .into(imageView)
     }
 

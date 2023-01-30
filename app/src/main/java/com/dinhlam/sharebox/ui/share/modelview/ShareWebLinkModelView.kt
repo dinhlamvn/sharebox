@@ -21,7 +21,6 @@ data class ShareWebLinkModelView(val id: String, val url: String?) :
         }
 
         override fun onUnBind() {
-            binding.linkPreview.destroy()
         }
     }
 }

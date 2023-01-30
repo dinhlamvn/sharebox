@@ -27,9 +27,14 @@ import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordD
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.selector.FolderSelectorDialogFragment
 import com.dinhlam.sharebox.extensions.*
+import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.ui.share.modelview.*
+import com.dinhlam.sharebox.ui.share.modelview.ShareImageModelView
+import com.dinhlam.sharebox.ui.share.modelview.ShareMultipleImageModelView
+import com.dinhlam.sharebox.ui.share.modelview.ShareTextModelView
+import com.dinhlam.sharebox.ui.share.modelview.ShareWebLinkModelView
 import com.dinhlam.sharebox.utils.ExtraUtils
+import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -92,12 +97,12 @@ class ShareActivity :
                         "shareMultipleImage$index", uri
                     )
                 })
-                else -> add(ShareDefaultModelView())
+                else -> add(LoadingModelView)
             }
         }
     }) {
-        withViewType(R.layout.model_view_share_default) {
-            ShareDefaultModelView.ShareDefaultViewHolder(this)
+        withViewType(R.layout.model_view_loading) {
+            LoadingViewHolder(this)
         }
 
         withViewType(R.layout.model_view_share_text) {
@@ -215,7 +220,8 @@ class ShareActivity :
     }
 
     private fun handleSendNoThing() {
-        viewModel.setShareInfo(ShareState.ShareInfo.None)
+        showToast(R.string.share_receive_no_thing)
+        finish()
     }
 
     private fun handleSendText(text: String) {

@@ -112,5 +112,6 @@
     <string name="search_title">Tìm kiếm</string>
     <string name="search_hint">Tìm kiếm…</string>
     <string name="title_share_list_search">Kết quả của %s</string>
+    <string name="share_receive_no_thing">Không có gì để lưu</string>
 
 </resources>
