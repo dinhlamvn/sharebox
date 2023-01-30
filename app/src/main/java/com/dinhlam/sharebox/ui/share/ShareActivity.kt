@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
@@ -140,7 +141,8 @@ class ShareActivity :
         when {
             intent.action == Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("text/") == true) {
-                    handleSendText(intent)
+                    val shareContent = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                    handleSendText(shareContent)
                 } else if (intent.type?.startsWith("image/") == true) {
                     handleSendImage(intent)
                 } else {
@@ -149,6 +151,9 @@ class ShareActivity :
             }
             intent.action == Intent.ACTION_SEND_MULTIPLE && intent.type?.startsWith("image/") == true -> {
                 handleSendMultipleImage(intent)
+            }
+            intent.action == Intent.ACTION_PROCESS_TEXT -> {
+                handleProcessText(intent)
             }
             else -> handleSendNoThing()
         }
@@ -173,6 +178,16 @@ class ShareActivity :
         viewModel.consume(this, ShareState::requestPassword) { requestPassword ->
             if (requestPassword) {
                 showDialogInputPassword()
+            }
+        }
+    }
+
+    private fun handleProcessText(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val isReadOnly = intent.getBooleanExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
+            if (isReadOnly) {
+                val content = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
+                handleSendText(content.toString())
             }
         }
     }
@@ -203,11 +218,10 @@ class ShareActivity :
         viewModel.setShareInfo(ShareState.ShareInfo.None)
     }
 
-    private fun handleSendText(intent: Intent) {
-        val shareContent = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+    private fun handleSendText(text: String) {
         val shareInfo = when {
-            shareContent.isWebLink() -> ShareState.ShareInfo.ShareWebLink(shareContent)
-            else -> ShareState.ShareInfo.ShareText(shareContent)
+            text.isWebLink() -> ShareState.ShareInfo.ShareWebLink(text)
+            else -> ShareState.ShareInfo.ShareText(text)
         }
         viewModel.setShareInfo(shareInfo)
     }

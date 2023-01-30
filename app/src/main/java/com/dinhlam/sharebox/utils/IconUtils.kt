@@ -27,7 +27,17 @@ object IconUtils {
         if (isTiktokShare(shareContent)) {
             return TIKTOK_ICON_URL
         }
-        return WEB_LINK_ICON
+
+        if (isWebShare(shareContent)) {
+            return WEB_LINK_ICON
+        }
+
+        return ""
+    }
+
+    private fun isWebShare(content: String?): Boolean {
+        val nonNull = content ?: return false
+        return Regex("^(http:|https:).+").matches(nonNull)
     }
 
     private fun isFacebookShare(content: String?): Boolean {
