@@ -51,7 +51,7 @@ class FolderConfirmPasswordDialogFragment :
             nonNull.passwordAlias.takeIfNotNullOrBlank()?.let { alias ->
                 viewBinding.textPasswordAlias.visibility = View.VISIBLE
                 viewBinding.textPasswordAlias.text = HtmlCompat.fromHtml(
-                    getString(R.string.password_alias, alias), HtmlCompat.FROM_HTML_MODE_LEGACY
+                    getString(R.string.password_reminder, alias), HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
             } ?: viewBinding.textPasswordAlias.run {
                 text = null

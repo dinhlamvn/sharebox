@@ -17,7 +17,7 @@ class FolderCreatorDialogViewModel @Inject constructor(
         folderName: String,
         folderDesc: String? = null,
         folderPassword: String? = null,
-        folderPasswordAlias: String? = null
+        folderPasswordReminder: String? = null
     ) {
         if (folderName.isBlank()) {
             return setState { copy(error = R.string.error_require_folder_name) }
@@ -27,7 +27,7 @@ class FolderCreatorDialogViewModel @Inject constructor(
             name = folderName,
             desc = folderDesc,
             password = folderPassword?.md5(),
-            passwordAlias = folderPasswordAlias
+            passwordAlias = folderPasswordReminder
         )
         executeJob(onError = {
             setState { copy(toastRes = R.string.error_create_folder_try_again) }

@@ -44,7 +44,10 @@ class FolderCreatorDialogFragment :
             }
         }
 
-        viewModel.consume(viewLifecycleOwner, FolderCreatorDialogState::folderIdInserted) { folderId ->
+        viewModel.consume(
+            viewLifecycleOwner,
+            FolderCreatorDialogState::folderIdInserted
+        ) { folderId ->
             folderId?.let {
                 getCallback()?.onFolderCreated(it)
                 dismiss()
@@ -60,7 +63,7 @@ class FolderCreatorDialogFragment :
 
         viewBinding.checkboxPassword.setOnCheckedChangeListener { _, isChecked ->
             viewBinding.textLayoutFolderPassword.isVisible = isChecked
-            viewBinding.textLayoutFolderPasswordAlias.isVisible = isChecked
+            viewBinding.textLayoutFolderPasswordReminder.isVisible = isChecked
         }
 
         viewBinding.textInputFolderName.setOnFocusChangeListener { _, hasFocus ->
@@ -83,9 +86,9 @@ class FolderCreatorDialogFragment :
         val folderDesc = viewBinding.textInputFolderDesc.getTrimmedText().takeIfNotNullOrBlank()
         val folderPassword =
             viewBinding.textInputFolderPassword.getTrimmedText().takeIfNotNullOrBlank()
-        val folderPasswordAlias =
-            viewBinding.textInputFolderPasswordAlias.getTrimmedText().takeIfNotNullOrBlank()
-        viewModel.createFolder(folderName, folderDesc, folderPassword, folderPasswordAlias)
+        val folderPasswordReminder =
+            viewBinding.textInputFolderPasswordReminder.getTrimmedText().takeIfNotNullOrBlank()
+        viewModel.createFolder(folderName, folderDesc, folderPassword, folderPasswordReminder)
     }
 
     override fun getSpacing(): Int {

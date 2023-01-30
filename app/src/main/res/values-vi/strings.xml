@@ -21,8 +21,8 @@
     <string name="text_input_folder_password_hint_desc">Nhập mật khẩu ở đây</string>
     <string name="text_input_folder_password_hint">Mật khẩu (Không bắt buộc)</string>
     <string name="check_box_create_folder_password">Bảo vệ thư mục với mật khẩu</string>
-    <string name="text_input_folder_password_alias_hint_desc">Gợi nhớ mật khẩu</string>
-    <string name="text_input_folder_password_alias_hint">Gợi nhớ mật khẩu (không bắt buộc)</string>
+    <string name="text_input_folder_password_reminder_hint_desc">Gợi nhớ mật khẩu</string>
+    <string name="text_input_folder_password_reminder_hint">Gợi nhớ mật khẩu (không bắt buộc)</string>
     <string name="error_create_folder_try_again">Có lỗi xảy ra khi tạo thư mục mới, vui lòng thử lại sau.</string>
     <string name="remove">Loại trừ</string>
     <string name="rename">Đổi tên</string>
@@ -36,7 +36,7 @@
     <string name="button_done">Xong</string>
     <string name="password_incorrect">Sai mật khẩu</string>
     <string name="error_require_password">Vui lòng nhập mật khẩu</string>
-    <string name="password_alias"><![CDATA[Gợi nhớ mật khẩu: <b>%s</b>]]></string>
+    <string name="password_reminder"><![CDATA[Gợi nhớ mật khẩu: <b>%s</b>]]></string>
     <string name="error_folder_rename">Có lỗi xảy ra khi đổi tên thư mục</string>
     <string name="check_box_save_password_next_session">Lưu mật khẩu cho lần mở kế tiếp (hủy khi thoát ứng dụng)</string>
     <string name="detail">Chi tiết</string>

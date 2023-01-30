@@ -21,8 +21,8 @@
     <string name="text_input_folder_password_hint_desc">Type password here</string>
     <string name="text_input_folder_password_hint">Password (Optional)</string>
     <string name="check_box_create_folder_password">Encrypt with password</string>
-    <string name="text_input_folder_password_alias_hint_desc">Your alias</string>
-    <string name="text_input_folder_password_alias_hint">Password alias (Optional)</string>
+    <string name="text_input_folder_password_reminder_hint_desc">Your reminder</string>
+    <string name="text_input_folder_password_reminder_hint">Password reminder (Optional)</string>
     <string name="error_create_folder_try_again">Has an error until create folder, please try again!</string>
     <string name="remove">Remove</string>
     <string name="rename">Rename</string>
@@ -31,12 +31,12 @@
     <string name="confirmation">Confirmation</string>
     <string name="delete_folder_confirmation_message"><![CDATA[Are you sure delete folder <b>%s</b> (%s)?]]></string>
     <string name="cancel">Cancel</string>
-    <string name="delete_folder_success">Folder deleted</string>
+    <string name="delete_folder_success">Folder is deleted</string>
     <string name="text_input_folder_password_confirm_hint">Password</string>
     <string name="button_done">Done</string>
     <string name="password_incorrect">Password is incorrect</string>
     <string name="error_require_password">Please input password</string>
-    <string name="password_alias"><![CDATA[Password alias: <b>%s</b>]]></string>
+    <string name="password_reminder"><![CDATA[Password reminder: <b>%s</b>]]></string>
     <string name="error_folder_rename">Has an error when change name</string>
     <string name="check_box_save_password_next_session">Save password for next session</string>
     <string name="detail">Detail</string>
