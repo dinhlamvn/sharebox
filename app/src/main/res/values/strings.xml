@@ -116,5 +116,6 @@
     <string name="search_hint">Search…</string>
     <string name="title_share_list_search">Result of %s</string>
     <string name="share_receive_no_thing">No thing to save</string>
+    <string name="show_recently">Show recently share</string>
 
 </resources>

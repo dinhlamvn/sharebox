@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.pref
 
 import android.content.Context
-import androidx.core.content.edit
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.model.SortType
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,6 +23,8 @@ class AppSharePref @Inject constructor(
         private const val KEY_PASSWORD_RECOVERY = "recovery-password"
 
         private const val KEY_CUSTOM_TAB_ENABLED = "custom-tab-enabled"
+
+        private const val KEY_SHOW_RECENTLY_SHARE = "show-recently-share"
     }
 
     fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, Boolean::class.java, true)
@@ -35,11 +36,13 @@ class AppSharePref @Inject constructor(
     fun setLastSelectedFolder(folderId: String) = put(KEY_LAST_FOLDER_SELECTED, folderId)
 
     fun setSortType(sortType: SortType) {
-        put(KEY_SORT_SELECTED_OPTION, when (sortType) {
-            SortType.NEWEST -> 1
-            SortType.OLDEST -> 2
-            else -> 0
-        })
+        put(
+            KEY_SORT_SELECTED_OPTION, when (sortType) {
+                SortType.NEWEST -> 1
+                SortType.OLDEST -> 2
+                else -> 0
+            }
+        )
     }
 
     fun getSortType(): SortType {
@@ -61,10 +64,14 @@ class AppSharePref @Inject constructor(
     fun setRecoveryPassword(recoveryPasswordHash: String) =
         put(KEY_PASSWORD_RECOVERY, recoveryPasswordHash)
 
-    fun getRecoveryPassword(): String =
-        get(KEY_PASSWORD_RECOVERY, String::class.java, "")
+    fun getRecoveryPassword(): String = get(KEY_PASSWORD_RECOVERY, String::class.java, "")
 
     fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, Boolean::class.java, true)
 
     fun toggleCustomTab(isOn: Boolean) = put(KEY_CUSTOM_TAB_ENABLED, isOn)
+
+    fun isShowRecentlyShare() = get(KEY_SHOW_RECENTLY_SHARE, Boolean::class.java, true)
+
+    fun toggleShowRecentlyShare(showRecentlyShare: Boolean) =
+        put(KEY_SHOW_RECENTLY_SHARE, showRecentlyShare)
 }

@@ -113,5 +113,6 @@
     <string name="search_hint">Tìm kiếm…</string>
     <string name="title_share_list_search">Kết quả của %s</string>
     <string name="share_receive_no_thing">Không có gì để lưu</string>
+    <string name="show_recently">Show recently share</string>
 
 </resources>

@@ -77,6 +77,16 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                 generateRecoveryPasswordHash()
             }
         }
+
+
+        val isShowRecently = appSharePref.isShowRecentlyShare()
+        viewBinding.switchShowRecently.setOnCheckedChangeListener { _, isOn ->
+            if (isOn != appSharePref.isShowRecentlyShare()) {
+                setResult(Activity.RESULT_OK)
+                appSharePref.toggleShowRecentlyShare(isOn)
+            }
+        }
+        viewBinding.switchShowRecently.isChecked = isShowRecently
     }
 
     private fun generateRecoveryPasswordHash() {

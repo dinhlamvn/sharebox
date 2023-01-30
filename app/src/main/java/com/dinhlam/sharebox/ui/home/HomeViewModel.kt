@@ -4,6 +4,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Folder
 import com.dinhlam.sharebox.model.SortType
+import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.repository.FolderRepository
 import com.dinhlam.sharebox.repository.ShareRepository
 import com.dinhlam.sharebox.utils.TagUtil
@@ -12,8 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val folderRepository: FolderRepository, private val shareRepository: ShareRepository
-) : BaseViewModel<HomeState>(HomeState()) {
+    private val folderRepository: FolderRepository,
+    private val shareRepository: ShareRepository,
+    private val appSharePref: AppSharePref
+) : BaseViewModel<HomeState>(HomeState(isShowRecentlyShare = appSharePref.isShowRecentlyShare())) {
 
     init {
         loadShareListRecently()
@@ -29,9 +32,20 @@ class HomeViewModel @Inject constructor(
         setState { copy(folders = folders, isRefreshing = false) }
     }
 
-    fun loadShareListRecently() = executeJob {
-        val shares = shareRepository.getRecentList()
-        setState { copy(shareList = shares) }
+    fun reloadShareRecently() = getState { state ->
+        if (state.isShowRecentlyShare != appSharePref.isShowRecentlyShare()) {
+            setState { copy(isShowRecentlyShare = appSharePref.isShowRecentlyShare()) }
+            loadShareListRecently()
+        }
+    }
+
+    fun loadShareListRecently() = execute { state ->
+        if (state.isShowRecentlyShare) {
+            val shares = shareRepository.getRecentList()
+            setState { copy(shareList = shares) }
+        } else {
+            setState { copy(shareList = emptyList()) }
+        }
     }
 
     fun onFolderClick(position: Int) = execute { state ->

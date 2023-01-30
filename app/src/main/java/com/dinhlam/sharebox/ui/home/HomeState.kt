@@ -17,6 +17,7 @@ data class HomeState(
     val folderPasswordConfirmRemind: Set<String> = emptySet(),
     val tag: Int? = null,
     val sortType: SortType = SortType.NONE,
+    val isShowRecentlyShare: Boolean = true
 ) : BaseViewModel.BaseState {
     data class FolderActionConfirmation(
         val folder: Folder,

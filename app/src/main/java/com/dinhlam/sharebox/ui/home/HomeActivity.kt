@@ -69,6 +69,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     private val settingLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.reloadShareRecently()
                 val sortType = result.data?.getSerializableExtraCompat<SortType>("sort-type")
                     ?: return@registerForActivityResult
                 viewModel.setSortType(sortType)
