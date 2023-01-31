@@ -124,5 +124,7 @@
     <string name="share_to_other">Share to other</string>
     <string name="share_deleted">Share is deleted</string>
     <string name="delete_share_error">Has an error until delete this share, please try again!</string>
+    <string name="fast_save">Fast save share</string>
+    <string name="fast_save_desc">This setting will help you save a share without input note.</string>
 
 </resources>

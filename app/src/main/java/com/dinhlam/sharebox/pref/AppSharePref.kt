@@ -25,6 +25,8 @@ class AppSharePref @Inject constructor(
         private const val KEY_CUSTOM_TAB_ENABLED = "custom-tab-enabled"
 
         private const val KEY_SHOW_RECENTLY_SHARE = "show-recently-share"
+
+        private const val KEY_FAST_SAVE = "fast-save"
     }
 
     fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, Boolean::class.java, true)
@@ -74,4 +76,9 @@ class AppSharePref @Inject constructor(
 
     fun toggleShowRecentlyShare(showRecentlyShare: Boolean) =
         put(KEY_SHOW_RECENTLY_SHARE, showRecentlyShare)
+
+    fun isFastSave() = get(KEY_FAST_SAVE, Boolean::class.java, false)
+
+    fun toggleFastSave(isFastSave: Boolean) =
+        put(KEY_FAST_SAVE, isFastSave)
 }

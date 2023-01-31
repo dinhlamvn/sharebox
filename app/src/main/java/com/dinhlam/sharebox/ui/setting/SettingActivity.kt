@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
@@ -87,6 +88,23 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
         viewBinding.switchShowRecently.isChecked = isShowRecently
+
+        val isFastSave = appSharePref.isFastSave()
+        viewBinding.switchFastSave.isChecked = isFastSave
+        viewBinding.switchFastSave.setOnCheckedChangeListener { _, isOn ->
+            appSharePref.toggleFastSave(isOn)
+            if (isOn) {
+                showDialogAlertFastSaveEnable()
+            }
+        }
+    }
+
+    private fun showDialogAlertFastSaveEnable() {
+        AlertDialog.Builder(this)
+            .setMessage(R.string.fast_save_desc)
+            .setCancelable(true)
+            .setPositiveButton(R.string.button_done, null)
+            .show()
     }
 
     private fun generateRecoveryPasswordHash() {

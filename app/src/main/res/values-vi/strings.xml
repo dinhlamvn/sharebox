@@ -121,5 +121,7 @@
     <string name="share_to_other">Share to other</string>
     <string name="share_deleted">Share is deleted</string>
     <string name="delete_share_error">Has an error until delete this share, please try again!</string>
+    <string name="fast_save">Lưu trữ nhanh chia sẻ</string>
+    <string name="fast_save_desc">Tính năng này sẽ giúp bạn lưu chia sẻ mà không cần phải nhập ghi chú.</string>
 
 </resources>
