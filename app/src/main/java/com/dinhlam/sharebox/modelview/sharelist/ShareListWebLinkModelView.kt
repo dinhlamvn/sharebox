@@ -1,16 +1,16 @@
-package com.dinhlam.sharebox.ui.home.modelview.recently
+package com.dinhlam.sharebox.modelview.sharelist
 
 import android.view.View
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ModelViewShareRecentlyWebLinkBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListWebLinkBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
-data class ShareRecentlyWebLinkModelView(
+data class ShareListWebLinkModelView(
     val id: String,
     val iconUrl: String?,
     val url: String?,
@@ -20,19 +20,19 @@ data class ShareRecentlyWebLinkModelView(
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
-        get() = R.layout.model_view_share_recently_web_link
+        get() = R.layout.model_view_share_list_web_link
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    class ShareRecentlyWebLinkWebHolder(
+    class ShareListWebLinkWebHolder(
         view: View, private val openAction: (Int) -> Unit, private val shareToOther: (Int) -> Unit
-    ) : BaseListAdapter.BaseViewHolder<ShareRecentlyWebLinkModelView, ModelViewShareRecentlyWebLinkBinding>(
+    ) : BaseListAdapter.BaseViewHolder<ShareListWebLinkModelView, ModelViewShareListWebLinkBinding>(
         view
     ) {
 
-        override fun onBind(item: ShareRecentlyWebLinkModelView, position: Int) {
+        override fun onBind(item: ShareListWebLinkModelView, position: Int) {
             binding.container.setOnClickListener {
                 openAction.invoke(position)
             }
@@ -52,8 +52,8 @@ data class ShareRecentlyWebLinkModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewShareRecentlyWebLinkBinding {
-            return ModelViewShareRecentlyWebLinkBinding.bind(view)
+        override fun onCreateViewBinding(view: View): ModelViewShareListWebLinkBinding {
+            return ModelViewShareListWebLinkBinding.bind(view)
         }
     }
 }

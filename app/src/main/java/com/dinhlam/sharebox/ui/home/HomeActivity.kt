@@ -39,12 +39,12 @@ import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.modelview.FolderListModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SingleTextModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyImageModelView
-import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTextModelView
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTitleModelView
-import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyWebLinkModelView
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.*
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
@@ -95,18 +95,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 add(SingleTextModelView(getString(R.string.no_result)))
             } else {
                 folders.forEach { folder ->
-                    add(
-                        FolderListModelView(
-                            "folder_${folder.id}",
-                            folder.name,
-                            folder.desc,
-                            folder.updatedAt,
-                            folder.isHasPassword(),
-                            TagUtil.getTag(folder.tag),
-                            getState(viewModel) { state -> state.folderShareCountMap[folder.id] }
-                                ?: 0
-                        )
-                    )
+                    add(FolderListModelView("folder_${folder.id}",
+                        folder.name,
+                        folder.desc,
+                        folder.updatedAt,
+                        folder.isHasPassword(),
+                        TagUtil.getTag(folder.tag),
+                        getState(viewModel) { state -> state.folderShareCountMap[folder.id] } ?: 0))
                 }
             }
 
@@ -116,8 +111,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 if (models.isEmpty()) {
                     add(
                         SingleTextModelView(
-                            getString(R.string.recently_empty),
-                            ViewGroup.LayoutParams.WRAP_CONTENT
+                            getString(R.string.recently_empty), ViewGroup.LayoutParams.WRAP_CONTENT
                         )
                     )
                 } else {
@@ -144,8 +138,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             )
         }
 
-        withViewType(R.layout.model_view_share_recently_text) {
-            ShareRecentlyTextModelView.ShareRecentlyTextViewHolder(this, { textContent ->
+        withViewType(R.layout.model_view_share_list_text) {
+            ShareListTextModelView.ShareListTextViewHolder(this, { textContent ->
                 val dialog = TextViewerDialogFragment()
                 dialog.arguments = Bundle().apply {
                     putString(Intent.EXTRA_TEXT, textContent)
@@ -154,14 +148,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }, ::showDialogShareToOther)
         }
 
-        withViewType(R.layout.model_view_share_recently_web_link) {
-            ShareRecentlyWebLinkModelView.ShareRecentlyWebLinkWebHolder(
+        withViewType(R.layout.model_view_share_list_web_link) {
+            ShareListWebLinkModelView.ShareListWebLinkWebHolder(
                 this, ::openRecentlyShareWebLink, ::showDialogShareToOther
             )
         }
 
-        withViewType(R.layout.model_view_share_recently_image) {
-            ShareRecentlyImageModelView.ShareRecentlyImageViewHolder(
+        withViewType(R.layout.model_view_share_list_image) {
+            ShareListImageModelView.ShareListImageViewHolder(
                 this, ::showDialogShareToOther, ::viewImage
             )
         }
@@ -174,7 +168,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     val shareInfo = gson.fromJson(
                         share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
                     )
-                    ShareRecentlyWebLinkModelView(
+                    ShareListWebLinkModelView(
                         id = "${share.id}",
                         iconUrl = IconUtils.getIconUrl(shareInfo.url),
                         url = shareInfo.url,
@@ -187,7 +181,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     val shareInfo = gson.fromJson(
                         share.shareInfo, ShareState.ShareInfo.ShareImage::class.java
                     )
-                    ShareRecentlyImageModelView(
+                    ShareListImageModelView(
                         "${share.id}", shareInfo.uri, share.createdAt, share.shareNote, share.id
                     )
                 }
@@ -195,7 +189,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     val shareInfo = gson.fromJson(
                         share.shareInfo, ShareState.ShareInfo.ShareText::class.java
                     )
-                    ShareRecentlyTextModelView(
+                    ShareListTextModelView(
                         id = "${share.id}",
                         iconUrl = IconUtils.getIconUrl(shareInfo.text),
                         content = shareInfo.text,

@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.list
 
 import android.app.SearchManager
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
@@ -11,13 +12,15 @@ import com.dinhlam.sharebox.databinding.ActivityShareListBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.modelview.SingleTextModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
+import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -55,13 +58,15 @@ class ShareListActivity :
             }
 
             withViewType(R.layout.model_view_share_list_web_link) {
-                ShareListWebLinkModelView.ShareListWebLinkViewHolder(
+                ShareListWebLinkModelView.ShareListWebLinkWebHolder(
                     this, ::openShareWeb, ::showDialogShareToOther
                 )
             }
 
             withViewType(R.layout.model_view_share_list_image) {
-                ShareListImageModelView.ShareListImageViewHolder(this, ::showDialogShareToOther)
+                ShareListImageModelView.ShareListImageViewHolder(
+                    this, ::showDialogShareToOther, ::viewImage
+                )
             }
         }
     }
@@ -127,13 +132,28 @@ class ShareListActivity :
         shareListAdapter.requestBuildModelViews()
     }
 
-    private fun openShareWeb(url: String?) {
-        url?.let { nonNull ->
+    private fun openShareWeb(position: Int) = getState(viewModel) { state ->
+        val data = state.shareList.getOrNull(position) ?: return@getState
+        val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
+        gson.runCatching {
+            fromJson(
+                share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
+            )
+        }.getOrNull()?.url?.let { nonNull ->
             if (appSharePref.isCustomTabEnabled()) {
                 appRouter.moveToChromeCustomTab(this, nonNull)
             } else {
                 appRouter.moveToBrowser(nonNull)
             }
         }
+    }
+
+    private fun viewImage(uri: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uri, "image/*")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        startActivity(intent)
     }
 }

@@ -1,7 +1,6 @@
-package com.dinhlam.sharebox.ui.list.modelview
+package com.dinhlam.sharebox.modelview.sharelist
 
 import android.view.View
-import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
@@ -30,7 +29,9 @@ data class ShareListTextModelView(
         view: View,
         private val onClick: (String?) -> Unit,
         private val onShareToOther: (Int) -> Unit
-    ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(view) {
+    ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(
+        view
+    ) {
 
         override fun onBind(item: ShareListTextModelView, position: Int) {
             binding.imageShare.setOnClickListener {
@@ -42,15 +43,10 @@ data class ShareListTextModelView(
             }
 
             ImageLoader.load(
-                context,
-                item.iconUrl,
-                binding.imageView,
-                R.drawable.ic_share_text,
-                true
+                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
             )
             binding.textViewContent.text = item.content
-            binding.textViewCreatedDate.text = item.createdAt.format("H:mm")
-            binding.textViewNote.isVisible = !item.note.isNullOrBlank()
+            binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
         }
 

@@ -7,10 +7,10 @@ import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SingleTextModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListImageModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListTextModelView
-import com.dinhlam.sharebox.ui.list.modelview.ShareListWebLinkModelView
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.gson.Gson
