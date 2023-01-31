@@ -28,6 +28,7 @@ import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
 import com.dinhlam.sharebox.dialog.folder.selector.FolderSelectorDialogFragment
 import com.dinhlam.sharebox.extensions.*
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.share.modelview.ShareImageModelView
 import com.dinhlam.sharebox.ui.share.modelview.ShareMultipleImageModelView
@@ -63,6 +64,9 @@ class ShareActivity :
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var appPref: AppSharePref
 
     private val behavior: BottomSheetBehavior<View> by lazy {
         BottomSheetBehavior.from(viewBinding.frameContainer)
@@ -137,7 +141,6 @@ class ShareActivity :
         viewBinding.recyclerView.adapter = shareContentAdapter
 
         behavior.addBottomSheetCallback(bottomSheetCallback)
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         viewBinding.viewBackground.setOnClickListener { dismiss() }
 
@@ -183,6 +186,14 @@ class ShareActivity :
         viewModel.consume(this, ShareState::requestPassword) { requestPassword ->
             if (requestPassword) {
                 showDialogInputPassword()
+            }
+        }
+
+        viewModel.consume(this, ShareState::selectedFolder) { selectedFolder ->
+            if (selectedFolder != null && appPref.isFastSave()) {
+                viewModel.saveShare(null, this, false)
+            } else {
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
     }
