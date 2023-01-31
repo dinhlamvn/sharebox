@@ -108,11 +108,14 @@
     <string name="error_change_password_unknown">Lỗi không xác định, thử lại sau.</string>
     <string name="guideline">Hướng dẫn</string>
     <string name="check_box_on_off_custom_tab">Mở trang web bên trong ứng dụng</string>
-    <string name="recently">Gần đây</string>
+    <string name="recently">Chia sẻ gần đây</string>
     <string name="search_title">Tìm kiếm</string>
     <string name="search_hint">Tìm kiếm…</string>
     <string name="title_share_list_search">Kết quả của %s</string>
     <string name="share_receive_no_thing">Không có gì để lưu</string>
     <string name="show_recently">Show recently share</string>
+    <string name="welcome">Xin chào!</string>
+    <string name="welcome_desc">Let\'s manage your shares</string>
+    <string name="last_updated">Last updated %s</string>
 
 </resources>

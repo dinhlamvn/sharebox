@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.home.modelview.recently
 
 import android.view.View
-import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
@@ -28,32 +27,25 @@ data class ShareRecentlyWebLinkModelView(
     }
 
     class ShareRecentlyWebLinkWebHolder(
-        view: View,
-        private val openAction: (Int) -> Unit,
-        private val shareToOther: (Int) -> Unit
+        view: View, private val openAction: (Int) -> Unit, private val shareToOther: (Int) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareRecentlyWebLinkModelView, ModelViewShareRecentlyWebLinkBinding>(
         view
     ) {
 
         override fun onBind(item: ShareRecentlyWebLinkModelView, position: Int) {
-            binding.root.setOnClickListener {
+            binding.container.setOnClickListener {
                 openAction.invoke(position)
             }
             binding.imageShare.setOnClickListener {
                 shareToOther(item.shareId)
             }
             ImageLoader.load(
-                context,
-                item.iconUrl,
-                binding.imageView,
-                R.drawable.ic_share_text,
-                true
+                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
             )
             binding.textViewUrl.setLink(item.url) {
-                ShareBoxLinkPreviewView.Style(1, 1, 1)
+                ShareBoxLinkPreviewView.Style(maxLineDesc = 2, maxLineUrl = 2, maxLineTitle = 1)
             }
             binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.isVisible = !item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
         }
 

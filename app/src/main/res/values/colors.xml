@@ -12,7 +12,11 @@
 
     <color name="colorDivider">#757575</color>
 
-    <color name="colorDividerLight">#E8E8E8</color>
+    <color name="colorDividerLight">#C8C8C8</color>
 
     <color name="colorTextRed">#BD2020</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="colorBackground">#EDEDED</color>
 </resources>

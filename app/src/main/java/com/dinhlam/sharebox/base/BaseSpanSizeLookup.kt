@@ -20,7 +20,12 @@ class BaseSpanSizeLookup(
 
     override fun getSpanSize(position: Int): Int {
         val model = adapter.getModelAtPosition(position) ?: return 1
-        return factory?.getSpanSize(model, position) ?: getSpanSizeInternal(model)
+        val factorySpan = factory?.getSpanSize(model, position) ?: getSpanSizeInternal(model)
+        return if (factorySpan <= 0) {
+            getSpanSizeInternal(model)
+        } else {
+            factorySpan
+        }
     }
 
     private fun getSpanSizeInternal(model: BaseListAdapter.BaseModelView): Int {

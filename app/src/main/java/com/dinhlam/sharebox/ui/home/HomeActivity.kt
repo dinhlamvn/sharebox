@@ -2,32 +2,25 @@ package com.dinhlam.sharebox.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.appcompat.widget.SearchView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
-import com.dinhlam.sharebox.base.BaseDialogFragment
-import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.base.*
 import com.dinhlam.sharebox.database.entity.Folder
+import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
@@ -49,11 +42,10 @@ import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyImageModelView
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTextModelView
+import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTitleModelView
 import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyWebLinkModelView
 import com.dinhlam.sharebox.ui.share.ShareState
-import com.dinhlam.sharebox.utils.ExtraUtils
-import com.dinhlam.sharebox.utils.FolderUtils
-import com.dinhlam.sharebox.utils.TagUtil
+import com.dinhlam.sharebox.utils.*
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,10 +68,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
-    companion object {
-        private const val POPUP_ITEM_SPACING = 60
-    }
-
     @Inject
     lateinit var gson: Gson
 
@@ -93,50 +81,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     lateinit var shareHelper: ShareHelper
 
     override val viewModel: HomeViewModel by viewModels()
-
-    private val shareListAdapter by lazy {
-        BaseListAdapter.createAdapter(HomeShareListModelViewsBuilder(this, viewModel, gson)) {
-            val percentWidth = screenWidth().times(0.8f).toInt()
-
-            withViewType(R.layout.model_view_loading) {
-                LoadingViewHolder(this)
-            }
-
-            withViewType(R.layout.model_view_share_recently_text) {
-                ShareRecentlyTextModelView.ShareRecentlyTextViewHolder(this, { textContent ->
-                    val dialog = TextViewerDialogFragment()
-                    dialog.arguments = Bundle().apply {
-                        putString(Intent.EXTRA_TEXT, textContent)
-                    }
-                    dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-                }, ::showDialogShareToOther).apply {
-                    updateLayoutParams {
-                        width = percentWidth
-                    }
-                }
-            }
-
-            withViewType(R.layout.model_view_share_recently_web_link) {
-                ShareRecentlyWebLinkModelView.ShareRecentlyWebLinkWebHolder(
-                    this, ::openRecentlyShareWebLink, ::showDialogShareToOther
-                ).apply {
-                    updateLayoutParams {
-                        width = percentWidth
-                    }
-                }
-            }
-
-            withViewType(R.layout.model_view_share_recently_image) {
-                ShareRecentlyImageModelView.ShareRecentlyImageViewHolder(
-                    this, ::showDialogShareToOther, ::viewImage
-                ).apply {
-                    updateLayoutParams {
-                        width = percentWidth
-                    }
-                }
-            }
-        }
-    }
 
     private val homeAdapter = BaseListAdapter.createAdapter({
         getState(viewModel) { state ->
@@ -162,10 +106,20 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     )
                 }
             }
+
+            if (state.isShowRecentlyShare) {
+                add(ShareRecentlyTitleModelView)
+
+                addAll(buildShares(state.shareList))
+            }
         }
     }) {
         withViewType(R.layout.model_view_loading) {
             LoadingViewHolder(this)
+        }
+
+        withViewType(R.layout.model_view_share_recently_title) {
+            ShareRecentlyTitleModelView.ShareRecentlyTitleViewHolder(this)
         }
 
         withViewType(R.layout.model_view_single_text) {
@@ -177,16 +131,80 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 this, viewModel::onFolderClick, ::onFolderOptionClick
             )
         }
+
+        withViewType(R.layout.model_view_share_recently_text) {
+            ShareRecentlyTextModelView.ShareRecentlyTextViewHolder(this, { textContent ->
+                val dialog = TextViewerDialogFragment()
+                dialog.arguments = Bundle().apply {
+                    putString(Intent.EXTRA_TEXT, textContent)
+                }
+                dialog.show(supportFragmentManager, "TextViewerDialogFragment")
+            }, ::showDialogShareToOther)
+        }
+
+        withViewType(R.layout.model_view_share_recently_web_link) {
+            ShareRecentlyWebLinkModelView.ShareRecentlyWebLinkWebHolder(
+                this, ::openRecentlyShareWebLink, ::showDialogShareToOther
+            )
+        }
+
+        withViewType(R.layout.model_view_share_recently_image) {
+            ShareRecentlyImageModelView.ShareRecentlyImageViewHolder(
+                this, ::showDialogShareToOther, ::viewImage
+            )
+        }
+    }
+
+    private fun buildShares(shares: List<Share>): List<BaseListAdapter.BaseModelView> {
+        return shares.mapNotNull { share ->
+            when (share.shareType) {
+                ShareType.WEB.type -> {
+                    val shareInfo = gson.fromJson(
+                        share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
+                    )
+                    ShareRecentlyWebLinkModelView(
+                        id = "${share.id}",
+                        iconUrl = IconUtils.getIconUrl(shareInfo.url),
+                        url = shareInfo.url,
+                        createdAt = share.createdAt,
+                        note = share.shareNote,
+                        shareId = share.id
+                    )
+                }
+                ShareType.IMAGE.type -> {
+                    val shareInfo = gson.fromJson(
+                        share.shareInfo, ShareState.ShareInfo.ShareImage::class.java
+                    )
+                    ShareRecentlyImageModelView(
+                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote, share.id
+                    )
+                }
+                ShareType.TEXT.type -> {
+                    val shareInfo = gson.fromJson(
+                        share.shareInfo, ShareState.ShareInfo.ShareText::class.java
+                    )
+                    ShareRecentlyTextModelView(
+                        id = "${share.id}",
+                        iconUrl = IconUtils.getIconUrl(shareInfo.text),
+                        content = shareInfo.text,
+                        createdAt = share.createdAt,
+                        note = share.shareNote,
+                        shareId = share.id
+                    )
+                }
+                else -> {
+                    null
+                }
+            }
+        }
     }
 
     private fun performSearch() {
-        if (Intent.ACTION_SEARCH == intent.action) {
-            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
-                val intent = appRouter.shareListSearch(query)
-                startActivity(intent)
-                finish()
-            }
-        }
+        val searchQuery = viewBinding.editTextSearch.text?.toString().takeIfNotNullOrBlank()
+            ?: return KeyboardUtil.hideKeyboard(viewBinding.editTextSearch)
+        KeyboardUtil.hideKeyboard(viewBinding.editTextSearch)
+        val intent = appRouter.shareListSearch(searchQuery)
+        startActivity(intent)
     }
 
     override fun onCreateViewBinding(): ActivityHomeBinding {
@@ -196,33 +214,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        performSearch()
+        setSupportActionBar(viewBinding.toolbar)
 
         viewModel.setSortType(appSharePref.getSortType())
 
-        viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
+        viewBinding.recyclerView.layoutManager = GridLayoutManager(this, 2).apply {
+            spanSizeLookup = BaseSpanSizeLookup(homeAdapter, this)
+        }
         viewBinding.recyclerView.adapter = homeAdapter
-
-        viewBinding.recyclerView.addOnScrollListener(object : OnScrollListener() {
-            private var scrolled = 0
-            private val rangeToHideGuideButton = 100
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                scrolled += dy
-
-                if (scrolled > rangeToHideGuideButton) {
-                    viewBinding.buttonCreateFolder.isVisible = false
-                    scrolled = 0
-                } else if (scrolled < -rangeToHideGuideButton) {
-                    viewBinding.buttonCreateFolder.isVisible = true
-                    scrolled = 0
-                }
-            }
-        })
-
-        viewBinding.recyclerViewShareRecently.adapter = shareListAdapter
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.loadFolders()
@@ -250,12 +249,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             invalidateOptionsMenu()
         }
 
-        viewModel.consume(this, HomeState::shareList, true) { shares ->
-            val isShowRecently = shares.isNotEmpty()
-            viewBinding.textViewTitleRecently.isVisible = isShowRecently
-            viewBinding.recyclerViewShareRecently.isVisible = isShowRecently
-        }
-
         viewBinding.buttonCreateFolder.setOnClickListener {
             showDialogCreateFolder()
         }
@@ -263,6 +256,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         if (appSharePref.isShowGuideLine()) {
             openGuideLineDialog()
             appSharePref.turnOffShowGuideline()
+        }
+
+        viewBinding.editTextSearch.setOnEditorActionListener { _, action, _ ->
+            val actionDone =
+                action == EditorInfo.IME_ACTION_SEARCH || action == resources.getInteger(R.integer.action_search)
+            return@setOnEditorActionListener if (actionDone) {
+                performSearch()
+                true
+            } else false
         }
     }
 
@@ -276,7 +278,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onStateChanged(state: HomeState) {
         homeAdapter.requestBuildModelViews()
-        shareListAdapter.requestBuildModelViews()
         viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
     }
 
@@ -289,9 +290,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.home_menu, menu)
         menu.cast<MenuBuilder>()?.setOptionalIconsVisible(true)
-        val searchManager = getSystemServiceCompat<SearchManager>(Context.SEARCH_SERVICE)
-        menu.findItem(R.id.search).actionView.cast<SearchView>()
-            ?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         return true
     }
 
@@ -567,7 +565,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     private fun openRecentlyShareWebLink(position: Int) = getState(viewModel) { state ->
-        val data = state.shareList.getOrNull(position) ?: return@getState
+        val correctPosition = position - state.folders.size - 1
+        val data = state.shareList.getOrNull(correctPosition) ?: return@getState
         val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
         gson.runCatching {
             fromJson(

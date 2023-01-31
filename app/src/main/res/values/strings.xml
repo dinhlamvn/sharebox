@@ -111,11 +111,14 @@
     <string name="change_folder_password_success">Change folder\'s password successfully.</string>
     <string name="guideline">Guideline</string>
     <string name="check_box_on_off_custom_tab">Open web page inside app</string>
-    <string name="recently">Recently</string>
+    <string name="recently">Recently shares</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search…</string>
     <string name="title_share_list_search">Result of %s</string>
     <string name="share_receive_no_thing">No thing to save</string>
     <string name="show_recently">Show recently share</string>
+    <string name="welcome">Hello!</string>
+    <string name="welcome_desc">Let\'s manage your shares</string>
+    <string name="last_updated">Last updated %s</string>
 
 </resources>

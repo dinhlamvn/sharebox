@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.home.modelview.recently
 
 import android.view.View
-import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
@@ -48,7 +47,6 @@ data class ShareRecentlyTextModelView(
             )
             binding.textViewContent.text = item.content
             binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.isVisible = !item.note.isNullOrBlank()
             binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
         }
 

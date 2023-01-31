@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewFolderListBinding
+import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.model.Tag
 
 data class FolderListModelView(
@@ -39,6 +40,7 @@ data class FolderListModelView(
             binding.textViewFolderName.text = item.name
             binding.textViewFolderDesc.text = item.desc
             binding.imageViewKey.isVisible = item.hasPassword
+            binding.textViewFolderUpdated.text = item.updatedAt.format("MMM d h:mm a")
 
             val tag = item.tag ?: return binding.imageViewTag.run { isVisible = false }
             binding.imageViewTag.isVisible = true
