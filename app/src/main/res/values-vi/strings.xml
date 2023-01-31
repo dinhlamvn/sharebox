@@ -118,5 +118,8 @@
     <string name="welcome_desc">Cùng quản lý chia sẻ của bạn nhé</string>
     <string name="last_updated">Cập nhật %s</string>
     <string name="recently_empty">Không có chia sẻ nào</string>
+    <string name="share_to_other">Share to other</string>
+    <string name="share_deleted">Share is deleted</string>
+    <string name="delete_share_error">Has an error until delete this share, please try again!</string>
 
 </resources>

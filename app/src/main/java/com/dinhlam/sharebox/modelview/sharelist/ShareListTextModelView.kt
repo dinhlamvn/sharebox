@@ -34,7 +34,7 @@ data class ShareListTextModelView(
     ) {
 
         override fun onBind(item: ShareListTextModelView, position: Int) {
-            binding.imageShare.setOnClickListener {
+            binding.imageOption.setOnClickListener {
                 onShareToOther.invoke(item.shareId)
             }
 

@@ -18,7 +18,7 @@ class ShareRepository @Inject constructor(
     }
 
     override fun delete(item: Share): Boolean {
-        return false
+        return shareDao.delete(item) > 0
     }
 
     override fun insertMany(vararg items: Share) {

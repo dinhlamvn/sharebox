@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.ui.home
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Folder
+import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.repository.FolderRepository
@@ -235,5 +236,21 @@ class HomeViewModel @Inject constructor(
                 folder, 0, HomeState.FolderActionConfirmation.FolderActionType.RESET_PASSWORD
             )
         )
+    }
+
+    fun deleteShare(shareData: Share) = backgroundTask {
+        setState { copy(showProgress = true) }
+        backgroundTask(onError = {
+            setState { copy(showProgress = false, toastRes = R.string.delete_share_error) }
+        }) {
+            val deleted = shareRepository.delete(shareData)
+            if (deleted) {
+                setState { copy(showProgress = false, toastRes = R.string.share_deleted) }
+                loadFolders()
+                loadShareListRecently()
+            } else {
+                setState { copy(showProgress = false, toastRes = R.string.delete_share_error) }
+            }
+        }
     }
 }

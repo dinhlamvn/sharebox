@@ -121,5 +121,8 @@
     <string name="welcome_desc">Let\'s manage your shares</string>
     <string name="last_updated">Last updated %s</string>
     <string name="recently_empty">No recently shares</string>
+    <string name="share_to_other">Share to other</string>
+    <string name="share_deleted">Share is deleted</string>
+    <string name="delete_share_error">Has an error until delete this share, please try again!</string>
 
 </resources>

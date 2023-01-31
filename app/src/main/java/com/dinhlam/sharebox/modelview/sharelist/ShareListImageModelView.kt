@@ -28,7 +28,7 @@ data class ShareListImageModelView(
     ) {
 
         override fun onBind(item: ShareListImageModelView, position: Int) {
-            binding.imageShare.setOnClickListener {
+            binding.imageOption.setOnClickListener {
                 block.invoke(item.shareId)
             }
             binding.root.setOnClickListener {

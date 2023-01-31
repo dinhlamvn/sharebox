@@ -36,7 +36,7 @@ data class ShareListWebLinkModelView(
             binding.container.setOnClickListener {
                 openAction.invoke(position)
             }
-            binding.imageShare.setOnClickListener {
+            binding.imageOption.setOnClickListener {
                 shareToOther(item.shareId)
             }
             ImageLoader.load(

@@ -145,18 +145,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     putString(Intent.EXTRA_TEXT, textContent)
                 }
                 dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-            }, ::showDialogShareToOther)
+            }, ::openShareRecentlyOptionClick)
         }
 
         withViewType(R.layout.model_view_share_list_web_link) {
             ShareListWebLinkModelView.ShareListWebLinkWebHolder(
-                this, ::openRecentlyShareWebLink, ::showDialogShareToOther
+                this, ::openRecentlyShareWebLink, ::openShareRecentlyOptionClick
             )
         }
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(
-                this, ::showDialogShareToOther, ::viewImage
+                this, ::openShareRecentlyOptionClick, ::viewImage
             )
         }
     }
@@ -349,30 +349,30 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             items[getString(R.string.delete)] = {
                 viewModel.processFolderForDelete(folder)
             }
-            icons.add(R.drawable.ic_delete)
+            icons.add(R.drawable.ic_delete_primary)
 
             items[getString(R.string.rename)] = {
                 viewModel.processFolderForRename(folder)
             }
-            icons.add(R.drawable.ic_rename)
+            icons.add(R.drawable.ic_rename_primary)
         }
 
         if (folder.isHasPassword()) {
             items[getString(R.string.reset_password)] = {
                 viewModel.processFolderForResetPassword(folder)
             }
-            icons.add(R.drawable.ic_reset_password)
+            icons.add(R.drawable.ic_reset_password_primary)
         }
 
         items[getString(R.string.tag)] = {
             viewModel.processFolderForTag(folder)
         }
-        icons.add(R.drawable.ic_tag)
+        icons.add(R.drawable.ic_tag_primary)
 
         items[getString(R.string.detail)] = {
             viewModel.processFolderForDetail(folder)
         }
-        icons.add(R.drawable.ic_detail)
+        icons.add(R.drawable.ic_info_primary)
 
         BaseBottomSheetDialogFragment.showDialog(
             SingleChoiceDialogFragment::class, supportFragmentManager
@@ -556,15 +556,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             append(" ${getString(R.string.developer_email)}")
         }).setPositiveButton(R.string.button_close, null).setCancelable(true).show()
 
-    private fun showDialogShareToOther(shareId: Int) {
-        val shareData = getState(viewModel) { state ->
-            state.shareList.firstOrNull { share ->
-                share.id == shareId
-            }
-        } ?: return
-        shareHelper.shareToOther(shareData)
-    }
-
     private fun viewImage(uri: Uri) {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(uri, "image/*")
@@ -587,6 +578,42 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 appRouter.moveToChromeCustomTab(this, url)
             } else {
                 appRouter.moveToBrowser(url)
+            }
+        }
+    }
+
+    private fun openShareRecentlyOptionClick(shareId: Int) {
+        val shareData = getState(viewModel) { state ->
+            state.shareList.firstOrNull { share ->
+                share.id == shareId
+            }
+        } ?: return
+
+        val items = mutableMapOf<String, () -> Unit>()
+        val icons = mutableListOf<Int>()
+
+        items[getString(R.string.share_to_other)] = {
+            shareHelper.shareToOther(shareData)
+        }
+        icons.add(R.drawable.ic_share)
+
+        items[getString(R.string.delete)] = {
+            viewModel.deleteShare(shareData)
+        }
+        icons.add(R.drawable.ic_delete_primary)
+
+        BaseBottomSheetDialogFragment.showDialog(
+            SingleChoiceDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putStringArray(
+                    SingleChoiceDialogFragment.EXTRA_ITEM, items.keys.toTypedArray()
+                )
+                putIntArray(SingleChoiceDialogFragment.EXTRA_ICON, icons.toIntArray())
+            }
+            listener = SingleChoiceDialogFragment.OnItemSelectedListener { position ->
+                val key = items.keys.toList()[position]
+                items[key]?.invoke()
             }
         }
     }

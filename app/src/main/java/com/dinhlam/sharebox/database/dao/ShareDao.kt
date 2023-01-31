@@ -44,4 +44,7 @@ interface ShareDao {
 
     @Query("SELECT folder_id as id, COUNT(*) as shareCount FROM share GROUP BY folder_id")
     fun countShareByFolder(): List<FolderShareCount>
+
+    @Delete
+    fun delete(share: Share): Int
 }
