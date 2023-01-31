@@ -15,7 +15,7 @@ object ImageLoader {
         context: Context,
         url: String?,
         imageView: ImageView,
-        @DrawableRes error: Int = R.drawable.no_image
+        @DrawableRes error: Int = R.drawable.ic_image_broken
     ) {
         if (context is Activity && context.isFinishing) {
             return
@@ -43,7 +43,7 @@ object ImageLoader {
         @DrawableRes res: Int,
         imageView: ImageView,
         circle: Boolean = false,
-        @DrawableRes error: Int = R.drawable.no_image
+        @DrawableRes error: Int = R.drawable.ic_image_broken
     ) {
         if (context is Activity && context.isFinishing) {
             return

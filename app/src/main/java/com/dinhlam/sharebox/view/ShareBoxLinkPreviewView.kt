@@ -115,7 +115,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     private suspend fun handleErrorResult(url: String) =
         withContext(Dispatchers.Main) {
             binding.progressBar.isVisible = false
-            ImageLoader.load(context, R.drawable.no_image, binding.imageView)
+            ImageLoader.load(context, R.drawable.ic_image_broken, binding.imageView)
             binding.textViewUrl.text = url
         }
 

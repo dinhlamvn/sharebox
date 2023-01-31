@@ -34,7 +34,7 @@ class HomeViewModel @Inject constructor(
         loadFolderShareCount()
     }
 
-    private fun loadFolderShareCount() = backgroundTask {
+    fun loadFolderShareCount() = backgroundTask {
         val list = shareRepository.getFolderShareCount()
         setState { copy(folderShareCountMap = list.associate { it.id to it.shareCount }) }
     }

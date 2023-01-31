@@ -69,6 +69,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
+    private val shareListLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.loadShareListRecently()
+                viewModel.loadFolderShareCount()
+            }
+        }
+
     @Inject
     lateinit var gson: Gson
 
@@ -283,7 +291,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     private fun openFolder(folder: Folder) {
-        startActivity(appRouter.shareList(folder.id))
+        shareListLauncher.launch(appRouter.shareList(folder.id))
     }
 
     override fun onStateChanged(state: HomeState) {

@@ -6,10 +6,14 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareListBinding
+import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareType
@@ -19,6 +23,7 @@ import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.ui.home.HomeState
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.ExtraUtils
@@ -54,30 +59,57 @@ class ShareListActivity :
                         putString(Intent.EXTRA_TEXT, textContent)
                     }
                     dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-                }, ::showDialogShareToOther)
+                }, ::openShareOptionClick)
             }
 
             withViewType(R.layout.model_view_share_list_web_link) {
                 ShareListWebLinkModelView.ShareListWebLinkWebHolder(
-                    this, ::openShareWeb, ::showDialogShareToOther
+                    this, ::openShareWeb, ::openShareOptionClick
                 )
             }
 
             withViewType(R.layout.model_view_share_list_image) {
                 ShareListImageModelView.ShareListImageViewHolder(
-                    this, ::showDialogShareToOther, ::viewImage
+                    this, ::openShareOptionClick, ::viewImage
                 )
             }
         }
     }
 
-    private fun showDialogShareToOther(shareId: Int) {
+    private fun openShareOptionClick(shareId: Int) {
         val shareData = getState(viewModel) { state ->
             state.shareList.firstOrNull { share ->
                 share.id == shareId
             }
         } ?: return
-        shareHelper.shareToOther(shareData)
+
+        val items = mutableMapOf<String, () -> Unit>()
+        val icons = mutableListOf<Int>()
+
+        items[getString(R.string.share_to_other)] = {
+            shareHelper.shareToOther(shareData)
+        }
+        icons.add(R.drawable.ic_share)
+
+        items[getString(R.string.delete)] = {
+            viewModel.deleteShare(shareData)
+        }
+        icons.add(R.drawable.ic_delete_primary)
+
+        BaseBottomSheetDialogFragment.showDialog(
+            SingleChoiceDialogFragment::class, supportFragmentManager
+        ) {
+            arguments = Bundle().apply {
+                putStringArray(
+                    SingleChoiceDialogFragment.EXTRA_ITEM, items.keys.toTypedArray()
+                )
+                putIntArray(SingleChoiceDialogFragment.EXTRA_ICON, icons.toIntArray())
+            }
+            listener = SingleChoiceDialogFragment.OnItemSelectedListener { position ->
+                val key = items.keys.toList()[position]
+                items[key]?.invoke()
+            }
+        }
     }
 
     @Inject
@@ -100,6 +132,13 @@ class ShareListActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        registerOnBackPressHandler {
+            val resultCode = getState(viewModel) { state -> state.resultCode }
+            setResult(resultCode)
+            finish()
+        }
+
         viewBinding.recyclerView.adapter = shareListAdapter
 
         val folderId = intent.getStringExtra(ExtraUtils.EXTRA_FOLDER_ID) ?: ""
@@ -124,6 +163,13 @@ class ShareListActivity :
         viewModel.consume(this, ShareListState::searchQuery) { query ->
             if (query.isNotBlank()) {
                 supportActionBar?.title = getString(R.string.title_share_list_search, query)
+            }
+        }
+
+        viewModel.consume(this, HomeState::toastRes) { toastRes ->
+            if (toastRes != 0) {
+                showToast(getString(toastRes))
+                viewModel.clearToast()
             }
         }
     }
