@@ -25,7 +25,7 @@ class ShareViewModel @Inject constructor(
     private val appSharePref: AppSharePref
 ) : BaseViewModel<ShareState>(ShareState()) {
 
-    fun setShareInfo(shareInfo: ShareState.ShareInfo) = executeJob {
+    fun setShareInfo(shareInfo: ShareState.ShareInfo) = backgroundTask {
         val folders = folderRepository.getAll(SortType.NONE)
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
         val folderId = when {
@@ -114,7 +114,7 @@ class ShareViewModel @Inject constructor(
         setState { copy(isSaveSuccess = true) }
     }
 
-    fun setSelectedFolderAfterCreate(folderId: String) = executeJob {
+    fun setSelectedFolderAfterCreate(folderId: String) = backgroundTask {
         val folders = folderRepository.getAll(SortType.NONE)
         val folder = folders.firstOrNull { it.id == folderId }
         setState { copy(folders = folders, selectedFolder = folder) }

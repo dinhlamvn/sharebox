@@ -11,7 +11,7 @@ class RenameFolderDialogViewModel @Inject constructor(
     private val folderRepository: FolderRepository
 ) : BaseViewModel<RenameFolderDialogState>(RenameFolderDialogState()) {
 
-    fun loadFolderData(folderId: String) = executeJob {
+    fun loadFolderData(folderId: String) = backgroundTask {
         val folder = folderRepository.get(folderId)
         setState { copy(folder = folder) }
     }

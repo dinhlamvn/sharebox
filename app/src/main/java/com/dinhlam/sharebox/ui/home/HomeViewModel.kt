@@ -30,6 +30,12 @@ class HomeViewModel @Inject constructor(
         } ?: folderRepository.getAll(state.sortType)
 
         setState { copy(folders = folders, isRefreshing = false) }
+        loadFolderShareCount()
+    }
+
+    private fun loadFolderShareCount() = backgroundTask {
+        val list = shareRepository.getFolderShareCount()
+        setState { copy(folderShareCountMap = list.associate { it.id to it.shareCount }) }
     }
 
     fun reloadShareRecently() = getState { state ->
@@ -66,13 +72,14 @@ class HomeViewModel @Inject constructor(
 
     fun deleteFolder(folder: Folder) {
         setState { copy(showProgress = true, folderActionConfirmation = null) }
-        executeJob(onError = {
+        backgroundTask(onError = {
             setState { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
         }) {
             val deleted = folderRepository.delete(folder)
             if (deleted) {
                 setState { copy(showProgress = false, toastRes = R.string.delete_folder_success) }
                 loadFolders()
+                loadShareListRecently()
             } else {
                 setState { copy(showProgress = false, toastRes = R.string.delete_folder_error) }
             }
@@ -85,7 +92,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForDelete(folder: Folder) = executeJob {
+    fun processFolderForDelete(folder: Folder) = backgroundTask {
         val shareCount = shareRepository.countByFolder(folder.id)
         setState {
             copy(
@@ -96,7 +103,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForRename(folder: Folder) = executeJob {
+    fun processFolderForRename(folder: Folder) = backgroundTask {
         val shareCount = shareRepository.countByFolder(folder.id)
         setState {
             copy(
@@ -107,7 +114,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun processFolderForDetail(folder: Folder) = executeJob {
+    fun processFolderForDetail(folder: Folder) = backgroundTask {
         val shareCount = shareRepository.countByFolder(folder.id)
         setState {
             copy(
@@ -197,7 +204,7 @@ class HomeViewModel @Inject constructor(
         return true
     }
 
-    private fun loadFolderByTag(tagId: Int) = executeJob {
+    private fun loadFolderByTag(tagId: Int) = backgroundTask {
         val folders = folderRepository.getByTag(tagId)
         setState { copy(folders = folders, tag = tagId) }
     }

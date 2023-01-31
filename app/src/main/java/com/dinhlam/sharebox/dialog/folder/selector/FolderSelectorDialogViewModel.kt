@@ -21,7 +21,7 @@ class FolderSelectorDialogViewModel @Inject constructor(
     }
 
     init {
-        executeJob {
+        backgroundTask {
             val folders = folderRepository.getAll(SortType.NONE)
             setState { copy(folders = folders, isFirstLoad = false) }
         }

@@ -89,7 +89,7 @@
     <string name="button_confirm">Xác nhận</string>
     <string name="sort_option_title">Sắp xếp theo</string>
     <string name="password_recovery_title">Mã khôi phục mật khẩu (chưa tạo)</string>
-    <string name="password_recovery_desc_no_generate">* Cài đặt mã khôi phục mật khẩu để lấy lại mật khẩu khi mất (táp vào dòng trên).</string>
+    <string name="password_recovery_desc_no_generate">* Cài đặt mã khôi phục mật khẩu để lấy lại mật khẩu khi mất (nhấp vào dòng trên).</string>
     <string name="password_recovery_desc_generated">* Cài đặt mã khôi phục mật khẩu để lấy lại mật khẩu khi mất (đã tạo).</string>
     <string name="password_recovery_has_generated_error">Mã khôi phục mật khẩu đã được tạo.</string>
     <string name="password_recovery_generated">Mã khôi phục mật khẩu được tạo, vui lòng sao chép và lưu nó ở nơi an toàn.</string>
@@ -113,9 +113,10 @@
     <string name="search_hint">Tìm kiếm…</string>
     <string name="title_share_list_search">Kết quả của %s</string>
     <string name="share_receive_no_thing">Không có gì để lưu</string>
-    <string name="show_recently">Show recently share</string>
+    <string name="show_recently">Hiện thị chia sẻ gần đây</string>
     <string name="welcome">Xin chào!</string>
-    <string name="welcome_desc">Let\'s manage your shares</string>
-    <string name="last_updated">Last updated %s</string>
+    <string name="welcome_desc">Cùng quản lý chia sẻ của bạn nào</string>
+    <string name="last_updated">Cập nhật %s</string>
+    <string name="recently_empty">Không có chia sẻ nào</string>
 
 </resources>

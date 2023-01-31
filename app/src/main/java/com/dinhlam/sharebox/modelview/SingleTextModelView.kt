@@ -1,12 +1,17 @@
 package com.dinhlam.sharebox.modelview
 
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewSingleTextBinding
 
-data class SingleTextModelView(val text: String) :
+data class SingleTextModelView(
+    val text: String,
+    val height: Int = ViewGroup.LayoutParams.MATCH_PARENT
+) :
     BaseListAdapter.BaseModelView("single_text_$text") {
     override val modelLayoutRes: Int
         get() = R.layout.model_view_single_text
@@ -24,6 +29,9 @@ data class SingleTextModelView(val text: String) :
         }
 
         override fun onBind(item: SingleTextModelView, position: Int) {
+            binding.root.updateLayoutParams {
+                height = item.height
+            }
             binding.textView.text = item.text
         }
 

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -101,7 +102,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                             folder.desc,
                             folder.updatedAt,
                             folder.isHasPassword(),
-                            TagUtil.getTag(folder.tag)
+                            TagUtil.getTag(folder.tag),
+                            getState(viewModel) { state -> state.folderShareCountMap[folder.id] }
+                                ?: 0
                         )
                     )
                 }
@@ -109,8 +112,17 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
             if (state.isShowRecentlyShare) {
                 add(ShareRecentlyTitleModelView)
-
-                addAll(buildShares(state.shareList))
+                val models = buildShares(state.shareList)
+                if (models.isEmpty()) {
+                    add(
+                        SingleTextModelView(
+                            getString(R.string.recently_empty),
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    )
+                } else {
+                    addAll(models)
+                }
             }
         }
     }) {
@@ -265,6 +277,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 performSearch()
                 true
             } else false
+        }
+
+        viewBinding.imageViewSearch.setOnClickListener {
+            performSearch()
         }
     }
 

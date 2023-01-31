@@ -12,8 +12,8 @@ class ShareListViewModel @Inject constructor(
     private val shareRepository: ShareRepository
 ) : BaseViewModel<ShareListState>(ShareListState()) {
 
-    fun setFolderId(folderId: String) = executeJob {
-        val folder = folderRepository.get(folderId) ?: return@executeJob
+    fun setFolderId(folderId: String) = backgroundTask {
+        val folder = folderRepository.get(folderId) ?: return@backgroundTask
         setState { copy(folderId = folder.id, folderName = folder.name) }
         loadShareList()
     }

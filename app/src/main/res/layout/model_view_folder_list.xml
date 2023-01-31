@@ -89,6 +89,21 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_view_share_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:drawablePadding="2dp"
+            android:gravity="end|center_vertical"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Caption"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="99+" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_folder_updated"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

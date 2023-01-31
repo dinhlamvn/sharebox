@@ -95,7 +95,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    protected fun executeJob(
+    protected fun backgroundTask(
         onError: ((Throwable) -> Unit)? = null, block: suspend CoroutineScope.() -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
         try {

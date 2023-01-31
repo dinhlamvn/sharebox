@@ -120,5 +120,6 @@
     <string name="welcome">Hello!</string>
     <string name="welcome_desc">Let\'s manage your shares</string>
     <string name="last_updated">Last updated %s</string>
+    <string name="recently_empty">No recently shares</string>
 
 </resources>

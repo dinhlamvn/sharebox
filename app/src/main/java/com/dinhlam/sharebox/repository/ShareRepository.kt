@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.repository
 
 import com.dinhlam.sharebox.database.dao.ShareDao
 import com.dinhlam.sharebox.database.entity.Share
+import com.dinhlam.sharebox.model.FolderShareCount
 import com.dinhlam.sharebox.model.SortType
 import javax.inject.Inject
 
@@ -56,5 +57,9 @@ class ShareRepository @Inject constructor(
 
     override fun search(query: String): List<Share> {
         return shareDao.search(query)
+    }
+
+    fun getFolderShareCount(): List<FolderShareCount> {
+        return shareDao.countShareByFolder()
     }
 }

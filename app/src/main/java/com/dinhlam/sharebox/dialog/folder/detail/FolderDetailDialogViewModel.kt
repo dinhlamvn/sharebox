@@ -12,7 +12,7 @@ class FolderDetailDialogViewModel @Inject constructor(
     private val shareRepository: ShareRepository
 ) : BaseViewModel<FolderDetailDialogState>(FolderDetailDialogState()) {
 
-    fun loadFolderData(folderId: String) = executeJob {
+    fun loadFolderData(folderId: String) = backgroundTask {
         val folder = folderRepository.get(folderId)
         val shareCount = shareRepository.countByFolder(folderId)
         setState { copy(folder = folder, shareCount = shareCount) }

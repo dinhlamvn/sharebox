@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.database.dao
 
 import androidx.room.*
 import com.dinhlam.sharebox.database.entity.Share
+import com.dinhlam.sharebox.model.FolderShareCount
 
 @Dao
 interface ShareDao {
@@ -40,4 +41,7 @@ interface ShareDao {
 
     @Query("SELECT * FROM share WHERE share_info LIKE '%' || :query || '%' OR share_note LIKE '%' || :query || '%'")
     fun search(query: String): List<Share>
+
+    @Query("SELECT folder_id as id, COUNT(*) as shareCount FROM share GROUP BY folder_id")
+    fun countShareByFolder(): List<FolderShareCount>
 }

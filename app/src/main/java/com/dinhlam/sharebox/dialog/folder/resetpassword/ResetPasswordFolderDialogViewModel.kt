@@ -16,7 +16,7 @@ class ResetPasswordFolderDialogViewModel @Inject constructor(
     )
 ) {
 
-    fun loadFolderData(folderId: String) = executeJob {
+    fun loadFolderData(folderId: String) = backgroundTask {
         val folder = folderRepository.get(folderId)
         setState { copy(folder = folder) }
     }
