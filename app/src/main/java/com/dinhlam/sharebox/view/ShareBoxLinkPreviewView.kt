@@ -8,6 +8,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import java.util.concurrent.Executors
@@ -69,18 +70,28 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
     }
 
+    private fun resetUi() {
+        binding.textViewUrl.text = null
+        binding.textViewTitle.text = null
+        binding.textViewDescription.text = null
+        binding.textViewSiteName.text = null
+    }
+
     fun setLink(url: String?, block: () -> Style = { Style() }) {
         url?.let { nonNullUrl ->
             val style = block.invoke()
             binding.progressBar.isVisible = true
+            resetUi()
             binding.textViewTitle.maxLines = style.maxLineTitle
             binding.textViewDescription.maxLines = style.maxLineDesc
             binding.textViewUrl.maxLines = style.maxLineUrl
             linkPreviewScope.launch {
                 AGENTS.forEach { agent ->
-                    val openGraphResult = getLinkInfo(nonNullUrl, agent)
+                    val openGraphResult =
+                        LinkPreviewCacheUtils.getCache(nonNullUrl) ?: getLinkInfo(nonNullUrl, agent)
                     openGraphResult?.let { nonNullResult ->
                         Logger.debug(nonNullResult.toString())
+                        LinkPreviewCacheUtils.setCache(nonNullUrl, nonNullResult)
                         handleResult(nonNullResult)
                         return@launch
                     }
