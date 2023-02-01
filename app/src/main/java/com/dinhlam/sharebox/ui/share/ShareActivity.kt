@@ -146,8 +146,9 @@ class ShareActivity :
 
         viewBinding.textViewFolder.setOnClickListener(::showFloatingPopupFolderPicker)
 
+        val action = intent.action
         when {
-            intent.action == Intent.ACTION_SEND -> {
+            action == Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("text/") == true) {
                     val shareContent = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
                     handleSendText(shareContent)
@@ -157,10 +158,10 @@ class ShareActivity :
                     openHome()
                 }
             }
-            intent.action == Intent.ACTION_SEND_MULTIPLE && intent.type?.startsWith("image/") == true -> {
+            action == Intent.ACTION_SEND_MULTIPLE && intent.type?.startsWith("image/") == true -> {
                 handleSendMultipleImage(intent)
             }
-            intent.action == Intent.ACTION_PROCESS_TEXT -> {
+            action == Intent.ACTION_PROCESS_TEXT -> {
                 handleProcessText(intent)
             }
             else -> handleSendNoThing()
