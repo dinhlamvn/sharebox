@@ -9,16 +9,16 @@ import javax.inject.Inject
 class ShareRepository @Inject constructor(
     private val shareDao: ShareDao
 ) : Repository<Share, Int> {
-    override fun insert(item: Share) {
-        shareDao.insertAll(item)
+    override fun insert(data: Share) {
+        shareDao.insertAll(data)
     }
 
-    override fun update(item: Share): Boolean {
-        return shareDao.update(item.copy(updatedAt = System.currentTimeMillis())) > 0
+    override fun update(data: Share): Boolean {
+        return shareDao.update(data.copy(updatedAt = System.currentTimeMillis())) > 0
     }
 
-    override fun delete(item: Share): Boolean {
-        return shareDao.delete(item) > 0
+    override fun delete(data: Share): Boolean {
+        return shareDao.delete(data) > 0
     }
 
     override fun insertMany(vararg items: Share) {
@@ -31,11 +31,11 @@ class ShareRepository @Inject constructor(
     override fun updateById(id: Int, block: (Share) -> Share) {
     }
 
-    override fun get(id: Int): Share? {
+    override fun find(id: Int): Share? {
         return shareDao.getById(id)
     }
 
-    override fun getAll(sortType: SortType): List<Share> {
+    override fun findAll(sortType: SortType): List<Share> {
         return shareDao.getAll()
     }
 

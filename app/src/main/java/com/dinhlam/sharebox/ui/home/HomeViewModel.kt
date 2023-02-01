@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
 
         val folders = state.tag?.let { tag ->
             folderRepository.getByTag(tag)
-        } ?: folderRepository.getAll(state.sortType)
+        } ?: folderRepository.findAll(state.sortType)
 
         setState { copy(folders = folders, isRefreshing = false) }
         loadFolderShareCount()

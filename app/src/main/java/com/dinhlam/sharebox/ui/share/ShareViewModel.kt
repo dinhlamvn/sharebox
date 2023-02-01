@@ -26,7 +26,7 @@ class ShareViewModel @Inject constructor(
 ) : BaseViewModel<ShareState>(ShareState()) {
 
     fun setShareInfo(shareInfo: ShareState.ShareInfo) = backgroundTask {
-        val folders = folderRepository.getAll(SortType.NONE)
+        val folders = folderRepository.findAll(SortType.NONE)
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
         val folderId = when {
             historySelectedFolder.isNotBlank() -> historySelectedFolder
@@ -46,7 +46,7 @@ class ShareViewModel @Inject constructor(
         execute { state ->
             val folderId: String = state.selectedFolder?.id ?: return@execute
             val folder =
-                folderRepository.runCatching { get(folderId) }.getOrNull() ?: return@execute
+                folderRepository.runCatching { find(folderId) }.getOrNull() ?: return@execute
             if (requirePassword && folder.isHasPassword()) {
                 setState { copy(requestPassword = true, note = note) }
             } else {
@@ -115,7 +115,7 @@ class ShareViewModel @Inject constructor(
     }
 
     fun setSelectedFolderAfterCreate(folderId: String) = backgroundTask {
-        val folders = folderRepository.getAll(SortType.NONE)
+        val folders = folderRepository.findAll(SortType.NONE)
         val folder = folders.firstOrNull { it.id == folderId }
         setState { copy(folders = folders, selectedFolder = folder) }
     }

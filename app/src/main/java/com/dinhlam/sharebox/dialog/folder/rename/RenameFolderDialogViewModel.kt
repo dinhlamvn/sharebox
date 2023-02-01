@@ -12,7 +12,7 @@ class RenameFolderDialogViewModel @Inject constructor(
 ) : BaseViewModel<RenameFolderDialogState>(RenameFolderDialogState()) {
 
     fun loadFolderData(folderId: String) = backgroundTask {
-        val folder = folderRepository.get(folderId)
+        val folder = folderRepository.find(folderId)
         setState { copy(folder = folder) }
     }
 

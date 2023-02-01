@@ -8,16 +8,16 @@ import javax.inject.Inject
 class FolderRepository @Inject constructor(
     private val folderDao: FolderDao
 ) : Repository<Folder, String> {
-    override fun insert(item: Folder) {
-        folderDao.insertAll(item)
+    override fun insert(data: Folder) {
+        folderDao.insertAll(data)
     }
 
-    override fun update(item: Folder): Boolean {
-        return folderDao.update(item.copy(updatedAt = System.currentTimeMillis())) > 0
+    override fun update(data: Folder): Boolean {
+        return folderDao.update(data.copy(updatedAt = System.currentTimeMillis())) > 0
     }
 
-    override fun delete(item: Folder): Boolean {
-        return folderDao.delete(item) > 0
+    override fun delete(data: Folder): Boolean {
+        return folderDao.delete(data) > 0
     }
 
     override fun insertMany(vararg items: Folder) {
@@ -33,11 +33,11 @@ class FolderRepository @Inject constructor(
         update(newData.copy(updatedAt = System.currentTimeMillis()))
     }
 
-    override fun get(id: String): Folder? {
+    override fun find(id: String): Folder? {
         return folderDao.getById(id)
     }
 
-    override fun getAll(sortType: SortType): List<Folder> {
+    override fun findAll(sortType: SortType): List<Folder> {
         return when (sortType) {
             SortType.NEWEST -> folderDao.getAllNewest()
             SortType.OLDEST -> folderDao.getAllOldest()

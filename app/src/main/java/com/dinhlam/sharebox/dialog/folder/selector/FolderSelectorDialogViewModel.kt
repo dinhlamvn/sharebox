@@ -22,7 +22,7 @@ class FolderSelectorDialogViewModel @Inject constructor(
 
     init {
         backgroundTask {
-            val folders = folderRepository.getAll(SortType.NONE)
+            val folders = folderRepository.findAll(SortType.NONE)
             setState { copy(folders = folders, isFirstLoad = false) }
         }
     }
