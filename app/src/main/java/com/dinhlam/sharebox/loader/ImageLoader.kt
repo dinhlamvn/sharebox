@@ -7,6 +7,8 @@ import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.dinhlam.sharebox.R
 
 object ImageLoader {
@@ -15,7 +17,8 @@ object ImageLoader {
         context: Context,
         url: String?,
         imageView: ImageView,
-        @DrawableRes error: Int = R.drawable.ic_image_broken
+        @DrawableRes error: Int = R.drawable.ic_image_broken,
+        radius: Int = 0
     ) {
         if (context is Activity && context.isFinishing) {
             return
@@ -23,6 +26,7 @@ object ImageLoader {
 
         Glide.with(context)
             .load(url)
+            .transform(CenterCrop(), RoundedCorners(radius))
             .error(error)
             .into(imageView)
     }

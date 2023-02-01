@@ -83,7 +83,7 @@
     <string name="developer_title">Nhà phát triển:</string>
     <string name="contact_title">Liên hệ:</string>
     <string name="content_desc_button_guide_line">Nút hướng dẫn</string>
-    <string name="no_result">Không có kết quả</string>
+    <string name="no_result">Không có chia sẻ nào</string>
     <string name="default_folder_name">Mục chung</string>
     <string name="default_folder_desc">Thư mục mặc định</string>
     <string name="button_confirm">Xác nhận</string>
@@ -111,17 +111,18 @@
     <string name="recently">Chia sẻ gần đây</string>
     <string name="search_title">Tìm kiếm</string>
     <string name="search_hint">Tìm kiếm…</string>
-    <string name="title_share_list_search">Kết quả của %s</string>
+    <string name="title_share_list_search">Tìm kiếm chia sẻ %s</string>
     <string name="share_receive_no_thing">Không có gì để lưu</string>
     <string name="show_recently">Hiện thị chia sẻ gần đây</string>
     <string name="welcome">Xin chào!</string>
     <string name="welcome_desc">Cùng quản lý chia sẻ của bạn nhé</string>
     <string name="last_updated">Cập nhật %s</string>
     <string name="recently_empty">Không có chia sẻ nào</string>
-    <string name="share_to_other">Share to other</string>
-    <string name="share_deleted">Share is deleted</string>
-    <string name="delete_share_error">Has an error until delete this share, please try again!</string>
+    <string name="share_to_other">Chia sẻ tới</string>
+    <string name="share_deleted">Chia sẻ đã xóa</string>
+    <string name="delete_share_error">Có lỗi khi xóa chia sẻ này, vui lòng thử lại</string>
     <string name="fast_save">Lưu trữ nhanh chia sẻ</string>
     <string name="fast_save_desc">Tính năng này sẽ giúp bạn lưu chia sẻ mà không cần phải nhập ghi chú.</string>
+    <string name="title_feature">Tính năng</string>
 
 </resources>

@@ -3,38 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/checkbox_custom_tab"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_title_feature"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/title_feature"
+        android:textAppearance="@style/TextAppearance.Body1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_custom_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:paddingHorizontal="16dp"
         android:text="@string/check_box_on_off_custom_tab"
         android:textAppearance="@style/TextAppearance.Body1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_title_feature" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_show_recently"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/colorWhite"
+        android:paddingHorizontal="16dp"
         android:text="@string/show_recently"
         android:textAppearance="@style/TextAppearance.Body1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/checkbox_custom_tab" />
+        app:layout_constraintTop_toBottomOf="@id/switch_custom_tab" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_fast_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/colorWhite"
+        android:paddingHorizontal="16dp"
         android:text="@string/fast_save"
         android:textAppearance="@style/TextAppearance.Body1"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,9 +56,9 @@
         android:id="@+id/text_view_sort_option_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorDividerLight"
-        android:padding="10dp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:text="@string/sort_option_title"
         android:textAppearance="@style/TextAppearance.Header"
         app:layout_constraintTop_toBottomOf="@id/switch_fast_save" />
@@ -55,14 +67,15 @@
         android:id="@+id/radio_button_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp"
+        android:background="@color/colorWhite"
         app:layout_constraintTop_toBottomOf="@id/text_view_sort_option_title">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/radio_button_no_sort"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:background="@color/colorWhite"
             android:checked="true"
             android:text="@string/no_sort"
             android:textAppearance="@style/TextAppearance.Body1" />
@@ -71,7 +84,7 @@
             android:id="@+id/radio_button_sort_by_newest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="8dp"
             android:text="@string/sort_by_newest"
             android:textAppearance="@style/TextAppearance.Body1" />
 
@@ -79,7 +92,8 @@
             android:id="@+id/radio_button_sort_by_oldest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@color/colorWhite"
             android:text="@string/sort_by_oldest"
             android:textAppearance="@style/TextAppearance.Body1" />
 
@@ -90,7 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@color/colorDividerLight"
+        android:background="@drawable/rectangle_white_stroke_top_bottom_gray"
         android:drawableEnd="@drawable/ic_backup_off"
         android:drawablePadding="8dp"
         android:ellipsize="end"

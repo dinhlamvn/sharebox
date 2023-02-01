@@ -57,9 +57,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         }
 
         val isCustomTabEnabled = appSharePref.isCustomTabEnabled()
-        viewBinding.checkboxCustomTab.isChecked = isCustomTabEnabled
+        viewBinding.switchCustomTab.isChecked = isCustomTabEnabled
 
-        viewBinding.checkboxCustomTab.setOnCheckedChangeListener { _, isChecked ->
+        viewBinding.switchCustomTab.setOnCheckedChangeListener { _, isChecked ->
             appSharePref.toggleCustomTab(isChecked)
         }
 
@@ -78,7 +78,6 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                 generateRecoveryPasswordHash()
             }
         }
-
 
         val isShowRecently = appSharePref.isShowRecentlyShare()
         viewBinding.switchShowRecently.setOnCheckedChangeListener { _, isOn ->

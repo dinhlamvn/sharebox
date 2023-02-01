@@ -76,7 +76,7 @@
     <string name="menu_filter_tag">Tags</string>
     <string name="remove_tag">Remove tag</string>
     <string name="home_activity_title">Home</string>
-    <string name="no_sort">No sort</string>
+    <string name="no_sort">Default</string>
     <string name="sort_by_newest">Sort by newest</string>
     <string name="sort_by_oldest">Sort by oldest</string>
     <string name="about">About</string>
@@ -85,12 +85,12 @@
     <string name="contact_title">Contact:</string>
     <string name="developer_email" translatable="false">dinhlamvn353@gmail.com</string>
     <string name="content_desc_button_guide_line">Guideline button</string>
-    <string name="no_result">No results</string>
+    <string name="no_result">No shares</string>
     <string name="default_folder_name">Home</string>
     <string name="default_folder_desc">Home</string>
     <string name="button_confirm">Confirm</string>
     <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
-    <string name="sort_option_title">Sort by</string>
+    <string name="sort_option_title">Sort folders</string>
     <string name="password_recovery_title">Password recovery code (un-generate)</string>
     <string name="password_recovery_desc_no_generate">* Setting your password recovery code to reset folder\'s password (click section above to generate)</string>
     <string name="password_recovery_desc_generated">* Setting the password recovery code (generated).</string>
@@ -114,7 +114,7 @@
     <string name="recently">Recently shares</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search…</string>
-    <string name="title_share_list_search">Result of %s</string>
+    <string name="title_share_list_search">Search for share %s</string>
     <string name="share_receive_no_thing">No thing to save</string>
     <string name="show_recently">Show recently share</string>
     <string name="welcome">Hello!</string>
@@ -126,5 +126,6 @@
     <string name="delete_share_error">Has an error until delete this share, please try again!</string>
     <string name="fast_save">Fast save share</string>
     <string name="fast_save_desc">This setting will help you save a share without input note.</string>
+    <string name="title_feature">Features</string>
 
 </resources>

@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
@@ -105,7 +106,12 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     private suspend fun handleResult(openGraphResult: OpenGraphResult) =
         withContext(Dispatchers.Main) {
             binding.progressBar.isVisible = false
-            ImageLoader.load(context, openGraphResult.image, binding.imageView)
+            ImageLoader.load(
+                context,
+                openGraphResult.image,
+                binding.imageView,
+                radius = 8.dp(context)
+            )
             binding.textViewUrl.text = openGraphResult.url
             binding.textViewTitle.text = openGraphResult.title
             binding.textViewDescription.text = openGraphResult.description
