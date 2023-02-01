@@ -47,4 +47,7 @@ interface ShareDao {
 
     @Delete
     fun delete(share: Share): Int
+
+    @Query("SELECT COUNT(*) FROM share")
+    fun count(): Int
 }

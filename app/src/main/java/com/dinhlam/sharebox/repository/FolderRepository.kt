@@ -52,4 +52,8 @@ class FolderRepository @Inject constructor(
     override fun search(query: String): List<Folder> {
         return emptyList()
     }
+
+    override fun rowCount(): Int {
+        return folderDao.count()
+    }
 }

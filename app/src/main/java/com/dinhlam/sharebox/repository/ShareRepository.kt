@@ -62,4 +62,8 @@ class ShareRepository @Inject constructor(
     fun getFolderShareCount(): List<FolderShareCount> {
         return shareDao.countShareByFolder()
     }
+
+    override fun rowCount(): Int {
+        return shareDao.count()
+    }
 }

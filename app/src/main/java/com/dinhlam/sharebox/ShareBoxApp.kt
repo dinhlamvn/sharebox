@@ -30,7 +30,7 @@ class ShareBoxApp : Application() {
     private fun createDefaultFoldersOnFirstLaunch() {
         if (appSharePref.isAppFirstLaunch()) {
             applicationScope.launch(Dispatchers.IO) {
-                val count = folderRepository.findAll().size
+                val count = folderRepository.rowCount()
                 if (count == 0) {
                     folderRepository.insertMany(
                         *FolderUtils.getDefaultFolders(this@ShareBoxApp).toTypedArray()

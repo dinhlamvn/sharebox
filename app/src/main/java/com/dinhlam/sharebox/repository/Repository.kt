@@ -13,4 +13,6 @@ interface Repository<T, R> {
     fun findAll(sortType: SortType = SortType.NONE): List<T>
 
     fun search(query: String): List<T>
+
+    fun rowCount(): Int
 }

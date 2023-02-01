@@ -1,11 +1,6 @@
 package com.dinhlam.sharebox.database.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.dinhlam.sharebox.database.entity.Folder
 
 @Dao
@@ -33,4 +28,7 @@ interface FolderDao {
 
     @Query("SELECT * FROM folder WHERE tag = :tagId")
     fun getByTag(tagId: Int): List<Folder>
+
+    @Query("SELECT COUNT(*) FROM folder")
+    fun count(): Int
 }
