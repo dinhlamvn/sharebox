@@ -573,9 +573,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         startActivity(intent)
     }
 
-    private fun openRecentlyShareWebLink(position: Int) = getState(viewModel) { state ->
-        val correctPosition = position - state.folders.size - 1
-        val data = state.shareList.getOrNull(correctPosition) ?: return@getState
+    private fun openRecentlyShareWebLink(shareId: Int) = getState(viewModel) { state ->
+        val data = state.shareList.firstOrNull { it.id == shareId } ?: return@getState
         val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
         gson.runCatching {
             fromJson(

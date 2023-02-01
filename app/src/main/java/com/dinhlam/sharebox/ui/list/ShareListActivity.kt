@@ -178,8 +178,8 @@ class ShareListActivity :
         shareListAdapter.requestBuildModelViews()
     }
 
-    private fun openShareWeb(position: Int) = getState(viewModel) { state ->
-        val data = state.shareList.getOrNull(position) ?: return@getState
+    private fun openShareWeb(shareId: Int) = getState(viewModel) { state ->
+        val data = state.shareList.firstOrNull { it.id == shareId } ?: return@getState
         val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
         gson.runCatching {
             fromJson(

@@ -34,7 +34,7 @@ data class ShareListWebLinkModelView(
 
         override fun onBind(item: ShareListWebLinkModelView, position: Int) {
             binding.container.setOnClickListener {
-                openAction.invoke(position)
+                openAction.invoke(item.shareId)
             }
             binding.imageOption.setOnClickListener {
                 shareToOther(item.shareId)
