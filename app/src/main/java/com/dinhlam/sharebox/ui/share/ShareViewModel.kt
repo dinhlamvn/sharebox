@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.repository.FolderRepository
 import com.dinhlam.sharebox.repository.ShareRepository
+import com.dinhlam.sharebox.utils.FolderUtils
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -28,9 +29,9 @@ class ShareViewModel @Inject constructor(
     fun setShareInfo(shareInfo: ShareState.ShareInfo) = backgroundTask {
         val folders = folderRepository.findAll(SortType.NONE)
         val historySelectedFolder = appSharePref.getLastSelectedFolder()
-        val folderId = when {
+        val folderId = FolderUtils.getFolderIdByShareContent(shareInfo) ?: when {
             historySelectedFolder.isNotBlank() -> historySelectedFolder
-            else -> "folder_home"
+            else -> FolderUtils.FOLDER_HOME_ID
         }
         setState { copy(folders = folders, shareInfo = shareInfo) }
         setSelectedFolder(folderId)
@@ -120,7 +121,11 @@ class ShareViewModel @Inject constructor(
         setState { copy(folders = folders, selectedFolder = folder) }
     }
 
-    fun saveLastSelectedFolder(folderId: String) = appSharePref.setLastSelectedFolder(folderId)
+    fun saveLastSelectedFolder(folderId: String) {
+        if (!FolderUtils.isDefaultFolder(folderId)) {
+            appSharePref.setLastSelectedFolder(folderId)
+        }
+    }
 
     fun saveShareAfterPasswordConfirm(context: Context) = getState { state ->
         saveShare(state.note, context)
