@@ -124,5 +124,9 @@
     <string name="fast_save">Lưu trữ nhanh chia sẻ</string>
     <string name="fast_save_desc">Tính năng này sẽ giúp bạn lưu chia sẻ mà không cần phải nhập ghi chú.</string>
     <string name="title_feature">Tính năng</string>
+    <string name="guideline_2">Chọn ứng dụng ShareBox trong hộp thoại.</string>
+    <string name="guideline_4">Tuyệt vời, chia sẻ của bạn đã được lưu lại.</string>
+    <string name="guideline_3">Viết gì đó về nội dung này.</string>
+    <string name="guideline_1">Nhấp vào nút Chia Sẻ trên ứng dụng khác.</string>
 
 </resources>

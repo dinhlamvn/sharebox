@@ -127,5 +127,9 @@
     <string name="fast_save">Fast save share</string>
     <string name="fast_save_desc">This setting will help you save a share without input note.</string>
     <string name="title_feature">Features</string>
+    <string name="guideline_2">Select ShareBox app from the dialog.</string>
+    <string name="guideline_4">Cool, your share is saved.</string>
+    <string name="guideline_3">Type somethings about this content.</string>
+    <string name="guideline_1">Click on the Share button in the other app.</string>
 
 </resources>
