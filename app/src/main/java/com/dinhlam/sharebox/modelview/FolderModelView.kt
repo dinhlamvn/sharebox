@@ -24,7 +24,7 @@ data class FolderModelView(
             return ModelViewFolderBinding.bind(view)
         }
 
-        override fun onBind(item: FolderModelView, position: Int) {
+        override fun onBind(model: FolderModelView, position: Int) {
             binding.root.setOnClickListener {
                 folderClick(position)
             }
@@ -35,9 +35,9 @@ data class FolderModelView(
                 }
             }
 
-            binding.textViewFolderName.text = item.name
-            binding.textViewFolderDesc.text = item.desc
-            binding.imageViewKey.isVisible = item.hasPassword
+            binding.textViewFolderName.text = model.name
+            binding.textViewFolderDesc.text = model.desc
+            binding.imageViewKey.isVisible = model.hasPassword
         }
 
         override fun onUnBind() {

@@ -16,7 +16,7 @@ object NewFolderModelView : BaseListAdapter.BaseModelView("model_view_new_folder
             return ModelViewNewFolderBinding.bind(view)
         }
 
-        override fun onBind(item: NewFolderModelView, position: Int) {
+        override fun onBind(model: NewFolderModelView, position: Int) {
             binding.root.setOnClickListener(listener)
         }
 

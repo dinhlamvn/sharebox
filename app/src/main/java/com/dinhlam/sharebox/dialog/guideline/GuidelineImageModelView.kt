@@ -26,10 +26,10 @@ data class GuidelineImageModelView(
             return ModelViewGuidelineImageBinding.bind(view)
         }
 
-        override fun onBind(item: GuidelineImageModelView, position: Int) {
+        override fun onBind(model: GuidelineImageModelView, position: Int) {
             ImageLoader.load(
                 context,
-                Uri.parse("file:///android_asset/guideline/${item.number}.png"),
+                Uri.parse("file:///android_asset/guideline/${model.number}.png"),
                 binding.imageView
             )
         }

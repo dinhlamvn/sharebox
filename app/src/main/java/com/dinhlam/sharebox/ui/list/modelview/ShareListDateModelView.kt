@@ -23,8 +23,8 @@ data class ShareListDateModelView(
             return ModelViewShareListDateBinding.bind(view)
         }
 
-        override fun onBind(item: ShareListDateModelView, position: Int) {
-            binding.root.text = item.date
+        override fun onBind(model: ShareListDateModelView, position: Int) {
+            binding.root.text = model.date
         }
 
         override fun onUnBind() {

@@ -27,16 +27,16 @@ data class ShareListImageModelView(
         view
     ) {
 
-        override fun onBind(item: ShareListImageModelView, position: Int) {
+        override fun onBind(model: ShareListImageModelView, position: Int) {
             binding.imageOption.setOnClickListener {
-                block.invoke(item.shareId)
+                block.invoke(model.shareId)
             }
             binding.root.setOnClickListener {
-                blockViewImage(item.uri)
+                blockViewImage(model.uri)
             }
-            ImageLoader.load(context, item.uri, binding.imageShareContent)
-            binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
+            ImageLoader.load(context, model.uri, binding.imageShareContent)
+            binding.textViewCreatedDate.text = model.createdAt.format("MMM d h:mm a")
+            binding.textViewNote.text = model.note.takeIfNotNullOrBlank()
         }
 
         override fun onUnBind() {

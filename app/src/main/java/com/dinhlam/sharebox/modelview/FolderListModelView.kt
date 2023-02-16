@@ -30,7 +30,7 @@ data class FolderListModelView(
             return ModelViewFolderListBinding.bind(view)
         }
 
-        override fun onBind(item: FolderListModelView, position: Int) {
+        override fun onBind(model: FolderListModelView, position: Int) {
             binding.root.setOnClickListener {
                 folderClick(position)
             }
@@ -39,14 +39,14 @@ data class FolderListModelView(
                 folderOptionClick?.invoke(position)
             }
 
-            binding.textViewShareCount.text = item.shareCount.asDisplayCountValue()
+            binding.textViewShareCount.text = model.shareCount.asDisplayCountValue()
 
-            binding.textViewFolderName.text = item.name
-            binding.textViewFolderDesc.text = item.desc
-            binding.imageViewKey.isVisible = item.hasPassword
-            binding.textViewFolderUpdated.text = item.updatedAt.format("MMM d h:mm a")
+            binding.textViewFolderName.text = model.name
+            binding.textViewFolderDesc.text = model.desc
+            binding.imageViewKey.isVisible = model.hasPassword
+            binding.textViewFolderUpdated.text = model.updatedAt.format("MMM d h:mm a")
 
-            val tag = item.tag ?: return binding.imageViewTag.run { isVisible = false }
+            val tag = model.tag ?: return binding.imageViewTag.run { isVisible = false }
             binding.imageViewTag.isVisible = true
             binding.imageViewTag.setImageResource(tag.tagResource)
         }

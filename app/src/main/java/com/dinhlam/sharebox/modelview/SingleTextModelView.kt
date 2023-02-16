@@ -28,11 +28,11 @@ data class SingleTextModelView(
             return ModelViewSingleTextBinding.bind(view)
         }
 
-        override fun onBind(item: SingleTextModelView, position: Int) {
+        override fun onBind(model: SingleTextModelView, position: Int) {
             binding.root.updateLayoutParams {
-                height = item.height
+                height = model.height
             }
-            binding.textView.text = item.text
+            binding.textView.text = model.text
         }
 
         override fun onUnBind() {

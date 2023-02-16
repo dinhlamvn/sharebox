@@ -26,13 +26,13 @@ data class SingleChoiceModelView(
             return ModelViewSingleChoiceBinding.bind(view)
         }
 
-        override fun onBind(item: SingleChoiceModelView, position: Int) {
+        override fun onBind(model: SingleChoiceModelView, position: Int) {
             binding.root.setOnClickListener {
                 listener?.invoke(position)
             }
-            binding.textView.setTextColor(ContextCompat.getColor(context, item.textColor))
-            binding.textView.text = item.text
-            binding.imageViewIcon.setImageResource(item.icon)
+            binding.textView.setTextColor(ContextCompat.getColor(context, model.textColor))
+            binding.textView.text = model.text
+            binding.imageViewIcon.setImageResource(model.icon)
         }
 
         override fun onUnBind() {

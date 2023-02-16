@@ -18,8 +18,8 @@ data class ShareImageModelView(val id: String, val uri: Uri) :
             return ModelViewShareImageBinding.bind(view)
         }
 
-        override fun onBind(item: ShareImageModelView, position: Int) {
-            ImageLoader.load(context, item.uri, binding.imageView)
+        override fun onBind(model: ShareImageModelView, position: Int) {
+            ImageLoader.load(context, model.uri, binding.imageView)
         }
 
         override fun onUnBind() {

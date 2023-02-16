@@ -150,7 +150,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         protected val binding: VB by lazy { onCreateViewBinding(view) }
 
         abstract fun onCreateViewBinding(view: View): VB
-        abstract fun onBind(item: T, position: Int)
+        abstract fun onBind(model: T, position: Int)
         abstract fun onUnBind()
     }
 

@@ -16,8 +16,8 @@ data class ShareWebLinkModelView(val id: String, val url: String?) :
             return ModelViewShareWebLinkBinding.bind(view)
         }
 
-        override fun onBind(item: ShareWebLinkModelView, position: Int) {
-            binding.linkPreview.setLink(item.url)
+        override fun onBind(model: ShareWebLinkModelView, position: Int) {
+            binding.linkPreview.setLink(model.url)
         }
 
         override fun onUnBind() {

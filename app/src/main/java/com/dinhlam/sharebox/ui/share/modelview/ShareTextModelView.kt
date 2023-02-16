@@ -16,8 +16,8 @@ data class ShareTextModelView(val id: String, val text: String?) :
             return ModelViewShareTextBinding.bind(view)
         }
 
-        override fun onBind(item: ShareTextModelView, position: Int) {
-            binding.textView.text = item.text
+        override fun onBind(model: ShareTextModelView, position: Int) {
+            binding.textView.text = model.text
         }
 
         override fun onUnBind() {

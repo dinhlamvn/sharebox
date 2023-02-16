@@ -24,7 +24,7 @@ object ShareRecentlyTitleModelView : BaseListAdapter.BaseModelView("share_recent
             return ModelViewShareRecentlyTitleBinding.bind(view)
         }
 
-        override fun onBind(item: ShareRecentlyTitleModelView, position: Int) {
+        override fun onBind(model: ShareRecentlyTitleModelView, position: Int) {
         }
 
         override fun onUnBind() {

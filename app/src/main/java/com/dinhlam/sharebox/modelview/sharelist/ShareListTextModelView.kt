@@ -33,21 +33,21 @@ data class ShareListTextModelView(
         view
     ) {
 
-        override fun onBind(item: ShareListTextModelView, position: Int) {
+        override fun onBind(model: ShareListTextModelView, position: Int) {
             binding.imageOption.setOnClickListener {
-                onShareToOther.invoke(item.shareId)
+                onShareToOther.invoke(model.shareId)
             }
 
             binding.root.setOnClickListener {
-                onClick.invoke(item.content)
+                onClick.invoke(model.content)
             }
 
             ImageLoader.load(
-                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
+                context, model.iconUrl, binding.imageView, R.drawable.ic_share_text, true
             )
-            binding.textViewContent.text = item.content
-            binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
+            binding.textViewContent.text = model.content
+            binding.textViewCreatedDate.text = model.createdAt.format("MMM d h:mm a")
+            binding.textViewNote.text = model.note.takeIfNotNullOrBlank()
         }
 
         override fun onUnBind() {

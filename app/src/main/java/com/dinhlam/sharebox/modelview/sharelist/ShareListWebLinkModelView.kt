@@ -32,21 +32,21 @@ data class ShareListWebLinkModelView(
         view
     ) {
 
-        override fun onBind(item: ShareListWebLinkModelView, position: Int) {
+        override fun onBind(model: ShareListWebLinkModelView, position: Int) {
             binding.container.setOnClickListener {
-                openAction.invoke(item.shareId)
+                openAction.invoke(model.shareId)
             }
             binding.imageOption.setOnClickListener {
-                shareToOther(item.shareId)
+                shareToOther(model.shareId)
             }
             ImageLoader.load(
-                context, item.iconUrl, binding.imageView, R.drawable.ic_share_text, true
+                context, model.iconUrl, binding.imageView, R.drawable.ic_share_text, true
             )
-            binding.textViewUrl.setLink(item.url) {
+            binding.textViewUrl.setLink(model.url) {
                 ShareBoxLinkPreviewView.Style(maxLineDesc = 2, maxLineUrl = 2, maxLineTitle = 1)
             }
-            binding.textViewCreatedDate.text = item.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.text = item.note.takeIfNotNullOrBlank()
+            binding.textViewCreatedDate.text = model.createdAt.format("MMM d h:mm a")
+            binding.textViewNote.text = model.note.takeIfNotNullOrBlank()
         }
 
         override fun onUnBind() {

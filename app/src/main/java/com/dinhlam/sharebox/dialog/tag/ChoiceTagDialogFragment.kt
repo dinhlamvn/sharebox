@@ -92,18 +92,18 @@ class ChoiceTagDialogFragment :
             return SingleChooseTagBinding.bind(view)
         }
 
-        override fun onBind(item: TagModelView, position: Int) {
-            binding.textView.text = item.name
-            binding.imageViewTag.setImageResource(item.tagResource)
+        override fun onBind(model: TagModelView, position: Int) {
+            binding.textView.text = model.name
+            binding.imageViewTag.setImageResource(model.tagResource)
             binding.viewBackground.setBackgroundColor(
-                if (item.selected) {
+                if (model.selected) {
                     Color.LTGRAY
                 } else {
                     Color.WHITE
                 }
             )
             binding.root.setOnClickListener {
-                clickListener.onClick(item.id.toInt())
+                clickListener.onClick(model.id.toInt())
             }
         }
 
