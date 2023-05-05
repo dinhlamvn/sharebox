@@ -29,11 +29,11 @@ class AppSharePref @Inject constructor(
         private const val KEY_FAST_SAVE = "fast-save"
     }
 
-    fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, Boolean::class.java, true)
+    fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, true)
 
     fun commitAppFirstLaunch() = put(KEY_APP_FIRST_LAUNCH, value = false, sync = true)
 
-    fun getLastSelectedFolder(): String = get(KEY_LAST_FOLDER_SELECTED, String::class.java, "")
+    fun getLastSelectedFolder(): String = get(KEY_LAST_FOLDER_SELECTED, "")
 
     fun setLastSelectedFolder(folderId: String) = put(KEY_LAST_FOLDER_SELECTED, folderId)
 
@@ -48,7 +48,7 @@ class AppSharePref @Inject constructor(
     }
 
     fun getSortType(): SortType {
-        return when (get(KEY_SORT_SELECTED_OPTION, Int::class.java, 0)) {
+        return when (get(KEY_SORT_SELECTED_OPTION, 0)) {
             1 -> SortType.NEWEST
             2 -> SortType.OLDEST
             else -> SortType.NONE
@@ -56,7 +56,7 @@ class AppSharePref @Inject constructor(
     }
 
     fun isShowGuideLine(): Boolean {
-        return BuildConfig.DEBUG || get(KEY_SHOW_GUIDELINE, Boolean::class.java, true)
+        return BuildConfig.DEBUG || get(KEY_SHOW_GUIDELINE, true)
     }
 
     fun turnOffShowGuideline() {
@@ -66,18 +66,18 @@ class AppSharePref @Inject constructor(
     fun setRecoveryPassword(recoveryPasswordHash: String) =
         put(KEY_PASSWORD_RECOVERY, recoveryPasswordHash)
 
-    fun getRecoveryPassword(): String = get(KEY_PASSWORD_RECOVERY, String::class.java, "")
+    fun getRecoveryPassword(): String = get(KEY_PASSWORD_RECOVERY, "")
 
-    fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, Boolean::class.java, true)
+    fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, true)
 
     fun toggleCustomTab(isOn: Boolean) = put(KEY_CUSTOM_TAB_ENABLED, isOn)
 
-    fun isShowRecentlyShare() = get(KEY_SHOW_RECENTLY_SHARE, Boolean::class.java, true)
+    fun isShowRecentlyShare() = get(KEY_SHOW_RECENTLY_SHARE, true)
 
     fun toggleShowRecentlyShare(showRecentlyShare: Boolean) =
         put(KEY_SHOW_RECENTLY_SHARE, showRecentlyShare)
 
-    fun isFastSave() = get(KEY_FAST_SAVE, Boolean::class.java, false)
+    fun isFastSave() = get(KEY_FAST_SAVE, false)
 
     fun toggleFastSave(isFastSave: Boolean) =
         put(KEY_FAST_SAVE, isFastSave)

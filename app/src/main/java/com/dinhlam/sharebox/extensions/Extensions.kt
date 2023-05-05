@@ -10,6 +10,10 @@ inline fun <reified R> Any?.cast(): R? {
     return this as? R
 }
 
+inline fun <reified R> Any?.castNonNull(): R {
+    return this as R
+}
+
 @Suppress("DEPRECATION")
 inline fun <reified T : Parcelable> Intent.getParcelableExtraCompat(key: String): T? {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

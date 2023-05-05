@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.pref
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.castNonNull
 
 abstract class SharePref constructor(
     context: Context,
@@ -13,7 +13,7 @@ abstract class SharePref constructor(
     private val sharePref: SharedPreferences =
         context.getSharedPreferences(sharePrefName, Context.MODE_PRIVATE)
 
-    fun put(key: String, value: Any, sync: Boolean = false) {
+    protected fun put(key: String, value: Any, sync: Boolean = false) {
         if (key.isBlank()) {
             error("Key is required")
         }
@@ -24,40 +24,24 @@ abstract class SharePref constructor(
                 is Long -> putLong(key, value)
                 is String -> putString(key, value)
                 is Boolean -> putBoolean(key, value)
-                is Set<*> -> putStringSet(key, value.cast())
+                is Set<*> -> {
+                    val hasNonStringValue = value.any { it !is String }
+                    if (hasNonStringValue) {
+                        error("Not support put for value: $value")
+                    }
+                    putStringSet(key, value.castNonNull())
+                }
+
                 else -> error("Not support put for value: $value")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(key: String, typeOf: Class<T>, default: T): T {
+    protected fun <T : Any> get(key: String, default: T): T {
         if (key.isBlank()) {
             error("Key is required")
         }
-        return when {
-            typeOf.isAssignableFrom(Int::class.java) -> sharePref.getInt(key, default.cast()!!) as T
-            typeOf.isAssignableFrom(Float::class.java) -> sharePref.getFloat(
-                key,
-                default.cast()!!
-            ) as T
-            typeOf.isAssignableFrom(Long::class.java) -> sharePref.getLong(
-                key,
-                default.cast()!!
-            ) as T
-            typeOf.isAssignableFrom(Boolean::class.java) -> sharePref.getBoolean(
-                key,
-                default.cast()!!
-            ) as T
-            typeOf.isAssignableFrom(String::class.java) -> sharePref.getString(
-                key,
-                default.cast()!!
-            ) as T
-            typeOf.isAssignableFrom(Set::class.java) -> sharePref.getStringSet(
-                key,
-                default.cast()!!
-            ) as T
-            else -> error("No support get for type $typeOf")
-        }
+        return sharePref.all[key] as? T ?: default
     }
 }
