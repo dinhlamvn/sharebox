@@ -134,5 +134,6 @@
     <string name="title_community">Cộng đồng</string>
     <string name="up_vote">Lên(%d)</string>
     <string name="comment">(%d)</string>
+    <string name="power_point">Power Point</string>
 
 </resources>

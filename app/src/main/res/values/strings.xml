@@ -137,5 +137,6 @@
     <string name="title_community">Community</string>
     <string name="up_vote">Up(%d)</string>
     <string name="comment">(%d)</string>
+    <string name="power_point">Power Point</string>
 
 </resources>

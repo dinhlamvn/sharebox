@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.utils.IconUtils
 
 data class ShareListTextModelView(
     val id: String,
@@ -45,7 +46,7 @@ data class ShareListTextModelView(
 
             ImageLoader.load(
                 context,
-                "https://i.pravatar.cc/300",
+                IconUtils.FAKE_AVATAR,
                 binding.layoutUserInfo.imageAvatar,
                 R.drawable.no_preview_image,
                 true

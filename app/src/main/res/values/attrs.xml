@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="UserPointView">
+        <attr name="point_icon" format="reference" />
+        <attr name="point_name" format="reference" />
+    </declare-styleable>
+</resources>

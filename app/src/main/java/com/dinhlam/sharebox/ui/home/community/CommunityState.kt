@@ -9,4 +9,5 @@ data class CommunityState(
     val isRefreshing: Boolean = false,
     val shareList: List<Share> = emptyList(),
     val shareModelViews: List<BaseListAdapter.BaseModelView> = emptyList(),
+    val isLoadMore: Boolean = false
 ) : BaseViewModel.BaseState

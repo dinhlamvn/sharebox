@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
@@ -23,7 +22,9 @@ import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
 import com.dinhlam.sharebox.pref.AppSharePref
+import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.ui.home.profile.ProfileState
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,6 +38,12 @@ class CommunityFragment :
         container: ViewGroup?
     ): FragmentCommunityBinding {
         return FragmentCommunityBinding.inflate(inflater, container, false)
+    }
+
+    private val layoutManager by lazy {
+        LoadMoreLinearLayoutManager(requireContext()) {
+            viewModel.loadMores()
+        }
     }
 
     @Inject
@@ -63,6 +70,17 @@ class CommunityFragment :
                 models.forEachIndexed { idx, model ->
                     add(model)
                     add(DividerModelView("divider_$idx", size = 8))
+                }
+
+                if (state.isLoadMore) {
+                    add(LoadingModelView)
+                    add(
+                        DividerModelView(
+                            "dividerLoadingMore",
+                            size = 50,
+                            color = android.R.color.transparent
+                        )
+                    )
                 }
             }
         }
@@ -131,12 +149,16 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.recyclerView.layoutManager = layoutManager
         viewBinding.recyclerView.adapter = shareAdapter
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadShares()
+            viewModel.doOnRefresh()
             viewBinding.swipeRefreshLayout.isRefreshing = false
+        }
+
+        viewModel.consume(this, ProfileState::isLoadMore, true) { isLoadMore ->
+            layoutManager.isLoadMore = isLoadMore
         }
     }
 

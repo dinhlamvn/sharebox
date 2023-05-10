@@ -13,7 +13,9 @@ import com.dinhlam.sharebox.ui.share.ShareState
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
     private val gson: Gson
@@ -29,12 +31,14 @@ class ShareHelper @Inject constructor(
                 intent.putExtra(Intent.EXTRA_TEXT, shareData.url)
                 intent.type = "text/*"
             }
+
             ShareType.TEXT.type -> {
                 val shareData =
                     gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareText::class.java)
                 intent.putExtra(Intent.EXTRA_TEXT, shareData.text)
                 intent.type = "text/*"
             }
+
             ShareType.IMAGE.type -> {
                 val shareData =
                     gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareImage::class.java)

@@ -4,8 +4,7 @@
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDividerLight"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:background="@color/colorDividerLight">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"

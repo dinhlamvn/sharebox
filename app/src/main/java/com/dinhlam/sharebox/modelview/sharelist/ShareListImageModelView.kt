@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.utils.IconUtils
 
 data class ShareListImageModelView(
     val id: String, val uri: Uri, val createdAt: Long, val note: String?, val shareId: Int
@@ -37,7 +38,7 @@ data class ShareListImageModelView(
             }
             ImageLoader.load(
                 context,
-                "https://i.pravatar.cc/300",
+                IconUtils.FAKE_AVATAR,
                 binding.layoutUserInfo.imageAvatar,
                 R.drawable.no_preview_image,
                 true
