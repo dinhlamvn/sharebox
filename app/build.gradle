@@ -61,7 +61,7 @@ dependencies {
     def androidx_core_ktx_version = "1.9.0"
     implementation "androidx.core:core-ktx:$androidx_core_ktx_version"
 
-    def appcompat_version = "1.6.0"
+    def appcompat_version = "1.6.1"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
     def material_version = "1.8.0"
@@ -82,7 +82,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     // Room
-    def room_version = "2.5.0"
+    def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
@@ -96,7 +96,7 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
 
     // Webkit support
-    def webkit_version = "1.6.0"
+    def webkit_version = "1.6.1"
     implementation "androidx.webkit:webkit:$webkit_version"
 
 
@@ -112,12 +112,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
     // Browser
-    def browser_version = "1.4.0"
+    def browser_version = "1.5.0"
     implementation "androidx.browser:browser:$browser_version"
 
     // Jsoup for link preview
-    def jsoup_version = "1.8.3"
+    def jsoup_version = "1.16.1"
     implementation "org.jsoup:jsoup:$jsoup_version"
+
+    // Facebook shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 }
 
 kapt {

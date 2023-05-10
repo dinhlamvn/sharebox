@@ -6,77 +6,58 @@
     android:layout_height="wrap_content"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_view"
+    <FrameLayout
+        android:id="@+id/frame_1"
         android:layout_width="0dp"
         android:layout_height="160dp"
+        android:background="@color/colorDividerLight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_url"
+        android:id="@+id/frame_2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:background="@color/colorDividerLight"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body"
         android:textColor="@color/colorTextHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_view"
-        tools:text="https://google.com" />
+        app:layout_constraintTop_toBottomOf="@id/frame_1" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_title"
+        android:id="@+id/frame_3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
+        android:background="@color/colorDividerLight"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.HeaderMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_url"
-        tools:text="This is title This is title This is title This is title This is title" />
+        app:layout_constraintTop_toBottomOf="@id/frame_2" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_description"
+        android:id="@+id/frame_4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:background="@color/colorDividerLight"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:lines="2"
         android:textAppearance="@style/TextAppearance.Caption"
         android:textColor="@color/colorTextHint"
-        app:layout_constraintEnd_toEndOf="@id/text_view_title"
-        app:layout_constraintStart_toStartOf="@id/text_view_title"
-        app:layout_constraintTop_toBottomOf="@id/text_view_title"
-        tools:text="This is description" />
-
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shimmer_dropoff="2">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <include layout="@layout/view_share_box_link_preview_shimmer" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintEnd_toEndOf="@id/frame_3"
+        app:layout_constraintStart_toStartOf="@id/frame_3"
+        app:layout_constraintTop_toBottomOf="@id/frame_3" />
 
 </merge>

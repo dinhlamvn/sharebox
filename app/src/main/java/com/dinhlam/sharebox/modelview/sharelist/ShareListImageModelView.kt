@@ -2,11 +2,15 @@ package com.dinhlam.sharebox.modelview.sharelist
 
 import android.net.Uri
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
-import com.dinhlam.sharebox.extensions.format
+import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 
@@ -22,21 +26,43 @@ data class ShareListImageModelView(
     }
 
     class ShareListImageViewHolder(
-        view: View, private val block: (Int) -> Unit, private val blockViewImage: (Uri) -> Unit
+        view: View, private val shareToOther: (Int) -> Unit, private val viewImage: (Uri) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImageModelView, ModelViewShareListImageBinding>(
         view
     ) {
 
         override fun onBind(model: ShareListImageModelView, position: Int) {
-            binding.imageOption.setOnClickListener {
-                block.invoke(model.shareId)
-            }
             binding.root.setOnClickListener {
-                blockViewImage(model.uri)
+                viewImage(model.uri)
             }
-            ImageLoader.load(context, model.uri, binding.imageShareContent)
-            binding.textViewCreatedDate.text = model.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.text = model.note.takeIfNotNullOrBlank()
+            ImageLoader.load(
+                context,
+                "https://i.pravatar.cc/300",
+                binding.layoutUserInfo.imageAvatar,
+                R.drawable.no_preview_image,
+                true
+            )
+            binding.layoutBottomAction.buttonShare.setOnClickListener {
+                shareToOther(model.shareId)
+            }
+            ImageLoader.load(context, model.uri, binding.imageShare)
+            binding.layoutUserInfo.textViewName.text = buildSpannedString {
+                color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
+                    append("William Smith")
+                }
+                color(ContextCompat.getColor(context, R.color.colorTextHint)) {
+                    append(" shares an image")
+                }
+            }
+            binding.layoutUserInfo.textUserLevel.text = "Newbie"
+            binding.textCreatedDate.text = model.createdAt.formatForFeed()
+            model.note.takeIfNotNullOrBlank()?.let { text ->
+                binding.textViewNote.isVisible = true
+                binding.textViewNote.text = text
+            } ?: binding.textViewNote.apply {
+                text = null
+                isVisible = false
+            }
         }
 
         override fun onUnBind() {

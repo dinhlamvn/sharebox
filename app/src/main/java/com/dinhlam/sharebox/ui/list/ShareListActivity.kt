@@ -16,7 +16,6 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
@@ -25,7 +24,6 @@ import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.HomeState
 import com.dinhlam.sharebox.ui.list.modelview.ShareListDateModelView
-import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.ExtraUtils
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
@@ -178,19 +176,11 @@ class ShareListActivity :
         shareListAdapter.requestBuildModelViews()
     }
 
-    private fun openShareWeb(shareId: Int) = getState(viewModel) { state ->
-        val data = state.shareList.firstOrNull { it.id == shareId } ?: return@getState
-        val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
-        gson.runCatching {
-            fromJson(
-                share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
-            )
-        }.getOrNull()?.url?.let { nonNull ->
-            if (appSharePref.isCustomTabEnabled()) {
-                appRouter.moveToChromeCustomTab(this, nonNull)
-            } else {
-                appRouter.moveToBrowser(nonNull)
-            }
+    private fun openShareWeb(url: String) {
+        if (appSharePref.isCustomTabEnabled()) {
+            appRouter.moveToChromeCustomTab(this, url)
+        } else {
+            appRouter.moveToBrowser(url)
         }
     }
 

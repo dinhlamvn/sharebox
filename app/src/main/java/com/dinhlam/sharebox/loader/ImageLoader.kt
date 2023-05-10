@@ -7,8 +7,6 @@ import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.dinhlam.sharebox.R
 
 object ImageLoader {
@@ -17,8 +15,7 @@ object ImageLoader {
         context: Context,
         url: String?,
         imageView: ImageView,
-        @DrawableRes error: Int = R.drawable.ic_image_broken,
-        radius: Int = 0
+        @DrawableRes error: Int = R.drawable.no_preview_image
     ) {
         if (context is Activity && context.isFinishing) {
             return
@@ -26,8 +23,8 @@ object ImageLoader {
 
         Glide.with(context)
             .load(url)
-            .transform(CenterCrop(), RoundedCorners(radius))
             .error(error)
+            .centerCrop()
             .into(imageView)
     }
 
@@ -38,7 +35,7 @@ object ImageLoader {
 
         Glide.with(context)
             .load(uri)
-            .fitCenter()
+            .centerCrop()
             .into(imageView)
     }
 
@@ -72,6 +69,26 @@ object ImageLoader {
 
         var req = Glide.with(context)
             .load(url)
+            .placeholder(R.drawable.no_preview_image)
+        if (circle) req = req.circleCrop()
+        if (error != 0) req = req.error(error)
+        req.into(imageView)
+    }
+
+    fun load(
+        context: Context,
+        drawable: Int,
+        imageView: ImageView,
+        @DrawableRes error: Int = 0,
+        circle: Boolean = false
+    ) {
+        if (context is Activity && context.isFinishing) {
+            return
+        }
+
+        var req = Glide.with(context)
+            .load(drawable)
+            .placeholder(R.drawable.no_preview_image)
         if (circle) req = req.circleCrop()
         if (error != 0) req = req.error(error)
         req.into(imageView)

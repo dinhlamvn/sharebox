@@ -32,7 +32,7 @@
         android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Body1"
+        android:textAppearance="@style/TextAppearance.Body"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_view_tag"

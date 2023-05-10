@@ -5,133 +5,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primaryDarkColor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_scrollFlags="scroll|snap|enterAlways"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:subtitle="@string/subtitle_home"
+        app:subtitleTextAppearance="@style/TextAppearance.Caption"
+        app:subtitleTextColor="@color/colorWhite"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/TextAppearance.BodyMedium"
+        app:titleTextColor="@color/colorWhite"
+        tools:layout_editor_absoluteX="0dp" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            app:layout_scrollFlags="scroll|snap|enterAlways">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/primaryDarkColor"
-                app:layout_constraintTop_toTopOf="parent"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:title="@string/app_name"
-                app:titleTextColor="@color/colorWhite"
-                tools:layout_editor_absoluteX="0dp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_welcome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/welcome"
-                android:textAppearance="@style/TextAppearance.HeaderMedium"
-                android:textColor="@color/colorWhite"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_view_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/welcome_desc"
-                android:textAppearance="@style/TextAppearance.Caption"
-                android:textColor="@color/colorWhite"
-                app:layout_constraintStart_toStartOf="@id/text_view_welcome"
-                app:layout_constraintTop_toBottomOf="@id/text_view_welcome" />
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_text_search"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/rectangle_white_round_4"
-                android:gravity="center_vertical"
-                android:hint="@string/search_hint"
-                android:imeActionId="@integer/action_search"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1"
-                android:paddingStart="10dp"
-                android:paddingEnd="32dp"
-                android:textAppearance="@style/TextAppearance.Caption"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view_description" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image_view_search"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="6dp"
-                android:layout_marginEnd="6dp"
-                android:background="@color/primaryColor"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_search"
-                app:layout_constraintBottom_toBottomOf="@id/edit_text_search"
-                app:layout_constraintDimensionRatio="1,1"
-                app:layout_constraintEnd_toEndOf="@id/edit_text_search"
-                app:layout_constraintTop_toTopOf="@id/edit_text_search" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/swipe_refresh_layout"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_marginTop="?attr/actionBarSize" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="10dp"
+        app:fabCradleVerticalOffset="10dp">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            app:itemTextAppearanceActive="@style/TextAppearance.Caption"
+            app:itemTextAppearanceInactive="@style/TextAppearance.Caption"
+            app:menu="@menu/bottom_nav_menu" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="8dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <include
-                android:id="@+id/frame_progress"
-                layout="@layout/view_progress_bar"
-                android:visibility="gone" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_create_folder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/content_desc_button_guide_line"
-        android:src="@drawable/ic_new_folder_white"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_add"
         app:backgroundTint="@color/primaryColor"
-        app:fabSize="normal"
-        app:tint="@android:color/white"
-        tools:ignore="RedundantDescriptionCheck" />
+        app:layout_anchor="@id/bottomAppBar"
+        app:tint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

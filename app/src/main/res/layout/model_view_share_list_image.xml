@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
+    android:elevation="0dp"
     app:cardBackgroundColor="@color/colorWhite"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp"
-    app:cardUseCompatPadding="true">
+    app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
@@ -16,76 +15,64 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_share_content"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginBottom="8dp"
-            android:scaleType="centerCrop"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/image_option"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_view"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_share_image"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_created_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_note" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_option"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:src="@drawable/ic_more_vertical_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <include
+            android:id="@+id/layout_user_info"
+            layout="@layout/layout_share_item_user_info" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_note"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="4dp"
-            android:textAppearance="@style/TextAppearance.Caption"
-            app:layout_constraintBottom_toTopOf="@id/text_view_created_date"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textAppearance="@style/TextAppearance.Body"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier"
+            app:layout_constraintTop_toBottomOf="@id/layout_user_info"
             tools:text="This is my note" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_share"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintDimensionRatio="1,1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_note" />
+
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_view_created_date"
+            android:id="@+id/text_created_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.Caption"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/TextAppearance.Body"
+            android:textColor="@color/colorTextHint"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_share"
             tools:text="2022-09-14" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrier"
+        <!-- bottom action button -->
+
+        <View
+            android:id="@+id/divider_bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:barrierMargin="8dp"
-            app:constraint_referenced_ids="image_share_content" />
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorDividerLightV2"
+            app:layout_constraintTop_toBottomOf="@id/text_created_date" />
+
+        <include
+            android:id="@+id/layout_bottom_action"
+            layout="@layout/layout_share_item_bottom_action"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider_bottom" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

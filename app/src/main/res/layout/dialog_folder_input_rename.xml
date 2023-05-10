@@ -32,7 +32,7 @@
             android:imeOptions="actionDone"
             android:inputType="text"
             android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.Body1"
+            android:textAppearance="@style/TextAppearance.Body"
             android:textColorHint="#757575"
             android:textSize="14sp" />
 

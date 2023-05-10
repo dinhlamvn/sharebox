@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.modelview.recently
+package com.dinhlam.sharebox.modelview
 
 import android.view.View
 import com.dinhlam.sharebox.R

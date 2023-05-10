@@ -6,11 +6,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
-import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.setNonBlankText
 import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import java.util.concurrent.Executors
 
@@ -19,9 +24,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyle) {
 
     data class Style(
-        val maxLineTitle: Int = 2,
-        val maxLineDesc: Int = 3,
-        val maxLineUrl: Int = 2
+        val maxLineTitle: Int = 2, val maxLineDesc: Int = 3, val maxLineUrl: Int = 2
     )
 
     companion object {
@@ -71,21 +74,23 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
     }
 
-    private fun resetUi() {
+    fun resetUi() {
         binding.textViewUrl.text = null
         binding.textViewTitle.text = null
         binding.textViewDescription.text = null
-        binding.textViewSiteName.text = null
+        binding.imageView.setImageDrawable(null)
+
     }
 
     fun setLink(url: String?, block: () -> Style = { Style() }) {
         url?.let { nonNullUrl ->
             val style = block.invoke()
-            binding.progressBar.isVisible = true
             resetUi()
             binding.textViewTitle.maxLines = style.maxLineTitle
             binding.textViewDescription.maxLines = style.maxLineDesc
             binding.textViewUrl.maxLines = style.maxLineUrl
+            binding.shimmerContainer.isVisible = true
+            binding.shimmerContainer.showShimmer(true)
             linkPreviewScope.launch {
                 AGENTS.forEach { agent ->
                     val openGraphResult =
@@ -105,25 +110,25 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 
     private suspend fun handleResult(openGraphResult: OpenGraphResult) =
         withContext(Dispatchers.Main) {
-            binding.progressBar.isVisible = false
             ImageLoader.load(
                 context,
                 openGraphResult.image,
                 binding.imageView,
-                radius = 8.dp(context)
+                error = R.drawable.no_preview_image
             )
             binding.textViewUrl.text = openGraphResult.url
-            binding.textViewTitle.text = openGraphResult.title
-            binding.textViewDescription.text = openGraphResult.description
-            binding.textViewSiteName.text = openGraphResult.siteName
+            binding.textViewTitle.setNonBlankText(openGraphResult.title)
+            binding.textViewDescription.setNonBlankText(openGraphResult.description)
+            binding.shimmerContainer.hideShimmer()
+            binding.shimmerContainer.isVisible = false
         }
 
-    private suspend fun handleErrorResult(url: String) =
-        withContext(Dispatchers.Main) {
-            binding.progressBar.isVisible = false
-            ImageLoader.load(context, R.drawable.ic_image_broken, binding.imageView)
-            binding.textViewUrl.text = url
-        }
+    private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
+        ImageLoader.load(context, R.drawable.no_preview_image, binding.imageView, false)
+        binding.textViewUrl.text = url
+        binding.shimmerContainer.hideShimmer()
+        binding.shimmerContainer.isVisible = false
+    }
 
     private fun getLinkInfo(url: String, agent: String): OpenGraphResult? {
         val openGraphResult = OpenGraphResult()
@@ -140,18 +145,23 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
                     OG_IMAGE -> {
                         openGraphResult.image = tag.attr(OPEN_GRAPH_KEY)
                     }
+
                     OG_DESCRIPTION -> {
                         openGraphResult.description = tag.attr(OPEN_GRAPH_KEY)
                     }
+
                     OG_URL -> {
                         openGraphResult.url = tag.attr(OPEN_GRAPH_KEY)
                     }
+
                     OG_TITLE -> {
                         openGraphResult.title = tag.attr(OPEN_GRAPH_KEY)
                     }
+
                     OG_SITE_NAME -> {
                         openGraphResult.siteName = tag.attr(OPEN_GRAPH_KEY)
                     }
+
                     OG_TYPE -> {
                         openGraphResult.type = tag.attr(OPEN_GRAPH_KEY)
                     }

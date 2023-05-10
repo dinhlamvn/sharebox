@@ -47,7 +47,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="text"
                     android:lines="1"
-                    android:textAppearance="@style/TextAppearance.Body1"
+                    android:textAppearance="@style/TextAppearance.Body"
                     android:textColorHint="#757575"
                     android:textSize="14sp" />
 
@@ -74,7 +74,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="textMultiLine"
                     android:minLines="5"
-                    android:textAppearance="@style/TextAppearance.Body1"
+                    android:textAppearance="@style/TextAppearance.Body"
                     android:textColorHint="#757575"
                     android:textSize="14sp" />
 
@@ -87,7 +87,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/check_box_create_folder_password"
-                android:textAppearance="@style/TextAppearance.Body1"
+                android:textAppearance="@style/TextAppearance.Body"
                 android:theme="@style/AppTheme.CheckBox"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_layout_folder_desc" />
@@ -115,7 +115,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Body1"
+                    android:textAppearance="@style/TextAppearance.Body"
                     android:textColorHint="#757575"
                     android:textSize="14sp" />
 
@@ -146,7 +146,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="text"
                     android:singleLine="true"
-                    android:textAppearance="@style/TextAppearance.Body1"
+                    android:textAppearance="@style/TextAppearance.Body"
                     android:textColorHint="#757575"
                     android:textSize="14sp" />
 

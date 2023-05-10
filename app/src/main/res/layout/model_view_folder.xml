@@ -34,7 +34,7 @@
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Body1"
+        android:textAppearance="@style/TextAppearance.Body"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -48,10 +48,16 @@
         <item name="fontFamily">@font/roboto_medium</item>
     </style>
 
-    <style name="TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.Body" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/colorTextBlack</item>
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="TextAppearance.BodyMedium" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/colorTextBlack</item>
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/roboto_medium</item>
     </style>
 
     <style name="TextAppearance.Caption" parent="TextAppearance.MaterialComponents.Caption">

@@ -1,11 +1,16 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
 import com.dinhlam.sharebox.extensions.format
+import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 
@@ -34,20 +39,35 @@ data class ShareListTextModelView(
     ) {
 
         override fun onBind(model: ShareListTextModelView, position: Int) {
-            binding.imageOption.setOnClickListener {
-                onShareToOther.invoke(model.shareId)
-            }
-
             binding.root.setOnClickListener {
                 onClick.invoke(model.content)
             }
 
             ImageLoader.load(
-                context, model.iconUrl, binding.imageView, R.drawable.ic_share_text, true
+                context,
+                "https://i.pravatar.cc/300",
+                binding.layoutUserInfo.imageAvatar,
+                R.drawable.no_preview_image,
+                true
             )
-            binding.textViewContent.text = model.content
-            binding.textViewCreatedDate.text = model.createdAt.format("MMM d h:mm a")
-            binding.textViewNote.text = model.note.takeIfNotNullOrBlank()
+            binding.layoutUserInfo.textViewName.text = buildSpannedString {
+                color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
+                    append("William Smith")
+                }
+                color(ContextCompat.getColor(context, R.color.colorTextHint)) {
+                    append(" shares a text content")
+                }
+            }
+            binding.textShare.text = model.content
+            binding.layoutUserInfo.textUserLevel.text = "Junior Member"
+            binding.textCreatedDate.text = model.createdAt.formatForFeed()
+            model.note.takeIfNotNullOrBlank()?.let { text ->
+                binding.textViewNote.isVisible = true
+                binding.textViewNote.text = text
+            } ?: binding.textViewNote.apply {
+                text = null
+                isVisible = false
+            }
         }
 
         override fun onUnBind() {

@@ -7,8 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -16,12 +14,12 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.text.HtmlCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.*
 import com.dinhlam.sharebox.database.entity.Folder
-import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.folder.confirmpassword.FolderConfirmPasswordDialogFragment
 import com.dinhlam.sharebox.dialog.folder.creator.FolderCreatorDialogFragment
@@ -31,26 +29,20 @@ import com.dinhlam.sharebox.dialog.folder.resetpassword.ResetPasswordFolderDialo
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
-import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.*
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.model.SortType
-import com.dinhlam.sharebox.modelview.FolderListModelView
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.SingleTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.ui.home.modelview.recently.ShareRecentlyTitleModelView
+import com.dinhlam.sharebox.ui.home.community.CommunityFragment
+import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.*
-import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.collections.set
 
 @AndroidEntryPoint
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
@@ -91,134 +83,12 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override val viewModel: HomeViewModel by viewModels()
 
-    private val homeAdapter = BaseListAdapter.createAdapter({
-        getState(viewModel) { state ->
-            if (state.isRefreshing) {
-                add(LoadingModelView)
-                return@getState
-            }
-            val folders = state.folders
+    private val pageAdapter = object : FragmentStateAdapter(this) {
+        override fun getItemCount(): Int = 2
 
-            if (folders.isEmpty()) {
-                add(SingleTextModelView(getString(R.string.no_result)))
-            } else {
-                folders.forEach { folder ->
-                    add(FolderListModelView("folder_${folder.id}",
-                        folder.name,
-                        folder.desc,
-                        folder.updatedAt,
-                        folder.isHasPassword(),
-                        TagUtil.getTag(folder.tag),
-                        getState(viewModel) { state -> state.folderShareCountMap[folder.id] } ?: 0))
-                }
-            }
-
-            if (state.isShowRecentlyShare) {
-                add(ShareRecentlyTitleModelView)
-                val models = buildShares(state.shareList)
-                if (models.isEmpty()) {
-                    add(
-                        SingleTextModelView(
-                            getString(R.string.recently_empty), ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    )
-                } else {
-                    addAll(models)
-                }
-            }
+        override fun createFragment(position: Int): Fragment {
+            return if (position == 1) ProfileFragment() else CommunityFragment()
         }
-    }) {
-        withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(this)
-        }
-
-        withViewType(R.layout.model_view_share_recently_title) {
-            ShareRecentlyTitleModelView.ShareRecentlyTitleViewHolder(this)
-        }
-
-        withViewType(R.layout.model_view_single_text) {
-            SingleTextModelView.SingleTextViewHolder(this)
-        }
-
-        withViewType(R.layout.model_view_folder_list) {
-            FolderListModelView.FolderListViewHolder(
-                this, viewModel::onFolderClick, ::onFolderOptionClick
-            )
-        }
-
-        withViewType(R.layout.model_view_share_list_text) {
-            ShareListTextModelView.ShareListTextViewHolder(this, { textContent ->
-                val dialog = TextViewerDialogFragment()
-                dialog.arguments = Bundle().apply {
-                    putString(Intent.EXTRA_TEXT, textContent)
-                }
-                dialog.show(supportFragmentManager, "TextViewerDialogFragment")
-            }, ::openShareRecentlyOptionClick)
-        }
-
-        withViewType(R.layout.model_view_share_list_web_link) {
-            ShareListWebLinkModelView.ShareListWebLinkWebHolder(
-                this, ::openRecentlyShareWebLink, ::openShareRecentlyOptionClick
-            )
-        }
-
-        withViewType(R.layout.model_view_share_list_image) {
-            ShareListImageModelView.ShareListImageViewHolder(
-                this, ::openShareRecentlyOptionClick, ::viewImage
-            )
-        }
-    }
-
-    private fun buildShares(shares: List<Share>): List<BaseListAdapter.BaseModelView> {
-        return shares.mapNotNull { share ->
-            when (share.shareType) {
-                ShareType.WEB.type -> {
-                    val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
-                    )
-                    ShareListWebLinkModelView(
-                        id = "${share.id}",
-                        iconUrl = IconUtils.getIconUrl(shareInfo.url),
-                        url = shareInfo.url,
-                        createdAt = share.createdAt,
-                        note = share.shareNote,
-                        shareId = share.id
-                    )
-                }
-                ShareType.IMAGE.type -> {
-                    val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareState.ShareInfo.ShareImage::class.java
-                    )
-                    ShareListImageModelView(
-                        "${share.id}", shareInfo.uri, share.createdAt, share.shareNote, share.id
-                    )
-                }
-                ShareType.TEXT.type -> {
-                    val shareInfo = gson.fromJson(
-                        share.shareInfo, ShareState.ShareInfo.ShareText::class.java
-                    )
-                    ShareListTextModelView(
-                        id = "${share.id}",
-                        iconUrl = IconUtils.getIconUrl(shareInfo.text),
-                        content = shareInfo.text,
-                        createdAt = share.createdAt,
-                        note = share.shareNote,
-                        shareId = share.id
-                    )
-                }
-                else -> {
-                    null
-                }
-            }
-        }
-    }
-
-    private fun performSearch() {
-        val searchQuery = viewBinding.editTextSearch.text?.toString().takeIfNotNullOrBlank()
-            ?: return KeyboardUtil.hideKeyboard(viewBinding.editTextSearch)
-        KeyboardUtil.hideKeyboard(viewBinding.editTextSearch)
-        val intent = appRouter.shareListSearch(searchQuery)
-        startActivity(intent)
     }
 
     override fun onCreateViewBinding(): ActivityHomeBinding {
@@ -232,16 +102,32 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         viewModel.setSortType(appSharePref.getSortType())
 
-        viewBinding.recyclerView.layoutManager = GridLayoutManager(this, 2).apply {
-            spanSizeLookup = BaseSpanSizeLookup(homeAdapter, this)
+        viewBinding.viewPager.adapter = pageAdapter
+        viewBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_community
+                    1 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_profile
+                }
+            }
+        })
+        viewBinding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            val pos = when (menuItem.itemId) {
+                R.id.navigation_community -> 0
+                else -> 1
+            }
+            viewBinding.viewPager.setCurrentItem(pos, true)
+            return@setOnItemSelectedListener true
         }
-        viewBinding.recyclerView.adapter = homeAdapter
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadFolders()
-            viewModel.loadShareListRecently()
-            viewBinding.swipeRefreshLayout.isRefreshing = false
-        }
+//        viewBinding.recyclerView.layoutManager = LinearLayoutManager(this)
+//        viewBinding.recyclerView.adapter = homeAdapter
+//
+//        viewBinding.swipeRefreshLayout.setOnRefreshListener {
+//            viewModel.loadFolders()
+//            viewModel.loadShareListRecently()
+//            viewBinding.swipeRefreshLayout.isRefreshing = false
+//        }
 
         viewModel.consume(this, HomeState::toastRes) { toastRes ->
             if (toastRes != 0) {
@@ -268,22 +154,12 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
 
         if (appSharePref.isShowGuideLine()) {
-            openGuideLineDialog()
-            appSharePref.turnOffShowGuideline()
+            //openGuideLineDialog()
+            //appSharePref.turnOffShowGuideline()
         }
 
-        viewBinding.editTextSearch.setOnEditorActionListener { _, action, _ ->
-            val actionDone =
-                action == EditorInfo.IME_ACTION_SEARCH || action == resources.getInteger(R.integer.action_search)
-            return@setOnEditorActionListener if (actionDone) {
-                performSearch()
-                true
-            } else false
-        }
-
-        viewBinding.imageViewSearch.setOnClickListener {
-            performSearch()
-        }
+        viewBinding.bottomNavigationView.background = null
+        viewBinding.bottomNavigationView.menu.getItem(1).isEnabled = false
     }
 
     private fun openGuideLineDialog() {
@@ -295,8 +171,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     override fun onStateChanged(state: HomeState) {
-        homeAdapter.requestBuildModelViews()
-        viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
+        //viewBinding.frameProgress.frameContainer.isVisible = state.showProgress
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -404,18 +279,23 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             HomeState.FolderActionConfirmation.FolderActionType.DELETE -> maybeShowConfirmPasswordToDeleteFolder(
                 nonNull
             )
+
             HomeState.FolderActionConfirmation.FolderActionType.OPEN -> maybeShowConfirmPasswordToOpenFolder(
                 nonNull
             )
+
             HomeState.FolderActionConfirmation.FolderActionType.RENAME -> maybeShowConfirmPasswordToRenameFolder(
                 nonNull
             )
+
             HomeState.FolderActionConfirmation.FolderActionType.RESET_PASSWORD -> showDialogToResetPassword(
                 nonNull
             )
+
             HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> maybeShowConfirmPasswordToViewDetailFolder(
                 nonNull
             )
+
             HomeState.FolderActionConfirmation.FolderActionType.TAG -> showTagChoose(nonNull)
         }
     }
@@ -527,6 +407,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             HomeState.FolderActionConfirmation.FolderActionType.OPEN -> viewModel.openFolderAfterPasswordVerified(
                 isRemindPassword
             )
+
             HomeState.FolderActionConfirmation.FolderActionType.DELETE -> viewModel.deleteFolderAfterPasswordVerified()
             HomeState.FolderActionConfirmation.FolderActionType.RENAME -> viewModel.renameFolderAfterPasswordVerified()
             HomeState.FolderActionConfirmation.FolderActionType.DETAIL -> viewModel.showDetailFolderAfterPasswordVerified()

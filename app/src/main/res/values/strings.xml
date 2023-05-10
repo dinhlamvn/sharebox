@@ -131,5 +131,11 @@
     <string name="guideline_4">Cool, your share is saved.</string>
     <string name="guideline_3">Type somethings about this content.</string>
     <string name="guideline_1">Click on the Share button in the other app.</string>
+    <string name="title_profile">Profile</string>
+    <string name="subtitle_home">Let\'s explore what is the world sharing</string>
+    <string name="action_share">Share</string>
+    <string name="title_community">Community</string>
+    <string name="up_vote">Up(%d)</string>
+    <string name="comment">(%d)</string>
 
 </resources>

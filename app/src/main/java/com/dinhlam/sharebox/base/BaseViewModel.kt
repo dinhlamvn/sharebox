@@ -5,10 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharebox.extensions.cast
-import kotlinx.coroutines.*
+import com.dinhlam.sharebox.extensions.castNonNull
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
@@ -26,10 +32,18 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         val notifyOnChanged: Boolean = false
     )
 
+    private data class ConsumerInternal(
+        val consumeField: String,
+        val changeNotifier: (Any?) -> Unit,
+        val notifyOnChanged: Boolean = false
+    )
+
     private val setStateChannel = Channel<T.() -> T>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(T) -> Unit>(Channel.UNLIMITED)
 
     private val consumers = CopyOnWriteArraySet<Consumer>()
+
+    private val internalConsumers = CopyOnWriteArraySet<ConsumerInternal>()
 
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
@@ -56,6 +70,11 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     private fun notifyConsumer(oldState: T, newState: T) {
+        notifyConsumerInternal(oldState, newState)
+        notifyConsumerExternal(oldState, newState)
+    }
+
+    private fun notifyConsumerExternal(oldState: T, newState: T) {
         val consumerIterator = consumers.iterator()
         while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
             val consumer = consumerIterator.next()
@@ -69,6 +88,24 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
                 consumer.liveData.postValue(afterValue)
             } else if (!consumer.notifyOnChanged) {
                 consumer.liveData.postValue(afterValue)
+            }
+        }
+    }
+
+    private fun notifyConsumerInternal(oldState: T, newState: T) {
+        val consumerIterator = internalConsumers.iterator()
+        while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
+            val consumer = consumerIterator.next()
+            val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
+            beforeField.isAccessible = true
+            val beforeValue = beforeField.get(oldState)
+            val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
+            afterField.isAccessible = true
+            val afterValue = afterField.get(newState)
+            if (consumer.notifyOnChanged && beforeValue !== afterValue) {
+                consumer.changeNotifier.invoke(afterValue)
+            } else if (!consumer.notifyOnChanged) {
+                consumer.changeNotifier.invoke(afterValue)
             }
         }
     }
@@ -120,6 +157,21 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             valueField.isAccessible = true
             val value = valueField.get(this)
             consumer.liveData.postValue(value)
+        }
+    }
+
+    protected fun <T> consume(
+        property: KProperty<T>,
+        notifyOnChanged: Boolean = true,
+        block: (T) -> Unit
+    ) {
+        val consumerInternal = ConsumerInternal(property.name, block.castNonNull(), notifyOnChanged)
+        internalConsumers.add(consumerInternal)
+        state.value.runCatching {
+            val valueField = this::class.java.getDeclaredField(property.name)
+            valueField.isAccessible = true
+            val value = valueField.get(this)
+            consumerInternal.changeNotifier.invoke(value)
         }
     }
 

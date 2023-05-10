@@ -128,5 +128,11 @@
     <string name="guideline_4">Tuyệt vời, chia sẻ của bạn đã được lưu lại.</string>
     <string name="guideline_3">Viết gì đó về nội dung này.</string>
     <string name="guideline_1">Nhấp vào nút Chia Sẻ trên ứng dụng khác.</string>
+    <string name="title_profile">Tôi</string>
+    <string name="subtitle_home">Cùng khám phá thế giới đang chia sẻ gì?</string>
+    <string name="action_share">Chia sẻ</string>
+    <string name="title_community">Cộng đồng</string>
+    <string name="up_vote">Lên(%d)</string>
+    <string name="comment">(%d)</string>
 
 </resources>
