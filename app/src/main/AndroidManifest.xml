@@ -74,12 +74,13 @@
         </activity>
 
         <activity
-            android:name="com.dinhlam.sharebox.ui.share.ShareActivity"
+            android:name="com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity"
             android:exported="true"
             android:label="@string/share_activity_title"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Transparent"
-            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

@@ -6,7 +6,7 @@
         <item name="colorOnPrimary">@color/primaryColor</item>
         <item name="colorAccent">@color/primaryDarkColor</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="editTextStyle">@style/AppEditText</item>
+        <item name="editTextStyle">@style/AppTextInputLayout</item>
         <item name="autoCompleteTextViewStyle">@style/Theme.AppAutoCompleteTextView</item>
     </style>
 
@@ -92,11 +92,12 @@
         <item name="cornerSizeTopLeft">20dp</item>
     </style>
 
-    <style name="AppEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="AppTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxCornerRadiusTopStart">0dp</item>
         <item name="boxCornerRadiusTopEnd">0dp</item>
         <item name="boxCornerRadiusBottomStart">0dp</item>
         <item name="boxCornerRadiusBottomEnd">0dp</item>
+        <item name="backgroundColor">@color/colorWhite</item>
     </style>
 
     <style name="Theme.AppBottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">

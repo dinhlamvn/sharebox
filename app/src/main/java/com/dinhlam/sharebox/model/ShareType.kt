@@ -2,8 +2,8 @@ package com.dinhlam.sharebox.model
 
 enum class ShareType(val type: String) {
     UNKNOWN("unknown"),
-    WEB("web-link"),
+    URL("url"),
     IMAGE("image"),
     TEXT("text"),
-    MULTIPLE_IMAGE("multiple-image"),
+    IMAGES("images"),
 }

@@ -21,3 +21,7 @@ fun Int.asDisplayCountValue(): String = if (this <= 99) {
 fun Int.asDisplayPoint(): String {
     return DecimalFormat("#,###").format(this)
 }
+
+fun Int.coerceMinMax(min: Int, max: Int) = this.coerceAtLeast(min).coerceAtMost(max)
+
+fun Int?.orElse(other: Int) = this ?: other

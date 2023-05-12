@@ -3,66 +3,59 @@ package com.dinhlam.sharebox.helper
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.database.entity.Share
-import com.dinhlam.sharebox.model.ShareType
-import com.dinhlam.sharebox.ui.share.ShareActivity
-import com.dinhlam.sharebox.ui.share.ShareState
-import com.google.gson.Gson
+import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShareHelper @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val gson: Gson
+    @ApplicationContext private val context: Context
 ) {
 
     @Suppress("DEPRECATION")
-    fun shareToOther(share: Share) {
+    fun shareToOther(share: ShareDetail) {
         val intent = Intent(Intent.ACTION_SEND)
-        when (share.shareType) {
-            ShareType.WEB.type -> {
-                val shareData =
-                    gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java)
-                intent.putExtra(Intent.EXTRA_TEXT, shareData.url)
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> {
+                intent.putExtra(Intent.EXTRA_TEXT, shareData.castNonNull<ShareData.ShareUrl>().url)
                 intent.type = "text/*"
             }
 
-            ShareType.TEXT.type -> {
-                val shareData =
-                    gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareText::class.java)
-                intent.putExtra(Intent.EXTRA_TEXT, shareData.text)
+            is ShareData.ShareText -> {
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    shareData.castNonNull<ShareData.ShareText>().text
+                )
                 intent.type = "text/*"
             }
 
-            ShareType.IMAGE.type -> {
-                val shareData =
-                    gson.fromJson(share.shareInfo, ShareState.ShareInfo.ShareImage::class.java)
-                intent.putExtra(Intent.EXTRA_STREAM, shareData.uri)
+            is ShareData.ShareImage -> {
+                intent.putExtra(
+                    Intent.EXTRA_STREAM,
+                    shareData.castNonNull<ShareData.ShareImage>().uri
+                )
                 intent.setDataAndType(shareData.uri, "image/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
+
+            else -> return
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val components = arrayOf(ComponentName(context, ShareActivity::class.java))
+            val components = arrayOf(ComponentName(context, ShareReceiveActivity::class.java))
             val chooser = Intent.createChooser(intent, "Share To")
             chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
             context.startActivity(chooser)
         } else {
-            val resolveInfoList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.queryIntentActivities(
-                    intent,
-                    PackageManager.ResolveInfoFlags.of(0)
-                )
-            } else {
+            val resolveInfoList =
                 context.packageManager.queryIntentActivities(intent, 0)
-            }
             if (resolveInfoList.isNotEmpty()) {
                 val targetIntents = mutableListOf<Intent>()
                 resolveInfoList.forEach { resolveInfo ->

@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.utils
 import android.content.Context
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.database.entity.Folder
-import com.dinhlam.sharebox.ui.share.ShareState
+import com.dinhlam.sharebox.model.ShareData
 
 object FolderUtils {
 
@@ -32,9 +32,9 @@ object FolderUtils {
         return id in arrayOf(YOUTUBE_SHORTS, FACEBOOK_REELS, TIKTOK)
     }
 
-    fun getFolderIdByShareContent(shareInfo: ShareState.ShareInfo): String? {
+    fun getFolderIdByShareContent(shareInfo: ShareData): String? {
         return when (shareInfo) {
-            is ShareState.ShareInfo.ShareWebLink -> {
+            is ShareData.ShareUrl -> {
                 val url = shareInfo.url ?: return FOLDER_HOME_ID
                 if (url.contains("youtube.com/shorts")) {
                     YOUTUBE_SHORTS

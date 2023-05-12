@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.sharebox.extensions.showToast
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
@@ -18,6 +19,9 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect(::onStateChanged)
+        }
+        viewModel.toastEvent.observe(this) { strRes ->
+            showToast(strRes)
         }
         super.onViewCreated(view, savedInstanceState)
     }

@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.dinhlam.sharebox.database.AppDatabase
 import com.dinhlam.sharebox.database.dao.FolderDao
 import com.dinhlam.sharebox.database.dao.ShareDao
+import com.dinhlam.sharebox.database.dao.UserDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +23,9 @@ object DatabaseModule {
     fun provideAppDatabase(
         @ApplicationContext context: Context
     ): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "share-keeper-db").build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "share-box-db")
+            .fallbackToDestructiveMigrationFrom()
+            .build()
     }
 
     @Provides
@@ -37,5 +40,12 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): FolderDao {
         return appDatabase.folderDao()
+    }
+
+    @Provides
+    fun provideUserDao(
+        appDatabase: AppDatabase
+    ): UserDao {
+        return appDatabase.userDao()
     }
 }

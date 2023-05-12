@@ -70,7 +70,7 @@ class FolderSelectorDialogFragment :
 
     override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
         viewBinding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3).apply {
-            spanSizeLookup = BaseSpanSizeLookup(folderAdapter, this)
+            spanSizeLookup = BaseSpanSizeLookup(folderAdapter, 3)
         }
         viewBinding.recyclerView.adapter = folderAdapter
 

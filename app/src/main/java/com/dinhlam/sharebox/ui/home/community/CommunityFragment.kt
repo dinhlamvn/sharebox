@@ -19,8 +19,9 @@ import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.ShareRecentlyTitleModelView
 import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
@@ -41,7 +42,9 @@ class CommunityFragment :
     }
 
     private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(requireContext()) {
+        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
+            return@LoadMoreLinearLayoutManager false
+        }) {
             viewModel.loadMores()
         }
     }
@@ -126,14 +129,18 @@ class CommunityFragment :
             }
         }
 
-        withViewType(R.layout.model_view_share_list_web_link) {
-            ShareListWebLinkModelView.ShareListWebLinkWebHolder(
+        withViewType(R.layout.model_view_share_list_url) {
+            ShareListUrlModelView.ShareListWebLinkWebHolder(
                 this, ::openWebLink, ::shareToOther
             )
         }
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(this, ::shareToOther, ::viewImage)
+        }
+
+        withViewType(R.layout.model_view_share_list_images) {
+            ShareListImagesModelView.ShareListMultipleImageViewHolder(this, ::shareToOther, ::viewImage)
         }
     }
 
@@ -171,7 +178,7 @@ class CommunityFragment :
     }
 
     private fun shareToOther(shareId: Int) = getState(viewModel) { state ->
-        val share = state.shareList.firstOrNull { it.id == shareId } ?: return@getState
+        val share = state.shares.firstOrNull { it.id == shareId } ?: return@getState
         shareHelper.shareToOther(share)
     }
 

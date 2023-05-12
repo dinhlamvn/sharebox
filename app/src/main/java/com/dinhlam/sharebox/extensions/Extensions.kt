@@ -45,3 +45,7 @@ inline fun <reified T> Context.getSystemServiceCompat(name: String): T {
         getSystemService(name) as T
     }
 }
+
+inline fun <reified T : Enum<T>> enumByNameIgnoreCase(input: String, default: T): T {
+    return enumValues<T>().firstOrNull { enum -> enum.name.equals(input, true) } ?: default
+}

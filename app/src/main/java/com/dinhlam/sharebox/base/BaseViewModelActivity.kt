@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.sharebox.extensions.showToast
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
@@ -22,6 +23,10 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect(::onStateChanged)
             }
+        }
+
+        viewModel.toastEvent.observe(this) { strRes ->
+            showToast(strRes)
         }
     }
 }

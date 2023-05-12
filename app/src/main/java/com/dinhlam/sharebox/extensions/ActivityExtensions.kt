@@ -1,16 +1,19 @@
 package com.dinhlam.sharebox.extensions
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 
 fun AppCompatActivity.screenWidth() = resources.displayMetrics.widthPixels
+
+fun Context.screenWidth() = resources.displayMetrics.widthPixels
 
 fun AppCompatActivity.screenHeight() = resources.displayMetrics.heightPixels
 
@@ -35,4 +38,11 @@ fun Activity.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
     text.takeIfNotNullOrBlank()?.let { toastContent ->
         Toast.makeText(this, toastContent, duration).show()
     }
+}
+
+fun Activity.hideKeyboard() = currentFocus?.let { focusedView ->
+    getSystemServiceCompat<InputMethodManager>(Context.INPUT_METHOD_SERVICE).hideSoftInputFromWindow(
+        focusedView.windowToken,
+        0
+    )
 }

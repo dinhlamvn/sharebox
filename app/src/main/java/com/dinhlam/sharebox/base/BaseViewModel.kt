@@ -1,6 +1,8 @@
 package com.dinhlam.sharebox.base
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -47,6 +49,9 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private val _state = MutableStateFlow(initState)
     val state: StateFlow<T> = _state
+
+    private val _toastEvent = OneTimeLiveData(0)
+    val toastEvent: LiveData<Int> = _toastEvent
 
     init {
         stateScope.launch {
@@ -174,6 +179,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             consumerInternal.changeNotifier.invoke(value)
         }
     }
+
+    protected fun postShowToast(@StringRes strRes: Int) = _toastEvent.postValue(strRes)
 
     override fun onCleared() {
         super.onCleared()

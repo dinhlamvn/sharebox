@@ -5,28 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primaryDarkColor"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_scrollFlags="scroll|snap|enterAlways"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:subtitle="@string/subtitle_home"
-        app:subtitleTextAppearance="@style/TextAppearance.Caption"
-        app:subtitleTextColor="@color/colorWhite"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/app_name"
-        app:titleTextAppearance="@style/TextAppearance.BodyMedium"
-        app:titleTextColor="@color/colorWhite"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primaryDarkColor"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_scrollFlags="scroll|snap|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:subtitle="@string/subtitle_home"
+            app:subtitleTextAppearance="@style/TextAppearance.Caption"
+            app:subtitleTextColor="@color/colorWhite"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title="@string/app_name"
+            app:titleTextAppearance="@style/TextAppearance.BodyMedium"
+            app:titleTextColor="@color/colorWhite"
+            tools:layout_editor_absoluteX="0dp" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"

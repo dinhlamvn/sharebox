@@ -138,5 +138,12 @@
     <string name="up_vote">Up(%d)</string>
     <string name="comment">(%d)</string>
     <string name="power_point">Power Point</string>
+    <string name="share_receive_activity_title">Share to others</string>
+    <string name="post">Post</string>
+    <string name="share_community_text">Community</string>
+    <string name="share_personal_text">Personal</string>
+    <string name="share_community_subtext">Public to community</string>
+    <string name="share_personal_subtext">Keep it private in profile</string>
+    <string name="share_receive_error_share">Has an error, please try again</string>
 
 </resources>

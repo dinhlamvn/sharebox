@@ -13,13 +13,13 @@ import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileMenuItemModelView
-import com.dinhlam.sharebox.modelview.profile.ProfileUserInfoModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,17 +34,31 @@ class ProfileFragment :
     }
 
     private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(requireContext()) {
+        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = { false }) {
             viewModel.loadMores()
         }
     }
 
     private val adapter = BaseListAdapter.createAdapter({
-        add(ProfileUserInfoModelView(1, IconUtils.FAKE_AVATAR, "William Smith", 8123))
-        add(DividerModelView("divider", color = android.R.color.transparent, size = 16))
-        add(DividerModelView("divider1", color = R.color.colorDividerLightV2))
-
         getState(viewModel) { state ->
+            val nonNullUser = state.activeUser ?: return@getState run {
+                add(LoadingModelView)
+                Unit
+            }
+
+            add(
+                ProfileInfoModelView(
+                    nonNullUser.id,
+                    nonNullUser.avatar,
+                    nonNullUser.name,
+                    nonNullUser.powerPoint,
+                    nonNullUser.level,
+                    nonNullUser.createdAt
+                )
+            )
+            add(DividerModelView("divider", color = android.R.color.transparent, size = 16))
+            add(DividerModelView("divider1", color = R.color.colorDividerLightV2))
+
             if (state.isRefreshing) {
                 add(LoadingModelView)
                 return@getState
@@ -67,8 +81,8 @@ class ProfileFragment :
             LoadingViewHolder(this)
         }
 
-        withViewType(R.layout.model_view_profile_user_info) {
-            ProfileUserInfoModelView.UserInfoViewHolder(this)
+        withViewType(R.layout.model_view_profile_info) {
+            ProfileInfoModelView.UserInfoViewHolder(this)
         }
 
         withViewType(R.layout.model_view_profile_menu_item) {
@@ -96,12 +110,16 @@ class ProfileFragment :
             }
         }
 
-        withViewType(R.layout.model_view_share_list_web_link) {
-            ShareListWebLinkModelView.ShareListWebLinkWebHolder(this, {}, { })
+        withViewType(R.layout.model_view_share_list_url) {
+            ShareListUrlModelView.ShareListWebLinkWebHolder(this, {}, { })
         }
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(this, {}, {})
+        }
+
+        withViewType(R.layout.model_view_share_list_images) {
+            ShareListImagesModelView.ShareListMultipleImageViewHolder(this, {}, {})
         }
     }
 

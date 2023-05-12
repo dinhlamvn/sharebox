@@ -2,8 +2,6 @@ package com.dinhlam.sharebox.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -31,13 +29,11 @@ import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.tag.ChoiceTagDialogFragment
 import com.dinhlam.sharebox.extensions.*
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
-import com.dinhlam.sharebox.ui.share.ShareState
 import com.dinhlam.sharebox.utils.*
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -444,65 +440,4 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
             append(" ${getString(R.string.developer_email)}")
         }).setPositiveButton(R.string.button_close, null).setCancelable(true).show()
-
-    private fun viewImage(uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(uri, "image/*")
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        startActivity(intent)
-    }
-
-    private fun openRecentlyShareWebLink(shareId: Int) = getState(viewModel) { state ->
-        val data = state.shareList.firstOrNull { it.id == shareId } ?: return@getState
-        val share = data.takeIf { it.shareType == ShareType.WEB.type } ?: return@getState
-        gson.runCatching {
-            fromJson(
-                share.shareInfo, ShareState.ShareInfo.ShareWebLink::class.java
-            )
-        }.getOrNull()?.url?.let { url ->
-            if (appSharePref.isCustomTabEnabled()) {
-                appRouter.moveToChromeCustomTab(this, url)
-            } else {
-                appRouter.moveToBrowser(url)
-            }
-        }
-    }
-
-    private fun openShareRecentlyOptionClick(shareId: Int) {
-        val shareData = getState(viewModel) { state ->
-            state.shareList.firstOrNull { share ->
-                share.id == shareId
-            }
-        } ?: return
-
-        val items = mutableMapOf<String, () -> Unit>()
-        val icons = mutableListOf<Int>()
-
-        items[getString(R.string.share_to_other)] = {
-            shareHelper.shareToOther(shareData)
-        }
-        icons.add(R.drawable.ic_share)
-
-        items[getString(R.string.delete)] = {
-            viewModel.deleteShare(shareData)
-        }
-        icons.add(R.drawable.ic_delete_primary)
-
-        BaseBottomSheetDialogFragment.showDialog(
-            SingleChoiceDialogFragment::class, supportFragmentManager
-        ) {
-            arguments = Bundle().apply {
-                putStringArray(
-                    SingleChoiceDialogFragment.EXTRA_ITEM, items.keys.toTypedArray()
-                )
-                putIntArray(SingleChoiceDialogFragment.EXTRA_ICON, icons.toIntArray())
-            }
-            listener = SingleChoiceDialogFragment.OnItemSelectedListener { position ->
-                val key = items.keys.toList()[position]
-                items[key]?.invoke()
-            }
-        }
-    }
 }

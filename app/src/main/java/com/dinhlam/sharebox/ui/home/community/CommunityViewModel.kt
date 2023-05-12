@@ -1,16 +1,13 @@
 package com.dinhlam.sharebox.ui.home.community
 
-import com.dinhlam.sharebox.base.BaseListAdapter
+import android.util.Log
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.database.entity.Share
-import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.filterValuesNotNull
 import com.dinhlam.sharebox.helper.ShareModelViewHelper
-import com.dinhlam.sharebox.model.ShareType
-import com.dinhlam.sharebox.model.SortType
+import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.model.ShareMode
 import com.dinhlam.sharebox.repository.ShareRepository
-import com.dinhlam.sharebox.ui.home.profile.ProfileState
-import com.dinhlam.sharebox.ui.share.ShareState
-import com.google.gson.Gson
+import com.dinhlam.sharebox.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -18,31 +15,47 @@ import javax.inject.Inject
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val shareModelViewHelper: ShareModelViewHelper
+    private val shareModelViewHelper: ShareModelViewHelper,
+    private val userRepository: UserRepository,
 ) : BaseViewModel<CommunityState>(CommunityState()) {
 
     init {
-        consume(CommunityState::shareList, true) { shares ->
-            setState { copy(shareModelViews = shareModelViewHelper.buildShareModelViews(shares)) }
+        consume(CommunityState::shares, true) { shares ->
+            sync(shares)
         }
         loadShares()
     }
 
+    private fun sync(shares: List<ShareDetail>) = execute { state ->
+        val newMap = state.userMap.plus(shares.associate { share ->
+            val user = state.userMap[share.userId] ?: userRepository.findOne(share.userId)
+            share.userId to user
+        }.filterValuesNotNull())
+        setState {
+            copy(
+                shareModelViews = shareModelViewHelper.buildShareModelViews(shares, newMap),
+                userMap = newMap
+            )
+        }
+    }
+
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
-        backgroundTask {
-            val shares = shareRepository.findAll(sortType = SortType.NEWEST)
+        backgroundTask(onError = {
+            Log.e("DinhLam", it.toString())
+        }) {
+            val shares = shareRepository.findAll(shareMode = ShareMode.ShareModeCommunity)
             delay(1000)
-            setState { copy(shareList = shares, isRefreshing = false) }
+            setState { copy(shares = shares, isRefreshing = false) }
         }
     }
 
     fun loadMores() {
         setState { copy(isLoadMore = true) }
         backgroundTask {
-            val shares = shareRepository.findAll(sortType = SortType.NEWEST)
+            val shares = shareRepository.findAll(shareMode = ShareMode.ShareModeCommunity)
             delay(3000)
-            setState { copy(shareList = shareList.plus(shares), isLoadMore = false) }
+            setState { copy(shares = this.shares.plus(shares), isLoadMore = false) }
         }
     }
 

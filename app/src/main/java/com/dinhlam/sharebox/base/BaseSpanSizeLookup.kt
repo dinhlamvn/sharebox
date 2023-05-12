@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 
 class BaseSpanSizeLookup(
     private val adapter: BaseListAdapter<BaseListAdapter.BaseModelView>,
-    private val gridLayoutManager: GridLayoutManager,
+    private val spanCount: Int,
     private val factory: SpanSizeFactory? = null
 ) : GridLayoutManager.SpanSizeLookup() {
 
@@ -31,7 +31,7 @@ class BaseSpanSizeLookup(
     private fun getSpanSizeInternal(model: BaseListAdapter.BaseModelView): Int {
         val spanSizeConfig = model.getSpanSizeConfig()
         if (spanSizeConfig is SpanSizeConfig.Full) {
-            return gridLayoutManager.spanCount
+            return spanCount
         }
         return spanSizeConfig.spanCount
     }

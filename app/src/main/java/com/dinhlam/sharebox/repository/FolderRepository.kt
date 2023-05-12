@@ -4,7 +4,9 @@ import com.dinhlam.sharebox.database.dao.FolderDao
 import com.dinhlam.sharebox.database.entity.Folder
 import com.dinhlam.sharebox.model.SortType
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FolderRepository @Inject constructor(
     private val folderDao: FolderDao
 ) : Repository<Folder, String> {

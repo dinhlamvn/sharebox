@@ -6,11 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareListBinding
-import com.dinhlam.sharebox.dialog.singlechoose.SingleChoiceDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
@@ -19,7 +17,7 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListWebLinkModelView
+import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.HomeState
@@ -60,8 +58,8 @@ class ShareListActivity :
                 }, ::openShareOptionClick)
             }
 
-            withViewType(R.layout.model_view_share_list_web_link) {
-                ShareListWebLinkModelView.ShareListWebLinkWebHolder(
+            withViewType(R.layout.model_view_share_list_url) {
+                ShareListUrlModelView.ShareListWebLinkWebHolder(
                     this, ::openShareWeb, ::openShareOptionClick
                 )
             }
@@ -75,39 +73,7 @@ class ShareListActivity :
     }
 
     private fun openShareOptionClick(shareId: Int) {
-        val shareData = getState(viewModel) { state ->
-            state.shareList.firstOrNull { share ->
-                share.id == shareId
-            }
-        } ?: return
 
-        val items = mutableMapOf<String, () -> Unit>()
-        val icons = mutableListOf<Int>()
-
-        items[getString(R.string.share_to_other)] = {
-            shareHelper.shareToOther(shareData)
-        }
-        icons.add(R.drawable.ic_share)
-
-        items[getString(R.string.delete)] = {
-            viewModel.deleteShare(shareData)
-        }
-        icons.add(R.drawable.ic_delete_primary)
-
-        BaseBottomSheetDialogFragment.showDialog(
-            SingleChoiceDialogFragment::class, supportFragmentManager
-        ) {
-            arguments = Bundle().apply {
-                putStringArray(
-                    SingleChoiceDialogFragment.EXTRA_ITEM, items.keys.toTypedArray()
-                )
-                putIntArray(SingleChoiceDialogFragment.EXTRA_ICON, icons.toIntArray())
-            }
-            listener = SingleChoiceDialogFragment.OnItemSelectedListener { position ->
-                val key = items.keys.toList()[position]
-                items[key]?.invoke()
-            }
-        }
     }
 
     @Inject
