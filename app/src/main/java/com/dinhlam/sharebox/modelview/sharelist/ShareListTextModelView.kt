@@ -16,16 +16,15 @@ import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ShareListTextModelView(
-    val id: String,
+    val shareId: String,
     val iconUrl: String?,
     val content: String?,
     val createdAt: Long,
     val note: String?,
-    val shareId: Int,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail
-) : BaseListAdapter.BaseModelView(id) {
+) : BaseListAdapter.BaseModelView(shareId) {
 
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_text
@@ -37,7 +36,7 @@ data class ShareListTextModelView(
     class ShareListTextViewHolder(
         view: View,
         private val onClick: (String?) -> Unit,
-        private val onShareToOther: (Int) -> Unit
+        private val shareToOther: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(
         view
     ) {
@@ -54,6 +53,10 @@ data class ShareListTextModelView(
                 R.drawable.no_preview_image,
                 true
             )
+
+            binding.layoutBottomAction.buttonShare.setOnClickListener {
+                shareToOther(model.shareId)
+            }
 
             binding.layoutBottomAction.textUpvote.text =
                 context.getString(R.string.up_vote, model.shareUpVote)

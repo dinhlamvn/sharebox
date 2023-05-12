@@ -67,7 +67,7 @@ class ProfileFragment :
             val models = state.shares.mapNotNull { shareDetail ->
                 shareDetail.shareData.buildShareModelViews(
                     requireContext(),
-                    shareDetail.id,
+                    shareDetail.shareId,
                     shareDetail.createdAt,
                     shareDetail.shareNote,
                     shareDetail.user
@@ -119,7 +119,7 @@ class ProfileFragment :
         }
 
         withViewType(R.layout.model_view_share_list_url) {
-            ShareListUrlModelView.ShareListWebLinkWebHolder(this, {}, { })
+            ShareListUrlModelView.ShareListUrlWebHolder(this, {}, { })
         }
 
         withViewType(R.layout.model_view_share_list_image) {

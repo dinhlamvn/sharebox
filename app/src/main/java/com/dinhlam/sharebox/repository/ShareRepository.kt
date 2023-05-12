@@ -24,7 +24,7 @@ class ShareRepository @Inject constructor(
         val shares = find()
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            ShareDetail(share.id, user, share.shareNote, share.createdAt, share.shareData)
+            ShareDetail(share.shareId, user, share.shareNote, share.createdAt, share.shareData)
         }
     }.getOrDefault(emptyList())
 
@@ -32,7 +32,7 @@ class ShareRepository @Inject constructor(
         val shares = find(shareMode)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            ShareDetail(share.id, user, share.shareNote, share.createdAt, share.shareData)
+            ShareDetail(share.shareId, user, share.shareNote, share.createdAt, share.shareData)
         }
     }.getOrDefault(emptyList())
 }

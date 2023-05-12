@@ -17,16 +17,15 @@ import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class ShareListUrlModelView(
-    val id: String,
+    val shareId: String,
     val iconUrl: String?,
     val url: String?,
     val createdAt: Long,
     val note: String?,
-    val shareId: Int,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail
-) : BaseListAdapter.BaseModelView(id) {
+) : BaseListAdapter.BaseModelView(shareId) {
 
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_url
@@ -35,10 +34,10 @@ data class ShareListUrlModelView(
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    class ShareListWebLinkWebHolder(
+    class ShareListUrlWebHolder(
         view: View,
         private val openAction: (String) -> Unit,
-        private val shareToOther: (Int) -> Unit
+        private val shareToOther: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
         view
     ) {

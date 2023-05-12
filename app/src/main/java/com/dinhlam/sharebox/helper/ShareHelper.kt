@@ -29,22 +29,29 @@ class ShareHelper @Inject constructor(
 
             is ShareData.ShareText -> {
                 intent.putExtra(
-                    Intent.EXTRA_TEXT,
-                    shareData.castNonNull<ShareData.ShareText>().text
+                    Intent.EXTRA_TEXT, shareData.castNonNull<ShareData.ShareText>().text
                 )
                 intent.type = "text/*"
             }
 
             is ShareData.ShareImage -> {
                 intent.putExtra(
-                    Intent.EXTRA_STREAM,
-                    shareData.castNonNull<ShareData.ShareImage>().uri
+                    Intent.EXTRA_STREAM, shareData.castNonNull<ShareData.ShareImage>().uri
                 )
                 intent.setDataAndType(shareData.uri, "image/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
 
-            else -> return
+            is ShareData.ShareImages -> {
+                val data = shareData.castNonNull<ShareData.ShareImages>()
+                intent.action = Intent.ACTION_SEND_MULTIPLE
+                intent.putParcelableArrayListExtra(
+                    Intent.EXTRA_STREAM,
+                    arrayListOf(*data.uris.toTypedArray())
+                )
+                intent.setDataAndType(data.uris[0], "image/*")
+                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -54,15 +61,13 @@ class ShareHelper @Inject constructor(
             chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
             context.startActivity(chooser)
         } else {
-            val resolveInfoList =
-                context.packageManager.queryIntentActivities(intent, 0)
+            val resolveInfoList = context.packageManager.queryIntentActivities(intent, 0)
             if (resolveInfoList.isNotEmpty()) {
                 val targetIntents = mutableListOf<Intent>()
                 resolveInfoList.forEach { resolveInfo ->
                     val newIntent = Intent(intent)
                     if (!resolveInfo.activityInfo.packageName.equals(
-                            BuildConfig.APPLICATION_ID,
-                            true
+                            BuildConfig.APPLICATION_ID, true
                         )
                     ) {
                         newIntent.setPackage(resolveInfo.activityInfo.packageName)

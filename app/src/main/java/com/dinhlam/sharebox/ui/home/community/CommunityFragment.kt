@@ -65,7 +65,7 @@ class CommunityFragment :
             val models = state.shares.mapNotNull { shareDetail ->
                 shareDetail.shareData.buildShareModelViews(
                     requireContext(),
-                    shareDetail.id,
+                    shareDetail.shareId,
                     shareDetail.createdAt,
                     shareDetail.shareNote,
                     shareDetail.user
@@ -127,14 +127,12 @@ class CommunityFragment :
                         putString(Intent.EXTRA_TEXT, textContent)
                     }
                     dialog.show(parentFragmentManager, "TextViewerDialogFragment")
-                },
-            ) {
-
-            }
+                }, ::shareToOther
+            )
         }
 
         withViewType(R.layout.model_view_share_list_url) {
-            ShareListUrlModelView.ShareListWebLinkWebHolder(
+            ShareListUrlModelView.ShareListUrlWebHolder(
                 this, ::openWebLink, ::shareToOther
             )
         }
@@ -183,8 +181,9 @@ class CommunityFragment :
         }
     }
 
-    private fun shareToOther(shareId: Int) = getState(viewModel) { state ->
-        val share = state.shares.firstOrNull { it.id == shareId } ?: return@getState
+    private fun shareToOther(shareId: String) = getState(viewModel) { state ->
+        val share =
+            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
         shareHelper.shareToOther(share)
     }
 

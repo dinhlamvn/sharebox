@@ -14,21 +14,20 @@ import com.dinhlam.sharebox.utils.IconUtils
 
 fun ShareData.buildShareModelViews(
     context: Context,
-    shareId: Int,
+    shareId: String,
     createdAt: Long,
     shareNote: String?,
     user: UserDetail
-): BaseListAdapter.BaseModelView? {
+): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
             ShareListUrlModelView(
-                id = "$shareId",
+                shareId = shareId,
                 iconUrl = IconUtils.getIconUrl(shareData.url),
                 url = shareData.url,
                 createdAt = createdAt,
                 note = shareNote,
-                shareId = shareId,
                 0,
                 0,
                 user
@@ -38,12 +37,11 @@ fun ShareData.buildShareModelViews(
         is ShareData.ShareText -> {
             val shareData = this.castNonNull<ShareData.ShareText>()
             ShareListTextModelView(
-                id = "$shareId",
+                shareId = shareId,
                 iconUrl = IconUtils.getIconUrl(shareData.text),
                 content = shareData.text,
                 createdAt = createdAt,
                 note = shareNote,
-                shareId = shareId,
                 0,
                 0,
                 user
@@ -53,11 +51,10 @@ fun ShareData.buildShareModelViews(
         is ShareData.ShareImage -> {
             val shareData = this.castNonNull<ShareData.ShareImage>()
             ShareListImageModelView(
-                "$shareId",
+                shareId,
                 shareData.uri,
                 createdAt,
                 shareNote,
-                shareId,
                 0,
                 0,
                 user
@@ -112,11 +109,10 @@ fun ShareData.buildShareModelViews(
             }
 
             ShareListImagesModelView(
-                "$shareId",
+                shareId,
                 shareData.uris,
                 createdAt,
                 shareNote,
-                shareId,
                 spanCount,
                 modelViews,
                 0,
@@ -124,7 +120,5 @@ fun ShareData.buildShareModelViews(
                 user
             )
         }
-
-        else -> null
     }
 }

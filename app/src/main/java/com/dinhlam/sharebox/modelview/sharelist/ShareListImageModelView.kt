@@ -17,15 +17,14 @@ import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ShareListImageModelView(
-    val id: String,
+    val shareId: String,
     val uri: Uri,
     val createdAt: Long,
     val note: String?,
-    val shareId: Int,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail
-) : BaseListAdapter.BaseModelView(id) {
+) : BaseListAdapter.BaseModelView(shareId) {
 
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_image
@@ -35,7 +34,7 @@ data class ShareListImageModelView(
     }
 
     class ShareListImageViewHolder(
-        view: View, private val shareToOther: (Int) -> Unit, private val viewImage: (Uri) -> Unit
+        view: View, private val shareToOther: (String) -> Unit, private val viewImage: (Uri) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImageModelView, ModelViewShareListImageBinding>(
         view
     ) {

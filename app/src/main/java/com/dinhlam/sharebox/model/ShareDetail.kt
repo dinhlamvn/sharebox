@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.model
 
 data class ShareDetail(
-    val id: Int,
+    val shareId: String,
     val user: UserDetail,
     val shareNote: String?,
     val createdAt: Long,

@@ -19,17 +19,16 @@ import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelVie
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ShareListImagesModelView(
-    val id: String,
+    val shareId: String,
     val uris: List<Uri>,
     val createdAt: Long,
     val note: String?,
-    val shareId: Int,
     val spanCount: Int,
     val modelViews: List<ShareReceiveImagesModelView>,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail
-) : BaseListAdapter.BaseModelView(id) {
+) : BaseListAdapter.BaseModelView(shareId) {
 
     override val modelLayoutRes: Int
         get() = R.layout.model_view_share_list_images
@@ -39,7 +38,7 @@ data class ShareListImagesModelView(
     }
 
     class ShareListMultipleImageViewHolder(
-        view: View, private val shareToOther: (Int) -> Unit, private val viewImage: (Uri) -> Unit
+        view: View, private val shareToOther: (String) -> Unit, private val viewImage: (Uri) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImagesModelView, ModelViewShareListImagesBinding>(
         view
     ) {
