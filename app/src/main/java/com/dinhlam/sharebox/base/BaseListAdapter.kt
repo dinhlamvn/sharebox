@@ -92,7 +92,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         val view = inflater.inflate(viewType, parent, false)
         val block = viewHolderManager.getViewHolder(viewType)
             ?: error("ViewHolder of $viewType is undefined.")
-        return block.invoke(view).cast() ?: error("Error create view holder of $viewType")
+        return block.invoke(view).cast()
+            ?: error("Error while create view holder with type $viewType")
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
