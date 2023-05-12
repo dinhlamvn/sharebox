@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.FolderListModelView
@@ -62,13 +63,14 @@ class CommunityFragment :
                 return@getState
             }
 
-            val models = state.shares.mapNotNull { shareDetail ->
+            val models = state.shares.map { shareDetail ->
                 shareDetail.shareData.buildShareModelViews(
                     requireContext(),
                     shareDetail.shareId,
                     shareDetail.createdAt,
                     shareDetail.shareNote,
-                    shareDetail.user
+                    shareDetail.user,
+                    state.voteMap[shareDetail.shareId].orElse(0)
                 )
             }
             if (models.isEmpty()) {
@@ -120,30 +122,31 @@ class CommunityFragment :
 
         withViewType(R.layout.model_view_share_list_text) {
             ShareListTextModelView.ShareListTextViewHolder(
-                this,
-                { textContent ->
+                this, { textContent ->
                     val dialog = TextViewerDialogFragment()
                     dialog.arguments = Bundle().apply {
                         putString(Intent.EXTRA_TEXT, textContent)
                     }
                     dialog.show(parentFragmentManager, "TextViewerDialogFragment")
-                }, ::shareToOther
+                }, ::shareToOther, ::voteShare
             )
         }
 
         withViewType(R.layout.model_view_share_list_url) {
             ShareListUrlModelView.ShareListUrlWebHolder(
-                this, ::openWebLink, ::shareToOther
+                this, ::openWebLink, ::shareToOther, ::voteShare
             )
         }
 
         withViewType(R.layout.model_view_share_list_image) {
-            ShareListImageModelView.ShareListImageViewHolder(this, ::shareToOther, ::viewImage)
+            ShareListImageModelView.ShareListImageViewHolder(
+                this, ::shareToOther, ::viewImage, ::voteShare
+            )
         }
 
         withViewType(R.layout.model_view_share_list_images) {
             ShareListImagesModelView.ShareListMultipleImageViewHolder(
-                this, ::shareToOther, ::viewImage
+                this, ::shareToOther, ::viewImage, ::voteShare
             )
         }
     }
@@ -185,6 +188,10 @@ class CommunityFragment :
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
         shareHelper.shareToOther(share)
+    }
+
+    private fun voteShare(shareId: String) {
+        viewModel.vote(shareId)
     }
 
     private fun viewImage(uri: Uri) {

@@ -113,21 +113,21 @@ class ProfileFragment :
                     }
                     dialog.show(parentFragmentManager, "TextViewerDialogFragment")
                 },
-            ) {
+                {
 
-            }
+                }, {})
         }
 
         withViewType(R.layout.model_view_share_list_url) {
-            ShareListUrlModelView.ShareListUrlWebHolder(this, {}, { })
+            ShareListUrlModelView.ShareListUrlWebHolder(this, {}, { }, {})
         }
 
         withViewType(R.layout.model_view_share_list_image) {
-            ShareListImageModelView.ShareListImageViewHolder(this, {}, {})
+            ShareListImageModelView.ShareListImageViewHolder(this, {}, {}, {})
         }
 
         withViewType(R.layout.model_view_share_list_images) {
-            ShareListImagesModelView.ShareListMultipleImageViewHolder(this, {}, {})
+            ShareListImagesModelView.ShareListMultipleImageViewHolder(this, {}, {}, {})
         }
     }
 

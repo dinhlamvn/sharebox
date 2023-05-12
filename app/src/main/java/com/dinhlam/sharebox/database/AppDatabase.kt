@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.database.converter.ShareDataConverter
 import com.dinhlam.sharebox.database.converter.ShareModeConverter
 import com.dinhlam.sharebox.database.dao.ShareDao
 import com.dinhlam.sharebox.database.dao.UserDao
+import com.dinhlam.sharebox.database.dao.VoteDao
 import com.dinhlam.sharebox.database.entity.Folder
 import com.dinhlam.sharebox.database.entity.HashTag
 import com.dinhlam.sharebox.database.entity.Share
@@ -23,4 +24,6 @@ import com.dinhlam.sharebox.database.entity.Vote
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shareDao(): ShareDao
     abstract fun userDao(): UserDao
+
+    abstract fun voteDao(): VoteDao
 }

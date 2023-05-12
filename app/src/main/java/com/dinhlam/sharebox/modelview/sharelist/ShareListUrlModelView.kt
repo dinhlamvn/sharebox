@@ -37,7 +37,8 @@ data class ShareListUrlModelView(
     class ShareListUrlWebHolder(
         view: View,
         private val openAction: (String) -> Unit,
-        private val shareToOther: (String) -> Unit
+        private val shareToOther: (String) -> Unit,
+        private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
         view
     ) {
@@ -51,6 +52,10 @@ data class ShareListUrlModelView(
             )
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
+                actionVote.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.textUpvote.text =

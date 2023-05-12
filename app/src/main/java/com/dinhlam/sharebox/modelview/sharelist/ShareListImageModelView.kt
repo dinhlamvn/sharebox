@@ -34,7 +34,10 @@ data class ShareListImageModelView(
     }
 
     class ShareListImageViewHolder(
-        view: View, private val shareToOther: (String) -> Unit, private val viewImage: (Uri) -> Unit
+        view: View,
+        private val shareToOther: (String) -> Unit,
+        private val viewImage: (Uri) -> Unit,
+        private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImageModelView, ModelViewShareListImageBinding>(
         view
     ) {
@@ -53,6 +56,11 @@ data class ShareListImageModelView(
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
             }
+
+            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
+                actionVote.invoke(model.shareId)
+            }
+
             binding.layoutBottomAction.textUpvote.text =
                 context.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =

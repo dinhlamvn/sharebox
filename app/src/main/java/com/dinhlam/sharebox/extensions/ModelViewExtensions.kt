@@ -17,19 +17,21 @@ fun ShareData.buildShareModelViews(
     shareId: String,
     createdAt: Long,
     shareNote: String?,
-    user: UserDetail
+    user: UserDetail,
+    shareVote: Int = 0,
+    shareComment: Int = 0,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
             ShareListUrlModelView(
-                shareId = shareId,
-                iconUrl = IconUtils.getIconUrl(shareData.url),
-                url = shareData.url,
-                createdAt = createdAt,
-                note = shareNote,
-                0,
-                0,
+                shareId,
+                IconUtils.getIconUrl(shareData.url),
+                shareData.url,
+                createdAt,
+                shareNote,
+                shareVote,
+                shareComment,
                 user
             )
         }
@@ -37,13 +39,13 @@ fun ShareData.buildShareModelViews(
         is ShareData.ShareText -> {
             val shareData = this.castNonNull<ShareData.ShareText>()
             ShareListTextModelView(
-                shareId = shareId,
-                iconUrl = IconUtils.getIconUrl(shareData.text),
-                content = shareData.text,
-                createdAt = createdAt,
-                note = shareNote,
-                0,
-                0,
+                shareId,
+                IconUtils.getIconUrl(shareData.text),
+                shareData.text,
+                createdAt,
+                shareNote,
+                shareVote,
+                shareComment,
                 user
             )
         }
@@ -55,8 +57,8 @@ fun ShareData.buildShareModelViews(
                 shareData.uri,
                 createdAt,
                 shareNote,
-                0,
-                0,
+                shareVote,
+                shareComment,
                 user
             )
         }
@@ -115,8 +117,8 @@ fun ShareData.buildShareModelViews(
                 shareNote,
                 spanCount,
                 modelViews,
-                0,
-                0,
+                shareVote,
+                shareComment,
                 user
             )
         }

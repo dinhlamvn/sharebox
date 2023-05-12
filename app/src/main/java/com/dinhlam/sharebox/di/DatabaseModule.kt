@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.database.AppDatabase
 import com.dinhlam.sharebox.database.converter.ShareDataConverter
 import com.dinhlam.sharebox.database.dao.ShareDao
 import com.dinhlam.sharebox.database.dao.UserDao
+import com.dinhlam.sharebox.database.dao.VoteDao
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -43,5 +44,12 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): UserDao {
         return appDatabase.userDao()
+    }
+
+    @Provides
+    fun provideVoteDao(
+        appDatabase: AppDatabase
+    ): VoteDao {
+        return appDatabase.voteDao()
     }
 }
