@@ -29,9 +29,9 @@ fun ShareData.buildShareModelViews(
                 createdAt = createdAt,
                 note = shareNote,
                 shareId = shareId,
-                userName = user.name,
-                userAvatar = user.avatar,
-                userLevel = user.level
+                0,
+                0,
+                user
             )
         }
 
@@ -43,13 +43,25 @@ fun ShareData.buildShareModelViews(
                 content = shareData.text,
                 createdAt = createdAt,
                 note = shareNote,
-                shareId = shareId
+                shareId = shareId,
+                0,
+                0,
+                user
             )
         }
 
         is ShareData.ShareImage -> {
             val shareData = this.castNonNull<ShareData.ShareImage>()
-            ShareListImageModelView("$shareId", shareData.uri, createdAt, shareNote, shareId)
+            ShareListImageModelView(
+                "$shareId",
+                shareData.uri,
+                createdAt,
+                shareNote,
+                shareId,
+                0,
+                0,
+                user
+            )
         }
 
         is ShareData.ShareImages -> {
@@ -106,7 +118,10 @@ fun ShareData.buildShareModelViews(
                 shareNote,
                 shareId,
                 spanCount,
-                modelViews
+                modelViews,
+                0,
+                0,
+                user
             )
         }
 

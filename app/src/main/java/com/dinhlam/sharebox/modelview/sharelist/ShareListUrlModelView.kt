@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
@@ -24,9 +25,7 @@ data class ShareListUrlModelView(
     val shareId: Int,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
-    val userAvatar: String = "",
-    val userName: String = "",
-    val userLevel: Int = 0,
+    val userDetail: UserDetail
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
@@ -49,10 +48,7 @@ data class ShareListUrlModelView(
                 openAction(model.url!!)
             }
             ImageLoader.load(
-                context,
-                model.userAvatar,
-                binding.layoutUserInfo.imageAvatar,
-                circle = true
+                context, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar, circle = true
             )
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
@@ -65,7 +61,7 @@ data class ShareListUrlModelView(
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
-                    append(model.userName)
+                    append(model.userDetail.name)
                 }
                 color(ContextCompat.getColor(context, R.color.colorTextHint)) {
                     append(" shares a weblink")
@@ -74,7 +70,8 @@ data class ShareListUrlModelView(
             binding.shareLinkPreview.setLink(model.url) {
                 ShareBoxLinkPreviewView.Style(maxLineDesc = 2, maxLineUrl = 1, maxLineTitle = 1)
             }
-            binding.layoutUserInfo.textUserLevel.text = UserUtils.getLevelTitle(model.userLevel)
+            binding.layoutUserInfo.textUserLevel.text =
+                UserUtils.getLevelTitle(model.userDetail.level)
 
             binding.textCreatedDate.text = model.createdAt.formatForFeed()
 

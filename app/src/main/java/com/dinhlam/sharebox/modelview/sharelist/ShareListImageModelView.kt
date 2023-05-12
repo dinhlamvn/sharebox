@@ -13,10 +13,18 @@ import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.model.UserDetail
+import com.dinhlam.sharebox.utils.UserUtils
 
 data class ShareListImageModelView(
-    val id: String, val uri: Uri, val createdAt: Long, val note: String?, val shareId: Int
+    val id: String,
+    val uri: Uri,
+    val createdAt: Long,
+    val note: String?,
+    val shareId: Int,
+    val shareUpVote: Int = 0,
+    val shareComment: Int = 0,
+    val userDetail: UserDetail
 ) : BaseListAdapter.BaseModelView(id) {
 
     override val modelLayoutRes: Int
@@ -38,7 +46,7 @@ data class ShareListImageModelView(
             }
             ImageLoader.load(
                 context,
-                IconUtils.FAKE_AVATAR,
+                model.userDetail.avatar,
                 binding.layoutUserInfo.imageAvatar,
                 R.drawable.no_preview_image,
                 true
@@ -46,16 +54,21 @@ data class ShareListImageModelView(
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
             }
+            binding.layoutBottomAction.textUpvote.text =
+                context.getString(R.string.up_vote, model.shareUpVote)
+            binding.layoutBottomAction.textComment.text =
+                context.getString(R.string.comment, model.shareComment)
             ImageLoader.load(context, model.uri, binding.imageShare)
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
-                    append("William Smith")
+                    append(model.userDetail.name)
                 }
                 color(ContextCompat.getColor(context, R.color.colorTextHint)) {
                     append(" shares an image")
                 }
             }
-            binding.layoutUserInfo.textUserLevel.text = "Newbie"
+            binding.layoutUserInfo.textUserLevel.text =
+                UserUtils.getLevelTitle(model.userDetail.level)
             binding.textCreatedDate.text = model.createdAt.formatForFeed()
             model.note.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true

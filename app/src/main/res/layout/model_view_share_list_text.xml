@@ -72,6 +72,7 @@
             app:layout_constraintTop_toBottomOf="@id/text_created_date" />
 
         <include
+            android:id="@+id/layout_bottom_action"
             layout="@layout/layout_share_item_bottom_action"
             android:layout_width="match_parent"
             android:layout_height="48dp"
