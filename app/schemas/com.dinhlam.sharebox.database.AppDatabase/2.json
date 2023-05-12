@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "cabd0654f970184158b814f3681816f9",
+    "identityHash": "9d2d1be185af69b9db2e65a60734f225",
     "entities": [
       {
         "tableName": "Share",
@@ -78,6 +78,15 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Share_share_id` ON `${TABLE_NAME}` (`share_id`)"
+          },
+          {
+            "name": "index_Share_share_user_id",
+            "unique": true,
+            "columnNames": [
+              "share_user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Share_share_user_id` ON `${TABLE_NAME}` (`share_user_id`)"
           }
         ],
         "foreignKeys": [
@@ -216,7 +225,7 @@
       },
       {
         "tableName": "User",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `name` TEXT NOT NULL, `avatar` TEXT NOT NULL, `level` INTEGER NOT NULL, `power_point` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `name` TEXT NOT NULL, `avatar` TEXT NOT NULL, `level` INTEGER NOT NULL, `drama` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -249,8 +258,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "powerPoint",
-            "columnName": "power_point",
+            "fieldPath": "drama",
+            "columnName": "drama",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -325,6 +334,15 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Vote_share_id_user_id` ON `${TABLE_NAME}` (`share_id`, `user_id`)"
+          },
+          {
+            "name": "index_Vote_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Vote_user_id` ON `${TABLE_NAME}` (`user_id`)"
           }
         ],
         "foreignKeys": [
@@ -440,7 +458,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cabd0654f970184158b814f3681816f9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9d2d1be185af69b9db2e65a60734f225')"
     ]
   }
 }

@@ -14,6 +14,6 @@ data class User(
     @ColumnInfo("name") val name: String,
     @ColumnInfo("avatar") val avatar: String,
     @ColumnInfo("level") val level: Int = 0,
-    @ColumnInfo("power_point") val powerPoint: Int = 0,
+    @ColumnInfo("drama") val drama: Int = 0,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
 )

@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
+import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
@@ -43,7 +44,6 @@ class ProfileFragment :
         getState(viewModel) { state ->
             val nonNullUser = state.activeUser ?: return@getState run {
                 add(LoadingModelView)
-                Unit
             }
 
             add(
@@ -51,7 +51,7 @@ class ProfileFragment :
                     nonNullUser.id,
                     nonNullUser.avatar,
                     nonNullUser.name,
-                    nonNullUser.powerPoint,
+                    nonNullUser.drama,
                     nonNullUser.level,
                     nonNullUser.createdAt
                 )
@@ -64,7 +64,15 @@ class ProfileFragment :
                 return@getState
             }
 
-            val models = state.shareModelViews
+            val models = state.shares.mapNotNull { shareDetail ->
+                shareDetail.shareData.buildShareModelViews(
+                    requireContext(),
+                    shareDetail.id,
+                    shareDetail.createdAt,
+                    shareDetail.shareNote,
+                    shareDetail.user
+                )
+            }
             if (models.isNotEmpty()) {
                 models.forEachIndexed { idx, model ->
                     add(model)

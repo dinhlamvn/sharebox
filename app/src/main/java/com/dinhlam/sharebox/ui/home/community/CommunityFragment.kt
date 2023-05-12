@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
+import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.FolderListModelView
@@ -35,8 +36,7 @@ class CommunityFragment :
     BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>() {
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+        inflater: LayoutInflater, container: ViewGroup?
     ): FragmentCommunityBinding {
         return FragmentCommunityBinding.inflate(inflater, container, false)
     }
@@ -62,7 +62,15 @@ class CommunityFragment :
                 return@getState
             }
 
-            val models = state.shareModelViews
+            val models = state.shares.mapNotNull { shareDetail ->
+                shareDetail.shareData.buildShareModelViews(
+                    requireContext(),
+                    shareDetail.id,
+                    shareDetail.createdAt,
+                    shareDetail.shareNote,
+                    shareDetail.user
+                )
+            }
             if (models.isEmpty()) {
                 add(
                     SingleTextModelView(
@@ -79,9 +87,7 @@ class CommunityFragment :
                     add(LoadingModelView)
                     add(
                         DividerModelView(
-                            "dividerLoadingMore",
-                            size = 50,
-                            color = android.R.color.transparent
+                            "dividerLoadingMore", size = 50, color = android.R.color.transparent
                         )
                     )
                 }
@@ -105,13 +111,11 @@ class CommunityFragment :
         }
 
         withViewType(R.layout.model_view_folder_list) {
-            FolderListModelView.FolderListViewHolder(
-                this, {
+            FolderListModelView.FolderListViewHolder(this, {
 
-                }, {
+            }, {
 
-                }
-            )
+            })
         }
 
         withViewType(R.layout.model_view_share_list_text) {
@@ -140,7 +144,9 @@ class CommunityFragment :
         }
 
         withViewType(R.layout.model_view_share_list_images) {
-            ShareListImagesModelView.ShareListMultipleImageViewHolder(this, ::shareToOther, ::viewImage)
+            ShareListImagesModelView.ShareListMultipleImageViewHolder(
+                this, ::shareToOther, ::viewImage
+            )
         }
     }
 

@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.extensions
 import android.content.Context
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.database.entity.User
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
@@ -17,7 +17,7 @@ fun ShareData.buildShareModelViews(
     shareId: Int,
     createdAt: Long,
     shareNote: String?,
-    user: User? = null
+    user: UserDetail
 ): BaseListAdapter.BaseModelView? {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -29,9 +29,9 @@ fun ShareData.buildShareModelViews(
                 createdAt = createdAt,
                 note = shareNote,
                 shareId = shareId,
-                userName = user?.name.orEmpty(),
-                userAvatar = user?.avatar.orEmpty(),
-                userLevel = user?.level.orElse(0)
+                userName = user.name,
+                userAvatar = user.avatar,
+                userLevel = user.level
             )
         }
 

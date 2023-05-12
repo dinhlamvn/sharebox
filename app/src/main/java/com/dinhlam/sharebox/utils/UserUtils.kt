@@ -8,7 +8,7 @@ object UserUtils {
     val fakeUserId: String by lazy { createUserId("dinhlamvn353@gmail.com") }
 
     fun createUserId(email: String) =
-        UUID.nameUUIDFromBytes("dinhlamvn353".toByteArray()).toString()
+        UUID.nameUUIDFromBytes(email.toByteArray()).toString()
 
     fun getLevelTitle(level: Int) = arrayOf(
         "Newbie",

@@ -46,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@id/barrier_bottom_name" />
 
     <com.dinhlam.sharebox.view.UserPointView
-        android:id="@+id/point_power"
+        android:id="@+id/point_drama"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -55,7 +55,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
         app:point_icon="@drawable/ic_emotion"
-        app:point_name="@string/power_point" />
+        app:point_name="@string/drama_point" />
 
     <View
         android:id="@+id/divider_point"
@@ -63,11 +63,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorDividerLightV2"
-        app:layout_constraintBottom_toBottomOf="@id/point_power"
+        app:layout_constraintBottom_toBottomOf="@id/point_drama"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier_bottom_name"
-        app:layout_constraintTop_toTopOf="@id/point_power" />
+        app:layout_constraintTop_toTopOf="@id/point_drama" />
 
     <com.dinhlam.sharebox.view.UserPointView
         android:id="@+id/point_level"

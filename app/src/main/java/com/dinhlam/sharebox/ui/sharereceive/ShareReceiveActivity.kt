@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.database.entity.User
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemIconWithTextSubtextBinding
 import com.dinhlam.sharebox.extensions.cast
@@ -38,6 +37,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareMode
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.HashTagModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -191,7 +191,7 @@ class ShareReceiveActivity :
         invalidateUserInfo(state.activeUser)
     }
 
-    private fun invalidateUserInfo(activeUser: User?) {
+    private fun invalidateUserInfo(activeUser: UserDetail?) {
         activeUser?.let { user ->
             ImageLoader.load(this, user.avatar, viewBinding.imageAvatar, circle = true)
             viewBinding.textViewName.text = user.name
@@ -311,7 +311,7 @@ class ShareReceiveActivity :
         )
     }
 
-    private fun showPopupChooseShareMode() = getState(viewModel) { state ->
+    private fun showPopupChooseShareMode() {
         val width = ViewGroup.LayoutParams.WRAP_CONTENT
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this)

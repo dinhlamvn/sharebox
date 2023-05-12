@@ -10,10 +10,10 @@ import com.dinhlam.sharebox.loader.ImageLoader
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ProfileInfoModelView(
-    val id: Int,
+    val id: String,
     val avatar: String,
     val name: String,
-    val powerPoint: Int,
+    val drama: Int,
     val level: Int,
     val createdAt: Long,
 ) : BaseListAdapter.BaseModelView("user_info_$id") {
@@ -33,7 +33,7 @@ data class ProfileInfoModelView(
         override fun onBind(model: ProfileInfoModelView, position: Int) {
             ImageLoader.load(context, model.avatar, binding.imageAvatar, circle = true)
             binding.textViewName.text = model.name
-            binding.pointPower.setPointText(model.powerPoint.asDisplayPoint())
+            binding.pointDrama.setPointText(model.drama.asDisplayPoint())
             binding.pointLevel.setPointText(UserUtils.getLevelTitle(model.level))
             binding.pointLevel.setPointNameText(model.createdAt.asProfileAge())
         }

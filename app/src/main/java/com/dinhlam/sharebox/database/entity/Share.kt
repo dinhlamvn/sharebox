@@ -14,7 +14,10 @@ import androidx.room.PrimaryKey
             childColumns = ["share_user_id"]
         )
     ],
-    indices = [Index(value = ["share_id"], unique = true)]
+    indices = [
+        Index(value = ["share_id"], unique = true),
+        Index(value = ["share_user_id"], unique = true)
+    ]
 )
 data class Share(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

@@ -17,7 +17,8 @@ import androidx.room.PrimaryKey
         entity = User::class,
         parentColumns = ["user_id"],
         childColumns = ["user_id"]
-    )], indices = [Index(value = ["share_id", "user_id"], unique = true)]
+    )],
+    indices = [Index(value = ["share_id", "user_id"], unique = true), Index(value = ["user_id"])]
 )
 data class Vote(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

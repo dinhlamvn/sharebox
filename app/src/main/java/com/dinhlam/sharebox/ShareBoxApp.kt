@@ -5,9 +5,7 @@ import com.dinhlam.sharebox.database.entity.User
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.repository.FolderRepository
 import com.dinhlam.sharebox.repository.UserRepository
-import com.dinhlam.sharebox.utils.FolderUtils
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.UserUtils
 import dagger.hilt.android.HiltAndroidApp
@@ -23,9 +21,6 @@ class ShareBoxApp : Application() {
     private val applicationScope = MainScope()
 
     @Inject
-    lateinit var folderRepository: FolderRepository
-
-    @Inject
     lateinit var userRepository: UserRepository
 
     @Inject
@@ -36,7 +31,6 @@ class ShareBoxApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        createDefaultFoldersOnFirstLaunch()
         createFakeUser()
     }
 
@@ -51,20 +45,6 @@ class ShareBoxApp : Application() {
 
             Logger.debug("insert user $insertUser")
             userSharePref.setActiveUserId(user.userId)
-        }
-    }
-
-    private fun createDefaultFoldersOnFirstLaunch() {
-        if (appSharePref.isAppFirstLaunch()) {
-            applicationScope.launch(Dispatchers.IO) {
-                val count = folderRepository.rowCount()
-                if (count == 0) {
-                    folderRepository.insertMany(
-                        *FolderUtils.getDefaultFolders(this@ShareBoxApp).toTypedArray()
-                    )
-                }
-            }
-            appSharePref.commitAppFirstLaunch()
         }
     }
 }

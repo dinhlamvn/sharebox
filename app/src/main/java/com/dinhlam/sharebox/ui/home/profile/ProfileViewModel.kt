@@ -2,11 +2,9 @@ package com.dinhlam.sharebox.ui.home.profile
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.helper.ShareModelViewHelper
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.repository.ShareRepository
 import com.dinhlam.sharebox.repository.UserRepository
-import com.dinhlam.sharebox.ui.home.community.CommunityState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -14,24 +12,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val shareModelViewHelper: ShareModelViewHelper,
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
 ) : BaseViewModel<ProfileState>(ProfileState()) {
     init {
         getActiveUserInfo()
-        consume(CommunityState::shares, true) { shares ->
-            getState { state ->
-                val nonNullUser = state.activeUser ?: return@getState
-                setState {
-                    copy(
-                        shareModelViews = shareModelViewHelper.buildShareModelViews(
-                            shares, mapOf(nonNullUser.userId to nonNullUser)
-                        )
-                    )
-                }
-            }
-        }
         loadShares()
     }
 
