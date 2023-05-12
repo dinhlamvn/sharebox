@@ -9,7 +9,7 @@ import com.dinhlam.sharebox.model.UserDetail
 
 data class ShareReceiveState(
     val activeUser: UserDetail? = null,
-    val shareData: ShareData = ShareData.None,
+    val shareData: ShareData? = null,
     val isSaveSuccess: Boolean = false,
     val folders: List<Folder> = emptyList(),
     val selectedFolder: Folder? = null,

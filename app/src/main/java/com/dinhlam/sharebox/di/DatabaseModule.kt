@@ -3,9 +3,10 @@ package com.dinhlam.sharebox.di
 import android.content.Context
 import androidx.room.Room
 import com.dinhlam.sharebox.database.AppDatabase
-import com.dinhlam.sharebox.database.dao.FolderDao
+import com.dinhlam.sharebox.database.converter.ShareDataConverter
 import com.dinhlam.sharebox.database.dao.ShareDao
 import com.dinhlam.sharebox.database.dao.UserDao
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,9 +22,11 @@ object DatabaseModule {
 
     @Provides
     fun provideAppDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        gson: Gson
     ): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "share-box-db")
+            .addTypeConverter(ShareDataConverter(gson))
             .fallbackToDestructiveMigrationFrom()
             .build()
     }
@@ -33,13 +36,6 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): ShareDao {
         return appDatabase.shareDao()
-    }
-
-    @Provides
-    fun provideFolderDao(
-        appDatabase: AppDatabase
-    ): FolderDao {
-        return appDatabase.folderDao()
     }
 
     @Provides

@@ -2,7 +2,9 @@ package com.dinhlam.sharebox.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.dinhlam.sharebox.database.dao.FolderDao
+import androidx.room.TypeConverters
+import com.dinhlam.sharebox.database.converter.ShareDataConverter
+import com.dinhlam.sharebox.database.converter.ShareModeConverter
 import com.dinhlam.sharebox.database.dao.ShareDao
 import com.dinhlam.sharebox.database.dao.UserDao
 import com.dinhlam.sharebox.database.entity.Folder
@@ -17,8 +19,8 @@ import com.dinhlam.sharebox.database.entity.Vote
     version = 1,
     exportSchema = true
 )
+@TypeConverters(ShareModeConverter::class, ShareDataConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shareDao(): ShareDao
-    abstract fun folderDao(): FolderDao
     abstract fun userDao(): UserDao
 }

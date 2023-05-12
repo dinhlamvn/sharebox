@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.json
 
 import android.net.Uri
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareType
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -19,6 +20,7 @@ class ShareImageJsonSerializerDeserializer :
         context: JsonSerializationContext?
     ): JsonElement {
         val jsonObject = JsonObject()
+        jsonObject.addProperty("type", ShareType.IMAGE.type)
         jsonObject.addProperty("data", src.uri.toString())
         return jsonObject
     }

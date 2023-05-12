@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.repository.ShareRepository
 import com.dinhlam.sharebox.repository.UserRepository
 import com.dinhlam.sharebox.utils.ShareUtils
 import com.dinhlam.sharebox.utils.UserUtils
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
@@ -25,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ShareReceiveViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val gson: Gson,
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState(shareMode = userSharePref.getActiveShareMode())) {
@@ -52,14 +50,12 @@ class ShareReceiveViewModel @Inject constructor(
                 note,
                 shareData.castNonNull(),
                 state.shareMode,
-                shareData.shareType
             )
 
             is ShareData.ShareText -> shareText(
                 note,
                 shareData.castNonNull(),
                 state.shareMode,
-                shareData.shareType
             )
 
             is ShareData.ShareImage -> shareImage(
@@ -67,7 +63,6 @@ class ShareReceiveViewModel @Inject constructor(
                 note,
                 shareData.castNonNull(),
                 state.shareMode,
-                shareData.shareType
             )
 
             is ShareData.ShareImages -> shareImages(
@@ -75,7 +70,6 @@ class ShareReceiveViewModel @Inject constructor(
                 note,
                 shareData.castNonNull(),
                 state.shareMode,
-                shareData.shareType
             )
 
             else -> return@execute
@@ -83,15 +77,13 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private fun shareUrl(
-        note: String?, shareWebLink: ShareData.ShareUrl, shareMode: ShareMode, shareType: String
+        note: String?, shareData: ShareData.ShareUrl, shareMode: ShareMode
     ) {
-        val json = gson.toJson(shareWebLink)
         val share = Share(
             shareId = ShareUtils.createShareId(),
-            shareType = shareType,
-            shareData = json,
+            shareData = shareData,
             shareNote = note,
-            shareMode = shareMode.mode,
+            shareMode = shareMode,
             shareUserId = UserUtils.fakeUserId
         )
         shareRepository.insert(share)
@@ -99,15 +91,13 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private fun shareText(
-        note: String?, shareText: ShareData.ShareText, shareMode: ShareMode, shareType: String
+        note: String?, shareData: ShareData.ShareText, shareMode: ShareMode
     ) {
-        val json = gson.toJson(shareText)
         val share = Share(
             shareId = ShareUtils.createShareId(),
-            shareType = shareType,
-            shareData = json,
+            shareData = shareData,
             shareNote = note,
-            shareMode = shareMode.mode,
+            shareMode = shareMode,
             shareUserId = UserUtils.fakeUserId
         )
         shareRepository.insert(share)
@@ -117,10 +107,10 @@ class ShareReceiveViewModel @Inject constructor(
     private fun shareImage(
         context: Context,
         note: String?,
-        shareImage: ShareData.ShareImage,
-        shareMode: ShareMode, shareType: String
+        shareData: ShareData.ShareImage,
+        shareMode: ShareMode
     ) {
-        val bitmap = ImageLoader.get(context, shareImage.uri)
+        val bitmap = ImageLoader.get(context, shareData.uri)
         val imagePath = context.getExternalFilesDir("share_images")!!
         if (!imagePath.exists()) {
             imagePath.mkdir()
@@ -131,14 +121,12 @@ class ShareReceiveViewModel @Inject constructor(
         val newUri = FileProvider.getUriForFile(
             context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
         )
-        val saveShareImage = shareImage.copy(uri = newUri)
-        val json = gson.toJson(saveShareImage)
+        val saveShareImage = shareData.copy(uri = newUri)
         val share = Share(
             shareId = ShareUtils.createShareId(),
-            shareType = shareType,
-            shareData = json,
+            shareData = saveShareImage,
             shareNote = note,
-            shareMode = shareMode.mode,
+            shareMode = shareMode,
             shareUserId = UserUtils.fakeUserId
         )
         shareRepository.insert(share)
@@ -148,10 +136,10 @@ class ShareReceiveViewModel @Inject constructor(
     private fun shareImages(
         context: Context,
         note: String?,
-        shareImages: ShareData.ShareImages,
-        shareMode: ShareMode, shareType: String
+        shareData: ShareData.ShareImages,
+        shareMode: ShareMode
     ) {
-        val uris = shareImages.uris.map { uri ->
+        val uris = shareData.uris.map { uri ->
             val bitmap = ImageLoader.get(context, uri)
             val imagePath = context.getExternalFilesDir("share_images")!!
             if (!imagePath.exists()) {
@@ -165,14 +153,12 @@ class ShareReceiveViewModel @Inject constructor(
             )
         }
 
-        val saveShareImage = shareImages.copy(uris = uris)
-        val json = gson.toJson(saveShareImage)
+        val saveShareImages = shareData.copy(uris = uris)
         val share = Share(
             shareId = ShareUtils.createShareId(),
-            shareType = shareType,
-            shareData = json,
+            shareData = saveShareImages,
             shareNote = note,
-            shareMode = shareMode.mode,
+            shareMode = shareMode,
             shareUserId = userSharePref.getActiveUserId()
         )
         shareRepository.insert(share)

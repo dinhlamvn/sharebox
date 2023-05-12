@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.json
 
+import android.net.Uri
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareType
+import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -9,16 +12,21 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
-class ShareWebLinkJsonSerializerDeserializer :
-    JsonSerializer<ShareData.ShareUrl>,
-    JsonDeserializer<ShareData.ShareUrl> {
+class ShareImagesJsonSerializerDeserializer :
+    JsonSerializer<ShareData.ShareImages>,
+    JsonDeserializer<ShareData.ShareImages> {
     override fun serialize(
-        src: ShareData.ShareUrl,
+        src: ShareData.ShareImages,
         typeOfSrc: Type?,
         context: JsonSerializationContext?
     ): JsonElement {
         val jsonObject = JsonObject()
-        jsonObject.addProperty("data", src.url)
+        val jsonArray = JsonArray()
+        src.uris.forEach { uri ->
+            jsonArray.add(uri.toString())
+        }
+        jsonObject.addProperty("type", ShareType.IMAGES.type)
+        jsonObject.add("data", jsonArray)
         return jsonObject
     }
 
@@ -26,7 +34,8 @@ class ShareWebLinkJsonSerializerDeserializer :
         json: JsonElement,
         typeOfT: Type?,
         context: JsonDeserializationContext?
-    ): ShareData.ShareUrl {
-        return ShareData.ShareUrl(json.asJsonObject.get("data").asString)
+    ): ShareData.ShareImages {
+        val arrUri = json.asJsonObject.get("data").asJsonArray
+        return ShareData.ShareImages(arrUri.map { str -> Uri.parse(str.asString) })
     }
 }

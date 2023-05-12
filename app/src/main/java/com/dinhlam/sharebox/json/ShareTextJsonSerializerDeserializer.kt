@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.json
 
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareType
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -18,6 +19,7 @@ class ShareTextJsonSerializerDeserializer :
         context: JsonSerializationContext?
     ): JsonElement {
         val jsonObject = JsonObject()
+        jsonObject.addProperty("type", ShareType.TEXT.type)
         jsonObject.addProperty("data", src.text)
         return jsonObject
     }
