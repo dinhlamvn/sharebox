@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
@@ -21,12 +20,8 @@ data class SingleTextModelView(
     }
 
     class SingleTextViewHolder(
-        view: View
-    ) : BaseListAdapter.BaseViewHolder<SingleTextModelView, ModelViewSingleTextBinding>(view) {
-
-        override fun onCreateViewBinding(view: View): ModelViewSingleTextBinding {
-            return ModelViewSingleTextBinding.bind(view)
-        }
+        private val binding: ModelViewSingleTextBinding,
+    ) : BaseListAdapter.BaseViewHolder<SingleTextModelView, ModelViewSingleTextBinding>(binding) {
 
         override fun onBind(model: SingleTextModelView, position: Int) {
             binding.root.updateLayoutParams {

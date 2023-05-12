@@ -19,7 +19,6 @@ class ShareDataConverter constructor(
             is ShareData.ShareText -> gson.toJson(shareData, ShareData.ShareText::class.java)
             is ShareData.ShareImage -> gson.toJson(shareData, ShareData.ShareImage::class.java)
             is ShareData.ShareImages -> gson.toJson(shareData, ShareData.ShareImages::class.java)
-            else -> error("Error while parse $shareData to json string")
         }
     }
 

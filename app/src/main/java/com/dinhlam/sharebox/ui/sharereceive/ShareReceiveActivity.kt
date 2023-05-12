@@ -21,6 +21,12 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemIconWithTextSubtextBinding
+import com.dinhlam.sharebox.databinding.ModelViewHashtagBinding
+import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImageBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImagesBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareReceiveTextBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareReceiveUrlBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
@@ -88,7 +94,7 @@ class ShareReceiveActivity :
         }
     }) {
         withViewType(R.layout.model_view_hashtag) {
-            HashTagModelView.HashTagViewHolder(this) { hashTagId ->
+            HashTagModelView.HashTagViewHolder(ModelViewHashtagBinding.bind(this)) { hashTagId ->
                 if (hashTagId == HASHTAG_DEFAULT_ID) {
                     showToast("ADD NEW HASHTAG")
                 }
@@ -165,23 +171,29 @@ class ShareReceiveActivity :
         }
     }) {
         withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(this)
+            LoadingViewHolder(ModelViewLoadingBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_share_receive_text) {
-            ShareReceiveTextModelView.ShareTextViewHolder(this)
+            ShareReceiveTextModelView.ShareTextViewHolder(ModelViewShareReceiveTextBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_share_receive_image) {
-            ShareReceiveImageModelView.ShareImageViewHolder(this)
+            ShareReceiveImageModelView.ShareImageViewHolder(
+                ModelViewShareReceiveImageBinding.bind(this)
+            )
         }
 
         withViewType(R.layout.model_view_share_receive_images) {
-            ShareReceiveImagesModelView.ShareImagesViewHolder(this)
+            ShareReceiveImagesModelView.ShareReceiveImagesViewHolder(
+                ModelViewShareReceiveImagesBinding.bind(this)
+            )
         }
 
         withViewType(R.layout.model_view_share_receive_url) {
-            ShareReceiveUrlModelView.ShareWebLinkViewHolder(this)
+            ShareReceiveUrlModelView.ShareReceiveUrlViewHolder(
+                ModelViewShareReceiveUrlBinding.bind(this)
+            )
         }
     }
 

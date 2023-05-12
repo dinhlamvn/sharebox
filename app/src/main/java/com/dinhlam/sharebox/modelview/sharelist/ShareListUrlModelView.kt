@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -35,12 +34,12 @@ data class ShareListUrlModelView(
     }
 
     class ShareListUrlWebHolder(
-        view: View,
+        private val binding: ModelViewShareListUrlBinding,
         private val openAction: (String) -> Unit,
         private val shareToOther: (String) -> Unit,
         private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
-        view
+        binding
     ) {
 
         override fun onBind(model: ShareListUrlModelView, position: Int) {
@@ -48,7 +47,10 @@ data class ShareListUrlModelView(
                 openAction(model.url!!)
             }
             ImageLoader.load(
-                context, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar, circle = true
+                buildContext,
+                model.userDetail.avatar,
+                binding.layoutUserInfo.imageAvatar,
+                circle = true
             )
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
@@ -59,15 +61,15 @@ data class ShareListUrlModelView(
             }
 
             binding.layoutBottomAction.textUpvote.text =
-                context.getString(R.string.up_vote, model.shareUpVote)
+                buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
-                context.getString(R.string.comment, model.shareComment)
+                buildContext.getString(R.string.comment, model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(context, R.color.colorTextHint)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
                     append(" shares a weblink")
                 }
             }
@@ -93,8 +95,5 @@ data class ShareListUrlModelView(
             binding.textViewNote.text = null
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewShareListUrlBinding {
-            return ModelViewShareListUrlBinding.bind(view)
-        }
     }
 }

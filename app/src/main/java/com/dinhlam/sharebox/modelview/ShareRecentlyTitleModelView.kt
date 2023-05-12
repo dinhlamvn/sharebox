@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview
 
-import android.view.View
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
@@ -15,14 +14,10 @@ object ShareRecentlyTitleModelView : BaseListAdapter.BaseModelView("share_recent
     }
 
     class ShareRecentlyTitleViewHolder(
-        view: View
+        binding: ModelViewShareRecentlyTitleBinding
     ) : BaseListAdapter.BaseViewHolder<ShareRecentlyTitleModelView, ModelViewShareRecentlyTitleBinding>(
-        view
+        binding
     ) {
-
-        override fun onCreateViewBinding(view: View): ModelViewShareRecentlyTitleBinding {
-            return ModelViewShareRecentlyTitleBinding.bind(view)
-        }
 
         override fun onBind(model: ShareRecentlyTitleModelView, position: Int) {
         }

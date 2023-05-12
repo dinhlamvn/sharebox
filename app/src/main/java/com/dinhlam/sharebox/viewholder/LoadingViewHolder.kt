@@ -1,15 +1,11 @@
 package com.dinhlam.sharebox.viewholder
 
-import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
 import com.dinhlam.sharebox.modelview.LoadingModelView
 
-class LoadingViewHolder(view: View) :
-    BaseListAdapter.BaseViewHolder<LoadingModelView, ModelViewLoadingBinding>(view) {
-    override fun onCreateViewBinding(view: View): ModelViewLoadingBinding {
-        return ModelViewLoadingBinding.bind(view)
-    }
+class LoadingViewHolder(binding: ModelViewLoadingBinding) :
+    BaseListAdapter.BaseViewHolder<LoadingModelView, ModelViewLoadingBinding>(binding) {
 
     override fun onBind(model: LoadingModelView, position: Int) {
     }

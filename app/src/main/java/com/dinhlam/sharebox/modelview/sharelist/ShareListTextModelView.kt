@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -34,12 +33,12 @@ data class ShareListTextModelView(
     }
 
     class ShareListTextViewHolder(
-        view: View,
+        private val binding: ModelViewShareListTextBinding,
         private val onClick: (String?) -> Unit,
         private val shareToOther: (String) -> Unit,
         private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(
-        view
+        binding
     ) {
 
         override fun onBind(model: ShareListTextModelView, position: Int) {
@@ -48,7 +47,7 @@ data class ShareListTextModelView(
             }
 
             ImageLoader.load(
-                context,
+                buildContext,
                 model.userDetail.avatar,
                 binding.layoutUserInfo.imageAvatar,
                 R.drawable.no_preview_image,
@@ -64,15 +63,15 @@ data class ShareListTextModelView(
             }
 
             binding.layoutBottomAction.textUpvote.text =
-                context.getString(R.string.up_vote, model.shareUpVote)
+                buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
-                context.getString(R.string.comment, model.shareComment)
+                buildContext.getString(R.string.comment, model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(context, R.color.colorTextHint)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
                     append(" shares a text content")
                 }
             }
@@ -92,8 +91,5 @@ data class ShareListTextModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewShareListTextBinding {
-            return ModelViewShareListTextBinding.bind(view)
-        }
     }
 }

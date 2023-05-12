@@ -10,6 +10,14 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
+import com.dinhlam.sharebox.databinding.ModelViewDividerBinding
+import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
+import com.dinhlam.sharebox.databinding.ModelViewProfileInfoBinding
+import com.dinhlam.sharebox.databinding.ModelViewProfileMenuItemBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListImagesBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.modelview.DividerModelView
@@ -86,26 +94,28 @@ class ProfileFragment :
         }
     }) {
         withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(this)
+            LoadingViewHolder(ModelViewLoadingBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_profile_info) {
-            ProfileInfoModelView.UserInfoViewHolder(this)
+            ProfileInfoModelView.UserInfoViewHolder(ModelViewProfileInfoBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_profile_menu_item) {
-            ProfileMenuItemModelView.ProfileMenuItemViewHolder(this) {
+            ProfileMenuItemModelView.ProfileMenuItemViewHolder(
+                ModelViewProfileMenuItemBinding.bind(this)
+            ) {
 
             }
         }
 
         withViewType(R.layout.model_view_divider) {
-            DividerModelView.DividerViewHolder(this)
+            DividerModelView.DividerViewHolder(ModelViewDividerBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_share_list_text) {
             ShareListTextModelView.ShareListTextViewHolder(
-                this,
+                ModelViewShareListTextBinding.bind(this),
                 { textContent ->
                     val dialog = TextViewerDialogFragment()
                     dialog.arguments = Bundle().apply {
@@ -119,15 +129,25 @@ class ProfileFragment :
         }
 
         withViewType(R.layout.model_view_share_list_url) {
-            ShareListUrlModelView.ShareListUrlWebHolder(this, {}, { }, {})
+            ShareListUrlModelView.ShareListUrlWebHolder(
+                ModelViewShareListUrlBinding.bind(this),
+                {},
+                { },
+                {})
         }
 
         withViewType(R.layout.model_view_share_list_image) {
-            ShareListImageModelView.ShareListImageViewHolder(this, {}, {}, {})
+            ShareListImageModelView.ShareListImageViewHolder(
+                ModelViewShareListImageBinding.bind(
+                    this
+                ), {}, {}, {})
         }
 
         withViewType(R.layout.model_view_share_list_images) {
-            ShareListImagesModelView.ShareListMultipleImageViewHolder(this, {}, {}, {})
+            ShareListImagesModelView.ShareListImagesViewHolder(
+                ModelViewShareListImagesBinding.bind(
+                    this
+                ), {}, {}, {})
         }
     }
 

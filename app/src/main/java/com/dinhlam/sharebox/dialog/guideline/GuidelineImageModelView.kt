@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.dialog.guideline
 
 import android.net.Uri
-import android.view.View
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
@@ -19,16 +18,14 @@ data class GuidelineImageModelView(
     }
 
     class GuidelineImageViewHolder(
-        view: View
-    ) : BaseListAdapter.BaseViewHolder<GuidelineImageModelView, ModelViewGuidelineImageBinding>(view) {
-
-        override fun onCreateViewBinding(view: View): ModelViewGuidelineImageBinding {
-            return ModelViewGuidelineImageBinding.bind(view)
-        }
+        val binding: ModelViewGuidelineImageBinding
+    ) : BaseListAdapter.BaseViewHolder<GuidelineImageModelView, ModelViewGuidelineImageBinding>(
+        binding
+    ) {
 
         override fun onBind(model: GuidelineImageModelView, position: Int) {
             ImageLoader.load(
-                context,
+                buildContext,
                 Uri.parse("file:///android_asset/guideline/${model.number}.png"),
                 binding.imageView
             )

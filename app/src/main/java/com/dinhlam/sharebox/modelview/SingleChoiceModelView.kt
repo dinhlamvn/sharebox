@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview
 
-import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -19,18 +18,14 @@ data class SingleChoiceModelView(
         get() = R.layout.model_view_single_choice
 
     class SingleChoiceViewHolder(
-        view: View, private val listener: ((Int) -> Unit)?
-    ) : BaseListAdapter.BaseViewHolder<SingleChoiceModelView, ModelViewSingleChoiceBinding>(view) {
-
-        override fun onCreateViewBinding(view: View): ModelViewSingleChoiceBinding {
-            return ModelViewSingleChoiceBinding.bind(view)
-        }
+        private val binding: ModelViewSingleChoiceBinding, private val listener: ((Int) -> Unit)?
+    ) : BaseListAdapter.BaseViewHolder<SingleChoiceModelView, ModelViewSingleChoiceBinding>(binding) {
 
         override fun onBind(model: SingleChoiceModelView, position: Int) {
             binding.root.setOnClickListener {
                 listener?.invoke(position)
             }
-            binding.textView.setTextColor(ContextCompat.getColor(context, model.textColor))
+            binding.textView.setTextColor(ContextCompat.getColor(buildContext, model.textColor))
             binding.textView.text = model.text
             binding.imageViewIcon.setImageResource(model.icon)
         }

@@ -30,25 +30,21 @@ class ChoiceTagDialogFragment :
             TagUtil.tags.forEach { tag ->
                 add(
                     TagModelView(
-                        tag.id.toLong(),
-                        tag.name,
-                        tag.tagResource,
-                        tag.id == state.selectedTagId
+                        tag.id.toLong(), tag.name, tag.tagResource, tag.id == state.selectedTagId
                     )
                 )
             }
         }
     }) {
         withViewType(R.layout.single_choose_tag) {
-            TagViewHolder(this) { selectedTagId ->
+            TagViewHolder(SingleChooseTagBinding.bind(this)) { selectedTagId ->
                 viewModel.selectedTag(selectedTagId)
             }
         }
     }
 
     override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+        inflater: LayoutInflater, container: ViewGroup?
     ): DialogListBinding {
         return DialogListBinding.inflate(layoutInflater, container, false)
     }
@@ -81,15 +77,12 @@ class ChoiceTagDialogFragment :
             get() = R.layout.single_choose_tag
     }
 
-    private class TagViewHolder(view: View, val clickListener: OnClickListener) :
-        BaseListAdapter.BaseViewHolder<TagModelView, SingleChooseTagBinding>(view) {
+    private class TagViewHolder(
+        private val binding: SingleChooseTagBinding, val clickListener: OnClickListener
+    ) : BaseListAdapter.BaseViewHolder<TagModelView, SingleChooseTagBinding>(binding) {
 
         fun interface OnClickListener {
             fun onClick(tagId: Int)
-        }
-
-        override fun onCreateViewBinding(view: View): SingleChooseTagBinding {
-            return SingleChooseTagBinding.bind(view)
         }
 
         override fun onBind(model: TagModelView, position: Int) {

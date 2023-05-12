@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
 import android.net.Uri
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -34,12 +33,12 @@ data class ShareListImageModelView(
     }
 
     class ShareListImageViewHolder(
-        view: View,
+        private val binding: ModelViewShareListImageBinding,
         private val shareToOther: (String) -> Unit,
         private val viewImage: (Uri) -> Unit,
         private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImageModelView, ModelViewShareListImageBinding>(
-        view
+        binding
     ) {
 
         override fun onBind(model: ShareListImageModelView, position: Int) {
@@ -47,7 +46,7 @@ data class ShareListImageModelView(
                 viewImage(model.uri)
             }
             ImageLoader.load(
-                context,
+                buildContext,
                 model.userDetail.avatar,
                 binding.layoutUserInfo.imageAvatar,
                 R.drawable.no_preview_image,
@@ -62,15 +61,15 @@ data class ShareListImageModelView(
             }
 
             binding.layoutBottomAction.textUpvote.text =
-                context.getString(R.string.up_vote, model.shareUpVote)
+                buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
-                context.getString(R.string.comment, model.shareComment)
-            ImageLoader.load(context, model.uri, binding.imageShare)
+                buildContext.getString(R.string.comment, model.shareComment)
+            ImageLoader.load(buildContext, model.uri, binding.imageShare)
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(context, R.color.colorTextHint)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
                     append(" shares an image")
                 }
             }
@@ -89,8 +88,5 @@ data class ShareListImageModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewShareListImageBinding {
-            return ModelViewShareListImageBinding.bind(view)
-        }
     }
 }

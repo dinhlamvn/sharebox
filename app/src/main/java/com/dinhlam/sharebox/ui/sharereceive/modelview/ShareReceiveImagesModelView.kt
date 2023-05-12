@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.sharereceive.modelview
 
 import android.net.Uri
-import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
@@ -25,13 +24,10 @@ data class ShareReceiveImagesModelView(
         return BaseSpanSizeLookup.SpanSizeConfig.Custom(spanCount)
     }
 
-    class ShareImagesViewHolder(view: View) :
+    class ShareReceiveImagesViewHolder(private val binding: ModelViewShareReceiveImagesBinding) :
         BaseListAdapter.BaseViewHolder<ShareReceiveImagesModelView, ModelViewShareReceiveImagesBinding>(
-            view
+            binding
         ) {
-        override fun onCreateViewBinding(view: View): ModelViewShareReceiveImagesBinding {
-            return ModelViewShareReceiveImagesBinding.bind(view)
-        }
 
         override fun onBind(model: ShareReceiveImagesModelView, position: Int) {
             binding.root.updateLayoutParams {
@@ -43,7 +39,7 @@ data class ShareReceiveImagesModelView(
                 height = model.width
             }
 
-            ImageLoader.load(context, model.uri, binding.imageView)
+            ImageLoader.load(buildContext, model.uri, binding.imageView)
 
             model.textNumber.takeIfNotNullOrBlank()?.let { textNumber ->
                 binding.textNumber.isVisible = true

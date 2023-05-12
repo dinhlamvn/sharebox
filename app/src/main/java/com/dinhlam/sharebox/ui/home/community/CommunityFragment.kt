@@ -11,14 +11,19 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
+import com.dinhlam.sharebox.databinding.ModelViewDividerBinding
+import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListImagesBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
+import com.dinhlam.sharebox.databinding.ModelViewSingleTextBinding
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.DividerModelView
-import com.dinhlam.sharebox.modelview.FolderListModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.ShareRecentlyTitleModelView
 import com.dinhlam.sharebox.modelview.SingleTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
@@ -97,32 +102,20 @@ class CommunityFragment :
         }
     }) {
         withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(this)
+            LoadingViewHolder(ModelViewLoadingBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_divider) {
-            DividerModelView.DividerViewHolder(this)
-        }
-
-        withViewType(R.layout.model_view_share_recently_title) {
-            ShareRecentlyTitleModelView.ShareRecentlyTitleViewHolder(this)
+            DividerModelView.DividerViewHolder(ModelViewDividerBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_single_text) {
-            SingleTextModelView.SingleTextViewHolder(this)
-        }
-
-        withViewType(R.layout.model_view_folder_list) {
-            FolderListModelView.FolderListViewHolder(this, {
-
-            }, {
-
-            })
+            SingleTextModelView.SingleTextViewHolder(ModelViewSingleTextBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_share_list_text) {
             ShareListTextModelView.ShareListTextViewHolder(
-                this, { textContent ->
+                ModelViewShareListTextBinding.bind(this), { textContent ->
                     val dialog = TextViewerDialogFragment()
                     dialog.arguments = Bundle().apply {
                         putString(Intent.EXTRA_TEXT, textContent)
@@ -134,19 +127,19 @@ class CommunityFragment :
 
         withViewType(R.layout.model_view_share_list_url) {
             ShareListUrlModelView.ShareListUrlWebHolder(
-                this, ::openWebLink, ::shareToOther, ::voteShare
+                ModelViewShareListUrlBinding.bind(this), ::openWebLink, ::shareToOther, ::voteShare
             )
         }
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(
-                this, ::shareToOther, ::viewImage, ::voteShare
+                ModelViewShareListImageBinding.bind(this), ::shareToOther, ::viewImage, ::voteShare
             )
         }
 
         withViewType(R.layout.model_view_share_list_images) {
-            ShareListImagesModelView.ShareListMultipleImageViewHolder(
-                this, ::shareToOther, ::viewImage, ::voteShare
+            ShareListImagesModelView.ShareListImagesViewHolder(
+                ModelViewShareListImagesBinding.bind(this), ::shareToOther, ::viewImage, ::voteShare
             )
         }
     }

@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview.profile
 
-import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -19,20 +18,16 @@ data class ProfileMenuItemModelView(
         get() = R.layout.model_view_profile_menu_item
 
     class ProfileMenuItemViewHolder(
-        view: View, private val listener: ((Int) -> Unit)?
+        private val binding: ModelViewProfileMenuItemBinding, private val listener: ((Int) -> Unit)?
     ) : BaseListAdapter.BaseViewHolder<ProfileMenuItemModelView, ModelViewProfileMenuItemBinding>(
-        view
+        binding
     ) {
-
-        override fun onCreateViewBinding(view: View): ModelViewProfileMenuItemBinding {
-            return ModelViewProfileMenuItemBinding.bind(view)
-        }
 
         override fun onBind(model: ProfileMenuItemModelView, position: Int) {
             binding.root.setOnClickListener {
                 listener?.invoke(position)
             }
-            binding.textView.setTextColor(ContextCompat.getColor(context, model.textColor))
+            binding.textView.setTextColor(ContextCompat.getColor(buildContext, model.textColor))
             binding.textView.text = model.text
             binding.imageViewIcon.setImageResource(model.icon)
         }

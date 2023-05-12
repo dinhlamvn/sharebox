@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.DialogGuidelineBinding
+import com.dinhlam.sharebox.databinding.ModelViewGuidelineImageBinding
 import com.dinhlam.sharebox.extensions.screenHeight
 
 class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
@@ -21,7 +22,11 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
             }
         }) {
             withViewType(R.layout.model_view_guideline_image) {
-                GuidelineImageModelView.GuidelineImageViewHolder(this)
+                GuidelineImageModelView.GuidelineImageViewHolder(
+                    ModelViewGuidelineImageBinding.bind(
+                        this
+                    )
+                )
             }
         }
     }

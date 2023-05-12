@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
 import android.net.Uri
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -11,6 +10,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewShareListImagesBinding
+import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImagesBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.loader.ImageLoader
@@ -37,20 +37,22 @@ data class ShareListImagesModelView(
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    class ShareListMultipleImageViewHolder(
-        view: View,
+    class ShareListImagesViewHolder(
+        private val binding: ModelViewShareListImagesBinding,
         private val shareToOther: (String) -> Unit,
         private val viewImage: (Uri) -> Unit,
         private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImagesModelView, ModelViewShareListImagesBinding>(
-        view
+        binding
     ) {
 
         private val adapter = BaseListAdapter.createAdapter({
             addAll(models)
         }) {
             withViewType(R.layout.model_view_share_receive_images) {
-                ShareReceiveImagesModelView.ShareImagesViewHolder(this)
+                ShareReceiveImagesModelView.ShareReceiveImagesViewHolder(
+                    ModelViewShareReceiveImagesBinding.bind(this)
+                )
             }
         }
 
@@ -67,7 +69,7 @@ data class ShareListImagesModelView(
             }
 
             binding.recyclerViewImage.layoutManager =
-                GridLayoutManager(context, model.spanCount).apply {
+                GridLayoutManager(buildContext, model.spanCount).apply {
                     spanSizeLookup = BaseSpanSizeLookup(adapter, model.spanCount)
                 }
 
@@ -76,7 +78,7 @@ data class ShareListImagesModelView(
             adapter.requestBuildModelViews()
 
             ImageLoader.load(
-                context,
+                buildContext,
                 model.userDetail.avatar,
                 binding.layoutUserInfo.imageAvatar,
                 R.drawable.no_preview_image,
@@ -91,15 +93,15 @@ data class ShareListImagesModelView(
             }
 
             binding.layoutBottomAction.textUpvote.text =
-                context.getString(R.string.up_vote, model.shareUpVote)
+                buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
-                context.getString(R.string.comment, model.shareComment)
+                buildContext.getString(R.string.comment, model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(context, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(context, R.color.colorTextHint)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
                     append(" shares an image")
                 }
             }
@@ -118,8 +120,5 @@ data class ShareListImagesModelView(
         override fun onUnBind() {
         }
 
-        override fun onCreateViewBinding(view: View): ModelViewShareListImagesBinding {
-            return ModelViewShareListImagesBinding.bind(view)
-        }
     }
 }

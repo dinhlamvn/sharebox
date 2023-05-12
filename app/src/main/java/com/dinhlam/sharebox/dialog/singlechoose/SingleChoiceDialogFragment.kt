@@ -8,6 +8,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.DialogSingleChoiceBinding
+import com.dinhlam.sharebox.databinding.ModelViewSingleChoiceBinding
 import com.dinhlam.sharebox.modelview.SingleChoiceModelView
 
 class SingleChoiceDialogFragment : BaseBottomSheetDialogFragment<DialogSingleChoiceBinding>() {
@@ -35,7 +36,7 @@ class SingleChoiceDialogFragment : BaseBottomSheetDialogFragment<DialogSingleCho
         }) {
 
             withViewType(R.layout.model_view_single_choice) {
-                SingleChoiceModelView.SingleChoiceViewHolder(this) { position ->
+                SingleChoiceModelView.SingleChoiceViewHolder(ModelViewSingleChoiceBinding.bind(this)) { position ->
                     dismiss()
                     listener?.onItemSelected(position)
                 }

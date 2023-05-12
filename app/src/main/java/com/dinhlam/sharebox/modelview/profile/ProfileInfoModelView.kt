@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview.profile
 
-import android.view.View
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewProfileInfoBinding
@@ -21,17 +20,13 @@ data class ProfileInfoModelView(
         get() = R.layout.model_view_profile_info
 
     class UserInfoViewHolder(
-        view: View
+        private val binding: ModelViewProfileInfoBinding,
     ) : BaseListAdapter.BaseViewHolder<ProfileInfoModelView, ModelViewProfileInfoBinding>(
-        view
+        binding
     ) {
 
-        override fun onCreateViewBinding(view: View): ModelViewProfileInfoBinding {
-            return ModelViewProfileInfoBinding.bind(view)
-        }
-
         override fun onBind(model: ProfileInfoModelView, position: Int) {
-            ImageLoader.load(context, model.avatar, binding.imageAvatar, circle = true)
+            ImageLoader.load(buildContext, model.avatar, binding.imageAvatar, circle = true)
             binding.textViewName.text = model.name
             binding.pointDrama.setPointText(model.drama.asDisplayPoint())
             binding.pointLevel.setPointText(UserUtils.getLevelTitle(model.level))

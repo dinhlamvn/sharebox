@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview
 
-import android.view.View
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewHashtagBinding
@@ -13,12 +12,8 @@ data class HashTagModelView(
         get() = R.layout.model_view_hashtag
 
     class HashTagViewHolder(
-        view: View, private val onClick: (String) -> Unit
-    ) : BaseListAdapter.BaseViewHolder<HashTagModelView, ModelViewHashtagBinding>(view) {
-
-        override fun onCreateViewBinding(view: View): ModelViewHashtagBinding {
-            return ModelViewHashtagBinding.bind(view)
-        }
+        val binding: ModelViewHashtagBinding, private val onClick: (String) -> Unit
+    ) : BaseListAdapter.BaseViewHolder<HashTagModelView, ModelViewHashtagBinding>(binding) {
 
         override fun onBind(model: HashTagModelView, position: Int) {
             binding.container.setOnClickListener {

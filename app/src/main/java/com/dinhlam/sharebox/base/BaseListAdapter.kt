@@ -10,7 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.utils.Ids
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
@@ -142,14 +148,11 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
             BaseSpanSizeLookup.SpanSizeConfig.Normal
     }
 
-    abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(view: View) :
-        RecyclerView.ViewHolder(view) {
+    abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(binding: VB) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        protected val context: Context = itemView.context
+        protected val buildContext: Context = itemView.context
 
-        protected val binding: VB by lazy { onCreateViewBinding(view) }
-
-        abstract fun onCreateViewBinding(view: View): VB
         abstract fun onBind(model: T, position: Int)
         abstract fun onUnBind()
     }

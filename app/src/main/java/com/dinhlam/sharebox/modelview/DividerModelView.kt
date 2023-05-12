@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.modelview
 
-import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -16,17 +15,14 @@ data class DividerModelView(
         get() = R.layout.model_view_divider
 
 
-    class DividerViewHolder(view: View) :
-        BaseListAdapter.BaseViewHolder<DividerModelView, ModelViewDividerBinding>(view) {
-        override fun onCreateViewBinding(view: View): ModelViewDividerBinding {
-            return ModelViewDividerBinding.bind(view)
-        }
+    class DividerViewHolder(val binding: ModelViewDividerBinding) :
+        BaseListAdapter.BaseViewHolder<DividerModelView, ModelViewDividerBinding>(binding) {
 
         override fun onBind(model: DividerModelView, position: Int) {
             binding.root.updateLayoutParams {
-                height = model.size.dp(context)
+                height = model.size.dp(buildContext)
             }
-            binding.root.setBackgroundColor(ContextCompat.getColor(context, model.color))
+            binding.root.setBackgroundColor(ContextCompat.getColor(buildContext, model.color))
         }
 
         override fun onUnBind() {
