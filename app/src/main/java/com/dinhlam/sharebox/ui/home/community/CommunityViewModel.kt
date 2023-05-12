@@ -23,7 +23,6 @@ class CommunityViewModel @Inject constructor(
             Log.e("DinhLam", it.toString())
         }) {
             val shares = shareRepository.findAll(shareMode = ShareMode.ShareModeCommunity)
-            delay(1000)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -32,7 +31,6 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isLoadMore = true) }
         backgroundTask {
             val shares = shareRepository.findAll(shareMode = ShareMode.ShareModeCommunity)
-            delay(3000)
             setState { copy(shares = this.shares.plus(shares), isLoadMore = false) }
         }
     }

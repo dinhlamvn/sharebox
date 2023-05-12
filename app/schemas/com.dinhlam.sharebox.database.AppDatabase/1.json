@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2102623d1e3e445faf6b48a5571de04c",
+    "identityHash": "9d2d1be185af69b9db2e65a60734f225",
     "entities": [
       {
         "tableName": "Share",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `folder_id` TEXT NOT NULL, `share_type` TEXT NOT NULL, `share_info` TEXT NOT NULL, `share_note` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`folder_id`) REFERENCES `Folder`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_type` TEXT NOT NULL, `share_data` TEXT NOT NULL, `share_note` TEXT, `share_mode` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,8 +15,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "folderId",
-            "columnName": "folder_id",
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareUserId",
+            "columnName": "share_user_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -27,8 +33,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "shareInfo",
-            "columnName": "share_info",
+            "fieldPath": "shareData",
+            "columnName": "share_data",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -37,6 +43,12 @@
             "columnName": "share_note",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "shareMode",
+            "columnName": "share_mode",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "createdAt",
@@ -52,32 +64,41 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
-            "name": "index_Share_folder_id",
-            "unique": false,
+            "name": "index_Share_share_id",
+            "unique": true,
             "columnNames": [
-              "folder_id"
+              "share_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_Share_folder_id` ON `${TABLE_NAME}` (`folder_id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Share_share_id` ON `${TABLE_NAME}` (`share_id`)"
+          },
+          {
+            "name": "index_Share_share_user_id",
+            "unique": true,
+            "columnNames": [
+              "share_user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Share_share_user_id` ON `${TABLE_NAME}` (`share_user_id`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "Folder",
-            "onDelete": "CASCADE",
+            "table": "User",
+            "onDelete": "NO ACTION",
             "onUpdate": "NO ACTION",
             "columns": [
-              "folder_id"
+              "share_user_id"
             ],
             "referencedColumns": [
-              "id"
+              "user_id"
             ]
           }
         ]
@@ -136,10 +157,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": false
+          ]
         },
         "indices": [
           {
@@ -153,12 +174,291 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "HashTag",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hash_tag_id` TEXT NOT NULL, `hash_tag_name` TEXT NOT NULL, `created_at` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hashTagId",
+            "columnName": "hash_tag_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hashTagName",
+            "columnName": "hash_tag_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_HashTag_hash_tag_id",
+            "unique": true,
+            "columnNames": [
+              "hash_tag_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_HashTag_hash_tag_id` ON `${TABLE_NAME}` (`hash_tag_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "User",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `name` TEXT NOT NULL, `avatar` TEXT NOT NULL, `level` INTEGER NOT NULL, `drama` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "avatar",
+            "columnName": "avatar",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "level",
+            "columnName": "level",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "drama",
+            "columnName": "drama",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_User_user_id",
+            "unique": true,
+            "columnNames": [
+              "user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_User_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Vote",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Vote_share_id_user_id",
+            "unique": true,
+            "columnNames": [
+              "share_id",
+              "user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Vote_share_id_user_id` ON `${TABLE_NAME}` (`share_id`, `user_id`)"
+          },
+          {
+            "name": "index_Vote_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Vote_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Share",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "share_id"
+            ],
+            "referencedColumns": [
+              "share_id"
+            ]
+          },
+          {
+            "table": "User",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "user_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ShareHashTag",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `hash_tag_id` TEXT NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`hash_tag_id`) REFERENCES `HashTag`(`hash_tag_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hashTagId",
+            "columnName": "hash_tag_id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ShareHashTag_share_id_hash_tag_id",
+            "unique": true,
+            "columnNames": [
+              "share_id",
+              "hash_tag_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ShareHashTag_share_id_hash_tag_id` ON `${TABLE_NAME}` (`share_id`, `hash_tag_id`)"
+          },
+          {
+            "name": "index_ShareHashTag_share_id",
+            "unique": false,
+            "columnNames": [
+              "share_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShareHashTag_share_id` ON `${TABLE_NAME}` (`share_id`)"
+          },
+          {
+            "name": "index_ShareHashTag_hash_tag_id",
+            "unique": false,
+            "columnNames": [
+              "hash_tag_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShareHashTag_hash_tag_id` ON `${TABLE_NAME}` (`hash_tag_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Share",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "share_id"
+            ],
+            "referencedColumns": [
+              "share_id"
+            ]
+          },
+          {
+            "table": "HashTag",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "hash_tag_id"
+            ],
+            "referencedColumns": [
+              "hash_tag_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2102623d1e3e445faf6b48a5571de04c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9d2d1be185af69b9db2e65a60734f225')"
     ]
   }
 }

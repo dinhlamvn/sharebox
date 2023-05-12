@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.repository
 
+import android.util.Log
 import com.dinhlam.sharebox.database.dao.UserDao
 import com.dinhlam.sharebox.database.entity.User
 import com.dinhlam.sharebox.model.UserDetail
@@ -16,6 +17,8 @@ class UserRepository @Inject constructor(
     fun insert(user: User): Boolean = user.runCatching {
         userDao.insert(user)
         true
+    }.onFailure {
+        Log.d("DinhLam", it.toString())
     }.getOrDefault(false)
 
 

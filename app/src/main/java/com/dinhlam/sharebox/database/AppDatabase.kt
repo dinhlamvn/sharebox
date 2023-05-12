@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.database.entity.Vote
 
 @Database(
     entities = [Share::class, Folder::class, HashTag::class, User::class, Vote::class, ShareHashTag::class],
-    version = 2,
+    version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

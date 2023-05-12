@@ -58,7 +58,7 @@ class CommunityFragment :
     private val shareAdapter = BaseListAdapter.createAdapter({
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView)
+                add(LoadingModelView("home_refresh"))
                 return@getState
             }
 
@@ -84,7 +84,7 @@ class CommunityFragment :
                 }
 
                 if (state.isLoadMore) {
-                    add(LoadingModelView)
+                    add(LoadingModelView("home_load_more"))
                     add(
                         DividerModelView(
                             "dividerLoadingMore", size = 50, color = android.R.color.transparent

@@ -6,7 +6,6 @@ import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.repository.ShareRepository
 import com.dinhlam.sharebox.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +30,6 @@ class ProfileViewModel @Inject constructor(
         setState { copy(isRefreshing = true) }
         backgroundTask {
             val shares = shareRepository.findAll()
-            delay(1000)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -40,7 +38,6 @@ class ProfileViewModel @Inject constructor(
         setState { copy(isLoadMore = true) }
         backgroundTask {
             val others = shareRepository.findAll()
-            delay(1000)
             setState { copy(shares = shares.plus(others), isLoadMore = false) }
         }
     }

@@ -38,6 +38,5 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    private fun mapShareToShareData(share: Share): ShareData =
-        shareToShareDetailMapper.map(share)
+    private fun mapShareToShareData(share: Share): ShareData = shareToShareDetailMapper.map(share)
 }

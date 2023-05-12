@@ -160,7 +160,7 @@ class ShareReceiveActivity :
 
                 }
 
-                else -> add(LoadingModelView)
+                else -> add(LoadingModelView("loading"))
             }
         }
     }) {

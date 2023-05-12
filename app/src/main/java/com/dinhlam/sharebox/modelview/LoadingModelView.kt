@@ -3,9 +3,8 @@ package com.dinhlam.sharebox.modelview
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import kotlin.random.Random
 
-object LoadingModelView : BaseListAdapter.BaseModelView("loading_view_${Random.nextInt()}") {
+data class LoadingModelView(val id: String) : BaseListAdapter.BaseModelView("loading_view_$id") {
     override val modelLayoutRes: Int
         get() = R.layout.model_view_loading
 

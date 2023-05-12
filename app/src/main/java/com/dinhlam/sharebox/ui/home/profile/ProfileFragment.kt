@@ -43,7 +43,7 @@ class ProfileFragment :
     private val adapter = BaseListAdapter.createAdapter({
         getState(viewModel) { state ->
             val nonNullUser = state.activeUser ?: return@getState run {
-                add(LoadingModelView)
+                add(LoadingModelView("loading_user"))
             }
 
             add(
@@ -60,7 +60,7 @@ class ProfileFragment :
             add(DividerModelView("divider1", color = R.color.colorDividerLightV2))
 
             if (state.isRefreshing) {
-                add(LoadingModelView)
+                add(LoadingModelView("loading_profile"))
                 return@getState
             }
 
@@ -80,7 +80,7 @@ class ProfileFragment :
                 }
 
                 if (state.isLoadMore) {
-                    add(LoadingModelView)
+                    add(LoadingModelView("profile_load_more"))
                 }
             }
         }
