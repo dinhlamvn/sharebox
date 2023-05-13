@@ -133,13 +133,17 @@ class CommunityFragment :
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(
-                ModelViewShareListImageBinding.bind(this), ::shareToOther, ::viewImage, ::voteShare
+                ModelViewShareListImageBinding.bind(this), ::shareToOther, {uri ->
+                    shareHelper.viewShareImage(requireContext(), uri)
+                }, ::voteShare
             )
         }
 
         withViewType(R.layout.model_view_share_list_images) {
             ShareListImagesModelView.ShareListImagesViewHolder(
-                ModelViewShareListImagesBinding.bind(this), ::shareToOther, ::viewImage, ::voteShare
+                ModelViewShareListImagesBinding.bind(this), ::shareToOther, { uris ->
+                    shareHelper.viewShareImages(requireActivity(), uris)
+                }, ::voteShare
             )
         }
     }
@@ -185,14 +189,5 @@ class CommunityFragment :
 
     private fun voteShare(shareId: String) {
         viewModel.vote(shareId)
-    }
-
-    private fun viewImage(uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(uri, "image/*")
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        startActivity(intent)
     }
 }

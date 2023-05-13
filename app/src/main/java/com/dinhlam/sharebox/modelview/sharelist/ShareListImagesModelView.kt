@@ -40,7 +40,7 @@ data class ShareListImagesModelView(
     class ShareListImagesViewHolder(
         private val binding: ModelViewShareListImagesBinding,
         private val shareToOther: (String) -> Unit,
-        private val viewImage: (Uri) -> Unit,
+        private val viewImages: (List<Uri>) -> Unit,
         private val actionVote: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListImagesModelView, ModelViewShareListImagesBinding>(
         binding
@@ -52,7 +52,9 @@ data class ShareListImagesModelView(
             withViewType(R.layout.model_view_share_receive_images) {
                 ShareReceiveImagesModelView.ShareReceiveImagesViewHolder(
                     ModelViewShareReceiveImagesBinding.bind(this)
-                )
+                ) {
+                    viewImages.invoke(models.map { it.uri })
+                }
             }
         }
 
@@ -65,7 +67,7 @@ data class ShareListImagesModelView(
 
         override fun onBind(model: ShareListImagesModelView, position: Int) {
             binding.root.setOnClickListener {
-
+                viewImages(model.uris)
             }
 
             binding.recyclerViewImage.layoutManager =

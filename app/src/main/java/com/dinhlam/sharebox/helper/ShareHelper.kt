@@ -3,8 +3,13 @@ package com.dinhlam.sharebox.helper
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.base.BaseDialogFragment
+import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
@@ -46,8 +51,7 @@ class ShareHelper @Inject constructor(
                 val data = shareData.castNonNull<ShareData.ShareImages>()
                 intent.action = Intent.ACTION_SEND_MULTIPLE
                 intent.putParcelableArrayListExtra(
-                    Intent.EXTRA_STREAM,
-                    arrayListOf(*data.uris.toTypedArray())
+                    Intent.EXTRA_STREAM, arrayListOf(*data.uris.toTypedArray())
                 )
                 intent.setDataAndType(data.uris[0], "image/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -82,6 +86,26 @@ class ShareHelper @Inject constructor(
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toTypedArray())
                 chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(chooserIntent)
+            }
+        }
+    }
+
+    fun viewShareImage(context: Context, uri: Uri) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uri, "image/*")
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        context.startActivity(intent)
+    }
+
+    fun viewShareImages(activity: FragmentActivity, uris: List<Uri>) {
+        BaseDialogFragment.showDialog(ViewImagesDialogFragment(), activity.supportFragmentManager) {
+            arguments = Bundle().apply {
+                putParcelableArrayList(
+                    ViewImagesDialogFragment.EXTRA_LIST_URI,
+                    arrayListOf(*uris.toTypedArray())
+                )
             }
         }
     }

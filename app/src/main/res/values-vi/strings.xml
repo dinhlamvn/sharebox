@@ -142,5 +142,6 @@
     <string name="share_community_subtext">Public to community</string>
     <string name="share_personal_subtext">Keep it private in profile</string>
     <string name="share_receive_error_share">Has an error, please try again</string>
+    <string name="page_number">%d/%d</string>
 
 </resources>

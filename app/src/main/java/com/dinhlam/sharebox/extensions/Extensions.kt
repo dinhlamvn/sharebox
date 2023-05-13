@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.extensions
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.Parcelable
 import java.io.Serializable
 
@@ -36,6 +37,14 @@ inline fun <reified T : Parcelable> Intent.getParcelableArrayListExtraCompat(key
         return getParcelableArrayListExtra(key, T::class.java)
     }
     return getParcelableArrayListExtra(key)
+}
+
+@Suppress("DEPRECATION")
+inline fun <reified T : Parcelable> Bundle.getParcelableArrayListExtraCompat(key: String): ArrayList<T>? {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return getParcelableArrayList(key, T::class.java)
+    }
+    return getParcelableArrayList(key)
 }
 
 inline fun <reified T> Context.getSystemServiceCompat(name: String): T {

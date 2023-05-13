@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenWidth
-import kotlin.reflect.KClass
 
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
@@ -24,15 +23,13 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
     companion object {
         fun <T : BaseDialogFragment<*>> showDialog(
-            clazz: KClass<T>,
+            dialog: T,
             fragmentManager: FragmentManager,
             tag: String = "DialogFragment",
             block: T.() -> Unit = { }
         ) {
-            val constructor = clazz.java.getConstructor()
-            val dialogFragment = constructor.newInstance()
-            dialogFragment.apply(block)
-            dialogFragment.show(fragmentManager, tag)
+            dialog.apply(block)
+            dialog.show(fragmentManager, tag)
         }
     }
 
@@ -46,9 +43,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     var dismissListener: OnDialogDismissListener? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         onViewPreLoad(savedInstanceState)
         binding = onCreateViewBinding(inflater, container)

@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.sharereceive.modelview
 
 import android.net.Uri
+import android.view.View.OnClickListener
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
@@ -24,7 +25,10 @@ data class ShareReceiveImagesModelView(
         return BaseSpanSizeLookup.SpanSizeConfig.Custom(spanCount)
     }
 
-    class ShareReceiveImagesViewHolder(private val binding: ModelViewShareReceiveImagesBinding) :
+    class ShareReceiveImagesViewHolder(
+        private val binding: ModelViewShareReceiveImagesBinding,
+        private val onViewImage: OnClickListener? = null
+    ) :
         BaseListAdapter.BaseViewHolder<ShareReceiveImagesModelView, ModelViewShareReceiveImagesBinding>(
             binding
         ) {
@@ -33,6 +37,8 @@ data class ShareReceiveImagesModelView(
             binding.root.updateLayoutParams {
                 height = model.width
             }
+
+            binding.root.setOnClickListener(onViewImage)
 
             binding.textNumber.updateLayoutParams {
                 width = model.width
