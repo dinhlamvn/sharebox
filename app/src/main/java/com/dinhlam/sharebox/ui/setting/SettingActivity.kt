@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.ui.setting
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -10,15 +13,15 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
+import com.dinhlam.sharebox.data.model.SortType
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
+import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.data.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
-import com.dinhlam.sharebox.utils.KeyboardUtil
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -118,7 +121,14 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         }
         viewBinding.textViewPasswordRecoveryDesc.setText(R.string.password_recovery_desc_generated)
         viewBinding.textViewPasswordRecoveryTitle.setOnClickListener {
-            KeyboardUtil.copyTextToClipboard(this, recoveryHash)
+            val clipboardManager =
+                getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
+            clipboardManager.setPrimaryClip(
+                ClipData.newPlainText(
+                    "share_box_recovery_password",
+                    recoveryHash
+                )
+            )
             appSharePref.setRecoveryPassword(recoveryHash)
             showToast(R.string.copied)
         }
