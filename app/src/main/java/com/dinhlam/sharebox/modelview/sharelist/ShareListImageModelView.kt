@@ -11,7 +11,9 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
+import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 
@@ -45,13 +47,13 @@ data class ShareListImageModelView(
             binding.root.setOnClickListener {
                 viewImage(model.uri)
             }
-            ImageLoader.load(
+            ImageLoader.instance.load(
                 buildContext,
                 model.userDetail.avatar,
-                binding.layoutUserInfo.imageAvatar,
-                R.drawable.no_preview_image,
-                true
-            )
+                binding.layoutUserInfo.imageAvatar
+            ) {
+                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+            }
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
             }
@@ -64,7 +66,7 @@ data class ShareListImageModelView(
                 buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
                 buildContext.getString(R.string.comment, model.shareComment)
-            ImageLoader.load(buildContext, model.uri, binding.imageShare)
+            ImageLoader.instance.load(buildContext, model.uri, binding.imageShare)
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)

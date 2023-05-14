@@ -4,7 +4,7 @@ import android.net.Uri
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImageBinding
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
 
 data class ShareReceiveImageModelView(val id: String, val uri: Uri) :
     BaseListAdapter.BaseModelView("share_image_$id") {
@@ -17,7 +17,7 @@ data class ShareReceiveImageModelView(val id: String, val uri: Uri) :
         ) {
 
         override fun onBind(model: ShareReceiveImageModelView, position: Int) {
-            ImageLoader.load(buildContext, model.uri, binding.imageView)
+            ImageLoader.instance.load(buildContext, model.uri, binding.imageView)
         }
 
         override fun onUnBind() {

@@ -10,7 +10,9 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
+import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
@@ -46,12 +48,13 @@ data class ShareListUrlModelView(
             binding.container.setOnClickListener {
                 openAction(model.url!!)
             }
-            ImageLoader.load(
+            ImageLoader.instance.load(
                 buildContext,
                 model.userDetail.avatar,
-                binding.layoutUserInfo.imageAvatar,
-                circle = true
-            )
+                binding.layoutUserInfo.imageAvatar
+            ) {
+                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+            }
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
             }

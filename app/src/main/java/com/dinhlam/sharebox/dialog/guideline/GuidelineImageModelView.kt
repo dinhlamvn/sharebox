@@ -5,7 +5,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewGuidelineImageBinding
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
 
 data class GuidelineImageModelView(
     val number: Int
@@ -24,7 +24,7 @@ data class GuidelineImageModelView(
     ) {
 
         override fun onBind(model: GuidelineImageModelView, position: Int) {
-            ImageLoader.load(
+            ImageLoader.instance.load(
                 buildContext,
                 Uri.parse("file:///android_asset/guideline/${model.number}.png"),
                 binding.imageView

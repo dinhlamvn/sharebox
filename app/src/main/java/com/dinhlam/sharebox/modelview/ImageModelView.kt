@@ -6,7 +6,9 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
+import com.dinhlam.sharebox.imageloader.config.TransformType
 
 data class ImageModelView(
     val uri: Uri
@@ -23,11 +25,11 @@ data class ImageModelView(
     ) : BaseListAdapter.BaseViewHolder<ImageModelView, ModelViewImageBinding>(binding) {
 
         override fun onBind(model: ImageModelView, position: Int) {
-            ImageLoader.load(buildContext, model.uri, binding.image) {
+            ImageLoader.instance.load(buildContext, model.uri, binding.image) {
                 copy(
-                    transformType = ImageLoader.TransformType.Rounded(
+                    transformType = TransformType.Rounded(
                         8.dp(buildContext),
-                        ImageLoader.ImageLoadScaleType.FitCenter
+                        ImageLoadScaleType.FitCenter
                     )
                 )
             }

@@ -40,7 +40,9 @@ import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.setNonBlankText
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
+import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareMode
 import com.dinhlam.sharebox.model.UserDetail
@@ -205,7 +207,9 @@ class ShareReceiveActivity :
 
     private fun invalidateUserInfo(activeUser: UserDetail?) {
         activeUser?.let { user ->
-            ImageLoader.load(this, user.avatar, viewBinding.imageAvatar, circle = true)
+            ImageLoader.instance.load(this, user.avatar, viewBinding.imageAvatar) {
+                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+            }
             viewBinding.textViewName.text = user.name
         }
     }

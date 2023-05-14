@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.extensions.setNonBlankText
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
 import kotlinx.coroutines.CoroutineScope
@@ -110,11 +110,10 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 
     private suspend fun handleResult(openGraphResult: OpenGraphResult) =
         withContext(Dispatchers.Main) {
-            ImageLoader.load(
+            ImageLoader.instance.load(
                 context,
                 openGraphResult.image,
-                binding.imageView,
-                error = R.drawable.no_preview_image
+                binding.imageView
             )
             binding.textViewUrl.text = openGraphResult.url
             binding.textViewTitle.setNonBlankText(openGraphResult.title)
@@ -124,7 +123,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
 
     private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
-        ImageLoader.load(context, R.drawable.no_preview_image, binding.imageView, false)
+        ImageLoader.instance.load(context, R.drawable.no_preview_image, binding.imageView)
         binding.textViewUrl.text = url
         binding.shimmerContainer.hideShimmer()
         binding.shimmerContainer.isVisible = false

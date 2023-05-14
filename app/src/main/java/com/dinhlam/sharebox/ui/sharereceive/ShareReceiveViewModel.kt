@@ -9,7 +9,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.database.entity.Share
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareMode
 import com.dinhlam.sharebox.pref.UserSharePref
@@ -110,7 +110,7 @@ class ShareReceiveViewModel @Inject constructor(
         shareData: ShareData.ShareImage,
         shareMode: ShareMode
     ) {
-        val bitmap = ImageLoader.get(context, shareData.uri)
+        val bitmap = ImageLoader.instance.get(context, shareData.uri) ?: return
         val imagePath = context.getExternalFilesDir("share_images")!!
         if (!imagePath.exists()) {
             imagePath.mkdir()
@@ -139,8 +139,8 @@ class ShareReceiveViewModel @Inject constructor(
         shareData: ShareData.ShareImages,
         shareMode: ShareMode
     ) {
-        val uris = shareData.uris.map { uri ->
-            val bitmap = ImageLoader.get(context, uri)
+        val uris = shareData.uris.mapNotNull { uri ->
+            val bitmap = ImageLoader.instance.get(context, uri) ?: return@mapNotNull null
             val imagePath = context.getExternalFilesDir("share_images")!!
             if (!imagePath.exists()) {
                 imagePath.mkdir()

@@ -9,7 +9,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImagesBinding
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.loader.ImageLoader
+import com.dinhlam.sharebox.imageloader.ImageLoader
 
 data class ShareReceiveImagesModelView(
     val id: String,
@@ -45,7 +45,7 @@ data class ShareReceiveImagesModelView(
                 height = model.width
             }
 
-            ImageLoader.load(buildContext, model.uri, binding.imageView)
+            ImageLoader.instance.load(buildContext, model.uri, binding.imageView)
 
             model.textNumber.takeIfNotNullOrBlank()?.let { textNumber ->
                 binding.textNumber.isVisible = true
