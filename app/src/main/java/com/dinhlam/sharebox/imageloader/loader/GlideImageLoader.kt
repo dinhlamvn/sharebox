@@ -125,7 +125,7 @@ object GlideImageLoader : ImageLoader() {
 
     override fun get(
         context: Context,
-        uri: Uri?,
+        model: Any?,
         block: ImageLoadConfig.() -> ImageLoadConfig
     ): Bitmap? {
         val toContext = toActivityContext(context) ?: context.applicationContext
@@ -136,7 +136,7 @@ object GlideImageLoader : ImageLoader() {
 
         val config = block.invoke(ImageLoadConfig())
 
-        return buildRequest(Glide.with(toContext).asBitmap().load(uri), config).submit().get()
+        return buildRequest(Glide.with(toContext).asBitmap().load(model), config).submit().get()
             .cast()
     }
 }

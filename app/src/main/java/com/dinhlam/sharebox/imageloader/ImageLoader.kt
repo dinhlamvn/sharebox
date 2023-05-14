@@ -50,7 +50,7 @@ abstract class ImageLoader {
 
     abstract fun get(
         context: Context,
-        uri: Uri?,
+        model: Any?,
         block: ImageLoadConfig.() -> ImageLoadConfig = { ImageLoadConfig() }
     ): Bitmap?
 }
