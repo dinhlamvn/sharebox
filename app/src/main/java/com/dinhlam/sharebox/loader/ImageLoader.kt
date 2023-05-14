@@ -49,13 +49,14 @@ object ImageLoader {
         }.into(imageView)
     }
 
-    private fun createScaleTypeRequest(
-        builder: RequestBuilder<Drawable>, scaleType: ImageLoadScaleType
-    ): RequestBuilder<Drawable> = builder.run {
-        if (scaleType == ImageLoadScaleType.CenterCrop) {
-            centerCrop()
-        } else {
-            fitCenter()
+    private fun createScaleTypeTransform(
+        transforms: MutableList<BitmapTransformation>,
+        scaleType: ImageLoadScaleType
+    ) {
+        if (scaleType is ImageLoadScaleType.CenterCrop) {
+            transforms.add(CenterCrop())
+        } else if (scaleType is ImageLoadScaleType.FitCenter) {
+            transforms.add(FitCenter())
         }
     }
 
@@ -64,26 +65,18 @@ object ImageLoader {
     ): RequestBuilder<Drawable> = builder.run {
         when (transformType) {
             is TransformType.Rounded -> {
-                val roundedTransform = transformType.castNonNull<TransformType.Rounded>()
+                val transform = transformType.castNonNull<TransformType.Rounded>()
                 val transforms =
-                    mutableListOf<BitmapTransformation>(RoundedCorners(roundedTransform.radius))
-                if (roundedTransform.scaleType == ImageLoadScaleType.CenterCrop) {
-                    transforms.add(CenterCrop())
-                } else if (roundedTransform.scaleType == ImageLoadScaleType.FitCenter) {
-                    transforms.add(FitCenter())
-                }
+                    mutableListOf<BitmapTransformation>(RoundedCorners(transform.radius))
+                createScaleTypeTransform(transforms, transform.scaleType)
                 transform(*transforms.toTypedArray())
             }
 
             is TransformType.Circle -> {
-                val roundedTransform = transformType.castNonNull<TransformType.Circle>()
+                val transform = transformType.castNonNull<TransformType.Circle>()
                 val transforms =
                     mutableListOf<BitmapTransformation>(CircleCrop())
-                if (roundedTransform.scaleType == ImageLoadScaleType.CenterCrop) {
-                    transforms.add(CenterCrop())
-                } else if (roundedTransform.scaleType == ImageLoadScaleType.FitCenter) {
-                    transforms.add(FitCenter())
-                }
+                createScaleTypeTransform(transforms, transform.scaleType)
                 transform(*transforms.toTypedArray())
             }
 
