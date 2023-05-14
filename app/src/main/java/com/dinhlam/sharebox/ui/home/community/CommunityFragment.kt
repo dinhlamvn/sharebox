@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.home.community
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -133,8 +132,8 @@ class CommunityFragment :
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(
-                ModelViewShareListImageBinding.bind(this), ::shareToOther, {uri ->
-                    shareHelper.viewShareImage(requireContext(), uri)
+                ModelViewShareListImageBinding.bind(this), ::shareToOther, { uri ->
+                    shareHelper.viewShareImage(requireActivity(), uri)
                 }, ::voteShare
             )
         }

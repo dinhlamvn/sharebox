@@ -90,13 +90,15 @@ class ShareHelper @Inject constructor(
         }
     }
 
-    fun viewShareImage(context: Context, uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(uri, "image/*")
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.addCategory(Intent.CATEGORY_DEFAULT)
-        context.startActivity(intent)
+    fun viewShareImage(activity: FragmentActivity, uri: Uri) {
+        BaseDialogFragment.showDialog(ViewImagesDialogFragment(), activity.supportFragmentManager) {
+            arguments = Bundle().apply {
+                putParcelableArrayList(
+                    ViewImagesDialogFragment.EXTRA_LIST_URI,
+                    arrayListOf(uri)
+                )
+            }
+        }
     }
 
     fun viewShareImages(activity: FragmentActivity, uris: List<Uri>) {
