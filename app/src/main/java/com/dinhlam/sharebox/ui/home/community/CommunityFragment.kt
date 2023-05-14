@@ -160,6 +160,7 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewBinding.recyclerView.itemAnimator = null
         viewBinding.recyclerView.layoutManager = layoutManager
         viewBinding.recyclerView.adapter = shareAdapter
 
