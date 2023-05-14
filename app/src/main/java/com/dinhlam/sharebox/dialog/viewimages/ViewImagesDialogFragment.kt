@@ -29,7 +29,8 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         return DialogViewImagesBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val uris =
             arguments?.getParcelableArrayListExtraCompat<Uri>(EXTRA_LIST_URI) ?: return dismiss()
 

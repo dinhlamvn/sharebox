@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.model.ShareData
@@ -91,24 +90,24 @@ class ShareHelper @Inject constructor(
     }
 
     fun viewShareImage(activity: FragmentActivity, uri: Uri) {
-        BaseDialogFragment.showDialog(ViewImagesDialogFragment(), activity.supportFragmentManager) {
+        ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(
                     ViewImagesDialogFragment.EXTRA_LIST_URI,
                     arrayListOf(uri)
                 )
             }
-        }
+        }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
     }
 
     fun viewShareImages(activity: FragmentActivity, uris: List<Uri>) {
-        BaseDialogFragment.showDialog(ViewImagesDialogFragment(), activity.supportFragmentManager) {
+        ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(
                     ViewImagesDialogFragment.EXTRA_LIST_URI,
                     arrayListOf(*uris.toTypedArray())
                 )
             }
-        }
+        }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
     }
 }

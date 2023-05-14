@@ -21,12 +21,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        onViewPreLoad(savedInstanceState)
         binding = onCreateViewBinding(inflater, container)
         return binding!!.root
-    }
-
-    open fun onViewPreLoad(savedInstanceState: Bundle?) {
     }
 
     override fun onDestroyView() {

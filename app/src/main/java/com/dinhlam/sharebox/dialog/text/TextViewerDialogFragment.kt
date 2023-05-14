@@ -18,7 +18,8 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
         return DialogTextViewerBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewDidLoad(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val textContent = arguments?.getString(Intent.EXTRA_TEXT) ?: ""
         val htmlText = textContent.replace("\n", "<br>")
         viewBinding.textContent.text =

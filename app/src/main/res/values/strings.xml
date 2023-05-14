@@ -148,5 +148,6 @@
     <string name="page_number">%d/%d</string>
     <string name="action_fork">Fork</string>
     <string name="action_star">Star</string>
+    <string name="comment_title">Comments</string>
 
 </resources>

@@ -7,8 +7,8 @@ import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharebox.extensions.showToast
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
-    BaseDialogFragment<VB>() {
+abstract class BaseBottomSheetViewModelDialogFragment<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
+    BaseBottomSheetDialogFragment<VB>() {
 
     abstract val viewModel: VM
 
