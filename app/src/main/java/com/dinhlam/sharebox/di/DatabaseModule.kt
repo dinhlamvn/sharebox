@@ -2,11 +2,11 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import androidx.room.Room
-import com.dinhlam.sharebox.database.AppDatabase
-import com.dinhlam.sharebox.database.converter.ShareDataConverter
-import com.dinhlam.sharebox.database.dao.ShareDao
-import com.dinhlam.sharebox.database.dao.UserDao
-import com.dinhlam.sharebox.database.dao.VoteDao
+import com.dinhlam.sharebox.data.local.AppDatabase
+import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
+import com.dinhlam.sharebox.data.local.dao.ShareDao
+import com.dinhlam.sharebox.data.local.dao.UserDao
+import com.dinhlam.sharebox.data.local.dao.VoteDao
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

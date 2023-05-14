@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.ui.home.community
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.data.model.ShareDetail
 
 data class CommunityState(
     val isRefreshing: Boolean = false,

@@ -4,7 +4,7 @@ import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImagesJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareTextJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareUrlJsonSerializerDeserializer
-import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.data.model.ShareData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module

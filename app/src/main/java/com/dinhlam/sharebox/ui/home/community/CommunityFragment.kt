@@ -32,7 +32,6 @@ import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.profile.ProfileState
-import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -101,7 +100,7 @@ class CommunityFragment :
         }
     }) {
         withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(ModelViewLoadingBinding.bind(this))
+            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_divider) {

@@ -10,8 +10,8 @@ import androidx.fragment.app.FragmentActivity
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

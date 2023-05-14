@@ -43,9 +43,9 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareMode
-import com.dinhlam.sharebox.model.UserDetail
+import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.ShareMode
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.modelview.HashTagModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -54,7 +54,6 @@ import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImageModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
-import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -173,7 +172,7 @@ class ShareReceiveActivity :
         }
     }) {
         withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(ModelViewLoadingBinding.bind(this))
+            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_share_receive_text) {

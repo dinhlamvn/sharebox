@@ -16,7 +16,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.model.UserDetail
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelView
 import com.dinhlam.sharebox.utils.UserUtils
 

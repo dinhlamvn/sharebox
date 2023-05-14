@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.extensions
 import android.content.Context
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.UserDetail
+import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView

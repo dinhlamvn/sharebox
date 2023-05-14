@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.ui.home.profile
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.repository.ShareRepository
-import com.dinhlam.sharebox.repository.UserRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.pref
 
 import android.content.Context
-import com.dinhlam.sharebox.model.ShareMode
+import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.utils.ShareUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

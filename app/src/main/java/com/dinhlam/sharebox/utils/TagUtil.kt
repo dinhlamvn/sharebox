@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.utils
 
-import com.dinhlam.sharebox.database.entity.Folder
-import com.dinhlam.sharebox.model.Tag
+import com.dinhlam.sharebox.data.local.entity.Folder
+import com.dinhlam.sharebox.data.model.Tag
 
 object TagUtil {
 

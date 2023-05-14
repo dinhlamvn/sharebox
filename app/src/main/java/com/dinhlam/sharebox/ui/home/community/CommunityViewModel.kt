@@ -2,10 +2,10 @@ package com.dinhlam.sharebox.ui.home.community
 
 import android.util.Log
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.model.ShareMode
+import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.repository.ShareRepository
-import com.dinhlam.sharebox.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.VoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

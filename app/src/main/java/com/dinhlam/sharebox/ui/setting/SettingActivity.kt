@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.model.SortType
+import com.dinhlam.sharebox.data.model.SortType
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.utils.KeyboardUtil
 import dagger.hilt.android.AndroidEntryPoint

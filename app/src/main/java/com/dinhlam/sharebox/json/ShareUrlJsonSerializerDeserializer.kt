@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.json
 
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareType
+import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.ShareType
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

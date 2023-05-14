@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.extensions.cast
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDialogFragment() {
@@ -43,5 +46,15 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
 
     override fun getTheme(): Int {
         return R.style.Theme_AppBottomSheet
+    }
+
+    override fun onStart() {
+        dialog?.cast<BottomSheetDialog>()?.behavior?.apply {
+            skipCollapsed = true
+            state = BottomSheetBehavior.STATE_EXPANDED
+            peekHeight = 0
+        }
+        super.onStart()
+
     }
 }

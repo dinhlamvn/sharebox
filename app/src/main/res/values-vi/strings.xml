@@ -146,5 +146,6 @@
     <string name="action_fork">Fork</string>
     <string name="action_star">Star</string>
     <string name="comment_title">Comments</string>
+    <string name="comment_hint">What\'s on your mind?</string>
 
 </resources>

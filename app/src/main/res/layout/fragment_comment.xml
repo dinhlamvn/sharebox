@@ -35,7 +35,50 @@
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/divider_bottom"
             app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <View
+            android:id="@+id/divider_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/colorDividerLightV2"
+            app:layout_constraintBottom_toTopOf="@id/barrier" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorDividerLightV2"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="image_avatar,edit_comment" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_avatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_comment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rectangle_white_round_4_stroke"
+            android:gravity="center_vertical"
+            android:hint="@string/comment_hint"
+            android:lines="1"
+            android:paddingHorizontal="8dp"
+            android:textAppearance="@style/TextAppearance.Body"
+            app:layout_constraintBottom_toBottomOf="@id/image_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_avatar"
+            app:layout_constraintTop_toTopOf="@id/image_avatar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

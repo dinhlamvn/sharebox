@@ -2,7 +2,7 @@ package com.dinhlam.sharebox.pref
 
 import android.content.Context
 import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.model.SortType
+import com.dinhlam.sharebox.data.model.SortType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton

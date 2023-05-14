@@ -29,7 +29,6 @@ import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.viewholder.LoadingViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -94,7 +93,7 @@ class ProfileFragment :
         }
     }) {
         withViewType(R.layout.model_view_loading) {
-            LoadingViewHolder(ModelViewLoadingBinding.bind(this))
+            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
         }
 
         withViewType(R.layout.model_view_profile_info) {

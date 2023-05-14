@@ -1,13 +1,13 @@
 package com.dinhlam.sharebox
 
 import android.app.Application
-import com.dinhlam.sharebox.database.entity.User
+import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.repository.UserRepository
+import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.UserUtils
 import dagger.hilt.android.HiltAndroidApp
