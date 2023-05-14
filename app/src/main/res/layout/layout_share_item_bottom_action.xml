@@ -10,9 +10,7 @@
         android:id="@+id/button_up_vote"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
@@ -31,7 +29,7 @@
             android:drawablePadding="6dp"
             android:gravity="center"
             android:text="@string/up_vote"
-            android:textAppearance="@style/TextAppearance.BodyMedium"
+            android:textAppearance="@style/TextAppearance.Caption"
             android:textColor="@color/colorTextHint" />
 
     </FrameLayout>
@@ -40,9 +38,7 @@
         android:id="@+id/button_comment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
@@ -61,7 +57,7 @@
             android:drawablePadding="6dp"
             android:gravity="center"
             android:text="@string/comment"
-            android:textAppearance="@style/TextAppearance.BodyMedium"
+            android:textAppearance="@style/TextAppearance.Caption"
             android:textColor="@color/colorTextHint" />
 
     </FrameLayout>
@@ -70,15 +66,13 @@
         android:id="@+id/button_share"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="4dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_star"
         app:layout_constraintStart_toEndOf="@id/button_comment"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -91,7 +85,35 @@
             android:drawablePadding="6dp"
             android:gravity="center"
             android:text="@string/action_share"
-            android:textAppearance="@style/TextAppearance.BodyMedium"
+            android:textAppearance="@style/TextAppearance.Caption"
+            android:textColor="@color/colorTextHint" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/button_star"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_share"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_fork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/ic_star"
+            android:drawablePadding="6dp"
+            android:gravity="center"
+            android:text="@string/action_star"
+            android:textAppearance="@style/TextAppearance.Caption"
             android:textColor="@color/colorTextHint" />
 
     </FrameLayout>
