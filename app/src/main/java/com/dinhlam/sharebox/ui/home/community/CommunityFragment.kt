@@ -75,7 +75,8 @@ class CommunityFragment :
                     shareDetail.createdAt,
                     shareDetail.shareNote,
                     shareDetail.user,
-                    state.voteMap[shareDetail.shareId].orElse(0)
+                    state.voteMap[shareDetail.shareId].orElse(0),
+                    shareComment = shareDetail.commentCount
                 )
             }
             if (models.isEmpty()) {

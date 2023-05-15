@@ -13,4 +13,7 @@ interface CommentDao {
 
     @Query("SELECT * FROM comment WHERE share_id = :shareId ORDER BY id DESC")
     fun find(shareId: String): List<Comment>
+
+    @Query("SELECT COUNT(*) FROM comment WHERE share_id = :shareId")
+    fun count(shareId: String): Int
 }

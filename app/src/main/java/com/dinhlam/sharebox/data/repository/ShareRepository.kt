@@ -12,6 +12,7 @@ import javax.inject.Singleton
 class ShareRepository @Inject constructor(
     private val shareDao: ShareDao,
     private val userRepository: UserRepository,
+    private val commentRepository: CommentRepository,
 ) {
     fun insert(data: Share): Boolean = data.runCatching {
         shareDao.insertAll(data)
@@ -24,7 +25,15 @@ class ShareRepository @Inject constructor(
         val shares = find()
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            ShareDetail(share.shareId, user, share.shareNote, share.createdAt, share.shareData)
+            val commentCount = commentRepository.count(share.shareId)
+            ShareDetail(
+                share.shareId,
+                user,
+                share.shareNote,
+                share.createdAt,
+                share.shareData,
+                commentCount
+            )
         }
     }.getOrDefault(emptyList())
 
@@ -32,7 +41,15 @@ class ShareRepository @Inject constructor(
         val shares = find(shareMode)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            ShareDetail(share.shareId, user, share.shareNote, share.createdAt, share.shareData)
+            val commentCount = commentRepository.count(share.shareId)
+            ShareDetail(
+                share.shareId,
+                user,
+                share.shareNote,
+                share.createdAt,
+                share.shareData,
+                commentCount
+            )
         }
     }.getOrDefault(emptyList())
 }

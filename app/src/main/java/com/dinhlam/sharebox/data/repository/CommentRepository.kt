@@ -30,4 +30,8 @@ class CommentRepository @Inject constructor(
             }
         }.getOrDefault(emptyList())
     }
+
+    fun count(shareId: String): Int = commentDao.runCatching {
+        commentDao.count(shareId)
+    }.getOrDefault(0)
 }

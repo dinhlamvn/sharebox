@@ -71,13 +71,14 @@ class ProfileFragment :
                 return@getState
             }
 
-            val models = state.shares.mapNotNull { shareDetail ->
+            val models = state.shares.map { shareDetail ->
                 shareDetail.shareData.buildShareModelViews(
                     requireContext(),
                     shareDetail.shareId,
                     shareDetail.createdAt,
                     shareDetail.shareNote,
-                    shareDetail.user
+                    shareDetail.user,
+                    shareComment = shareDetail.commentCount
                 )
             }
             if (models.isNotEmpty()) {

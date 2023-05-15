@@ -5,5 +5,6 @@ data class ShareDetail(
     val user: UserDetail,
     val shareNote: String?,
     val createdAt: Long,
-    val shareData: ShareData
+    val shareData: ShareData,
+    val commentCount: Int
 )
