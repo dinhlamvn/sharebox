@@ -50,11 +50,10 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
 
     override fun onStart() {
         dialog?.cast<BottomSheetDialog>()?.behavior?.apply {
-            skipCollapsed = true
-            state = BottomSheetBehavior.STATE_EXPANDED
-            peekHeight = 0
+            onConfigBottomBehavior(this)
         }
         super.onStart()
-
     }
+
+    open fun onConfigBottomBehavior(behavior: BottomSheetBehavior<*>) {}
 }

@@ -1,0 +1,16 @@
+package com.dinhlam.sharebox.data.mapper
+
+import com.dinhlam.sharebox.data.local.entity.Comment
+import com.dinhlam.sharebox.data.model.CommentDetail
+import com.dinhlam.sharebox.data.model.UserDetail
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class CommentToCommentDetailMapper @Inject constructor() {
+    fun map(comment: Comment, userDetail: UserDetail): CommentDetail {
+        return CommentDetail(
+            comment.id, comment.shareId, comment.content, comment.createdAt, userDetail
+        )
+    }
+}

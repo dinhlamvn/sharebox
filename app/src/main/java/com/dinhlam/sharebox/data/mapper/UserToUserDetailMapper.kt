@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.data.repository.mapper
+package com.dinhlam.sharebox.data.mapper
 
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.UserDetail

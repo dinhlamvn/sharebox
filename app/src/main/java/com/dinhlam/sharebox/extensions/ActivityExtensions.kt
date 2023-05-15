@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
@@ -20,8 +21,7 @@ fun AppCompatActivity.screenHeight() = resources.displayMetrics.heightPixels
 fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         onBackInvokedDispatcher.registerOnBackInvokedCallback(
-            OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-            handler
+            OnBackInvokedDispatcher.PRIORITY_DEFAULT, handler
         )
     } else {
         onBackPressedDispatcher.addCallback(this) {
@@ -42,7 +42,11 @@ fun Activity.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
 
 fun Activity.hideKeyboard() = currentFocus?.let { focusedView ->
     getSystemServiceCompat<InputMethodManager>(Context.INPUT_METHOD_SERVICE).hideSoftInputFromWindow(
-        focusedView.windowToken,
-        0
+        focusedView.windowToken, 0
     )
+}
+
+fun EditText.hideKeyboard() {
+    context.getSystemServiceCompat<InputMethodManager>(Context.INPUT_METHOD_SERVICE)
+        .hideSoftInputFromWindow(windowToken, 0)
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.UserDetail
-import com.dinhlam.sharebox.data.repository.mapper.UserToUserDetailMapper
+import com.dinhlam.sharebox.data.mapper.UserToUserDetailMapper
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.dinhlam.sharebox.data.local.AppDatabase
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
+import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VoteDao
@@ -28,7 +29,6 @@ object DatabaseModule {
     ): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "share-box-db")
             .addTypeConverter(ShareDataConverter(gson))
-            .fallbackToDestructiveMigrationFrom()
             .build()
     }
 
@@ -51,5 +51,12 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): VoteDao {
         return appDatabase.voteDao()
+    }
+
+    @Provides
+    fun provideCommentDao(
+        appDatabase: AppDatabase
+    ): CommentDao {
+        return appDatabase.commentDao()
     }
 }

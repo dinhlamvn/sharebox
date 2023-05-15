@@ -8,7 +8,9 @@ import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AppRouter @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun home(): Intent {

@@ -124,7 +124,7 @@ class ProfileFragment :
                 },
                 {
 
-                }, {})
+                }, {}, {})
         }
 
         withViewType(R.layout.model_view_share_list_url) {
@@ -132,21 +132,21 @@ class ProfileFragment :
                 ModelViewShareListUrlBinding.bind(this),
                 {},
                 { },
-                {})
+                {}, {})
         }
 
         withViewType(R.layout.model_view_share_list_image) {
             ShareListImageModelView.ShareListImageViewHolder(
                 ModelViewShareListImageBinding.bind(
                     this
-                ), {}, {}, {})
+                ), {}, {}, {}, {})
         }
 
         withViewType(R.layout.model_view_share_list_images) {
             ShareListImagesModelView.ShareListImagesViewHolder(
                 ModelViewShareListImagesBinding.bind(
                     this
-                ), {}, {}, {})
+                ), {}, {}, {}, {})
         }
     }
 

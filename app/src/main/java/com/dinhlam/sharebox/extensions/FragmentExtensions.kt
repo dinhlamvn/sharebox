@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.extensions
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.SavedStateHandle
 
 fun Fragment.screenWidth() = resources.displayMetrics.widthPixels
 
@@ -17,3 +18,6 @@ fun Fragment.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
         Toast.makeText(requireContext(), toastContent, duration).show()
     }
 }
+
+fun <T> SavedStateHandle.getNonNull(key: String): T =
+    get<T>(key) ?: error("The value of $key is null.")

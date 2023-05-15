@@ -14,19 +14,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:text="@string/comment_title"
             android:textAppearance="@style/TextAppearance.HeaderMedium"
+            app:layout_constraintBottom_toBottomOf="@id/image_close"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/image_close" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_close_gray"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="1dp"
             android:background="@color/colorDividerLightV2"
-            app:layout_constraintTop_toBottomOf="@id/text_title" />
+            app:layout_constraintTop_toBottomOf="@id/image_close" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -66,19 +80,34 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edit_comment"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/rectangle_white_round_4_stroke"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/rectangle_white_round_4_stroke_2"
             android:gravity="center_vertical"
             android:hint="@string/comment_hint"
+            android:imeOptions="actionSend"
+            android:inputType="text"
             android:lines="1"
-            android:paddingHorizontal="8dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
             android:textAppearance="@style/TextAppearance.Body"
             app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/image_send"
             app:layout_constraintStart_toEndOf="@id/image_avatar"
             app:layout_constraintTop_toTopOf="@id/image_avatar" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_send"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_send"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

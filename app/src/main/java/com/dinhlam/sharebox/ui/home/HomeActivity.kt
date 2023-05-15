@@ -6,6 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
@@ -52,7 +53,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         viewBinding.bottomNavigationView.menu.getItem(1).isEnabled = false
 
         viewBinding.buttonCreateFolder.setOnClickListener {
-            CommentFragment().show(supportFragmentManager, "hello")
+            CommentFragment().apply {
+                arguments = Bundle().apply {
+                    putString(AppExtras.EXTRA_SHARE_ID, "1234")
+                }
+            }.show(supportFragmentManager, "CommentFragment")
         }
     }
 }

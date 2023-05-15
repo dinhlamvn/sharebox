@@ -38,7 +38,8 @@ data class ShareListTextModelView(
         private val binding: ModelViewShareListTextBinding,
         private val onClick: (String?) -> Unit,
         private val shareToOther: (String) -> Unit,
-        private val actionVote: (String) -> Unit
+        private val actionVote: (String) -> Unit,
+        private val actionComment: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(
         binding
     ) {
@@ -60,6 +61,10 @@ data class ShareListTextModelView(
 
             binding.layoutBottomAction.buttonUpVote.setOnClickListener {
                 actionVote.invoke(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonComment.setOnClickListener {
+                actionComment(model.shareId)
             }
 
             binding.layoutBottomAction.textUpvote.text =

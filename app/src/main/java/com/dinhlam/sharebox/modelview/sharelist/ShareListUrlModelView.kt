@@ -7,13 +7,13 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
@@ -39,7 +39,8 @@ data class ShareListUrlModelView(
         private val binding: ModelViewShareListUrlBinding,
         private val openAction: (String) -> Unit,
         private val shareToOther: (String) -> Unit,
-        private val actionVote: (String) -> Unit
+        private val actionVote: (String) -> Unit,
+        private val actionComment: (String) -> Unit
     ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
         binding
     ) {
@@ -49,14 +50,16 @@ data class ShareListUrlModelView(
                 openAction(model.url!!)
             }
             ImageLoader.instance.load(
-                buildContext,
-                model.userDetail.avatar,
-                binding.layoutUserInfo.imageAvatar
+                buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             binding.layoutBottomAction.buttonShare.setOnClickListener {
                 shareToOther(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonComment.setOnClickListener {
+                actionComment(model.shareId)
             }
 
             binding.layoutBottomAction.buttonUpVote.setOnClickListener {
