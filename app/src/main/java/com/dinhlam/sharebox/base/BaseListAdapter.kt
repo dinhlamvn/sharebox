@@ -63,25 +63,25 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     private class ModelViewsManager<T : BaseModelView> {
-        private val viewHolders = mutableMapOf<Int, T>()
+        private val modelViewMap = mutableMapOf<Int, T>()
 
         private var previousModel: T? = null
 
         fun getModel(viewType: Int) =
-            viewHolders[viewType] ?: error("No model is provide with view type $viewType")
+            modelViewMap[viewType] ?: error("No model view is provided with view type $viewType")
 
         fun getViewTypeAndRemember(model: T): Int {
             if (previousModel != null && previousModel!!::class == model::class) {
-                return viewHolders.size
+                return modelViewMap.size
             }
 
             val viewType = generateViewType(model)
-            viewHolders[viewType] = model
+            modelViewMap[viewType] = model
             previousModel = model
             return viewType
         }
 
-        private fun generateViewType(model: T): Int = viewHolders.size + 1
+        private fun generateViewType(model: T): Int = modelViewMap.size + 1
     }
 
     companion object {
