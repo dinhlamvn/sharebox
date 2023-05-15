@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
 import android.net.Uri
+import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -9,14 +10,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewShareListImagesBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImagesBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelView
 import com.dinhlam.sharebox.utils.UserUtils
 
@@ -29,36 +29,30 @@ data class ShareListImagesModelView(
     val modelViews: List<ShareReceiveImagesModelView>,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
-    val userDetail: UserDetail
+    val userDetail: UserDetail,
+    val actionOpen: Function1<List<Uri>, Unit>? = null,
+    val actionShareToOther: Function1<String, Unit>? = null,
+    val actionVote: Function1<String, Unit>? = null,
+    val actionComment: Function1<String, Unit>? = null,
+    val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_share_list_images
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListImagesViewHolder(ModelViewShareListImagesBinding.inflate(inflater))
+    }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    class ShareListImagesViewHolder(
-        private val binding: ModelViewShareListImagesBinding,
-        private val shareToOther: (String) -> Unit,
-        private val viewImages: (List<Uri>) -> Unit,
-        private val actionVote: (String) -> Unit,
-        private val actionComment: (String) -> Unit
+    private class ShareListImagesViewHolder(
+        binding: ModelViewShareListImagesBinding,
     ) : BaseListAdapter.BaseViewHolder<ShareListImagesModelView, ModelViewShareListImagesBinding>(
         binding
     ) {
 
-        private val adapter = BaseListAdapter.createAdapter({
+        private val adapter = BaseListAdapter.createAdapter {
             addAll(models)
-        }) {
-            withViewType(R.layout.model_view_share_receive_images) {
-                ShareReceiveImagesModelView.ShareReceiveImagesViewHolder(
-                    ModelViewShareReceiveImagesBinding.bind(this)
-                ) {
-                    viewImages.invoke(models.map { it.uri })
-                }
-            }
         }
 
         private val models = mutableListOf<ShareReceiveImagesModelView>()
@@ -69,10 +63,6 @@ data class ShareListImagesModelView(
         }
 
         override fun onBind(model: ShareListImagesModelView, position: Int) {
-            binding.root.setOnClickListener {
-                viewImages(model.uris)
-            }
-
             binding.recyclerViewImage.layoutManager =
                 GridLayoutManager(buildContext, model.spanCount).apply {
                     spanSizeLookup = BaseSpanSizeLookup(adapter, model.spanCount)
@@ -90,16 +80,24 @@ data class ShareListImagesModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.layoutBottomAction.buttonShare.setOnClickListener {
-                shareToOther(model.shareId)
+            binding.container.setOnClickListener {
+                model.actionOpen?.invoke(model.uris)
             }
 
-            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
-                actionVote.invoke(model.shareId)
+            binding.layoutBottomAction.buttonShare.setOnClickListener {
+                model.actionShareToOther?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonComment.setOnClickListener {
-                actionComment(model.shareId)
+                model.actionComment?.invoke(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
+                model.actionVote?.invoke(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonStar.setOnClickListener {
+                model.actionStar?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.textUpvote.text =

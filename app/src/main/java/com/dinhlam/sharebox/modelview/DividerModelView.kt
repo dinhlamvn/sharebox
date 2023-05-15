@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview
 
+import android.view.LayoutInflater
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -11,11 +12,12 @@ import com.dinhlam.sharebox.extensions.dp
 data class DividerModelView(
     val id: String, val size: Int = 1, @ColorRes val color: Int = R.color.colorDividerLight
 ) : BaseListAdapter.BaseModelView(id) {
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_divider
 
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return DividerViewHolder(ModelViewDividerBinding.inflate(inflater))
+    }
 
-    class DividerViewHolder(val binding: ModelViewDividerBinding) :
+    private class DividerViewHolder(binding: ModelViewDividerBinding) :
         BaseListAdapter.BaseViewHolder<DividerModelView, ModelViewDividerBinding>(binding) {
 
         override fun onBind(model: DividerModelView, position: Int) {

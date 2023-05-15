@@ -1,28 +1,29 @@
 package com.dinhlam.sharebox.modelview
 
-import com.dinhlam.sharebox.R
+import android.view.LayoutInflater
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewHashtagBinding
 
 data class HashTagModelView(
     val id: String,
     val text: String,
+    val onClick: Function1<String, Unit>?
 ) : BaseListAdapter.BaseModelView("hashtag_$text") {
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_hashtag
 
-    class HashTagViewHolder(
-        val binding: ModelViewHashtagBinding, private val onClick: (String) -> Unit
-    ) : BaseListAdapter.BaseViewHolder<HashTagModelView, ModelViewHashtagBinding>(binding) {
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return object : BaseListAdapter.BaseViewHolder<HashTagModelView, ModelViewHashtagBinding>(
+            ModelViewHashtagBinding.inflate(inflater)
+        ) {
 
-        override fun onBind(model: HashTagModelView, position: Int) {
-            binding.container.setOnClickListener {
-                onClick.invoke(model.id)
+            override fun onBind(model: HashTagModelView, position: Int) {
+                binding.container.setOnClickListener {
+                    model.onClick?.invoke(model.id)
+                }
+                binding.textHashtag.text = "#${model.text}"
             }
-            binding.textHashtag.text = "#${model.text}"
-        }
 
-        override fun onUnBind() {
+            override fun onUnBind() {
+            }
         }
     }
 }

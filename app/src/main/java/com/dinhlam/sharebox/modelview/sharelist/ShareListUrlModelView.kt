@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
+import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -27,56 +28,60 @@ data class ShareListUrlModelView(
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val starred: Boolean = false,
-    val userDetail: UserDetail
+    val userDetail: UserDetail,
+    val actionOpen: Function1<String, Unit>? = null,
+    val actionShareToOther: Function1<String, Unit>? = null,
+    val actionVote: Function1<String, Unit>? = null,
+    val actionComment: Function1<String, Unit>? = null,
+    val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_share_list_url
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListUrlWebHolder(ModelViewShareListUrlBinding.inflate(inflater))
+    }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    class ShareListUrlWebHolder(
-        private val binding: ModelViewShareListUrlBinding,
-        private val openAction: (String) -> Unit,
-        private val shareToOther: (String) -> Unit,
-        private val actionVote: (String) -> Unit,
-        private val actionComment: (String) -> Unit,
-        private val actionStar: (String) -> Unit,
-    ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
+    private class ShareListUrlWebHolder(
+        binding: ModelViewShareListUrlBinding,
+
+        ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
         binding
     ) {
 
         override fun onBind(model: ShareListUrlModelView, position: Int) {
-            binding.container.setOnClickListener {
-                openAction(model.url!!)
-            }
             ImageLoader.instance.load(
                 buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
+
+            binding.container.setOnClickListener {
+                model.actionOpen?.invoke(model.url!!)
+            }
+
             binding.layoutBottomAction.buttonShare.setOnClickListener {
-                shareToOther(model.shareId)
+                model.actionShareToOther?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonComment.setOnClickListener {
-                actionComment(model.shareId)
+                model.actionComment?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonUpVote.setOnClickListener {
-                actionVote.invoke(model.shareId)
+                model.actionVote?.invoke(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonStar.setOnClickListener {
+                model.actionStar?.invoke(model.shareId)
             }
 
             if (model.starred) {
                 binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_starred)
             } else {
                 binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_star)
-            }
-
-            binding.layoutBottomAction.buttonStar.setOnClickListener {
-                actionStar(model.shareId)
             }
 
             binding.layoutBottomAction.textUpvote.text =

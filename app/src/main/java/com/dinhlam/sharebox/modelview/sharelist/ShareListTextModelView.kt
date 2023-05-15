@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview.sharelist
 
+import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -7,13 +8,13 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ShareListTextModelView(
@@ -24,47 +25,53 @@ data class ShareListTextModelView(
     val note: String?,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
-    val userDetail: UserDetail
+    val userDetail: UserDetail,
+    val actionOpen: Function1<String?, Unit>? = null,
+    val actionShareToOther: Function1<String, Unit>? = null,
+    val actionVote: Function1<String, Unit>? = null,
+    val actionComment: Function1<String, Unit>? = null,
+    val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_share_list_text
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListTextViewHolder(ModelViewShareListTextBinding.inflate(inflater))
+    }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
     class ShareListTextViewHolder(
-        private val binding: ModelViewShareListTextBinding,
-        private val onClick: (String?) -> Unit,
-        private val shareToOther: (String) -> Unit,
-        private val actionVote: (String) -> Unit,
-        private val actionComment: (String) -> Unit
+        binding: ModelViewShareListTextBinding,
     ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(
         binding
     ) {
 
         override fun onBind(model: ShareListTextModelView, position: Int) {
-            binding.root.setOnClickListener {
-                onClick.invoke(model.content)
-            }
-
             ImageLoader.instance.load(
                 buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.layoutBottomAction.buttonShare.setOnClickListener {
-                shareToOther(model.shareId)
+            binding.container.setOnClickListener {
+                model.actionOpen?.invoke(model.content)
             }
 
-            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
-                actionVote.invoke(model.shareId)
+            binding.layoutBottomAction.buttonShare.setOnClickListener {
+                model.actionShareToOther?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonComment.setOnClickListener {
-                actionComment(model.shareId)
+                model.actionComment?.invoke(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
+                model.actionVote?.invoke(model.shareId)
+            }
+
+            binding.layoutBottomAction.buttonStar.setOnClickListener {
+                model.actionStar?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.textUpvote.text =

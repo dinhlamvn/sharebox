@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview
 
+import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -18,10 +19,12 @@ data class CommentModelView(
     val content: String?,
     val createdAt: Long,
 ) : BaseListAdapter.BaseModelView("comment_$id") {
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_comment
 
-    class CommentViewHolder(private val binding: ModelViewCommentBinding) :
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return CommentViewHolder(ModelViewCommentBinding.inflate(inflater))
+    }
+
+    private class CommentViewHolder(binding: ModelViewCommentBinding) :
         BaseListAdapter.BaseViewHolder<CommentModelView, ModelViewCommentBinding>(binding) {
         override fun onBind(model: CommentModelView, position: Int) {
             binding.textName.text = buildSpannedString {

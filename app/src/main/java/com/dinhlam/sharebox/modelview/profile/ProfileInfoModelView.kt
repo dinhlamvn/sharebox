@@ -1,6 +1,6 @@
 package com.dinhlam.sharebox.modelview.profile
 
-import com.dinhlam.sharebox.R
+import android.view.LayoutInflater
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewProfileInfoBinding
 import com.dinhlam.sharebox.extensions.asDisplayPoint
@@ -18,11 +18,13 @@ data class ProfileInfoModelView(
     val level: Int,
     val createdAt: Long,
 ) : BaseListAdapter.BaseModelView("user_info_$id") {
-    override val modelLayoutRes: Int
-        get() = R.layout.model_view_profile_info
 
-    class UserInfoViewHolder(
-        private val binding: ModelViewProfileInfoBinding,
+    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+        return UserInfoViewHolder(ModelViewProfileInfoBinding.inflate(inflater))
+    }
+
+    private class UserInfoViewHolder(
+        binding: ModelViewProfileInfoBinding,
     ) : BaseListAdapter.BaseViewHolder<ProfileInfoModelView, ModelViewProfileInfoBinding>(
         binding
     ) {

@@ -2,13 +2,12 @@ package com.dinhlam.sharebox.base
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.utils.Ids
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +19,6 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
-    private val viewHolderManager: ViewHolderManager,
     private val modelViewsBuilder: MutableList<T>.() -> Unit
 ) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
 
@@ -30,6 +28,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     private var buildModelViewsJob: Job? = null
 
     private val modelViews = mutableListOf<T>()
+
+    private val modelViewsManager = ModelViewsManager<T>()
 
     override fun submitList(list: MutableList<T>?) {
         error("No support direct call method")
@@ -62,26 +62,34 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         setHasStableIds(true)
     }
 
-    class ViewHolderManager internal constructor() {
-        private val viewHolders = mutableMapOf<Int, View.() -> BaseViewHolder<*, ViewBinding>>()
+    private class ModelViewsManager<T : BaseModelView> {
+        private val viewHolders = mutableMapOf<Int, T>()
 
-        fun withViewType(viewType: Int, block: View.() -> BaseViewHolder<*, *>) {
-            val viewHolderBlock = block.cast<View.() -> BaseViewHolder<*, ViewBinding>>()
-                ?: error("Just support view holder extend from ${BaseViewHolder::class}")
-            viewHolders[viewType] = viewHolderBlock
+        private var previousModel: T? = null
+
+        fun getModel(viewType: Int) =
+            viewHolders[viewType] ?: error("No model is provide with view type $viewType")
+
+        fun getViewTypeAndRemember(model: T): Int {
+            if (previousModel != null && previousModel!!::class == model::class) {
+                return viewHolders.size
+            }
+
+            val viewType = generateViewType(model)
+            viewHolders[viewType] = model
+            previousModel = model
+            return viewType
         }
 
-        fun getViewHolder(viewType: Int) = viewHolders[viewType]
+        private fun generateViewType(model: T): Int = viewHolders.size + 1
     }
 
     companion object {
         @JvmStatic
         fun createAdapter(
             modelViewsBuilder: MutableList<BaseModelView>.() -> Unit,
-            block: ViewHolderManager.() -> Unit
         ): BaseListAdapter<BaseModelView> {
-            val viewHolderManager = ViewHolderManager().apply(block)
-            return BaseListAdapter(viewHolderManager, modelViewsBuilder)
+            return BaseListAdapter(modelViewsBuilder)
         }
     }
 
@@ -89,11 +97,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         parent: ViewGroup, viewType: Int
     ): BaseViewHolder<T, ViewBinding> {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(viewType, parent, false)
-        val block = viewHolderManager.getViewHolder(viewType)
-            ?: error("ViewHolder of $viewType is undefined.")
-        return block.invoke(view).cast()
-            ?: error("Error while create view holder with type $viewType")
+        val model = modelViewsManager.getModel(viewType)
+        return model.createViewHolder(inflater).castNonNull()
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
@@ -111,7 +116,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position).modelLayoutRes
+        return modelViewsManager.getViewTypeAndRemember(getItem(position))
     }
 
     override fun getItemId(position: Int): Long {
@@ -135,7 +140,9 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         var modelId: Long = 0L
             private set
 
-        abstract val modelLayoutRes: Int
+        abstract fun createViewHolder(
+            inflater: LayoutInflater
+        ): BaseViewHolder<*, *>
 
         open fun areItemsTheSame(other: BaseModelView): Boolean {
             return this.modelId == other.modelId
@@ -149,7 +156,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
             BaseSpanSizeLookup.SpanSizeConfig.Normal
     }
 
-    abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(binding: VB) :
+    abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(val binding: VB) :
         RecyclerView.ViewHolder(binding.root) {
 
         protected val buildContext: Context = itemView.context
