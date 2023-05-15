@@ -7,8 +7,9 @@
         android:title="@string/title_community" />
 
     <item
-        android:id="@+id/placeholder"
-        android:title="" />
+        android:id="@+id/navigation_starred"
+        android:icon="@drawable/ic_star"
+        android:title="@string/title_starred" />
 
     <item
         android:id="@+id/navigation_profile"

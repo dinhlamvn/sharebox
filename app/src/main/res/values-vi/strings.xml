@@ -148,5 +148,6 @@
     <string name="comment_title">Bình luận (%d)</string>
     <string name="comment_hint">Bạn đang nghĩ gì đó?</string>
     <string name="error_send_comment">A error occurred while send comment</string>
+    <string name="title_starred">Starred</string>
 
 </resources>

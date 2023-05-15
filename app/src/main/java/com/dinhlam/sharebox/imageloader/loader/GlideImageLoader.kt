@@ -81,8 +81,6 @@ object GlideImageLoader : ImageLoader() {
                 createScaleTypeTransform(transforms, transform.scaleType)
                 transform(*transforms.toTypedArray())
             }
-
-            else -> this
         }
     }
 

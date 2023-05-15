@@ -1,9 +1,9 @@
 package com.dinhlam.sharebox.imageloader.config
 
-sealed class TransformType(scaleType: ImageLoadScaleType) {
+sealed class TransformType {
     class Normal(val scaleType: ImageLoadScaleType = ImageLoadScaleType.None) :
-        TransformType(scaleType)
+        TransformType()
 
-    class Rounded(val radius: Int, val scaleType: ImageLoadScaleType) : TransformType(scaleType)
-    class Circle(val scaleType: ImageLoadScaleType) : TransformType(scaleType)
+    class Rounded(val radius: Int, val scaleType: ImageLoadScaleType) : TransformType()
+    class Circle(val scaleType: ImageLoadScaleType) : TransformType()
 }
