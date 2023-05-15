@@ -21,7 +21,7 @@ class ShareRepository @Inject constructor(
         Log.d("DinhLam", "hehe")
     }.getOrDefault(false)
 
-    fun findAll() = shareDao.runCatching {
+    fun find() = shareDao.runCatching {
         val shares = find()
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
@@ -37,8 +37,24 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    fun findAll(shareMode: ShareMode) = shareDao.runCatching {
+    fun find(shareMode: ShareMode) = shareDao.runCatching {
         val shares = find(shareMode)
+        shares.mapNotNull { share ->
+            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
+            val commentCount = commentRepository.count(share.shareId)
+            ShareDetail(
+                share.shareId,
+                user,
+                share.shareNote,
+                share.createdAt,
+                share.shareData,
+                commentCount
+            )
+        }
+    }.getOrDefault(emptyList())
+
+    fun find(shareIds: List<String>) = shareDao.runCatching {
+        val shares = find(shareIds)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)

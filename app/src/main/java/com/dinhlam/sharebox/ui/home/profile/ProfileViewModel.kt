@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shares = shareRepository.findAll()
+            val shares = shareRepository.find()
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -37,7 +37,7 @@ class ProfileViewModel @Inject constructor(
     fun loadMores() {
         setState { copy(isLoadMore = true) }
         backgroundTask {
-            val others = shareRepository.findAll()
+            val others = shareRepository.find()
             setState { copy(shares = shares.plus(others), isLoadMore = false) }
         }
     }

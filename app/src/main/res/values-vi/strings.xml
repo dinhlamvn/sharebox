@@ -149,5 +149,6 @@
     <string name="comment_hint">Bạn đang nghĩ gì đó?</string>
     <string name="error_send_comment">A error occurred while send comment</string>
     <string name="title_starred">Starred</string>
+    <string name="no_starred_shares">No share is starred!</string>
 
 </resources>

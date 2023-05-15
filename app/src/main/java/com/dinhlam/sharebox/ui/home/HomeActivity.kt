@@ -9,16 +9,21 @@ import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
+import com.dinhlam.sharebox.ui.home.starred.StarredFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     private val pageAdapter = object : FragmentStateAdapter(this) {
-        override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 3
 
         override fun createFragment(position: Int): Fragment {
-            return if (position == 1) ProfileFragment() else CommunityFragment()
+            return when (position) {
+                1 -> StarredFragment()
+                2 -> ProfileFragment()
+                else -> CommunityFragment()
+            }
         }
     }
 
@@ -34,14 +39,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             override fun onPageSelected(position: Int) {
                 when (position) {
                     0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_community
-                    1 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_profile
+                    1 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_starred
+                    2 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_profile
                 }
             }
         })
         viewBinding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             val pos = when (menuItem.itemId) {
-                R.id.navigation_community -> 0
-                else -> 1
+                R.id.navigation_starred -> 1
+                R.id.navigation_profile -> 2
+                else -> 0
             }
             viewBinding.viewPager.setCurrentItem(pos, true)
             return@setOnItemSelectedListener true

@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.community
+package com.dinhlam.sharebox.ui.home.starred
 
 import android.util.Log
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -11,15 +11,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class CommunityViewModel @Inject constructor(
+class StarredViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val voteRepository: VoteRepository,
     private val userSharePref: UserSharePref,
     private val starRepository: StarRepository,
-) : BaseViewModel<CommunityState>(CommunityState()) {
+) : BaseViewModel<StarredState>(StarredState()) {
 
     init {
-        consume(CommunityState::shares, true) { shares ->
+        consume(StarredState::shares, true) { shares ->
             execute { state ->
                 shares.forEach { share ->
                     if (state.voteMap[share.shareId] == null) {
@@ -40,7 +40,9 @@ class CommunityViewModel @Inject constructor(
         backgroundTask(onError = {
             Log.e("DinhLam", it.toString())
         }) {
-            val shares = shareRepository.find(shareMode = ShareMode.ShareModeCommunity)
+            val starredShares = starRepository.find()
+            val ids = starredShares.map { it.shareId }
+            val shares = shareRepository.find(ids)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -54,7 +56,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { CommunityState() }
+        setState { StarredState() }
         loadShares()
     }
 
