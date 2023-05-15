@@ -175,7 +175,7 @@ class CommunityFragment :
         }
 
         viewModel.consume(this, ProfileState::isLoadMore, true) { isLoadMore ->
-            layoutManager.isLoadMore = isLoadMore
+            layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }
 

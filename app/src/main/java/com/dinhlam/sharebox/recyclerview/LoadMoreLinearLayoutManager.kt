@@ -11,16 +11,22 @@ class LoadMoreLinearLayoutManager(
     private val block: () -> Unit
 ) : LinearLayoutManager(context, orientation, false) {
 
-    var isLoadMore = false
+    var hadTriggerLoadMore = false
 
     override fun onScrollStateChanged(state: Int) {
         if (!blockShouldLoadMore.invoke()) {
+            hadTriggerLoadMore = false
             return
         }
+
+        if (itemCount <= 1) {
+            return
+        }
+
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             val lastPosition = findLastCompletelyVisibleItemPosition()
-            if (itemCount > 0 && !isLoadMore && lastPosition == itemCount - 1) {
-                isLoadMore = true
+            if (!hadTriggerLoadMore && lastPosition == itemCount - 1) {
+                hadTriggerLoadMore = true
                 block()
             }
         }

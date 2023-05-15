@@ -8,6 +8,8 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.extensions.setNonBlankText
 import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
+import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
 import kotlinx.coroutines.CoroutineScope
@@ -114,7 +116,9 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
                 context,
                 openGraphResult.image,
                 binding.imageView
-            )
+            ) {
+                copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
+            }
             binding.textViewUrl.text = openGraphResult.url
             binding.textViewTitle.setNonBlankText(openGraphResult.title)
             binding.textViewDescription.setNonBlankText(openGraphResult.description)

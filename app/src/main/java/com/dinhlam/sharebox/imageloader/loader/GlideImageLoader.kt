@@ -75,6 +75,13 @@ object GlideImageLoader : ImageLoader() {
                 transform(*transforms.toTypedArray())
             }
 
+            is TransformType.Normal -> {
+                val transform = transformType.castNonNull<TransformType.Normal>()
+                val transforms = mutableListOf<BitmapTransformation>()
+                createScaleTypeTransform(transforms, transform.scaleType)
+                transform(*transforms.toTypedArray())
+            }
+
             else -> this
         }
     }
@@ -124,9 +131,7 @@ object GlideImageLoader : ImageLoader() {
     }
 
     override fun get(
-        context: Context,
-        model: Any?,
-        block: ImageLoadConfig.() -> ImageLoadConfig
+        context: Context, model: Any?, block: ImageLoadConfig.() -> ImageLoadConfig
     ): Bitmap? {
         val toContext = toActivityContext(context) ?: context.applicationContext
 

@@ -88,7 +88,7 @@ class ProfileFragment :
                 }
 
                 if (state.isLoadMore) {
-                    add(LoadingModelView("profile_load_more"))
+                    add(LoadingModelView("loading_more"))
                 }
             }
         }
@@ -169,7 +169,7 @@ class ProfileFragment :
         }
 
         viewModel.consume(this, ProfileState::isLoadMore, true) { isLoadMore ->
-            layoutManager.isLoadMore = isLoadMore
+            layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }
 }
