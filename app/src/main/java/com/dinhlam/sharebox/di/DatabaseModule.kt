@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.data.local.AppDatabase
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
+import com.dinhlam.sharebox.data.local.dao.StarDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VoteDao
 import com.google.gson.Gson
@@ -24,12 +25,10 @@ object DatabaseModule {
 
     @Provides
     fun provideAppDatabase(
-        @ApplicationContext context: Context,
-        gson: Gson
+        @ApplicationContext context: Context, gson: Gson
     ): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "share-box-db")
-            .addTypeConverter(ShareDataConverter(gson))
-            .build()
+            .addTypeConverter(ShareDataConverter(gson)).build()
     }
 
     @Provides
@@ -58,5 +57,12 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): CommentDao {
         return appDatabase.commentDao()
+    }
+
+    @Provides
+    fun provideStarDao(
+        appDatabase: AppDatabase
+    ): StarDao {
+        return appDatabase.starDao()
     }
 }

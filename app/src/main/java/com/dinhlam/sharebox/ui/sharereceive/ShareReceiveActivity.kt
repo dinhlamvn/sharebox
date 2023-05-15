@@ -19,6 +19,9 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.ShareMode
+import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemIconWithTextSubtextBinding
 import com.dinhlam.sharebox.databinding.ModelViewHashtagBinding
@@ -43,9 +46,6 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.ShareMode
-import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.modelview.HashTagModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -230,13 +230,7 @@ class ShareReceiveActivity :
             }
         }
 
-        viewBinding.toolbar.apply {
-            setNavigationOnClickListener {
-                onBackPressedDispatcher.onBackPressed()
-            }
-        }
-
-        viewBinding.containerPost.setOnClickListener {
+        viewBinding.buttonPost.setOnClickListener {
             hideKeyboard()
             val shareNote = viewBinding.textInputNote.getTrimmedText()
             viewModel.share(shareNote, this@ShareReceiveActivity)

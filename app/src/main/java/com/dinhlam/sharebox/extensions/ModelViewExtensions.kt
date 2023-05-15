@@ -20,6 +20,7 @@ fun ShareData.buildShareModelViews(
     user: UserDetail,
     shareVote: Int = 0,
     shareComment: Int = 0,
+    starred: Boolean = false,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -32,6 +33,7 @@ fun ShareData.buildShareModelViews(
                 shareNote,
                 shareVote,
                 shareComment,
+                starred,
                 user
             )
         }

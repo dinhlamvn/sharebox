@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -25,6 +26,7 @@ data class ShareListUrlModelView(
     val note: String?,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
+    val starred: Boolean = false,
     val userDetail: UserDetail
 ) : BaseListAdapter.BaseModelView(shareId) {
 
@@ -40,7 +42,8 @@ data class ShareListUrlModelView(
         private val openAction: (String) -> Unit,
         private val shareToOther: (String) -> Unit,
         private val actionVote: (String) -> Unit,
-        private val actionComment: (String) -> Unit
+        private val actionComment: (String) -> Unit,
+        private val actionStar: (String) -> Unit,
     ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
         binding
     ) {
@@ -64,6 +67,16 @@ data class ShareListUrlModelView(
 
             binding.layoutBottomAction.buttonUpVote.setOnClickListener {
                 actionVote.invoke(model.shareId)
+            }
+
+            if (model.starred) {
+                binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_starred)
+            } else {
+                binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_star)
+            }
+
+            binding.layoutBottomAction.buttonStar.setOnClickListener {
+                actionStar(model.shareId)
             }
 
             binding.layoutBottomAction.textUpvote.text =

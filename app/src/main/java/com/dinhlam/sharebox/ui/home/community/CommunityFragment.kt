@@ -76,7 +76,8 @@ class CommunityFragment :
                     shareDetail.shareNote,
                     shareDetail.user,
                     state.voteMap[shareDetail.shareId].orElse(0),
-                    shareComment = shareDetail.commentCount
+                    shareComment = shareDetail.commentCount,
+                    starred = state.starredSet.contains(shareDetail.shareId)
                 )
             }
             if (models.isEmpty()) {
@@ -132,7 +133,8 @@ class CommunityFragment :
                 ::openWebLink,
                 ::shareToOther,
                 ::voteShare,
-                ::commentShare
+                ::commentShare,
+                ::starredShare
             )
         }
 
@@ -195,6 +197,10 @@ class CommunityFragment :
 
     private fun voteShare(shareId: String) {
         viewModel.vote(shareId)
+    }
+
+    private fun starredShare(shareId: String) {
+        viewModel.starred(shareId)
     }
 
     private fun commentShare(shareId: String) {

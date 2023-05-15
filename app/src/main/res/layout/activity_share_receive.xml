@@ -5,49 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primaryDarkColor"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_scrollFlags="scroll|snap|enterAlways"
-        app:navigationIcon="@drawable/ic_arrow_back_white"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/share_receive_activity_title"
-        app:titleTextAppearance="@style/TextAppearance.BodyMedium"
-        app:titleTextColor="@color/colorWhite"
-        tools:layout_editor_absoluteX="0dp">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/container_post"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="16dp"
-            app:cardBackgroundColor="@color/colorWhite"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="6dp"
-                android:paddingVertical="2dp"
-                android:text="@string/post"
-                android:textAppearance="@style/TextAppearance.BodyMedium" />
-
-        </androidx.cardview.widget.CardView>
-
-    </androidx.appcompat.widget.Toolbar>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintBottom_toTopOf="@id/button_post"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -112,6 +76,16 @@
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="text_view_name,image_avatar" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/barrier_bottom_name" />
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_note"
                 android:layout_width="match_parent"
@@ -124,18 +98,20 @@
                 android:textAppearance="@style/TextAppearance.Body"
                 android:textColorHint="#757575"
                 android:textSize="22sp"
-                app:layout_constraintTop_toBottomOf="@id/barrier_bottom_name" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:overScrollMode="never"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/text_input_note" />
-
+                app:layout_constraintTop_toBottomOf="@id/recycler_view" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_post"
+        style="@style/AppTheme.Button"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/post"
+        android:textAppearance="@style/TextAppearance.Body"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

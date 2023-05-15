@@ -133,7 +133,7 @@ class ProfileFragment :
                 ModelViewShareListUrlBinding.bind(this),
                 {},
                 { },
-                {}, {})
+                {}, {}, {})
         }
 
         withViewType(R.layout.model_view_share_list_image) {
