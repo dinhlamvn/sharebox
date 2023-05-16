@@ -21,8 +21,8 @@ class ShareRepository @Inject constructor(
         Log.d("DinhLam", "hehe")
     }.getOrDefault(false)
 
-    fun find() = shareDao.runCatching {
-        val shares = find()
+    fun find(shareUserId: String) = shareDao.runCatching {
+        val shares = find(shareUserId)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)

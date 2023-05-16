@@ -1,10 +1,10 @@
 package com.dinhlam.sharebox.ui.home.profile
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shares = shareRepository.find()
+            val shares = shareRepository.find(userSharePref.getActiveUserId())
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -37,7 +37,7 @@ class ProfileViewModel @Inject constructor(
     fun loadMores() {
         setState { copy(isLoadMore = true) }
         backgroundTask {
-            val others = shareRepository.find()
+            val others = shareRepository.find(userSharePref.getActiveUserId())
             setState { copy(shares = shares.plus(others), isLoadMore = false) }
         }
     }

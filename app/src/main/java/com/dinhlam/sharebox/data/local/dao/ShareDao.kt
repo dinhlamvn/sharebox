@@ -13,6 +13,9 @@ interface ShareDao {
     @Query("SELECT * FROM share ORDER BY id DESC")
     fun find(): List<Share>
 
+    @Query("SELECT * FROM share WHERE share_user_id = :shareUserId ORDER BY id DESC")
+    fun find(shareUserId: String): List<Share>
+
     @Query("SELECT * FROM share WHERE share_mode = :shareMode ORDER BY id DESC")
     fun find(shareMode: ShareMode): List<Share>
 

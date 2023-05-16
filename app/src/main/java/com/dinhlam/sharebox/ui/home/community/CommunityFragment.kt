@@ -20,7 +20,6 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileState
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,9 +42,6 @@ class CommunityFragment :
             viewModel.loadMores()
         }
     }
-
-    @Inject
-    lateinit var appRouter: AppRouter
 
     @Inject
     lateinit var appSharePref: AppSharePref
@@ -82,7 +78,13 @@ class CommunityFragment :
                 }
                 models.forEachIndexed { idx, model ->
                     add(model)
-                    add(SizedBoxModelView("divider_$idx", height = 1.dp(), backgroundColor = R.color.colorDividerLightV2))
+                    add(
+                        SizedBoxModelView(
+                            "divider_$idx",
+                            height = 1.dp(),
+                            backgroundColor = R.color.colorDividerLightV2
+                        )
+                    )
                 }
 
                 if (state.isLoadMore) {
