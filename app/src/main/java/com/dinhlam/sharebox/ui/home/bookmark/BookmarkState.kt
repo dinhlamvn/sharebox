@@ -1,9 +1,9 @@
-package com.dinhlam.sharebox.ui.home.starred
+package com.dinhlam.sharebox.ui.home.bookmark
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.model.ShareDetail
 
-data class StarredState(
+data class BookmarkState(
     val isRefreshing: Boolean = false,
     val shares: List<ShareDetail> = emptyList(),
     val isLoadMore: Boolean = false,

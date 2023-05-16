@@ -155,5 +155,7 @@
     <string name="no_starred_shares">No share is starred!</string>
     <string name="title_video_mixer">Video Mixer</string>
     <string name="comments_input_hint">Comments…</string>
+    <string name="title_bookmark">Bookmark</string>
+    <string name="title_bookmark_collection">Bookmark Collections</string>
 
 </resources>

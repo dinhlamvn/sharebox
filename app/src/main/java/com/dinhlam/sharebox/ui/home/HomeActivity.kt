@@ -7,9 +7,9 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
+import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
-import com.dinhlam.sharebox.ui.home.starred.StarredFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,7 +26,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 1 -> VideoMixerFragment()
-                2 -> StarredFragment()
+                2 -> BookmarkFragment()
                 3 -> ProfileFragment()
                 else -> CommunityFragment()
             }
@@ -41,7 +41,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         super.onCreate(savedInstanceState)
 
         viewBinding.viewPager.isUserInputEnabled = false
-        viewBinding.viewPager.offscreenPageLimit = PAGE_SIZE
 
         viewBinding.viewPager.adapter = pageAdapter
         viewBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -51,7 +50,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                     1 -> viewBinding.bottomNavigationView.selectedItemId =
                         R.id.navigation_video_mixer
 
-                    2 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_starred
+                    2 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_bookmark
                     3 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_profile
                 }
             }
@@ -60,7 +59,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         viewBinding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             val pos = when (menuItem.itemId) {
                 R.id.navigation_video_mixer -> 1
-                R.id.navigation_starred -> 2
+                R.id.navigation_bookmark -> 2
                 R.id.navigation_profile -> 3
                 else -> 0
             }

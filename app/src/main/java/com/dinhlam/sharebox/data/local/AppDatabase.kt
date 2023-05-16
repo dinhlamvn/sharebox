@@ -5,11 +5,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
 import com.dinhlam.sharebox.data.local.converter.ShareModeConverter
+import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
+import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.StarDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VoteDao
+import com.dinhlam.sharebox.data.local.entity.Bookmark
+import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Folder
 import com.dinhlam.sharebox.data.local.entity.HashTag
@@ -20,7 +24,7 @@ import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.local.entity.Vote
 
 @Database(
-    entities = [Share::class, Folder::class, HashTag::class, User::class, Vote::class, ShareHashTag::class, Comment::class, Star::class],
+    entities = [Share::class, Folder::class, HashTag::class, User::class, Vote::class, ShareHashTag::class, Comment::class, Star::class, BookmarkCollection::class, Bookmark::class],
     version = 1,
     exportSchema = true
 )
@@ -31,4 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun voteDao(): VoteDao
     abstract fun commentDao(): CommentDao
     abstract fun starDao(): StarDao
+    abstract fun bookmarkCollectionDao(): BookmarkCollectionDao
+    abstract fun bookmarkDao(): BookmarkDao
 }

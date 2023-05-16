@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.dinhlam.sharebox.data.local.AppDatabase
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
+import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
+import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.StarDao
@@ -64,5 +66,19 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): StarDao {
         return appDatabase.starDao()
+    }
+
+    @Provides
+    fun provideBookmarkCollectionDao(
+        appDatabase: AppDatabase
+    ): BookmarkCollectionDao {
+        return appDatabase.bookmarkCollectionDao()
+    }
+
+    @Provides
+    fun provideBookmarkDao(
+        appDatabase: AppDatabase
+    ): BookmarkDao {
+        return appDatabase.bookmarkDao()
     }
 }
