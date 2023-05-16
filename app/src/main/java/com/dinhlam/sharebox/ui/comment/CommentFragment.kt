@@ -6,16 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.FragmentCommentBinding
-import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getTrimmedText
-import com.dinhlam.sharebox.extensions.hideKeyboard
+import com.dinhlam.sharebox.dialog.commentinput.CommentInputDialogFragment
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -28,7 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CommentFragment :
-    BaseBottomSheetViewModelDialogFragment<CommentState, CommentViewModel, FragmentCommentBinding>() {
+    BaseBottomSheetViewModelDialogFragment<CommentState, CommentViewModel, FragmentCommentBinding>(),
+    CommentInputDialogFragment.OnSubmitCommentCallback {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -82,17 +80,8 @@ class CommentFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.imageSend.isEnabled = false
-        viewBinding.editComment.doAfterTextChanged { editable ->
-            val text = editable?.toString() ?: ""
-            val trimmedText = text.trim()
-            viewBinding.imageSend.isEnabled = trimmedText.isNotEmpty()
-        }
-
-        viewBinding.imageSend.setOnClickListener {
-            viewBinding.editComment.hideKeyboard()
-            viewModel.sendComment(viewBinding.editComment.getTrimmedText())
-            viewBinding.editComment.text?.clear()
+        viewBinding.textComment.setOnClickListener {
+            CommentInputDialogFragment().show(childFragmentManager, "CommentInputDialogFragment")
         }
 
         viewBinding.recyclerView.adapter = adapter
@@ -103,16 +92,18 @@ class CommentFragment :
         }
     }
 
+    override fun onSubmitComment(comment: String) {
+        viewModel.sendComment(comment)
+    }
+
     private fun invalidateUserInfo(userDetail: UserDetail?) {
         val nonNullUser = userDetail ?: return run {
             viewBinding.imageAvatar.isVisible = false
-            viewBinding.editComment.isVisible = false
-            viewBinding.imageSend.isVisible = false
+            viewBinding.textComment.isVisible = false
         }
 
         viewBinding.imageAvatar.isVisible = true
-        viewBinding.editComment.isVisible = true
-        viewBinding.imageSend.isVisible = true
+        viewBinding.textComment.isVisible = true
 
         ImageLoader.instance.load(
             requireContext(), nonNullUser.avatar, viewBinding.imageAvatar
@@ -122,7 +113,8 @@ class CommentFragment :
     }
 
     override fun onConfigBottomBehavior(behavior: BottomSheetBehavior<*>) {
-        behavior.peekHeight = 52.dp()
+        behavior.peekHeight = 0
+        behavior.skipCollapsed = true
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 }

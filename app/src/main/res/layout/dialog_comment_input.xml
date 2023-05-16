@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rectangle_white_rounded_8">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start|top"
+        android:hint="@string/comments_input_hint"
+        android:imeOptions="actionSend"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:paddingStart="12dp"
+        android:paddingEnd="48dp"
+        android:textAppearance="@style/TextAppearance.Body"
+        android:textSize="20sp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_send"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_send"
+        app:layout_constraintBottom_toBottomOf="@id/edit_comment"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

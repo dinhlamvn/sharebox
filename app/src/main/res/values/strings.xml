@@ -154,5 +154,6 @@
     <string name="title_starred">Starred</string>
     <string name="no_starred_shares">No share is starred!</string>
     <string name="title_video_mixer">Video Mixer</string>
+    <string name="comments_input_hint">Comments…</string>
 
 </resources>
