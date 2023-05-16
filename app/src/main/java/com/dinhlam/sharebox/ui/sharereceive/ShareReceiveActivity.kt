@@ -40,11 +40,11 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.HashTagModelView
+import com.dinhlam.sharebox.modelview.ImageModelView
+import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImageModelView
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,10 +110,10 @@ class ShareReceiveActivity :
             }
         }
 
-        fun getTextNumber(realSize: Int, takeSize: Int, index: Int): String {
+        fun getNumber(realSize: Int, takeSize: Int, index: Int): Int {
             return when {
-                realSize > takeSize && index == takeSize - 1 -> "+${realSize - takeSize}"
-                else -> ""
+                realSize > takeSize && index == takeSize - 1 -> realSize - takeSize
+                else -> 0
             }
         }
 
@@ -132,21 +132,19 @@ class ShareReceiveActivity :
                 )
 
                 is ShareData.ShareImage -> add(
-                    ShareReceiveImageModelView(
-                        "shareImage", shareData.uri
-                    )
+                    ImageModelView(shareData.uri)
                 )
 
                 is ShareData.ShareImages -> {
                     val pickItems = shareData.uris.take(AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT)
 
                     addAll(pickItems.mapIndexed { index, uri ->
-                        ShareReceiveImagesModelView(
-                            index,
+                        ImageViewMoreModelView(
                             uri,
                             getSpanSize(pickItems.size, index),
                             getImageWidth(pickItems.size, index),
-                            getTextNumber(shareData.uris.size, pickItems.size, index)
+                            getImageWidth(pickItems.size, index),
+                            getNumber(shareData.uris.size, pickItems.size, index)
                         )
                     })
 
