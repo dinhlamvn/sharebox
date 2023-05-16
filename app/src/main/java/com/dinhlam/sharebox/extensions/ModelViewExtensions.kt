@@ -1,15 +1,16 @@
 package com.dinhlam.sharebox.extensions
 
 import android.content.Context
+import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
 import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelView
 import com.dinhlam.sharebox.utils.IconUtils
 
 fun ShareData.buildShareModelViews(
@@ -21,6 +22,11 @@ fun ShareData.buildShareModelViews(
     shareVote: Int = 0,
     shareComment: Int = 0,
     starred: Boolean = false,
+    actionOpen: Function1<String, Unit>? = null,
+    actionShareToOther: Function1<String, Unit>? = null,
+    actionVote: Function1<String, Unit>? = null,
+    actionComment: Function1<String, Unit>? = null,
+    actionStar: Function1<String, Unit>? = null,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -34,7 +40,12 @@ fun ShareData.buildShareModelViews(
                 shareVote,
                 shareComment,
                 starred,
-                user
+                user,
+                actionOpen,
+                actionShareToOther,
+                actionVote,
+                actionComment,
+                actionStar
             )
         }
 
@@ -48,7 +59,12 @@ fun ShareData.buildShareModelViews(
                 shareNote,
                 shareVote,
                 shareComment,
-                user
+                user,
+                actionOpen,
+                actionShareToOther,
+                actionVote,
+                actionComment,
+                actionStar
             )
         }
 
@@ -61,7 +77,12 @@ fun ShareData.buildShareModelViews(
                 shareNote,
                 shareVote,
                 shareComment,
-                user
+                user,
+                actionOpen,
+                actionShareToOther,
+                actionVote,
+                actionComment,
+                actionStar
             )
         }
 
@@ -86,10 +107,10 @@ fun ShareData.buildShareModelViews(
                 }
             }
 
-            fun getTextNumber(realSize: Int, takeSize: Int, index: Int): String {
+            fun getNumber(realSize: Int, takeSize: Int, index: Int): Int {
                 return when {
-                    realSize > takeSize && index == takeSize - 1 -> "+${realSize - takeSize}"
-                    else -> ""
+                    realSize > takeSize && index == takeSize - 1 -> realSize - takeSize
+                    else -> 0
                 }
             }
 
@@ -97,13 +118,12 @@ fun ShareData.buildShareModelViews(
             val pickItems = shareData.uris.take(AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT)
 
             val modelViews = pickItems.mapIndexed { index, uri ->
-                ShareReceiveImagesModelView(
-                    "shareMultipleImage$uri",
-                    uri,
+                ImageViewMoreModelView(uri,
                     getSpanSize(pickItems.size, index),
                     getImageWidth(pickItems.size, index),
-                    getTextNumber(shareData.uris.size, pickItems.size, index)
-                )
+                    getImageWidth(pickItems.size, index),
+                    getNumber(shareData.uris.size, pickItems.size, index),
+                    View.OnClickListener { actionOpen?.invoke(shareId) })
             }
 
             val spanCount = when {
@@ -121,7 +141,12 @@ fun ShareData.buildShareModelViews(
                 modelViews,
                 shareVote,
                 shareComment,
-                user
+                user,
+                actionOpen,
+                actionShareToOther,
+                actionVote,
+                actionComment,
+                actionStar
             )
         }
     }

@@ -142,7 +142,7 @@ class ShareReceiveActivity :
 
                     addAll(pickItems.mapIndexed { index, uri ->
                         ShareReceiveImagesModelView(
-                            "shareMultipleImage$index",
+                            index,
                             uri,
                             getSpanSize(pickItems.size, index),
                             getImageWidth(pickItems.size, index),

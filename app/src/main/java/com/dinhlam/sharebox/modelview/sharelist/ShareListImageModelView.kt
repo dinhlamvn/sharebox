@@ -27,7 +27,7 @@ data class ShareListImageModelView(
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail,
-    val actionOpen: Function1<Uri, Unit>? = null,
+    val actionOpen: Function1<String, Unit>? = null,
     val actionShareToOther: Function1<String, Unit>? = null,
     val actionVote: Function1<String, Unit>? = null,
     val actionComment: Function1<String, Unit>? = null,
@@ -58,7 +58,11 @@ data class ShareListImageModelView(
             }
 
             binding.container.setOnClickListener {
-                model.actionOpen?.invoke(model.uri)
+                model.actionOpen?.invoke(model.shareId)
+            }
+
+            binding.imageShare.setOnClickListener {
+                model.actionOpen?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonShare.setOnClickListener {
@@ -81,7 +85,9 @@ data class ShareListImageModelView(
                 buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
                 buildContext.getString(R.string.comment, model.shareComment)
+
             ImageLoader.instance.load(buildContext, model.uri, binding.imageShare)
+
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)

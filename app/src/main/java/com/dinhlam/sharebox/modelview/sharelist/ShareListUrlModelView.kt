@@ -60,7 +60,7 @@ data class ShareListUrlModelView(
             }
 
             binding.container.setOnClickListener {
-                model.actionOpen?.invoke(model.url!!)
+                model.actionOpen?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonShare.setOnClickListener {

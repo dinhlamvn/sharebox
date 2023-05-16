@@ -18,6 +18,8 @@ fun Int.asDisplayCountValue(): String = if (this <= 99) {
     "99+"
 }
 
+fun Int.asViewMoreDisplayCountValue(): String = "+$this"
+
 fun Int.asDisplayPoint(): String {
     return DecimalFormat("#,###").format(this)
 }
@@ -25,3 +27,5 @@ fun Int.asDisplayPoint(): String {
 fun Int.coerceMinMax(min: Int, max: Int) = this.coerceAtLeast(min).coerceAtMost(max)
 
 fun Int?.orElse(other: Int) = this ?: other
+
+fun Int.takeIfNotZero() = takeIf { it > 0 }

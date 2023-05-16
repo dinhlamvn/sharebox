@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveImagesModelView
+import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ShareListImagesModelView(
@@ -27,19 +27,28 @@ data class ShareListImagesModelView(
     val createdAt: Long,
     val note: String?,
     val spanCount: Int,
-    val modelViews: List<ShareReceiveImagesModelView>,
+    val modelViews: List<ImageViewMoreModelView>,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail,
-    val actionOpen: Function1<List<Uri>, Unit>? = null,
+    val actionOpen: Function1<String, Unit>? = null,
     val actionShareToOther: Function1<String, Unit>? = null,
     val actionVote: Function1<String, Unit>? = null,
     val actionComment: Function1<String, Unit>? = null,
     val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListImagesViewHolder(ModelViewShareListImagesBinding.inflate(inflater, container, false))
+    override fun createViewHolder(
+        inflater: LayoutInflater,
+        container: ViewGroup
+    ): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListImagesViewHolder(
+            ModelViewShareListImagesBinding.inflate(
+                inflater,
+                container,
+                false
+            )
+        )
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -56,7 +65,7 @@ data class ShareListImagesModelView(
             addAll(models)
         }
 
-        private val models = mutableListOf<ShareReceiveImagesModelView>()
+        private val models = mutableListOf<ImageViewMoreModelView>()
 
         init {
             binding.recyclerViewImage.adapter = adapter
@@ -82,7 +91,7 @@ data class ShareListImagesModelView(
             }
 
             binding.container.setOnClickListener {
-                model.actionOpen?.invoke(model.uris)
+                model.actionOpen?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonShare.setOnClickListener {

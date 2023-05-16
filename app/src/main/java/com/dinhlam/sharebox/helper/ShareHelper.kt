@@ -8,10 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
-import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
+import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
+import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
+import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -19,7 +21,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ShareHelper @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val appRouter: AppRouter,
 ) {
 
     @Suppress("DEPRECATION")
@@ -87,6 +90,22 @@ class ShareHelper @Inject constructor(
                 context.startActivity(chooserIntent)
             }
         }
+    }
+
+    fun openUrl(context: Context, url: String, isEnableCustomTab: Boolean = true) {
+        if (isEnableCustomTab) {
+            appRouter.moveToChromeCustomTab(context, url)
+        } else {
+            appRouter.moveToBrowser(url)
+        }
+    }
+
+    fun openTextViewer(activity: FragmentActivity, text: String) {
+        TextViewerDialogFragment().apply {
+            arguments = Bundle().apply {
+                putString(Intent.EXTRA_TEXT, text)
+            }
+        }.show(activity.supportFragmentManager, "TextViewerDialogFragment")
     }
 
     fun viewShareImage(activity: FragmentActivity, uri: Uri) {

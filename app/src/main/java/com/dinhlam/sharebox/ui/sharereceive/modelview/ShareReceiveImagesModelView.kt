@@ -12,7 +12,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 
 data class ShareReceiveImagesModelView(
-    val id: String,
+    val id: Int,
     val uri: Uri,
     val spanCount: Int,
     val width: Int,

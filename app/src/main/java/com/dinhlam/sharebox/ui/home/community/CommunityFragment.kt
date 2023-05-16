@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.orElse
@@ -63,7 +64,12 @@ class CommunityFragment :
                     shareDetail.user,
                     state.voteMap[shareDetail.shareId].orElse(0),
                     shareComment = shareDetail.commentCount,
-                    starred = state.starredSet.contains(shareDetail.shareId)
+                    starred = state.starredSet.contains(shareDetail.shareId),
+                    actionOpen = ::onOpen,
+                    actionShareToOther = ::onShareToOther,
+                    actionVote = ::onVote,
+                    actionComment = ::onComment,
+                    actionStar = ::onStar
                 )
             }
             if (models.isEmpty()) {
@@ -115,29 +121,49 @@ class CommunityFragment :
         }
     }
 
-    private fun openWebLink(url: String) {
-        if (appSharePref.isCustomTabEnabled()) {
-            appRouter.moveToChromeCustomTab(requireContext(), url)
-        } else {
-            appRouter.moveToBrowser(url)
+    private fun onOpen(shareId: String) = getState(viewModel) { state ->
+        val share =
+            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+
+
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> {
+                shareHelper.openUrl(
+                    requireContext(),
+                    shareData.url,
+                    appSharePref.isCustomTabEnabled()
+                )
+            }
+
+            is ShareData.ShareText -> {
+                shareHelper.openTextViewer(requireActivity(), shareData.text)
+            }
+
+            is ShareData.ShareImage -> {
+                shareHelper.viewShareImage(requireActivity(), shareData.uri)
+            }
+
+            is ShareData.ShareImages -> {
+                shareHelper.viewShareImages(requireActivity(), shareData.uris)
+            }
         }
     }
 
-    private fun shareToOther(shareId: String) = getState(viewModel) { state ->
+    private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
         shareHelper.shareToOther(share)
     }
 
-    private fun voteShare(shareId: String) {
+    private fun onVote(shareId: String) {
         viewModel.vote(shareId)
     }
 
-    private fun starredShare(shareId: String) {
+    private fun onStar(shareId: String) {
         viewModel.starred(shareId)
     }
 
-    private fun commentShare(shareId: String) {
+    private fun onComment(shareId: String) {
         CommentFragment().apply {
             arguments = Bundle().apply {
                 putString(AppExtras.EXTRA_SHARE_ID, shareId)

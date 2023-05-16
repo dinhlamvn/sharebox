@@ -27,7 +27,7 @@ data class ShareListTextModelView(
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail,
-    val actionOpen: Function1<String?, Unit>? = null,
+    val actionOpen: Function1<String, Unit>? = null,
     val actionShareToOther: Function1<String, Unit>? = null,
     val actionVote: Function1<String, Unit>? = null,
     val actionComment: Function1<String, Unit>? = null,
@@ -56,7 +56,7 @@ data class ShareListTextModelView(
             }
 
             binding.container.setOnClickListener {
-                model.actionOpen?.invoke(model.content)
+                model.actionOpen?.invoke(model.shareId)
             }
 
             binding.layoutBottomAction.buttonShare.setOnClickListener {
