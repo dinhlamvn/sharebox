@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
 import android.content.Context
-import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
@@ -126,12 +125,13 @@ fun ShareData.buildShareModelViews(
             val pickItems = shareData.uris.take(AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT)
 
             val modelViews = pickItems.mapIndexed { index, uri ->
-                ImageViewMoreModelView(uri,
+                ImageViewMoreModelView(
+                    uri,
                     getSpanSize(pickItems.size, index),
                     getImageWidth(pickItems.size, index),
                     getImageWidth(pickItems.size, index),
-                    getNumber(shareData.uris.size, pickItems.size, index),
-                    View.OnClickListener { actionOpen?.invoke(shareId) })
+                    getNumber(shareData.uris.size, pickItems.size, index)
+                ) { actionOpen?.invoke(shareId) }
             }
 
             val spanCount = when {
