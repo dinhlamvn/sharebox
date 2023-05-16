@@ -7,6 +7,11 @@
         android:title="@string/title_community" />
 
     <item
+        android:id="@+id/navigation_video_mixer"
+        android:icon="@drawable/ic_video_library"
+        android:title="@string/title_video_mixer" />
+
+    <item
         android:id="@+id/navigation_starred"
         android:icon="@drawable/ic_star"
         android:title="@string/title_starred" />

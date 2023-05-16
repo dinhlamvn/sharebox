@@ -7,7 +7,9 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="55dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -16,6 +18,7 @@
         android:layout_gravity="bottom"
         app:itemTextAppearanceActive="@style/TextAppearance.Body"
         app:itemTextAppearanceInactive="@style/TextAppearance.Body"
+        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
