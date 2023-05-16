@@ -27,8 +27,6 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
     private var buildModelViewsJob: Job? = null
 
-    private val modelViews = mutableListOf<T>()
-
     private val modelViewsManager = ModelViewsManager<T>()
 
     override fun submitList(list: MutableList<T>?) {
@@ -50,10 +48,10 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     private suspend fun buildModelViewsInternal() {
-        modelViews.clear()
-        modelViewsBuilder.invoke(modelViews)
+        val mutableList = mutableListOf<T>()
+        modelViewsBuilder.invoke(mutableList)
         withContext(Dispatchers.Main) {
-            super.submitList(modelViews.toList())
+            super.submitList(mutableList.toList())
         }
     }
 
