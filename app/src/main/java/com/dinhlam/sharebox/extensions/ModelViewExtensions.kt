@@ -7,10 +7,10 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
+import com.dinhlam.sharebox.modelview.list.ListImageModelView
+import com.dinhlam.sharebox.modelview.list.ListImagesModelView
+import com.dinhlam.sharebox.modelview.list.ListTextModelView
+import com.dinhlam.sharebox.modelview.list.ListUrlModelView
 import com.dinhlam.sharebox.utils.IconUtils
 
 fun ShareData.buildShareModelViews(
@@ -31,7 +31,7 @@ fun ShareData.buildShareModelViews(
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
-            ShareListUrlModelView(
+            ListUrlModelView(
                 shareId,
                 IconUtils.getIconUrl(shareData.url),
                 shareData.url,
@@ -51,7 +51,7 @@ fun ShareData.buildShareModelViews(
 
         is ShareData.ShareText -> {
             val shareData = this.castNonNull<ShareData.ShareText>()
-            ShareListTextModelView(
+            ListTextModelView(
                 shareId,
                 IconUtils.getIconUrl(shareData.text),
                 shareData.text,
@@ -70,7 +70,7 @@ fun ShareData.buildShareModelViews(
 
         is ShareData.ShareImage -> {
             val shareData = this.castNonNull<ShareData.ShareImage>()
-            ShareListImageModelView(
+            ListImageModelView(
                 shareId,
                 shareData.uri,
                 createdAt,
@@ -132,7 +132,7 @@ fun ShareData.buildShareModelViews(
                 else -> shareData.uris.size
             }
 
-            ShareListImagesModelView(
+            ListImagesModelView(
                 shareId,
                 shareData.uris,
                 createdAt,

@@ -1,5 +1,6 @@
-package com.dinhlam.sharebox.modelview.sharelist
+package com.dinhlam.sharebox.modelview.list
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -10,7 +11,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
-import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
+import com.dinhlam.sharebox.databinding.ModelViewListImageBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -18,10 +19,9 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.utils.UserUtils
 
-data class ShareListTextModelView(
+data class ListImageModelView(
     val shareId: String,
-    val iconUrl: String?,
-    val content: String?,
+    val uri: Uri,
     val createdAt: Long,
     val note: String?,
     val shareUpVote: Int = 0,
@@ -34,28 +34,43 @@ data class ShareListTextModelView(
     val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListTextViewHolder(ModelViewShareListTextBinding.inflate(inflater, container, false))
+    override fun createViewHolder(
+        inflater: LayoutInflater,
+        container: ViewGroup
+    ): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListImageViewHolder(
+            ModelViewListImageBinding.inflate(
+                inflater,
+                container,
+                false
+            )
+        )
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    class ShareListTextViewHolder(
-        binding: ModelViewShareListTextBinding,
-    ) : BaseListAdapter.BaseViewHolder<ShareListTextModelView, ModelViewShareListTextBinding>(
+    private class ShareListImageViewHolder(
+        binding: ModelViewListImageBinding,
+    ) : BaseListAdapter.BaseViewHolder<ListImageModelView, ModelViewListImageBinding>(
         binding
     ) {
 
-        override fun onBind(model: ShareListTextModelView, position: Int) {
+        override fun onBind(model: ListImageModelView, position: Int) {
             ImageLoader.instance.load(
-                buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
+                buildContext,
+                model.userDetail.avatar,
+                binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
             binding.container.setOnClickListener {
+                model.actionOpen?.invoke(model.shareId)
+            }
+
+            binding.imageShare.setOnClickListener {
                 model.actionOpen?.invoke(model.shareId)
             }
 
@@ -80,15 +95,16 @@ data class ShareListTextModelView(
             binding.layoutBottomAction.textComment.text =
                 buildContext.getString(R.string.comment, model.shareComment)
 
+            ImageLoader.instance.load(buildContext, model.uri, binding.imageShare)
+
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)
                 }
                 color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
-                    append(" shares a text content")
+                    append(" shares an image")
                 }
             }
-            binding.textShare.text = model.content
             binding.layoutUserInfo.textUserLevel.text =
                 UserUtils.getLevelTitle(model.userDetail.level)
             binding.textCreatedDate.text = model.createdAt.formatForFeed()

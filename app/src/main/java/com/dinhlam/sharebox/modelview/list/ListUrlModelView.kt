@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.modelview.sharelist
+package com.dinhlam.sharebox.modelview.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
-import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
+import com.dinhlam.sharebox.databinding.ModelViewListUrlBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -20,7 +20,7 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
-data class ShareListUrlModelView(
+data class ListUrlModelView(
     val shareId: String,
     val iconUrl: String?,
     val url: String?,
@@ -37,8 +37,11 @@ data class ShareListUrlModelView(
     val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListUrlWebHolder(ModelViewShareListUrlBinding.inflate(inflater, container, false))
+    override fun createViewHolder(
+        inflater: LayoutInflater,
+        container: ViewGroup
+    ): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListUrlWebHolder(ModelViewListUrlBinding.inflate(inflater, container, false))
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -46,13 +49,13 @@ data class ShareListUrlModelView(
     }
 
     private class ShareListUrlWebHolder(
-        binding: ModelViewShareListUrlBinding,
+        binding: ModelViewListUrlBinding,
 
-        ) : BaseListAdapter.BaseViewHolder<ShareListUrlModelView, ModelViewShareListUrlBinding>(
+        ) : BaseListAdapter.BaseViewHolder<ListUrlModelView, ModelViewListUrlBinding>(
         binding
     ) {
 
-        override fun onBind(model: ShareListUrlModelView, position: Int) {
+        override fun onBind(model: ListUrlModelView, position: Int) {
             ImageLoader.instance.load(
                 buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {

@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.modelview.sharelist
+package com.dinhlam.sharebox.modelview.list
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -7,23 +7,27 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
-import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
+import com.dinhlam.sharebox.databinding.ModelViewListImagesBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
 import com.dinhlam.sharebox.utils.UserUtils
 
-data class ShareListImageModelView(
+data class ListImagesModelView(
     val shareId: String,
-    val uri: Uri,
+    val uris: List<Uri>,
     val createdAt: Long,
     val note: String?,
+    val spanCount: Int,
+    val modelViews: List<ImageViewMoreModelView>,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail,
@@ -34,21 +38,50 @@ data class ShareListImageModelView(
     val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListImageViewHolder(ModelViewShareListImageBinding.inflate(inflater, container, false))
+    override fun createViewHolder(
+        inflater: LayoutInflater,
+        container: ViewGroup
+    ): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListImagesViewHolder(
+            ModelViewListImagesBinding.inflate(
+                inflater,
+                container,
+                false
+            )
+        )
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    private class ShareListImageViewHolder(
-        binding: ModelViewShareListImageBinding,
-    ) : BaseListAdapter.BaseViewHolder<ShareListImageModelView, ModelViewShareListImageBinding>(
+    private class ShareListImagesViewHolder(
+        binding: ModelViewListImagesBinding,
+    ) : BaseListAdapter.BaseViewHolder<ListImagesModelView, ModelViewListImagesBinding>(
         binding
     ) {
 
-        override fun onBind(model: ShareListImageModelView, position: Int) {
+        private val adapter = BaseListAdapter.createAdapter {
+            addAll(models)
+        }
+
+        private val models = mutableListOf<ImageViewMoreModelView>()
+
+        init {
+            binding.recyclerViewImage.adapter = adapter
+            adapter.requestBuildModelViews()
+        }
+
+        override fun onBind(model: ListImagesModelView, position: Int) {
+            binding.recyclerViewImage.layoutManager =
+                GridLayoutManager(buildContext, model.spanCount).apply {
+                    spanSizeLookup = BaseSpanSizeLookup(adapter, model.spanCount)
+                }
+
+            models.clear()
+            models.addAll(model.modelViews)
+            adapter.requestBuildModelViews()
+
             ImageLoader.instance.load(
                 buildContext,
                 model.userDetail.avatar,
@@ -58,10 +91,6 @@ data class ShareListImageModelView(
             }
 
             binding.container.setOnClickListener {
-                model.actionOpen?.invoke(model.shareId)
-            }
-
-            binding.imageShare.setOnClickListener {
                 model.actionOpen?.invoke(model.shareId)
             }
 
@@ -85,8 +114,6 @@ data class ShareListImageModelView(
                 buildContext.getString(R.string.up_vote, model.shareUpVote)
             binding.layoutBottomAction.textComment.text =
                 buildContext.getString(R.string.comment, model.shareComment)
-
-            ImageLoader.instance.load(buildContext, model.uri, binding.imageShare)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
