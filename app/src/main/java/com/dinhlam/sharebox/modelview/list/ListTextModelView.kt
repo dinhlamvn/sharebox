@@ -32,6 +32,8 @@ data class ListTextModelView(
     val actionVote: Function1<String, Unit>? = null,
     val actionComment: Function1<String, Unit>? = null,
     val actionStar: Function1<String, Unit>? = null,
+    val showUpVote: Boolean = true,
+    val showStar: Boolean = true,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
@@ -77,6 +79,9 @@ data class ListTextModelView(
             binding.layoutBottomAction.buttonStar.setOnClickListener {
                 model.actionStar?.invoke(model.shareId)
             }
+
+            binding.layoutBottomAction.buttonUpVote.isVisible = model.showUpVote
+            binding.layoutBottomAction.buttonStar.isVisible = model.showUpVote
 
             binding.layoutBottomAction.textUpvote.text =
                 buildContext.getString(R.string.up_vote, model.shareUpVote)

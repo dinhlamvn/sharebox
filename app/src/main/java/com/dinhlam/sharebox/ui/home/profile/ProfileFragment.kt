@@ -89,7 +89,9 @@ class ProfileFragment :
                     actionShareToOther = ::onShareToOther,
                     actionVote = ::onVote,
                     actionComment = ::onComment,
-                    actionStar = ::onStar
+                    actionStar = ::onStar,
+                    showUpVote = false,
+                    showStar = false
                 )
             }
             if (models.isNotEmpty()) {

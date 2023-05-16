@@ -35,6 +35,8 @@ data class ListUrlModelView(
     val actionVote: Function1<String, Unit>? = null,
     val actionComment: Function1<String, Unit>? = null,
     val actionStar: Function1<String, Unit>? = null,
+    val showUpVote: Boolean = true,
+    val showStar: Boolean = true,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
@@ -81,6 +83,9 @@ data class ListUrlModelView(
             binding.layoutBottomAction.buttonStar.setOnClickListener {
                 model.actionStar?.invoke(model.shareId)
             }
+
+            binding.layoutBottomAction.buttonUpVote.isVisible = model.showUpVote
+            binding.layoutBottomAction.buttonStar.isVisible = model.showUpVote
 
             if (model.starred) {
                 binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_starred)

@@ -27,6 +27,8 @@ fun ShareData.buildShareModelViews(
     actionVote: Function1<String, Unit>? = null,
     actionComment: Function1<String, Unit>? = null,
     actionStar: Function1<String, Unit>? = null,
+    showUpVote: Boolean = true,
+    showStar: Boolean = true
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -45,7 +47,9 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar
+                actionStar,
+                showUpVote,
+                showStar,
             )
         }
 
@@ -64,7 +68,9 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar
+                actionStar,
+                showUpVote,
+                showStar,
             )
         }
 
@@ -82,7 +88,9 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar
+                actionStar,
+                showUpVote,
+                showStar,
             )
         }
 
@@ -146,7 +154,9 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar
+                actionStar,
+                showUpVote,
+                showStar,
             )
         }
     }
