@@ -24,7 +24,7 @@ data class ImageModelView(
                 ImageLoader.instance.load(buildContext, model.uri, binding.image) {
                     copy(
                         transformType = TransformType.Rounded(
-                            8.dp(buildContext), ImageLoadScaleType.FitCenter
+                            8.dp(), ImageLoadScaleType.FitCenter
                         )
                     )
                 }

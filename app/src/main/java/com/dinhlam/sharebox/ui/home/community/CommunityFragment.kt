@@ -12,10 +12,11 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -81,14 +82,16 @@ class CommunityFragment :
                 }
                 models.forEachIndexed { idx, model ->
                     add(model)
-                    add(DividerModelView("divider_$idx", size = 1))
+                    add(SizedBoxModelView("divider_$idx", height = 1.dp(), backgroundColor = R.color.colorDividerLightV2))
                 }
 
                 if (state.isLoadMore) {
                     add(LoadingModelView("home_load_more"))
                     add(
-                        DividerModelView(
-                            "dividerLoadingMore", size = 50, color = android.R.color.transparent
+                        SizedBoxModelView(
+                            "sizeBoxLoadMore",
+                            height = 50.dp(),
+                            backgroundColor = android.R.color.transparent
                         )
                     )
                 }

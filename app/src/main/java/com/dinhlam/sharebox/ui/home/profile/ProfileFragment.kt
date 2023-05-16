@@ -10,8 +10,9 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
-import com.dinhlam.sharebox.modelview.DividerModelView
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,8 +49,20 @@ class ProfileFragment :
                     nonNullUser.createdAt
                 )
             )
-            add(DividerModelView("divider", color = android.R.color.transparent, size = 16))
-            add(DividerModelView("divider1", color = R.color.colorDividerLightV2))
+            add(
+                SizedBoxModelView(
+                    "divider",
+                    backgroundColor = android.R.color.transparent,
+                    height = 16.dp()
+                )
+            )
+            add(
+                SizedBoxModelView(
+                    "divider1",
+                    backgroundColor = R.color.colorDividerLightV2,
+                    height = 1.dp()
+                )
+            )
 
             if (state.isRefreshing) {
                 add(LoadingModelView("loading_profile"))
@@ -69,7 +82,13 @@ class ProfileFragment :
             if (models.isNotEmpty()) {
                 models.forEachIndexed { idx, model ->
                     add(model)
-                    add(DividerModelView("divider_$idx", size = 8))
+                    add(
+                        SizedBoxModelView(
+                            "divider_$idx",
+                            height = 1.dp(),
+                            backgroundColor = R.color.colorDividerLightV2
+                        )
+                    )
                 }
 
                 if (state.isLoadMore) {

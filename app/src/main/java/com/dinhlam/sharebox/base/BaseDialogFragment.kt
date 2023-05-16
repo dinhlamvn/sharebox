@@ -50,7 +50,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { wd ->
-            val dialogWidth = screenWidth() - getSpacing().dp(requireContext())
+            val dialogWidth = screenWidth() - getSpacing().dp()
             val dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT
             wd.setLayout(dialogWidth, dialogHeight)
             wd.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

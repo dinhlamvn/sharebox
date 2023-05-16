@@ -284,7 +284,7 @@ class ShareReceiveActivity :
         popupWindow.width = width
         popupWindow.height = height
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 10.dpF(this)
+        popupWindow.elevation = 10.dpF()
         popupWindow.isOutsideTouchable = true
 
         fun dismissPopup() {

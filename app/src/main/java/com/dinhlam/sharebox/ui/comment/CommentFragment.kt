@@ -122,7 +122,7 @@ class CommentFragment :
     }
 
     override fun onConfigBottomBehavior(behavior: BottomSheetBehavior<*>) {
-        behavior.peekHeight = 52.dp(requireContext())
+        behavior.peekHeight = 52.dp()
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 }
