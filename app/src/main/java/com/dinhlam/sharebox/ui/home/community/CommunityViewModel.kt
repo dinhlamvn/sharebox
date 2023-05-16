@@ -54,7 +54,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { CommunityState() }
+        setState { copy() }
         loadShares()
     }
 

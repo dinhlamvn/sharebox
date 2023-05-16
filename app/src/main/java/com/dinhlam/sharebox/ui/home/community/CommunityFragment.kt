@@ -52,33 +52,33 @@ class CommunityFragment :
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("home_refresh"))
+                add(LoadingModelView("top_loading"))
+                return@getState
             }
-
-            val models = state.shares.map { shareDetail ->
-                shareDetail.shareData.buildShareModelViews(
-                    requireContext(),
-                    shareDetail.shareId,
-                    shareDetail.createdAt,
-                    shareDetail.shareNote,
-                    shareDetail.user,
-                    state.voteMap[shareDetail.shareId].orElse(0),
-                    shareComment = shareDetail.commentCount,
-                    starred = state.starredSet.contains(shareDetail.shareId),
-                    actionOpen = ::onOpen,
-                    actionShareToOther = ::onShareToOther,
-                    actionVote = ::onVote,
-                    actionComment = ::onComment,
-                    actionStar = ::onStar
-                )
-            }
-            if (models.isEmpty()) {
+            if (state.shares.isEmpty()) {
                 add(
                     TextModelView(
-                        getString(R.string.recently_empty), ViewGroup.LayoutParams.WRAP_CONTENT
+                        getString(R.string.no_result), ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 )
             } else {
+                val models = state.shares.map { shareDetail ->
+                    shareDetail.shareData.buildShareModelViews(
+                        requireContext(),
+                        shareDetail.shareId,
+                        shareDetail.createdAt,
+                        shareDetail.shareNote,
+                        shareDetail.user,
+                        state.voteMap[shareDetail.shareId].orElse(0),
+                        shareComment = shareDetail.commentCount,
+                        starred = state.starredSet.contains(shareDetail.shareId),
+                        actionOpen = ::onOpen,
+                        actionShareToOther = ::onShareToOther,
+                        actionVote = ::onVote,
+                        actionComment = ::onComment,
+                        actionStar = ::onStar
+                    )
+                }
                 models.forEachIndexed { idx, model ->
                     add(model)
                     add(DividerModelView("divider_$idx", size = 1))
@@ -129,9 +129,7 @@ class CommunityFragment :
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> {
                 shareHelper.openUrl(
-                    requireContext(),
-                    shareData.url,
-                    appSharePref.isCustomTabEnabled()
+                    requireContext(), shareData.url, appSharePref.isCustomTabEnabled()
                 )
             }
 

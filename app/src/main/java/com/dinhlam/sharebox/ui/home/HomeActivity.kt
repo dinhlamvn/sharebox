@@ -16,8 +16,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
+    companion object {
+        private const val PAGE_SIZE = 4
+    }
+
     private val pageAdapter = object : FragmentStateAdapter(this) {
-        override fun getItemCount(): Int = 4
+        override fun getItemCount(): Int = PAGE_SIZE
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
@@ -37,6 +41,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         super.onCreate(savedInstanceState)
 
         viewBinding.viewPager.isUserInputEnabled = false
+        viewBinding.viewPager.offscreenPageLimit = PAGE_SIZE
 
         viewBinding.viewPager.adapter = pageAdapter
         viewBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -51,6 +56,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 }
             }
         })
+
         viewBinding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             val pos = when (menuItem.itemId) {
                 R.id.navigation_video_mixer -> 1
@@ -58,7 +64,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 R.id.navigation_profile -> 3
                 else -> 0
             }
-            viewBinding.viewPager.setCurrentItem(pos, true)
+            viewBinding.viewPager.setCurrentItem(pos, false)
             return@setOnItemSelectedListener true
         }
     }
