@@ -24,12 +24,6 @@ import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemIconWithTextSubtextBinding
-import com.dinhlam.sharebox.databinding.ModelViewHashtagBinding
-import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImageBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareReceiveImagesBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareReceiveTextBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareReceiveUrlBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
@@ -41,7 +35,6 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.setNonBlankText
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -83,27 +76,19 @@ class ShareReceiveActivity :
         handleShareData()
     }
 
-    private val hashtagAdapter = BaseListAdapter.createAdapter({
+    private val hashtagAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.hashTags.isNotEmpty()) {
                 addAll(state.hashTags.map { ht ->
-                    HashTagModelView(ht.hashTagId, ht.hashTagName)
+                    HashTagModelView(ht.hashTagId, ht.hashTagName, null)
                 })
             } else {
-                add(HashTagModelView(HASHTAG_DEFAULT_ID, "+"))
-            }
-        }
-    }) {
-        withViewType(R.layout.model_view_hashtag) {
-            HashTagModelView.HashTagViewHolder(ModelViewHashtagBinding.bind(this)) { hashTagId ->
-                if (hashTagId == HASHTAG_DEFAULT_ID) {
-                    showToast("ADD NEW HASHTAG")
-                }
+                add(HashTagModelView(HASHTAG_DEFAULT_ID, "+", null))
             }
         }
     }
 
-    private val shareContentAdapter = BaseListAdapter.createAdapter({
+    private val shareContentAdapter = BaseListAdapter.createAdapter {
 
         fun getSpanSize(size: Int, index: Int): Int {
             return when (size) {
@@ -169,32 +154,6 @@ class ShareReceiveActivity :
 
                 else -> add(LoadingModelView("loading"))
             }
-        }
-    }) {
-        withViewType(R.layout.model_view_loading) {
-            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_share_receive_text) {
-            ShareReceiveTextModelView.ShareTextViewHolder(ModelViewShareReceiveTextBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_share_receive_image) {
-            ShareReceiveImageModelView.ShareImageViewHolder(
-                ModelViewShareReceiveImageBinding.bind(this)
-            )
-        }
-
-        withViewType(R.layout.model_view_share_receive_images) {
-            ShareReceiveImagesModelView.ShareReceiveImagesViewHolder(
-                ModelViewShareReceiveImagesBinding.bind(this)
-            )
-        }
-
-        withViewType(R.layout.model_view_share_receive_url) {
-            ShareReceiveUrlModelView.ShareReceiveUrlViewHolder(
-                ModelViewShareReceiveUrlBinding.bind(this)
-            )
         }
     }
 

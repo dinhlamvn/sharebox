@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home.starred
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,24 +10,12 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentStarredBinding
-import com.dinhlam.sharebox.databinding.ModelViewDividerBinding
-import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListImagesBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
-import com.dinhlam.sharebox.databinding.ModelViewTextBinding
-import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
@@ -61,7 +48,7 @@ class StarredFragment :
     @Inject
     lateinit var appSharePref: AppSharePref
 
-    private val shareAdapter = BaseListAdapter.createAdapter({
+    private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 add(LoadingModelView("home_refresh"))
@@ -101,57 +88,6 @@ class StarredFragment :
                     )
                 }
             }
-        }
-    }) {
-        withViewType(R.layout.model_view_loading) {
-            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_divider) {
-            DividerModelView.DividerViewHolder(ModelViewDividerBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_text) {
-            TextModelView.TextViewHolder(ModelViewTextBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_share_list_text) {
-            ShareListTextModelView.ShareListTextViewHolder(
-                ModelViewShareListTextBinding.bind(this), { textContent ->
-                    val dialog = TextViewerDialogFragment()
-                    dialog.arguments = Bundle().apply {
-                        putString(Intent.EXTRA_TEXT, textContent)
-                    }
-                    dialog.show(parentFragmentManager, "TextViewerDialogFragment")
-                }, ::shareToOther, ::voteShare, ::commentShare
-            )
-        }
-
-        withViewType(R.layout.model_view_share_list_url) {
-            ShareListUrlModelView.ShareListUrlWebHolder(
-                ModelViewShareListUrlBinding.bind(this),
-                ::openWebLink,
-                ::shareToOther,
-                ::voteShare,
-                ::commentShare,
-                ::starredShare
-            )
-        }
-
-        withViewType(R.layout.model_view_share_list_image) {
-            ShareListImageModelView.ShareListImageViewHolder(
-                ModelViewShareListImageBinding.bind(this), ::shareToOther, { uri ->
-                    shareHelper.viewShareImage(requireActivity(), uri)
-                }, ::voteShare, ::commentShare
-            )
-        }
-
-        withViewType(R.layout.model_view_share_list_images) {
-            ShareListImagesModelView.ShareListImagesViewHolder(
-                ModelViewShareListImagesBinding.bind(this), ::shareToOther, { uris ->
-                    shareHelper.viewShareImages(requireActivity(), uris)
-                }, ::voteShare, ::commentShare
-            )
         }
     }
 

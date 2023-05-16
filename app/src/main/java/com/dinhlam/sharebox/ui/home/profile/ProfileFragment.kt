@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home.profile
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,24 +9,10 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
-import com.dinhlam.sharebox.databinding.ModelViewDividerBinding
-import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
-import com.dinhlam.sharebox.databinding.ModelViewProfileInfoBinding
-import com.dinhlam.sharebox.databinding.ModelViewProfileMenuItemBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListImageBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListImagesBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListTextBinding
-import com.dinhlam.sharebox.databinding.ModelViewShareListUrlBinding
-import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.modelview.DividerModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
-import com.dinhlam.sharebox.modelview.profile.ProfileMenuItemModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImageModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListImagesModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListTextModelView
-import com.dinhlam.sharebox.modelview.sharelist.ShareListUrlModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,7 +32,7 @@ class ProfileFragment :
         }
     }
 
-    private val adapter = BaseListAdapter.createAdapter({
+    private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             val nonNullUser = state.activeUser ?: return@getState run {
                 add(LoadingModelView("loading_user"))
@@ -91,63 +76,6 @@ class ProfileFragment :
                     add(LoadingModelView("loading_more"))
                 }
             }
-        }
-    }) {
-        withViewType(R.layout.model_view_loading) {
-            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_profile_info) {
-            ProfileInfoModelView.UserInfoViewHolder(ModelViewProfileInfoBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_profile_menu_item) {
-            ProfileMenuItemModelView.ProfileMenuItemViewHolder(
-                ModelViewProfileMenuItemBinding.bind(this)
-            ) {
-
-            }
-        }
-
-        withViewType(R.layout.model_view_divider) {
-            DividerModelView.DividerViewHolder(ModelViewDividerBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_share_list_text) {
-            ShareListTextModelView.ShareListTextViewHolder(
-                ModelViewShareListTextBinding.bind(this),
-                { textContent ->
-                    val dialog = TextViewerDialogFragment()
-                    dialog.arguments = Bundle().apply {
-                        putString(Intent.EXTRA_TEXT, textContent)
-                    }
-                    dialog.show(parentFragmentManager, "TextViewerDialogFragment")
-                },
-                {
-
-                }, {}, {})
-        }
-
-        withViewType(R.layout.model_view_share_list_url) {
-            ShareListUrlModelView.ShareListUrlWebHolder(
-                ModelViewShareListUrlBinding.bind(this),
-                {},
-                { },
-                {}, {}, {})
-        }
-
-        withViewType(R.layout.model_view_share_list_image) {
-            ShareListImageModelView.ShareListImageViewHolder(
-                ModelViewShareListImageBinding.bind(
-                    this
-                ), {}, {}, {}, {})
-        }
-
-        withViewType(R.layout.model_view_share_list_images) {
-            ShareListImagesModelView.ShareListImagesViewHolder(
-                ModelViewShareListImagesBinding.bind(
-                    this
-                ), {}, {}, {}, {})
         }
     }
 

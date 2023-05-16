@@ -13,9 +13,6 @@ import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.FragmentCommentBinding
-import com.dinhlam.sharebox.databinding.ModelViewCommentBinding
-import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
-import com.dinhlam.sharebox.databinding.ModelViewTextBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
@@ -45,7 +42,7 @@ class CommentFragment :
 
     override val viewModel: CommentViewModel by viewModels()
 
-    private val adapter = BaseListAdapter.createAdapter({
+    private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             state.activeUser ?: return@getState run {
                 add(LoadingModelView("loading_user"))
@@ -73,18 +70,6 @@ class CommentFragment :
                     )
                 }
             }
-        }
-    }) {
-        withViewType(R.layout.model_view_comment) {
-            CommentModelView.CommentViewHolder(ModelViewCommentBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_loading) {
-            LoadingModelView.LoadingViewHolder(ModelViewLoadingBinding.bind(this))
-        }
-
-        withViewType(R.layout.model_view_text) {
-            TextModelView.TextViewHolder(ModelViewTextBinding.bind(this))
         }
     }
 

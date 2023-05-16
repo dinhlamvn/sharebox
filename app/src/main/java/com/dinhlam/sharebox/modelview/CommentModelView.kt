@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.modelview
 
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -20,8 +21,8 @@ data class CommentModelView(
     val createdAt: Long,
 ) : BaseListAdapter.BaseModelView("comment_$id") {
 
-    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
-        return CommentViewHolder(ModelViewCommentBinding.inflate(inflater))
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
+        return CommentViewHolder(ModelViewCommentBinding.inflate(inflater, container, false))
     }
 
     private class CommentViewHolder(binding: ModelViewCommentBinding) :

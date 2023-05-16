@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.modelview.sharelist
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -33,8 +34,8 @@ data class ShareListImageModelView(
     val actionStar: Function1<String, Unit>? = null,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
-    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListImageViewHolder(ModelViewShareListImageBinding.inflate(inflater))
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
+        return ShareListImageViewHolder(ModelViewShareListImageBinding.inflate(inflater, container, false))
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {

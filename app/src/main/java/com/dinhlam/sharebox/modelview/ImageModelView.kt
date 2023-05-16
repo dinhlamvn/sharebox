@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.modelview
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
@@ -14,9 +15,9 @@ data class ImageModelView(
     val uri: Uri
 ) : BaseListAdapter.BaseModelView("image_model_view_$uri") {
 
-    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
         return object : BaseListAdapter.BaseViewHolder<ImageModelView, ModelViewImageBinding>(
-            ModelViewImageBinding.inflate(inflater)
+            ModelViewImageBinding.inflate(inflater, container, false)
         ) {
 
             override fun onBind(model: ImageModelView, position: Int) {

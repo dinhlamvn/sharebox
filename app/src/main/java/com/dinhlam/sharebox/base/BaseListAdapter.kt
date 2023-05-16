@@ -57,31 +57,28 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         }
     }
 
-
     init {
         setHasStableIds(true)
     }
 
     private class ModelViewsManager<T : BaseModelView> {
-        private val modelViewMap = mutableMapOf<Int, T>()
+        private val modelViewTypeMap = mutableMapOf<Int, T>()
+        private val rememberMap = mutableMapOf<String, Int>()
 
-        private var previousModel: T? = null
-
-        fun getModel(viewType: Int) =
-            modelViewMap[viewType] ?: error("No model view is provided with view type $viewType")
+        fun getModel(viewType: Int) = modelViewTypeMap[viewType]
+            ?: error("No model view is provided with view type $viewType")
 
         fun getViewTypeAndRemember(model: T): Int {
-            if (previousModel != null && previousModel!!::class == model::class) {
-                return modelViewMap.size
+            val modelClassName = model::class.java.simpleName
+            return rememberMap[modelClassName] ?: let {
+                val viewType = generateViewType()
+                modelViewTypeMap[viewType] = model
+                rememberMap[modelClassName] = viewType
+                viewType
             }
-
-            val viewType = generateViewType(model)
-            modelViewMap[viewType] = model
-            previousModel = model
-            return viewType
         }
 
-        private fun generateViewType(model: T): Int = modelViewMap.size + 1
+        private fun generateViewType(): Int = modelViewTypeMap.size + 1
     }
 
     companion object {
@@ -96,9 +93,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): BaseViewHolder<T, ViewBinding> {
-        val inflater = LayoutInflater.from(parent.context)
         val model = modelViewsManager.getModel(viewType)
-        return model.createViewHolder(inflater).castNonNull()
+        return model.createViewHolder(LayoutInflater.from(parent.context), parent).castNonNull()
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
@@ -141,7 +137,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
             private set
 
         abstract fun createViewHolder(
-            inflater: LayoutInflater
+            inflater: LayoutInflater, container: ViewGroup
         ): BaseViewHolder<*, *>
 
         open fun areItemsTheSame(other: BaseModelView): Boolean {

@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.sharereceive.modelview
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -18,10 +19,10 @@ data class ShareReceiveImagesModelView(
     val textNumber: String,
 ) : BaseListAdapter.BaseModelView("share_multiple_image_$id") {
 
-    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
         return object :
             BaseListAdapter.BaseViewHolder<ShareReceiveImagesModelView, ModelViewShareReceiveImagesBinding>(
-                ModelViewShareReceiveImagesBinding.inflate(inflater)
+                ModelViewShareReceiveImagesBinding.inflate(inflater, container, false)
             ) {
 
             override fun onBind(model: ShareReceiveImagesModelView, position: Int) {

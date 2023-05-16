@@ -13,10 +13,11 @@ data class TextModelView(
 ) : BaseListAdapter.BaseModelView("text_$text") {
 
     override fun createViewHolder(
-        inflater: LayoutInflater
+        inflater: LayoutInflater,
+        container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return object : BaseListAdapter.BaseViewHolder<TextModelView, ModelViewTextBinding>(
-            ModelViewTextBinding.inflate(inflater)
+            ModelViewTextBinding.inflate(inflater, container, false)
         ) {
 
             override fun onBind(model: TextModelView, position: Int) {

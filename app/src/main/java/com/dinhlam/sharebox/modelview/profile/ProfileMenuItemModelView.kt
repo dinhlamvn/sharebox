@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.modelview.profile
 
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
@@ -16,8 +17,8 @@ data class ProfileMenuItemModelView(
     val listener: ((Int) -> Unit)? = null
 ) : BaseListAdapter.BaseModelView("profile_menu_item_$id") {
 
-    override fun createViewHolder(inflater: LayoutInflater): BaseListAdapter.BaseViewHolder<*, *> {
-        return ProfileMenuItemViewHolder(ModelViewProfileMenuItemBinding.inflate(inflater))
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
+        return ProfileMenuItemViewHolder(ModelViewProfileMenuItemBinding.inflate(inflater, container, false))
     }
 
     private class ProfileMenuItemViewHolder(

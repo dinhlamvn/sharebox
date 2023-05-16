@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.modelview
 
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
@@ -8,10 +9,11 @@ import com.dinhlam.sharebox.databinding.ModelViewLoadingBinding
 data class LoadingModelView(val id: String) : BaseListAdapter.BaseModelView("loading_view_$id") {
 
     override fun createViewHolder(
-        inflater: LayoutInflater
+        inflater: LayoutInflater,
+        container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return object : BaseListAdapter.BaseViewHolder<LoadingModelView, ModelViewLoadingBinding>(
-            ModelViewLoadingBinding.inflate(inflater)
+            ModelViewLoadingBinding.inflate(inflater, container, false)
         ) {
             override fun onBind(model: LoadingModelView, position: Int) {
 

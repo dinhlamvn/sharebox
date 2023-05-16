@@ -13,7 +13,6 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.DialogViewImagesBinding
-import com.dinhlam.sharebox.databinding.ModelViewImageBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.modelview.ImageModelView
 
@@ -34,12 +33,8 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         val uris =
             arguments?.getParcelableArrayListExtraCompat<Uri>(EXTRA_LIST_URI) ?: return dismiss()
 
-        val adapter = BaseListAdapter.createAdapter({
+        val adapter = BaseListAdapter.createAdapter {
             addAll(uris.map { ImageModelView(it) })
-        }) {
-            withViewType(R.layout.model_view_image) {
-                ImageModelView.ImageViewHolder(ModelViewImageBinding.bind(this))
-            }
         }
 
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
