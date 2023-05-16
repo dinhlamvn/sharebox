@@ -8,12 +8,16 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.databinding.DialogCommentInputBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
+import com.dinhlam.sharebox.extensions.showKeyboard
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>() {
 
@@ -58,6 +62,12 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
             val text = editable?.toString() ?: ""
             val trimmedText = text.trim()
             viewBinding.imageSend.isEnabled = trimmedText.isNotEmpty()
+        }
+
+        viewBinding.editComment.requestFocus()
+        lifecycleScope.launch {
+            delay(500)
+            viewBinding.editComment.showKeyboard()
         }
     }
 
