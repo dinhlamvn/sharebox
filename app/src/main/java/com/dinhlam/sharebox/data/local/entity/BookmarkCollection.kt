@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
+    tableName = "bookmark_collection",
     indices = [Index(value = ["id"], unique = true)]
 )
 data class BookmarkCollection(

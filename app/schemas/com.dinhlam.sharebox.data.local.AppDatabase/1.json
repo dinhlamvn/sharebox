@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "db025e751d0455572bdf14560436bde3",
+    "identityHash": "27b24aa66afca1d199f2a4d8fb2d3e0b",
     "entities": [
       {
         "tableName": "Share",
@@ -589,7 +589,7 @@
         ]
       },
       {
-        "tableName": "BookmarkCollection",
+        "tableName": "bookmark_collection",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `description` TEXT NOT NULL, `passcode` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
@@ -643,20 +643,20 @@
         },
         "indices": [
           {
-            "name": "index_BookmarkCollection_id",
+            "name": "index_bookmark_collection_id",
             "unique": true,
             "columnNames": [
               "id"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_BookmarkCollection_id` ON `${TABLE_NAME}` (`id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_bookmark_collection_id` ON `${TABLE_NAME}` (`id`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "Bookmark",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookmark_collection_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`bookmark_collection_id`) REFERENCES `BookmarkCollection`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookmark_collection_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`bookmark_collection_id`) REFERENCES `bookmark_collection`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -723,7 +723,7 @@
             ]
           },
           {
-            "table": "BookmarkCollection",
+            "table": "bookmark_collection",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -739,7 +739,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'db025e751d0455572bdf14560436bde3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '27b24aa66afca1d199f2a4d8fb2d3e0b')"
     ]
   }
 }

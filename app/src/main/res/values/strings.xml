@@ -157,5 +157,7 @@
     <string name="comments_input_hint">Comments…</string>
     <string name="title_bookmark">Bookmark</string>
     <string name="title_bookmark_collection">Bookmark Collections</string>
+    <string name="button_add_bookmark_collection">Add new bookmark collection</string>
+    <string name="no_bookmark_collections">No bookmark collections found.\nTap button (+) to create one.</string>
 
 </resources>

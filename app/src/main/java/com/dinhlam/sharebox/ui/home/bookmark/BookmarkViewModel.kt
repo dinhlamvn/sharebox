@@ -1,27 +1,23 @@
 package com.dinhlam.sharebox.ui.home.bookmark
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.StarRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
-import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
-    private val shareRepository: ShareRepository,
-    private val voteRepository: VoteRepository,
-    private val userSharePref: UserSharePref,
-    private val starRepository: StarRepository,
+    private val bookmarkCollectionRepository: BookmarkCollectionRepository,
 ) : BaseViewModel<BookmarkState>(BookmarkState()) {
 
     init {
-
+        loadBookmarkCollections()
     }
 
-    private fun loadShares() {
-
+    private fun loadBookmarkCollections() = backgroundTask {
+        setState { copy(isRefreshing = true) }
+        val bookmarkCollections = bookmarkCollectionRepository.find()
+        setState { copy(bookmarkCollections = bookmarkCollections, isRefreshing = false) }
     }
 
     fun loadMores() {
@@ -30,6 +26,6 @@ class BookmarkViewModel @Inject constructor(
 
     fun doOnRefresh() {
         setState { BookmarkState() }
-        loadShares()
+        loadBookmarkCollections()
     }
 }
