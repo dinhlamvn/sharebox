@@ -58,6 +58,7 @@ class BookmarkFragment :
                         bookmarkCollection.name,
                         bookmarkCollection.thumbnail,
                         bookmarkCollection.desc,
+                        bookmarkCollection.passcode,
                         if (idx % COLLECTION_SPAN_COUNT == 0) 0 else 8.dp(),
                         if (idx >= COLLECTION_SPAN_COUNT) 8.dp() else 0,
                     )
@@ -91,9 +92,7 @@ class BookmarkFragment :
 
         viewBinding.buttonAdd.setOnClickListener {
             createBookmarkCollectionResultLauncher.launch(
-                appRouter.bookmarkCollectionCreatorIntent(
-                    requireContext()
-                )
+                appRouter.bookmarkCollectionCreatorIntent(requireContext())
             )
         }
     }

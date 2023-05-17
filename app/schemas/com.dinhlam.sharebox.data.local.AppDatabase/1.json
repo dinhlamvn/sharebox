@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "27b24aa66afca1d199f2a4d8fb2d3e0b",
+    "identityHash": "1904d0829714f4fb0cd9c986b49b44a0",
     "entities": [
       {
         "tableName": "Share",
@@ -590,7 +590,7 @@
       },
       {
         "tableName": "bookmark_collection",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `description` TEXT NOT NULL, `passcode` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `description` TEXT NOT NULL, `passcode` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -620,7 +620,7 @@
             "fieldPath": "passcode",
             "columnName": "passcode",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "createdAt",
@@ -739,7 +739,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '27b24aa66afca1d199f2a4d8fb2d3e0b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1904d0829714f4fb0cd9c986b49b44a0')"
     ]
   }
 }

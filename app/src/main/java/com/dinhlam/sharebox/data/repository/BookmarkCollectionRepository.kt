@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 import com.dinhlam.sharebox.data.mapper.BookmarkCollectionToBookmarkCollectionDetailMapper
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.extensions.md5
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.BookmarkUtils
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,8 +17,9 @@ class BookmarkCollectionRepository @Inject constructor(
 ) {
     fun createCollection(name: String, desc: String, thumbnail: String, passcode: String): Boolean {
         val collectionId = BookmarkUtils.createBookmarkCollectionId()
+        val passCode = passcode.takeIfNotNullOrBlank()
         val bookmarkCollection =
-            BookmarkCollection(collectionId, name, thumbnail, desc, passcode.md5())
+            BookmarkCollection(collectionId, name, thumbnail, desc, passCode?.md5())
         return bookmarkCollectionDao.runCatching {
             insert(bookmarkCollection)
             true

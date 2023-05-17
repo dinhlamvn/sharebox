@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.modelview.bookmark
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBookmarkCollectionBinding
@@ -13,6 +14,7 @@ data class BookmarkCollectionModelView(
     val name: String,
     val thumbnail: String,
     val desc: String,
+    val passcode: String?,
     val marginStart: Int = 0,
     val marginTop: Int = 0,
 ) : BaseListAdapter.BaseModelView("bookmark_collection_$id") {
@@ -31,6 +33,7 @@ data class BookmarkCollectionModelView(
                 ImageLoader.instance.load(buildContext, model.thumbnail, binding.imageThumbnail)
                 binding.textName.text = model.name
                 binding.textDesc.text = model.desc
+                binding.imageLock.isVisible = !model.passcode.isNullOrBlank()
             }
 
             override fun onUnBind() {

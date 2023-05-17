@@ -34,7 +34,9 @@ data class TextModelView(
                 }
                 binding.textView.setTextAppearanceCompat(model.textAppearance)
                 binding.textView.text = model.text
-                binding.textView.setOnClickListener(model.actionClick)
+                model.actionClick?.let { listener ->
+                    binding.textView.setOnClickListener(listener)
+                }
             }
 
             override fun onUnBind() {

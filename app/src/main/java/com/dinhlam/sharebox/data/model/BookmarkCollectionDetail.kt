@@ -5,5 +5,5 @@ data class BookmarkCollectionDetail(
     val name: String,
     val thumbnail: String,
     val desc: String,
-    val passcode: String,
+    val passcode: String?,
 )

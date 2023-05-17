@@ -14,7 +14,7 @@ data class BookmarkCollection(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "thumbnail") val thumbnail: String,
     @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "passcode") val passcode: String,
+    @ColumnInfo(name = "passcode") val passcode: String?,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updated_at") val updatedAt: Long = System.currentTimeMillis()
 )

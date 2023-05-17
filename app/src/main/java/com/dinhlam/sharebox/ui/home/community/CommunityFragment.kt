@@ -56,7 +56,7 @@ class CommunityFragment :
                 add(
                     TextModelView(
                         "text_empty",
-                        getString(R.string.no_result), ViewGroup.LayoutParams.WRAP_CONTENT
+                        getString(R.string.no_result)
                     )
                 )
             } else {
