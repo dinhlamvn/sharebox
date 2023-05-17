@@ -6,8 +6,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
+import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.ui.home.HomeActivity
-import com.dinhlam.sharebox.ui.home.bookmark.creator.BookmarkCollectionCreatorActivity
+import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,7 +42,13 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
     }
 
     fun bookmarkCollectionCreatorIntent(context: Context): Intent {
-        return Intent(context, BookmarkCollectionCreatorActivity::class.java)
+        return Intent(context, BookmarkCollectionFormActivity::class.java)
+    }
+
+    fun bookmarkCollectionEditorIntent(context: Context, bookmarkCollection: BookmarkCollectionDetail): Intent {
+        return Intent(context, BookmarkCollectionFormActivity::class.java).apply {
+            putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
+        }
     }
 
     fun pickImageIntent(): Intent {

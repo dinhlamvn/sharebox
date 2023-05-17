@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.bookmark.creator
+package com.dinhlam.sharebox.ui.home.bookmark.form
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -16,9 +16,9 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class BookmarkCollectionCreatorViewModel @Inject constructor(
+class BookmarkCollectionFormViewModel @Inject constructor(
     private val bookmarkCollectionRepository: BookmarkCollectionRepository
-) : BaseViewModel<BookmarkCollectionCreatorState>(BookmarkCollectionCreatorState()) {
+) : BaseViewModel<BookmarkCollectionFormState>(BookmarkCollectionFormState()) {
 
     fun setThumbnail(uri: Uri) {
         setState { copy(thumbnail = uri, errorThumbnail = false) }
@@ -86,6 +86,10 @@ class BookmarkCollectionCreatorViewModel @Inject constructor(
 
     fun togglePasscodeVisibility() {
         setState { copy(isPasscodeVisible = !isPasscodeVisible) }
+    }
+
+    fun clearPasscode() {
+        setState { copy(passcode = "") }
     }
 
 }

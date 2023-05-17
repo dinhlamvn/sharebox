@@ -119,7 +119,7 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name=".ui.home.bookmark.creator.BookmarkCollectionCreatorActivity"
+            android:name=".ui.home.bookmark.form.BookmarkCollectionFormActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"

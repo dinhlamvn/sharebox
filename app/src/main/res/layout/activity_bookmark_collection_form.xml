@@ -139,7 +139,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/text_layout_passcode"
                     style="@style/AppTextInputLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
@@ -147,6 +147,8 @@
                     app:endIconTint="@color/colorGray60"
                     app:errorTextAppearance="@style/TextAppearance.Caption"
                     app:hintTextAppearance="@style/TextAppearance.Body"
+                    app:layout_constraintEnd_toStartOf="@id/image_clear"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text_layout_desc"
                     app:placeholderTextAppearance="@style/TextAppearance.Body">
 
@@ -165,6 +167,22 @@
                         android:textAppearance="@style/TextAppearance.Body" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_clear"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_clear_passcode"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/text_layout_passcode"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/text_layout_passcode" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

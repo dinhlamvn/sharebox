@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.bookmark.creator
+package com.dinhlam.sharebox.ui.home.bookmark.form
 
 import android.app.Activity
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.core.widget.doAfterTextChanged
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionCreatorBinding
+import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionFormBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -22,11 +22,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BookmarkCollectionCreatorActivity :
-    BaseViewModelActivity<BookmarkCollectionCreatorState, BookmarkCollectionCreatorViewModel, ActivityBookmarkCollectionCreatorBinding>() {
+class BookmarkCollectionFormActivity :
+    BaseViewModelActivity<BookmarkCollectionFormState, BookmarkCollectionFormViewModel, ActivityBookmarkCollectionFormBinding>() {
 
-    override fun onCreateViewBinding(): ActivityBookmarkCollectionCreatorBinding {
-        return ActivityBookmarkCollectionCreatorBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(): ActivityBookmarkCollectionFormBinding {
+        return ActivityBookmarkCollectionFormBinding.inflate(layoutInflater)
     }
 
     private val thumbnailResultLauncher =
@@ -49,9 +49,9 @@ class BookmarkCollectionCreatorActivity :
     @Inject
     lateinit var appRouter: AppRouter
 
-    override val viewModel: BookmarkCollectionCreatorViewModel by viewModels()
+    override val viewModel: BookmarkCollectionFormViewModel by viewModels()
 
-    override fun onStateChanged(state: BookmarkCollectionCreatorState) {
+    override fun onStateChanged(state: BookmarkCollectionFormState) {
         if (state.passcode.isEmpty()) {
             viewBinding.textLayoutPasscode.endIconDrawable = null
         } else {
@@ -65,6 +65,7 @@ class BookmarkCollectionCreatorActivity :
                     PasswordTransformationMethod.getInstance()
             }
         }
+        viewBinding.imageClear.isVisible = state.passcode.isNotEmpty()
         viewBinding.textLayoutPasscode.setEndIconActivated(state.passcode.isNotEmpty())
         viewBinding.textErrorThumbnail.isVisible = state.errorThumbnail
         viewBinding.textEditPasscode.setText(state.passcode)
@@ -77,6 +78,10 @@ class BookmarkCollectionCreatorActivity :
             onBackPressedDispatcher.onBackPressed()
         }
 
+        viewBinding.imageClear.setOnClickListener {
+            viewModel.clearPasscode()
+        }
+
         viewBinding.textLayoutPasscode.setEndIconOnClickListener {
             viewModel.togglePasscodeVisibility()
         }
@@ -85,7 +90,7 @@ class BookmarkCollectionCreatorActivity :
             passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
         }
 
-        viewModel.consume(this, BookmarkCollectionCreatorState::success, true) { success ->
+        viewModel.consume(this, BookmarkCollectionFormState::success, true) { success ->
             if (success) {
                 returnResultOk()
             }
@@ -111,14 +116,14 @@ class BookmarkCollectionCreatorActivity :
             viewModel.clearErrorDesc(text)
         }
 
-        viewModel.consume(this, BookmarkCollectionCreatorState::errorName, true) { errorRes ->
+        viewModel.consume(this, BookmarkCollectionFormState::errorName, true) { errorRes ->
             errorRes?.let { res ->
                 viewBinding.textEditName.error = getString(res)
                 viewBinding.textEditName.requestFocus()
             } ?: viewBinding.textEditName.apply { text = null }
         }
 
-        viewModel.consume(this, BookmarkCollectionCreatorState::errorDesc, true) { errorRes ->
+        viewModel.consume(this, BookmarkCollectionFormState::errorDesc, true) { errorRes ->
             errorRes?.let { res ->
                 viewBinding.textEditDesc.error = getString(res)
                 viewBinding.textEditDesc.requestFocus()
