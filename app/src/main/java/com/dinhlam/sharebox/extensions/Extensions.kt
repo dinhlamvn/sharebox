@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.os.VibrationEffect
+import android.os.VibratorManager
 import java.io.Serializable
 
 inline fun <reified R> Any?.cast(): R? {
@@ -57,4 +59,19 @@ inline fun <reified T> Context.getSystemServiceCompat(name: String): T {
 
 inline fun <reified T : Enum<T>> enumByNameIgnoreCase(input: String, default: T): T {
     return enumValues<T>().firstOrNull { enum -> enum.name.equals(input, true) } ?: default
+}
+
+@Suppress("DEPRECATION")
+fun Context.vibrate(timing: Long) {
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        getSystemServiceCompat<VibratorManager>(Context.VIBRATOR_MANAGER_SERVICE).defaultVibrator
+    } else {
+        getSystemServiceCompat(Context.VIBRATOR_SERVICE)
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(VibrationEffect.createOneShot(timing, VibrationEffect.DEFAULT_AMPLITUDE))
+    } else {
+        vibrator.vibrate(timing)
+    }
 }

@@ -12,8 +12,10 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.databinding.FragmentBookmarkBinding
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
@@ -29,6 +31,13 @@ class BookmarkFragment :
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.doOnRefresh()
+            }
+        }
+
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                showToast("OK")
             }
         }
 
@@ -61,7 +70,9 @@ class BookmarkFragment :
                         bookmarkCollection.passcode,
                         if (idx % COLLECTION_SPAN_COUNT == 0) 0 else 8.dp(),
                         if (idx >= COLLECTION_SPAN_COUNT) 8.dp() else 0,
-                    )
+                    ) {
+                        openBookmarkCollection(bookmarkCollection)
+                    }
                 })
             }
         }
@@ -93,6 +104,19 @@ class BookmarkFragment :
         viewBinding.buttonAdd.setOnClickListener {
             createBookmarkCollectionResultLauncher.launch(
                 appRouter.bookmarkCollectionCreatorIntent(requireContext())
+            )
+        }
+    }
+
+    private fun openBookmarkCollection(bookmarkCollection: BookmarkCollectionDetail) {
+        val passcode = bookmarkCollection.passcode ?: ""
+        if (passcode.isEmpty()) {
+            showToast("OK")
+        } else {
+            passcodeConfirmResultLauncher.launch(
+                appRouter.passcodeIntent(
+                    requireContext(), passcode
+                )
             )
         }
     }

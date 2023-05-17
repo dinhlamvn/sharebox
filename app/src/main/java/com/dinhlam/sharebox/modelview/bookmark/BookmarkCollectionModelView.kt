@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.modelview.bookmark
 
 import android.view.LayoutInflater
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.view.isVisible
@@ -17,6 +18,7 @@ data class BookmarkCollectionModelView(
     val passcode: String?,
     val marginStart: Int = 0,
     val marginTop: Int = 0,
+    val onClickListener: OnClickListener? = null
 ) : BaseListAdapter.BaseModelView("bookmark_collection_$id") {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
@@ -30,6 +32,7 @@ data class BookmarkCollectionModelView(
                     marginStart = model.marginStart
                     topMargin = model.marginTop
                 }
+                binding.container.setOnClickListener(model.onClickListener)
                 ImageLoader.instance.load(buildContext, model.thumbnail, binding.imageThumbnail)
                 binding.textName.text = model.name
                 binding.textDesc.text = model.desc

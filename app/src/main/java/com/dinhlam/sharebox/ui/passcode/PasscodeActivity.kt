@@ -10,7 +10,9 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityPasscodeBinding
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.screenWidth
+import com.dinhlam.sharebox.extensions.vibrate
 import com.dinhlam.sharebox.modelview.TextModelView
 import java.util.Stack
 
@@ -28,6 +30,10 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         return ActivityPasscodeBinding.inflate(layoutInflater)
     }
 
+    private val originalPasscode: String by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        intent.getStringExtra(AppExtras.EXTRA_PASSCODE) ?: ""
+    }
+
     private val stack = Stack<Int>()
 
     private val codeBulletSize: Int by lazy {
@@ -36,7 +42,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         space.times(0.8f).div(PASSCODE_LENGTH).toInt()
     }
 
-    private val codeAdapter = BaseListAdapter.createAdapter {
+    private val passcodeAdapter = BaseListAdapter.createAdapter {
         repeat(stack.size) { number ->
             add(
                 TextModelView(
@@ -107,8 +113,8 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         super.onCreate(savedInstanceState)
 
         viewBinding.recyclerViewCode.itemAnimator = null
-        viewBinding.recyclerViewCode.adapter = codeAdapter
-        codeAdapter.requestBuildModelViews()
+        viewBinding.recyclerViewCode.adapter = passcodeAdapter
+        passcodeAdapter.requestBuildModelViews()
 
         viewBinding.recyclerViewKeypad.adapter = keypadAdapter
         keypadAdapter.requestBuildModelViews()
@@ -117,35 +123,60 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
     private fun onNumberClicked(number: Int) {
         if (stack.size < PASSCODE_LENGTH) {
             stack.push(number)
-            codeAdapter.requestBuildModelViews()
+            passcodeAdapter.requestBuildModelViews()
         }
     }
 
     private fun onBackspace() {
         if (stack.isNotEmpty()) {
             stack.pop()
-            codeAdapter.requestBuildModelViews()
+            passcodeAdapter.requestBuildModelViews()
         }
     }
 
     private fun onDone() {
         if (stack.size < PASSCODE_LENGTH) {
-            viewBinding.cardLock.startAnimation(
-                AnimationUtils.loadAnimation(
-                    this, R.anim.lock_shake
-                )
-            )
-            viewBinding.recyclerViewCode.startAnimation(
-                AnimationUtils.loadAnimation(
-                    this, R.anim.passcode_shake
-                )
-            )
+            notifyPasscodeInvalid()
         } else {
             val code = stack.joinToString(separator = "")
-            setResult(Activity.RESULT_OK, Intent().apply {
-                putExtra(AppExtras.EXTRA_PASSCODE, code)
-            })
+            if (originalPasscode.isNotEmpty()) {
+                handleForValidate(code)
+            } else {
+                handleForCreateNew(code)
+            }
+        }
+    }
+
+    private fun handleForValidate(code: String) {
+        val encryptCode = code.md5()
+        if (originalPasscode != encryptCode) {
+            notifyPasscodeInvalid()
+            stack.clear()
+            passcodeAdapter.requestBuildModelViews()
+        } else {
+            setResult(Activity.RESULT_OK)
             finish()
         }
+    }
+
+    private fun handleForCreateNew(code: String) {
+        setResult(Activity.RESULT_OK, Intent().apply {
+            putExtra(AppExtras.EXTRA_PASSCODE, code)
+        })
+        finish()
+    }
+
+    private fun notifyPasscodeInvalid() {
+        vibrate(500)
+        viewBinding.cardLock.startAnimation(
+            AnimationUtils.loadAnimation(
+                this, R.anim.lock_shake
+            )
+        )
+        viewBinding.recyclerViewCode.startAnimation(
+            AnimationUtils.loadAnimation(
+                this, R.anim.passcode_shake
+            )
+        )
     }
 }

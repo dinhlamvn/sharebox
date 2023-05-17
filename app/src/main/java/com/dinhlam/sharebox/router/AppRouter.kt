@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.creator.BookmarkCollectionCreatorActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
@@ -48,5 +49,11 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
 
     fun passcodeIntent(context: Context): Intent {
         return Intent(context, PasscodeActivity::class.java)
+    }
+
+    fun passcodeIntent(context: Context, passcode: String): Intent {
+        return Intent(context, PasscodeActivity::class.java).apply {
+            putExtra(AppExtras.EXTRA_PASSCODE, passcode)
+        }
     }
 }
