@@ -3,7 +3,7 @@
     <string name="title_dashboard">Bảng điểm</string>
     <string name="title_notifications">Thông báo</string>
     <string name="button_save">Lưu</string>
-    <string name="share_activity_title">Lưu</string>
+    <string name="share_activity_title">Drop to box</string>
     <string name="button_cancel">Hủy</string>
     <string name="text_input_note_hint">Ghi chú</string>
     <string name="share_empty_content">Nội dung chia sẻ trống</string>
@@ -155,5 +155,14 @@
     <string name="title_bookmark_collection">Bookmark Collections</string>
     <string name="button_add_bookmark_collection">Add new bookmark collection</string>
     <string name="no_bookmark_collections">No bookmark collections found.\nTap button (+) to create one.</string>
+    <string name="title_bookmark_creator">Create new collection</string>
+    <string name="end">End</string>
+    <string name="bookmark_collection_hint_name">Name</string>
+    <string name="bookmark_collection_hint_desc">Description</string>
+    <string name="bookmark_collection_hint_checkbox_passcode">Use passcode</string>
+    <string name="bookmark_collection_create_error">An error occurred while create collection, try again.</string>
+    <string name="bookmark_collection_error_require_name">Name can\'t be empty</string>
+    <string name="bookmark_collection_error_require_desc">Desc can\'t be empty</string>
+    <string name="bookmark_collection_error_require_thumbnail">Thumbnail must be set</string>
 
 </resources>

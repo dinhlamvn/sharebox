@@ -116,6 +116,13 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.home.bookmark.creator.BookmarkCollectionCreatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name="com.dinhlam.sharebox.provider.ShareSaverFileProvider"
             android:authorities="${APPLICATION_ID}.file_provider"

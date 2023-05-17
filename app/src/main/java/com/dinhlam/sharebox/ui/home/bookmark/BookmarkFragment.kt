@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.ui.home.bookmark
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharebox.R
@@ -15,11 +17,20 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
+import com.dinhlam.sharebox.router.AppRouter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BookmarkFragment :
     BaseViewModelFragment<BookmarkState, BookmarkViewModel, FragmentBookmarkBinding>() {
+
+    private val createBookmarkCollectionResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.doOnRefresh()
+            }
+        }
 
     companion object {
         private const val COLLECTION_SPAN_COUNT = 2
@@ -55,6 +66,8 @@ class BookmarkFragment :
         }
     }
 
+    @Inject
+    lateinit var appRouter: AppRouter
 
     override val viewModel: BookmarkViewModel by viewModels()
 
@@ -74,6 +87,10 @@ class BookmarkFragment :
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewBinding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnRefresh()
+        }
+
+        viewBinding.buttonAdd.setOnClickListener {
+            createBookmarkCollectionResultLauncher.launch(appRouter.bookmarkCollectionCreatorIntent(requireContext()))
         }
     }
 }

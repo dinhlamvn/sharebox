@@ -98,7 +98,8 @@
         <item name="boxCornerRadiusTopEnd">0dp</item>
         <item name="boxCornerRadiusBottomStart">0dp</item>
         <item name="boxCornerRadiusBottomEnd">0dp</item>
-        <item name="backgroundColor">@color/colorWhite</item>
+        <item name="background">@android:color/transparent</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
     </style>
 
     <style name="Theme.AppBottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">

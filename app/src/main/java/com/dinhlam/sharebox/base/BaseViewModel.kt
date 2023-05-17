@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.Executors
+import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KProperty
 
 abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewModel() {
@@ -124,10 +125,11 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     protected fun execute(
+        context: CoroutineContext = Dispatchers.IO,
         onError: ((Throwable) -> Unit)? = null, block: suspend (T) -> Unit
     ) {
         getState { state ->
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(context) {
                 try {
                     block.invoke(state)
                 } catch (e: Exception) {
