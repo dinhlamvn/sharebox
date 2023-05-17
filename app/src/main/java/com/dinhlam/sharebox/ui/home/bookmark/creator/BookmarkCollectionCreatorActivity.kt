@@ -8,10 +8,12 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionCreatorBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.AppRouter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -31,6 +33,13 @@ class BookmarkCollectionCreatorActivity :
             }
         }
 
+    private val passcodeResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Logger.debug(result.data?.getStringExtra(AppExtras.EXTRA_PASSCODE) ?: "No")
+            }
+        }
+
     @Inject
     lateinit var appRouter: AppRouter
 
@@ -45,6 +54,12 @@ class BookmarkCollectionCreatorActivity :
 
         viewBinding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+
+        viewBinding.checkboxPasscode.setOnCheckedChangeListener { _, checked ->
+            if (checked) {
+                passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
+            }
         }
 
         viewModel.consume(this, BookmarkCollectionCreatorState::success, true) { success ->

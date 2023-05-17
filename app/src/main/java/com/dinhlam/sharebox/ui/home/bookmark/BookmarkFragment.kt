@@ -50,7 +50,7 @@ class BookmarkFragment :
             }
 
             if (state.bookmarkCollections.isEmpty()) {
-                add(TextModelView(getString(R.string.no_bookmark_collections)))
+                add(TextModelView("text_empty", getString(R.string.no_bookmark_collections)))
             } else {
                 addAll(state.bookmarkCollections.mapIndexed { idx, bookmarkCollection ->
                     BookmarkCollectionModelView(
@@ -90,7 +90,11 @@ class BookmarkFragment :
         }
 
         viewBinding.buttonAdd.setOnClickListener {
-            createBookmarkCollectionResultLauncher.launch(appRouter.bookmarkCollectionCreatorIntent(requireContext()))
+            createBookmarkCollectionResultLauncher.launch(
+                appRouter.bookmarkCollectionCreatorIntent(
+                    requireContext()
+                )
+            )
         }
     }
 }

@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.creator.BookmarkCollectionCreatorActivity
+import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -43,5 +44,9 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
 
     fun pickImageIntent(): Intent {
         return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+    }
+
+    fun passcodeIntent(context: Context): Intent {
+        return Intent(context, PasscodeActivity::class.java)
     }
 }

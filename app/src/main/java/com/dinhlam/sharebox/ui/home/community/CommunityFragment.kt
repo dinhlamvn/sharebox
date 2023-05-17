@@ -55,6 +55,7 @@ class CommunityFragment :
             if (state.shares.isEmpty()) {
                 add(
                     TextModelView(
+                        "text_empty",
                         getString(R.string.no_result), ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 )

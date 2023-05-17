@@ -53,7 +53,7 @@ class CommentFragment :
 
             val comments = state.comments
             if (comments.isEmpty()) {
-                add(TextModelView("There are no comments yet."))
+                add(TextModelView("text_empty", "There are no comments yet."))
                 return@getState
             } else {
                 comments.forEach { comment ->
