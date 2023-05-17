@@ -53,7 +53,12 @@ class BookmarkCollectionCreatorViewModel @Inject constructor(
             )
 
             val result =
-                bookmarkCollectionRepository.createCollection(name, desc, newUri.toString(), "")
+                bookmarkCollectionRepository.createCollection(
+                    name,
+                    desc,
+                    newUri.toString(),
+                    state.passcode
+                )
 
             if (result) {
                 setState { copy(success = true) }
@@ -73,6 +78,14 @@ class BookmarkCollectionCreatorViewModel @Inject constructor(
         if (state.errorDesc != null && !text.isNullOrBlank()) {
             setState { copy(errorDesc = null) }
         }
+    }
+
+    fun setPasscode(passcode: String) {
+        setState { copy(passcode = passcode) }
+    }
+
+    fun clearPasscode() {
+        setState { copy(passcode = "") }
     }
 
 }

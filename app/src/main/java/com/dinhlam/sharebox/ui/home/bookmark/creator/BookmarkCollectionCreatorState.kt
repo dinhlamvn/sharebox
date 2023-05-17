@@ -8,5 +8,6 @@ data class BookmarkCollectionCreatorState(
     val errorDesc: Int? = null,
     val errorThumbnail: Boolean = false,
     val thumbnail: Uri? = null,
-    val success: Boolean = false
+    val success: Boolean = false,
+    val passcode: String = "",
 ) : BaseViewModel.BaseState

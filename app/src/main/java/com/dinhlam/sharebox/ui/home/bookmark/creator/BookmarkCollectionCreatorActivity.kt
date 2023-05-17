@@ -36,7 +36,10 @@ class BookmarkCollectionCreatorActivity :
     private val passcodeResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                Logger.debug(result.data?.getStringExtra(AppExtras.EXTRA_PASSCODE) ?: "No")
+                val passcode = result?.data?.getStringExtra(AppExtras.EXTRA_PASSCODE)
+                    ?: return@registerForActivityResult
+                viewModel.setPasscode(passcode)
+                Logger.debug(passcode)
             }
         }
 
@@ -59,6 +62,8 @@ class BookmarkCollectionCreatorActivity :
         viewBinding.checkboxPasscode.setOnCheckedChangeListener { _, checked ->
             if (checked) {
                 passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
+            } else {
+                viewModel.clearPasscode()
             }
         }
 
