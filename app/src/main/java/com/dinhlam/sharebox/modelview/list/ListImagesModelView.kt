@@ -125,7 +125,7 @@ data class ListImagesModelView(
                     append(model.userDetail.name)
                 }
                 color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
-                    append(" shares an image")
+                    append(" shares some images")
                 }
             }
             binding.layoutUserInfo.textUserLevel.text =
