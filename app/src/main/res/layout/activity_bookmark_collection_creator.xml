@@ -8,17 +8,18 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        app:contentInsetEnd="16dp"
+        app:contentInsetStart="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back_black"
         app:title="@string/title_bookmark_creator"
-        app:titleTextAppearance="@style/TextAppearance.Body">
+        app:titleTextAppearance="@style/TextAppearance.BodyMedium">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_done"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
@@ -83,7 +84,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/button_thumbnail">
+                app:errorTextAppearance="@style/TextAppearance.Caption"
+                app:hintTextAppearance="@style/TextAppearance.Body"
+                app:layout_constraintTop_toBottomOf="@id/button_thumbnail"
+                app:placeholderTextAppearance="@style/TextAppearance.Body">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/text_edit_name"
@@ -104,8 +108,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-
-                app:layout_constraintTop_toBottomOf="@id/text_layout_name">
+                app:errorTextAppearance="@style/TextAppearance.Caption"
+                app:hintTextAppearance="@style/TextAppearance.Body"
+                app:layout_constraintTop_toBottomOf="@id/text_layout_name"
+                app:placeholderTextAppearance="@style/TextAppearance.Body">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/text_edit_desc"
@@ -131,9 +137,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_layout_desc" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     </ScrollView>
 

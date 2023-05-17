@@ -155,7 +155,7 @@
     <string name="title_bookmark_collection">Bookmark Collections</string>
     <string name="button_add_bookmark_collection">Add new bookmark collection</string>
     <string name="no_bookmark_collections">No bookmark collections found.\nTap button (+) to create one.</string>
-    <string name="title_bookmark_creator">Create new collection</string>
+    <string name="title_bookmark_creator">New bookmark collection</string>
     <string name="end">End</string>
     <string name="bookmark_collection_hint_name">Name</string>
     <string name="bookmark_collection_hint_desc">Description</string>

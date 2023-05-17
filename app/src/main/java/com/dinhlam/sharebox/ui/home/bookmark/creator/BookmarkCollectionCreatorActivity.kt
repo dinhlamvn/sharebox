@@ -43,6 +43,10 @@ class BookmarkCollectionCreatorActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewBinding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         viewModel.consume(this, BookmarkCollectionCreatorState::success, true) { success ->
             if (success) {
                 returnResultOk()
