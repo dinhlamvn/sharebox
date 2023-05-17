@@ -81,11 +81,11 @@ class BookmarkCollectionCreatorViewModel @Inject constructor(
     }
 
     fun setPasscode(passcode: String) {
-        setState { copy(passcode = passcode) }
+        setState { copy(passcode = passcode, isPasscodeVisible = false) }
     }
 
-    fun clearPasscode() {
-        setState { copy(passcode = "") }
+    fun togglePasscodeVisibility() {
+        setState { copy(isPasscodeVisible = !isPasscodeVisible) }
     }
 
 }

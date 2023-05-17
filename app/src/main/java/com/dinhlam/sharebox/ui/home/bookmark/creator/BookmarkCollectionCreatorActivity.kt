@@ -3,10 +3,13 @@ package com.dinhlam.sharebox.ui.home.bookmark.creator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionCreatorBinding
@@ -49,7 +52,22 @@ class BookmarkCollectionCreatorActivity :
     override val viewModel: BookmarkCollectionCreatorViewModel by viewModels()
 
     override fun onStateChanged(state: BookmarkCollectionCreatorState) {
+        if (state.passcode.isEmpty()) {
+            viewBinding.textLayoutPasscode.endIconDrawable = null
+        } else {
+            if (state.isPasscodeVisible) {
+                viewBinding.textLayoutPasscode.setEndIconDrawable(R.drawable.ic_visibility)
+                viewBinding.textEditPasscode.transformationMethod =
+                    HideReturnsTransformationMethod.getInstance()
+            } else {
+                viewBinding.textLayoutPasscode.setEndIconDrawable(R.drawable.ic_visibility_off)
+                viewBinding.textEditPasscode.transformationMethod =
+                    PasswordTransformationMethod.getInstance()
+            }
+        }
+        viewBinding.textLayoutPasscode.setEndIconActivated(state.passcode.isNotEmpty())
         viewBinding.textErrorThumbnail.isVisible = state.errorThumbnail
+        viewBinding.textEditPasscode.setText(state.passcode)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,12 +77,12 @@ class BookmarkCollectionCreatorActivity :
             onBackPressedDispatcher.onBackPressed()
         }
 
-        viewBinding.checkboxPasscode.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
-            } else {
-                viewModel.clearPasscode()
-            }
+        viewBinding.textLayoutPasscode.setEndIconOnClickListener {
+            viewModel.togglePasscodeVisibility()
+        }
+
+        viewBinding.textEditPasscode.setOnClickListener {
+            passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
         }
 
         viewModel.consume(this, BookmarkCollectionCreatorState::success, true) { success ->

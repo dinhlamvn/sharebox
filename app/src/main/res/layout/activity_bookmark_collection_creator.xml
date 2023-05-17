@@ -8,7 +8,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:contentInsetEnd="16dp"
+        app:contentInsetEnd="2dp"
         app:contentInsetStart="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back_black"
@@ -17,11 +17,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_done"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_vertical|end"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:contentDescription="@string/action_done"
             android:focusable="true"
             android:scaleType="centerInside"
             android:src="@drawable/ic_done_black" />
@@ -35,109 +36,139 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="@color/colorWhite"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="10dp">
 
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image_thumbnail"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/no_preview_image"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_error_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="4dp"
-                android:drawableStart="@drawable/ic_error_red"
-                android:drawablePadding="6dp"
-                android:gravity="center_vertical"
-                android:text="@string/bookmark_collection_error_require_thumbnail"
-                android:textAppearance="@style/TextAppearance.Caption"
-                android:textColor="@color/colorTextRed"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/image_thumbnail" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/no_preview_image"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/button_thumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="220dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/button_add_bookmark_collection"
-                android:src="@drawable/ic_share_image"
-                app:backgroundTint="@color/colorWhite"
-                app:fabSize="normal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/image_thumbnail" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_layout_name"
-                style="@style/AppTextInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                app:errorTextAppearance="@style/TextAppearance.Caption"
-                app:hintTextAppearance="@style/TextAppearance.Body"
-                app:layout_constraintTop_toBottomOf="@id/button_thumbnail"
-                app:placeholderTextAppearance="@style/TextAppearance.Body">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/text_edit_name"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_error_thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/bookmark_collection_hint_name"
-                    android:inputType="text"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:textAppearance="@style/TextAppearance.Body" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="4dp"
+                    android:drawableStart="@drawable/ic_error_red"
+                    android:drawablePadding="6dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/bookmark_collection_error_require_thumbnail"
+                    android:textAppearance="@style/TextAppearance.Caption"
+                    android:textColor="@color/colorTextRed"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/image_thumbnail" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/button_thumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="270dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/button_add_bookmark_collection"
+                    android:src="@drawable/ic_share_image"
+                    app:backgroundTint="@color/colorWhite"
+                    app:fabSize="normal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/image_thumbnail" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_layout_desc"
-                style="@style/AppTextInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                app:errorTextAppearance="@style/TextAppearance.Caption"
-                app:hintTextAppearance="@style/TextAppearance.Body"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_name"
-                app:placeholderTextAppearance="@style/TextAppearance.Body">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/text_edit_desc"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_layout_name"
+                    style="@style/AppTextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="start|top"
-                    android:hint="@string/bookmark_collection_hint_desc"
-                    android:inputType="text"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:textAppearance="@style/TextAppearance.Body" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    app:errorTextAppearance="@style/TextAppearance.Caption"
+                    app:hintTextAppearance="@style/TextAppearance.Body"
+                    app:layout_constraintTop_toBottomOf="@id/button_thumbnail"
+                    app:placeholderTextAppearance="@style/TextAppearance.Body">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/bookmark_collection_hint_name"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:textAppearance="@style/TextAppearance.Body" />
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/checkbox_passcode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/bookmark_collection_hint_checkbox_passcode"
-                android:textAppearance="@style/TextAppearance.Body"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_desc" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_layout_desc"
+                    style="@style/AppTextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    app:errorTextAppearance="@style/TextAppearance.Caption"
+                    app:hintTextAppearance="@style/TextAppearance.Body"
+                    app:layout_constraintTop_toBottomOf="@id/text_layout_name"
+                    app:placeholderTextAppearance="@style/TextAppearance.Body">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|top"
+                        android:hint="@string/bookmark_collection_hint_desc"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:textAppearance="@style/TextAppearance.Body" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_layout_passcode"
+                    style="@style/AppTextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    app:endIconMode="custom"
+                    app:endIconTint="@color/colorGray60"
+                    app:errorTextAppearance="@style/TextAppearance.Caption"
+                    app:hintTextAppearance="@style/TextAppearance.Body"
+                    app:layout_constraintTop_toBottomOf="@id/text_layout_desc"
+                    app:placeholderTextAppearance="@style/TextAppearance.Body">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/text_edit_passcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:gravity="start|top"
+                        android:hint="@string/bookmark_collection_hint_passcode"
+                        android:inputType="numberPassword"
+                        android:maxLength="6"
+                        android:maxLines="1"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:textAppearance="@style/TextAppearance.Body" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </ScrollView>
 

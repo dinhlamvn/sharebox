@@ -22,7 +22,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_lock_block" />
+            android:src="@drawable/ic_lock_black" />
 
     </androidx.cardview.widget.CardView>
 
