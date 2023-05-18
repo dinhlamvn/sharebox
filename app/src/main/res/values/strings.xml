@@ -176,5 +176,6 @@
     <string name="dialog_bookmark_collection_picker_title">Bookmark share to...</string>
     <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
     <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
+    <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
 
 </resources>

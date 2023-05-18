@@ -10,8 +10,10 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.databinding.DialogBookmarkCollectionPickerBinding
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.takeWithEllipsizeEnd
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -38,7 +40,7 @@ class BookmarkCollectionPickerDialogFragment :
             if (result.resultCode == Activity.RESULT_OK) {
                 Logger.debug("Hello ok")
                 getState(viewModel) { state ->
-                    listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
+                    listener.onBookmarkCollectionDone(state.pickedBookmarkCollection?.id)
                     dismiss()
                 }
             }
@@ -87,11 +89,9 @@ class BookmarkCollectionPickerDialogFragment :
                     bookmarkCollection.name,
                     height = 50.dp(),
                     startIcon = if (bookmarkCollection.passcode == null) 0 else R.drawable.ic_lock_black,
-                    isPicked = state.pickedBookmarkCollectionId == bookmarkCollection.id
+                    isPicked = state.pickedBookmarkCollection?.id == bookmarkCollection.id
                 ) {
-                    viewModel.onPickBookmarkCollection(
-                        bookmarkCollection.id, bookmarkCollection.passcode
-                    )
+                    viewModel.onPickBookmarkCollection(bookmarkCollection)
                 }
             })
         }
@@ -110,9 +110,9 @@ class BookmarkCollectionPickerDialogFragment :
 
         viewBinding.buttonDone.setOnClickListener {
             getState(viewModel) { state ->
-                if (state.pickedBookmarkCollectionId != state.originalPickedBookmarkCollectionId) {
-                    state.originalPasscode?.let(::requestVerifyOriginalPasscode)
-                        ?: doAfterOriginalPasscodeVerified()
+                if (state.pickedBookmarkCollection?.id != state.originalBookmarkCollection?.id) {
+                    state.originalBookmarkCollection?.takeIf { collection -> !collection.passcode.isNullOrBlank() }
+                        ?.let(::requestVerifyOriginalPasscode) ?: doAfterOriginalPasscodeVerified()
                 } else {
                     dismiss()
                 }
@@ -128,24 +128,31 @@ class BookmarkCollectionPickerDialogFragment :
         }
     }
 
-    private fun requestVerifyOriginalPasscode(passcode: String) {
+    private fun requestVerifyOriginalPasscode(bookmarkCollectionDetail: BookmarkCollectionDetail) {
         resultLauncherVerifyOriginalPasscode.launch(
             appRouter.passcodeIntent(
                 requireContext(),
-                passcode,
-                "Input your original collection passcode"
+                bookmarkCollectionDetail.passcode!!,
+                getString(
+                    R.string.dialog_bookmark_collection_picker_verify_passcode,
+                    bookmarkCollectionDetail.name.takeWithEllipsizeEnd(10)
+                )
             )
         )
     }
 
     private fun doAfterOriginalPasscodeVerified() = getState(viewModel) { state ->
-        val passcode = state.passcode ?: return@getState run {
-            listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
+        val bookmarkCollectionName = state.pickedBookmarkCollection?.name.orEmpty()
+        val passcode = state.pickedBookmarkCollection?.passcode ?: return@getState run {
+            listener.onBookmarkCollectionDone(state.pickedBookmarkCollection?.id)
             dismiss()
         }
         resultLauncherVerifyPasscode.launch(
             appRouter.passcodeIntent(
-                requireContext(), passcode, "Input your selected collection passcode"
+                requireContext(), passcode, getString(
+                    R.string.dialog_bookmark_collection_picker_verify_passcode,
+                    bookmarkCollectionName.takeWithEllipsizeEnd(10)
+                )
             )
         )
     }

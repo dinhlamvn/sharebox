@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.dialog.bookmarkcollectionpicker
 import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.extensions.getNonNull
@@ -25,16 +26,16 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
 
     private fun loadBookmarkCollections() = execute { state ->
         val collections = bookmarkCollectionRepository.find()
-        val pickedId = bookmarkRepository.findOne(state.shareId)?.bookmarkCollectionId
-        val bookmarkCollection =
-            pickedId?.let { collectionId -> bookmarkCollectionRepository.find(collectionId) }
+        val bookmarkDetail = bookmarkRepository.findOne(state.shareId)
+        val bookmarkCollection = bookmarkDetail?.bookmarkCollectionId?.let { collectionId ->
+            bookmarkCollectionRepository.find(collectionId)
+        }
         setState {
             copy(
                 bookmarkCollections = collections,
                 isLoading = false,
-                pickedBookmarkCollectionId = bookmarkCollection?.id,
-                originalPickedBookmarkCollectionId = bookmarkCollection?.id,
-                originalPasscode = bookmarkCollection?.passcode
+                pickedBookmarkCollection = bookmarkCollection,
+                originalBookmarkCollection = bookmarkCollection,
             )
         }
     }
@@ -44,11 +45,11 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
         setState { copy(bookmarkCollections = collections) }
     }
 
-    fun onPickBookmarkCollection(id: String, passcode: String?) = getState { state ->
-        if (state.pickedBookmarkCollectionId == id) {
-            setState { copy(pickedBookmarkCollectionId = null) }
+    fun onPickBookmarkCollection(collection: BookmarkCollectionDetail) = getState { state ->
+        if (state.pickedBookmarkCollection?.id == collection.id) {
+            setState { copy(pickedBookmarkCollection = null) }
         } else {
-            setState { copy(pickedBookmarkCollectionId = id, passcode = passcode) }
+            setState { copy(pickedBookmarkCollection = collection) }
         }
     }
 }
