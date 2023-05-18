@@ -64,29 +64,24 @@ data class ListTextModelView(
                 model.actionOpen?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonShare.setOnClickListener {
+            binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonComment.setOnClickListener {
+            binding.bottomAction.setOnCommentClickListener {
                 model.actionComment?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
+            binding.bottomAction.setOnLikeClickListener {
                 model.actionVote?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonStar.setOnClickListener {
+            binding.bottomAction.setOnBookmarkClickListener {
                 model.actionStar?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonUpVote.isVisible = model.showUpVote
-            binding.layoutBottomAction.buttonStar.isVisible = model.showUpVote
-
-            binding.layoutBottomAction.textUpvote.text =
-                buildContext.getString(R.string.up_vote, model.shareUpVote)
-            binding.layoutBottomAction.textComment.text =
-                buildContext.getString(R.string.comment, model.shareComment)
+            binding.bottomAction.setLikeNumber(model.shareUpVote)
+            binding.bottomAction.setCommentNumber(model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {

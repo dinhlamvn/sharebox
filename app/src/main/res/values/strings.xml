@@ -135,7 +135,7 @@
     <string name="subtitle_home">Let\'s explore what is the world sharing</string>
     <string name="action_share">Share</string>
     <string name="title_community">Community</string>
-    <string name="up_vote">Up(%d)</string>
+    <string name="up_vote">(%d)</string>
     <string name="comment">(%d)</string>
     <string name="drama_point">Drama</string>
     <string name="share_receive_activity_title">Share to others</string>

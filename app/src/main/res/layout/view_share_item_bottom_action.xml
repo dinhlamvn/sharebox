@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="50dp"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <FrameLayout
         android:id="@+id/button_up_vote"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
+        android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_comment"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,23 +25,22 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableStart="@drawable/ic_arrow_up"
-            android:drawablePadding="6dp"
+            android:drawablePadding="2dp"
             android:gravity="center"
             android:text="@string/up_vote"
-            android:textAppearance="@style/TextAppearance.Caption"
+            android:textAppearance="@style/TextAppearance.BodyMedium"
             android:textColor="@color/colorTextHint" />
 
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/button_comment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
+        android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_share"
         app:layout_constraintStart_toEndOf="@id/button_up_vote"
@@ -54,69 +52,45 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableStart="@drawable/ic_comment"
-            android:drawablePadding="6dp"
+            android:drawablePadding="2dp"
             android:gravity="center"
             android:text="@string/comment"
-            android:textAppearance="@style/TextAppearance.Caption"
+            android:textAppearance="@style/TextAppearance.BodyMedium"
             android:textColor="@color/colorTextHint" />
 
     </FrameLayout>
 
-    <FrameLayout
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/button_share"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="?attr/selectableItemBackground"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="2dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_share"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_star"
         app:layout_constraintStart_toEndOf="@id/button_comment"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableStart="@drawable/ic_share"
-            android:drawablePadding="6dp"
-            android:gravity="center"
-            android:text="@string/action_share"
-            android:textAppearance="@style/TextAppearance.Caption"
-            android:textColor="@color/colorTextHint" />
+    </androidx.appcompat.widget.AppCompatImageView>
 
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/button_star"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="?attr/selectableItemBackground"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/button_bookmark"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_bookmark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_share"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_starred"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableStart="@drawable/ic_star"
-            android:drawablePadding="6dp"
-            android:gravity="center"
-            android:text="@string/action_star"
-            android:textAppearance="@style/TextAppearance.Caption"
-            android:textColor="@color/colorTextHint" />
-
-    </FrameLayout>
+    </androidx.appcompat.widget.AppCompatImageView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

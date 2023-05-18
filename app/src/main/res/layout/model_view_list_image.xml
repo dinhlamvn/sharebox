@@ -64,11 +64,10 @@
             android:background="@color/colorDividerLightV2"
             app:layout_constraintTop_toBottomOf="@id/text_created_date" />
 
-        <include
-            android:id="@+id/layout_bottom_action"
-            layout="@layout/layout_share_item_bottom_action"
+        <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
+            android:id="@+id/bottom_action"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

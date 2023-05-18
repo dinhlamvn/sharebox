@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListUrlBinding
 import com.dinhlam.sharebox.extensions.formatForFeed
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -68,35 +67,24 @@ data class ListUrlModelView(
                 model.actionOpen?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonShare.setOnClickListener {
+            binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonComment.setOnClickListener {
+            binding.bottomAction.setOnCommentClickListener {
                 model.actionComment?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonUpVote.setOnClickListener {
+            binding.bottomAction.setOnLikeClickListener {
                 model.actionVote?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonStar.setOnClickListener {
+            binding.bottomAction.setOnBookmarkClickListener {
                 model.actionStar?.invoke(model.shareId)
             }
 
-            binding.layoutBottomAction.buttonUpVote.isVisible = model.showUpVote
-            binding.layoutBottomAction.buttonStar.isVisible = model.showUpVote
-
-            if (model.starred) {
-                binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_starred)
-            } else {
-                binding.layoutBottomAction.textStarred.setDrawableCompat(start = R.drawable.ic_star)
-            }
-
-            binding.layoutBottomAction.textUpvote.text =
-                buildContext.getString(R.string.up_vote, model.shareUpVote)
-            binding.layoutBottomAction.textComment.text =
-                buildContext.getString(R.string.comment, model.shareComment)
+            binding.bottomAction.setLikeNumber(model.shareUpVote)
+            binding.bottomAction.setCommentNumber(model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
