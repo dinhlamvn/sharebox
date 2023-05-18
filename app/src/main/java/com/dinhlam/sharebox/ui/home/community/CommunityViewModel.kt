@@ -85,27 +85,20 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun bookmark(shareId: String, bookmarkCollectionIds: List<String>) = backgroundTask {
-        if (bookmarkCollectionIds.isEmpty()) {
+    fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {
+        bookmarkCollectionId?.let { id ->
+            val bookmarkDetail = bookmarkRepository.findOne(shareId)
+            if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {
+                val bookmarked = bookmarkRepository.bookmark(shareId, id)
+                if (bookmarked) {
+                    setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(shareId)) }
+                }
+            }
+        } ?: run {
             val deleted = bookmarkRepository.delete(shareId)
             if (deleted) {
                 setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.minus(shareId)) }
             }
-        } else {
-            val bookmarkIds = bookmarkRepository.find(shareId).map { it.bookmarkCollectionId }
-            bookmarkIds.forEach { id ->
-                if (!bookmarkCollectionIds.contains(id)) {
-                    bookmarkRepository.delete(shareId, id)
-                }
-            }
-            val newBookmarkIds = bookmarkCollectionIds.filterNot { id -> bookmarkIds.contains(id) }
-            val set = mutableSetOf<String>()
-            newBookmarkIds.forEach { id ->
-                if (bookmarkRepository.bookmark(shareId, id)) {
-                    set.add(id)
-                }
-            }
-            setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(set)) }
         }
     }
 }

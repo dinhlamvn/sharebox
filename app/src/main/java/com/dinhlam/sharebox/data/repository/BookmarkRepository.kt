@@ -26,28 +26,12 @@ class BookmarkRepository @Inject constructor(
         }.getOrDefault(false)
     }
 
-    fun delete(shareId: String, bookmarkCollectionId: String): Boolean {
-        return bookmarkDao.runCatching {
-            delete(shareId, bookmarkCollectionId)
-            true
-        }.getOrDefault(false)
-    }
-
     fun findOne(shareId: String): BookmarkDetail? = bookmarkDao.runCatching {
-        find(shareId).firstOrNull()?.let { bookmark ->
+        find(shareId)?.let { bookmark ->
             BookmarkDetail(
                 bookmark.shareId,
                 bookmark.bookmarkCollectionId
             )
         }
     }.getOrDefault(null)
-
-    fun find(shareId: String): List<BookmarkDetail> = bookmarkDao.runCatching {
-        find(shareId).map { bookmark ->
-            BookmarkDetail(
-                bookmark.shareId,
-                bookmark.bookmarkCollectionId
-            )
-        }
-    }.getOrDefault(emptyList())
 }

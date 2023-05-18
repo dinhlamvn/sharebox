@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1904d0829714f4fb0cd9c986b49b44a0",
+    "identityHash": "cdf65765fe9369c70cf9afc5f9e425db",
     "entities": [
       {
         "tableName": "Share",
@@ -691,23 +691,22 @@
         },
         "indices": [
           {
-            "name": "index_Bookmark_bookmark_collection_id_share_id",
+            "name": "index_Bookmark_share_id",
             "unique": true,
             "columnNames": [
-              "bookmark_collection_id",
               "share_id"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Bookmark_bookmark_collection_id_share_id` ON `${TABLE_NAME}` (`bookmark_collection_id`, `share_id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Bookmark_share_id` ON `${TABLE_NAME}` (`share_id`)"
           },
           {
-            "name": "index_Bookmark_share_id",
+            "name": "index_Bookmark_bookmark_collection_id",
             "unique": false,
             "columnNames": [
-              "share_id"
+              "bookmark_collection_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_Bookmark_share_id` ON `${TABLE_NAME}` (`share_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Bookmark_bookmark_collection_id` ON `${TABLE_NAME}` (`bookmark_collection_id`)"
           }
         ],
         "foreignKeys": [
@@ -739,7 +738,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1904d0829714f4fb0cd9c986b49b44a0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cdf65765fe9369c70cf9afc5f9e425db')"
     ]
   }
 }

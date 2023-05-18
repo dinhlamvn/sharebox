@@ -22,5 +22,5 @@ interface BookmarkDao {
     fun delete(shareId: String, bookmarkCollectionId: String)
 
     @Query("SELECT * FROM bookmark WHERE share_id = :shareId")
-    fun find(shareId: String): List<Bookmark>
+    fun find(shareId: String): Bookmark?
 }

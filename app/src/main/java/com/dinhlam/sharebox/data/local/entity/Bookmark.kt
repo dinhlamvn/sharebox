@@ -19,9 +19,9 @@ import androidx.room.PrimaryKey
         childColumns = ["bookmark_collection_id"]
     )],
     indices = [Index(
-        value = ["bookmark_collection_id", "share_id"],
+        value = ["share_id"],
         unique = true
-    ), Index(value = ["share_id"])]
+    ), Index(value = ["bookmark_collection_id"])]
 )
 data class Bookmark(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

@@ -25,24 +25,27 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
 
     private fun loadBookmarkCollections() = execute { state ->
         val collections = bookmarkCollectionRepository.find()
-        val bookmarkedIds = bookmarkRepository.find(state.shareId)
-            .map { bookmarkDetail -> bookmarkDetail.bookmarkCollectionId }
-            .toSet()
+        val pickedId = bookmarkRepository.findOne(state.shareId)?.bookmarkCollectionId
         setState {
             copy(
                 bookmarkCollections = collections,
                 isLoading = false,
-                pickedBookmarkCollectionIds = bookmarkedIds,
-                originalPickedBookmarkCollectionIds = bookmarkedIds
+                pickedBookmarkCollectionId = pickedId,
+                originalPickedBookmarkCollectionId = pickedId
             )
         }
     }
 
+    fun reloadAfterCreateNewBookmarkCollection() = backgroundTask {
+        val collections = bookmarkCollectionRepository.find()
+        setState { copy(bookmarkCollections = collections) }
+    }
+
     fun onPickBookmarkCollection(id: String) = getState { state ->
-        if (state.pickedBookmarkCollectionIds.contains(id)) {
-            setState { copy(pickedBookmarkCollectionIds = pickedBookmarkCollectionIds.minus(id)) }
+        if (state.pickedBookmarkCollectionId == id) {
+            setState { copy(pickedBookmarkCollectionId = null) }
         } else {
-            setState { copy(pickedBookmarkCollectionIds = pickedBookmarkCollectionIds.plus(id)) }
+            setState { copy(pickedBookmarkCollectionId = id) }
         }
     }
 }

@@ -170,5 +170,6 @@
     <string name="desc_image_bookmark_list_thumbnail">The thumbnail of bookmark collection</string>
     <string name="dialog_bookmark_collection_picker_title">Bookmark share to...</string>
     <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
+    <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
 
 </resources>
