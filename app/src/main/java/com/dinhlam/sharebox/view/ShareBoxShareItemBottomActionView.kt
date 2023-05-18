@@ -38,4 +38,14 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
     fun setCommentNumber(number: Int) {
         binding.textComment.text = resources.getString(R.string.comment, number)
     }
+
+    fun updateBookmarkStatus(isBookmarked: Boolean) {
+        binding.buttonBookmark.setImageResource(
+            if (isBookmarked) {
+                R.drawable.ic_bookmarked
+            } else {
+                R.drawable.ic_bookmark
+            }
+        )
+    }
 }

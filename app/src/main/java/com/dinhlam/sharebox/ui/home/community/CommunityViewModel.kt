@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.ui.home.community
 import android.util.Log
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.model.ShareMode
+import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.StarRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
@@ -16,6 +17,7 @@ class CommunityViewModel @Inject constructor(
     private val voteRepository: VoteRepository,
     private val userSharePref: UserSharePref,
     private val starRepository: StarRepository,
+    private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<CommunityState>(CommunityState()) {
 
     init {
@@ -25,8 +27,8 @@ class CommunityViewModel @Inject constructor(
                     if (state.voteMap[share.shareId] == null) {
                         syncVote(share.shareId)
                     }
-                    starRepository.findOne(share.shareId)?.let {
-                        setState { copy(starredSet = starredSet.plus(it.shareId)) }
+                    bookmarkRepository.findOne(share.shareId)?.let { bookmark ->
+                        setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(bookmark.shareId)) }
                     }
                 }
             }
@@ -74,12 +76,36 @@ class CommunityViewModel @Inject constructor(
         val star = starRepository.findOne(shareId) ?: return@backgroundTask run {
             val result = starRepository.starred(shareId)
             if (result) {
-                setState { copy(starredSet = starredSet.plus(shareId)) }
+                setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(shareId)) }
             }
         }
         val result = starRepository.unStarred(star.shareId)
         if (result) {
-            setState { copy(starredSet = starredSet.minus(star.shareId)) }
+            setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.minus(star.shareId)) }
+        }
+    }
+
+    fun bookmark(shareId: String, bookmarkCollectionIds: List<String>) = backgroundTask {
+        if (bookmarkCollectionIds.isEmpty()) {
+            val deleted = bookmarkRepository.delete(shareId)
+            if (deleted) {
+                setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.minus(shareId)) }
+            }
+        } else {
+            val bookmarkIds = bookmarkRepository.find(shareId).map { it.bookmarkCollectionId }
+            bookmarkIds.forEach { id ->
+                if (!bookmarkCollectionIds.contains(id)) {
+                    bookmarkRepository.delete(shareId, id)
+                }
+            }
+            val newBookmarkIds = bookmarkCollectionIds.filterNot { id -> bookmarkIds.contains(id) }
+            val set = mutableSetOf<String>()
+            newBookmarkIds.forEach { id ->
+                if (bookmarkRepository.bookmark(shareId, id)) {
+                    set.add(id)
+                }
+            }
+            setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(set)) }
         }
     }
 }

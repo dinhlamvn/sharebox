@@ -27,7 +27,7 @@ data class ListUrlModelView(
     val note: String?,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
-    val starred: Boolean = false,
+    val bookmarked: Boolean = false,
     val userDetail: UserDetail,
     val actionOpen: Function1<String, Unit>? = null,
     val actionShareToOther: Function1<String, Unit>? = null,
@@ -66,6 +66,8 @@ data class ListUrlModelView(
             binding.container.setOnClickListener {
                 model.actionOpen?.invoke(model.shareId)
             }
+
+            binding.bottomAction.updateBookmarkStatus(model.bookmarked)
 
             binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther?.invoke(model.shareId)

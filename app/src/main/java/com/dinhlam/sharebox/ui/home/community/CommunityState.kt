@@ -8,5 +8,5 @@ data class CommunityState(
     val shares: List<ShareDetail> = emptyList(),
     val isLoadMore: Boolean = false,
     val voteMap: Map<String, Int> = emptyMap(),
-    val starredSet: Set<String> = emptySet(),
+    val bookmarkedShareIdSet: Set<String> = emptySet(),
 ) : BaseViewModel.BaseState

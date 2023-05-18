@@ -8,8 +8,10 @@ import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
+import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
@@ -112,8 +114,7 @@ class ShareHelper @Inject constructor(
         ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(
-                    ViewImagesDialogFragment.EXTRA_LIST_URI,
-                    arrayListOf(uri)
+                    ViewImagesDialogFragment.EXTRA_LIST_URI, arrayListOf(uri)
                 )
             }
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
@@ -123,10 +124,24 @@ class ShareHelper @Inject constructor(
         ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(
-                    ViewImagesDialogFragment.EXTRA_LIST_URI,
-                    arrayListOf(*uris.toTypedArray())
+                    ViewImagesDialogFragment.EXTRA_LIST_URI, arrayListOf(*uris.toTypedArray())
                 )
             }
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
+    }
+
+    fun bookmark(
+        activity: FragmentActivity,
+        shareId: String,
+        listener: BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener
+    ) {
+        BookmarkCollectionPickerDialogFragment().apply {
+            arguments = Bundle().apply {
+                putString(AppExtras.EXTRA_SHARE_ID, shareId)
+            }
+            this.listener = listener
+        }.show(
+            activity.supportFragmentManager, "BookmarkCollectionPickerDialogFragment"
+        )
     }
 }

@@ -84,7 +84,7 @@ class ProfileFragment :
                     shareDetail.user,
                     0,
                     shareComment = shareDetail.commentCount,
-                    starred = false,
+                    bookmarked = false,
                     actionOpen = ::onOpen,
                     actionShareToOther = ::onShareToOther,
                     actionVote = ::onVote,

@@ -15,6 +15,7 @@ import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -69,12 +70,12 @@ class CommunityFragment :
                         shareDetail.user,
                         state.voteMap[shareDetail.shareId].orElse(0),
                         shareComment = shareDetail.commentCount,
-                        starred = state.starredSet.contains(shareDetail.shareId),
+                        bookmarked = state.bookmarkedShareIdSet.contains(shareDetail.shareId),
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
                         actionVote = ::onVote,
                         actionComment = ::onComment,
-                        actionStar = ::onStar
+                        actionStar = ::onBookmark
                     )
                 }
                 models.forEachIndexed { idx, model ->
@@ -163,8 +164,11 @@ class CommunityFragment :
         viewModel.vote(shareId)
     }
 
-    private fun onStar(shareId: String) {
-        viewModel.starred(shareId)
+    private fun onBookmark(shareId: String) {
+        shareHelper.bookmark(requireActivity(), shareId) { pickedIds ->
+            Logger.debug("pick collection ${pickedIds.toString()}")
+            viewModel.bookmark(shareId, pickedIds)
+        }
     }
 
     private fun onComment(shareId: String) {

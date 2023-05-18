@@ -173,5 +173,7 @@
     <string name="action_toggle_passcode">Toggle passcode\'s visibility</string>
     <string name="action_clear_passcode">Clear passcode</string>
     <string name="desc_image_bookmark_list_thumbnail">The thumbnail of bookmark collection</string>
+    <string name="dialog_bookmark_collection_picker_title">Bookmark share to...</string>
+    <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
 
 </resources>
