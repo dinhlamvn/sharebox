@@ -64,13 +64,16 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
         return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
     }
 
-    fun passcodeIntent(context: Context): Intent {
-        return Intent(context, PasscodeActivity::class.java)
+    fun passcodeIntent(context: Context, desc: String? = null): Intent {
+        return Intent(context, PasscodeActivity::class.java).apply {
+            putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
+        }
     }
 
-    fun passcodeIntent(context: Context, passcode: String): Intent {
+    fun passcodeIntent(context: Context, passcode: String, desc: String? = null): Intent {
         return Intent(context, PasscodeActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_PASSCODE, passcode)
+            putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
         }
     }
 }

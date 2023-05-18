@@ -118,6 +118,10 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
         viewBinding.recyclerViewKeypad.adapter = keypadAdapter
         keypadAdapter.requestBuildModelViews()
+
+        intent.getStringExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION)?.let { passcodeDescription ->
+            viewBinding.textDesc.text = passcodeDescription
+        }
     }
 
     private fun onNumberClicked(number: Int) {

@@ -132,7 +132,8 @@ class BookmarkCollectionPickerDialogFragment :
         resultLauncherVerifyOriginalPasscode.launch(
             appRouter.passcodeIntent(
                 requireContext(),
-                passcode
+                passcode,
+                "Input your original collection passcode"
             )
         )
     }
@@ -144,7 +145,7 @@ class BookmarkCollectionPickerDialogFragment :
         }
         resultLauncherVerifyPasscode.launch(
             appRouter.passcodeIntent(
-                requireContext(), passcode
+                requireContext(), passcode, "Input your selected collection passcode"
             )
         )
     }
