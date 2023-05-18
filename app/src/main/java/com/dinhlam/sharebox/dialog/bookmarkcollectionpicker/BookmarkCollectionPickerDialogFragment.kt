@@ -37,6 +37,10 @@ class BookmarkCollectionPickerDialogFragment :
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 Logger.debug("Hello ok")
+                getState(viewModel) { state ->
+                    listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
+                    dismiss()
+                }
             }
         }
 
@@ -77,7 +81,9 @@ class BookmarkCollectionPickerDialogFragment :
                     height = 50.dp(),
                     isPicked = state.pickedBookmarkCollectionId == bookmarkCollection.id
                 ) {
-                    viewModel.onPickBookmarkCollection(bookmarkCollection.id)
+                    viewModel.onPickBookmarkCollection(
+                        bookmarkCollection.id, bookmarkCollection.passcode
+                    )
                 }
             })
         }
@@ -97,9 +103,18 @@ class BookmarkCollectionPickerDialogFragment :
         viewBinding.buttonDone.setOnClickListener {
             getState(viewModel) { state ->
                 if (state.pickedBookmarkCollectionId != state.originalPickedBookmarkCollectionId) {
-                    listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
+                    val passcode = state.passcode ?: return@getState run {
+                        listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
+                        dismiss()
+                    }
+                    resultLauncherVerifyPasscode.launch(
+                        appRouter.passcodeIntent(
+                            requireContext(), passcode
+                        )
+                    )
+                } else {
+                    dismiss()
                 }
-                dismiss()
             }
         }
 

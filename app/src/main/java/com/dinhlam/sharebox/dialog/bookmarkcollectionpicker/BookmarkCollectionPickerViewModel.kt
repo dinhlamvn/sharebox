@@ -26,12 +26,15 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
     private fun loadBookmarkCollections() = execute { state ->
         val collections = bookmarkCollectionRepository.find()
         val pickedId = bookmarkRepository.findOne(state.shareId)?.bookmarkCollectionId
+        val bookmarkCollection =
+            pickedId?.let { collectionId -> bookmarkCollectionRepository.find(collectionId) }
         setState {
             copy(
                 bookmarkCollections = collections,
                 isLoading = false,
-                pickedBookmarkCollectionId = pickedId,
-                originalPickedBookmarkCollectionId = pickedId
+                pickedBookmarkCollectionId = bookmarkCollection?.id,
+                originalPickedBookmarkCollectionId = bookmarkCollection?.id,
+                passcode = bookmarkCollection?.passcode
             )
         }
     }
@@ -41,11 +44,11 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
         setState { copy(bookmarkCollections = collections) }
     }
 
-    fun onPickBookmarkCollection(id: String) = getState { state ->
+    fun onPickBookmarkCollection(id: String, passcode: String?) = getState { state ->
         if (state.pickedBookmarkCollectionId == id) {
             setState { copy(pickedBookmarkCollectionId = null) }
         } else {
-            setState { copy(pickedBookmarkCollectionId = id) }
+            setState { copy(pickedBookmarkCollectionId = id, passcode = passcode) }
         }
     }
 }
