@@ -16,6 +16,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.TranslucentStatusBar" parent="AppTheme.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="AppTheme.Transparent" parent="AppTheme">
         <item name="android:background">@android:color/transparent</item>
         <item name="windowNoTitle">true</item>
@@ -43,6 +49,18 @@
         <item name="android:textColor">@color/colorTextBlack</item>
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/roboto</item>
+    </style>
+
+    <style name="TextAppearance.CollapsingToolbar.Expanded" parent="TextAppearance.Header">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">22sp</item>
+        <item name="fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextAppearance.CollapsingToolbar.Collapsed" parent="TextAppearance.Header">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/roboto_medium</item>
     </style>
 
     <style name="TextAppearance.HeaderMedium" parent="TextAppearance.Header">

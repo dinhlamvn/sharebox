@@ -154,7 +154,9 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
             stack.clear()
             passcodeAdapter.requestBuildModelViews()
         } else {
-            setResult(Activity.RESULT_OK)
+            val returnIntent = Intent()
+            returnIntent.putExtras(intent)
+            setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }
     }

@@ -13,4 +13,7 @@ interface BookmarkCollectionDao {
 
     @Query("SELECT * FROM bookmark_collection ORDER BY id DESC")
     fun find(): List<BookmarkCollection>
+
+    @Query("SELECT * FROM bookmark_collection WHERE id = :id")
+    fun find(id: String): BookmarkCollection?
 }

@@ -126,6 +126,13 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
+            android:name=".ui.home.bookmark.list.BookmarkListItemActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.TranslucentStatusBar"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
             android:name=".ui.passcode.PasscodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"

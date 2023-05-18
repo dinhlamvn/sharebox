@@ -30,4 +30,9 @@ class BookmarkCollectionRepository @Inject constructor(
         val bookmarkCollections = find()
         bookmarkCollections.map { bookmarkCollection -> mapper.map(bookmarkCollection) }
     }.getOrDefault(emptyList())
+
+    fun find(id: String): BookmarkCollectionDetail? = bookmarkCollectionDao.runCatching {
+        val bookmarkCollection = find(id) ?: return@runCatching null
+        mapper.map(bookmarkCollection)
+    }.getOrNull()
 }

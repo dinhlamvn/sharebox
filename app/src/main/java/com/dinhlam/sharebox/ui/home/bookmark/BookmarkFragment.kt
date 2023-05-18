@@ -12,10 +12,10 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.databinding.FragmentBookmarkBinding
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
@@ -37,7 +37,10 @@ class BookmarkFragment :
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                showToast("OK")
+                val bookmarkCollectionId =
+                    result.data?.getStringExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID)
+                        ?: return@registerForActivityResult
+                goToBookmarkListItem(bookmarkCollectionId)
             }
         }
 
@@ -103,7 +106,7 @@ class BookmarkFragment :
 
         viewBinding.buttonAdd.setOnClickListener {
             createBookmarkCollectionResultLauncher.launch(
-                appRouter.bookmarkCollectionCreatorIntent(requireContext())
+                appRouter.bookmarkCollectionFormIntent(requireContext())
             )
         }
     }
@@ -111,13 +114,15 @@ class BookmarkFragment :
     private fun openBookmarkCollection(bookmarkCollection: BookmarkCollectionDetail) {
         val passcode = bookmarkCollection.passcode ?: ""
         if (passcode.isEmpty()) {
-            showToast("OK")
+            goToBookmarkListItem(bookmarkCollection.id)
         } else {
-            passcodeConfirmResultLauncher.launch(
-                appRouter.passcodeIntent(
-                    requireContext(), passcode
-                )
-            )
+            val intent = appRouter.passcodeIntent(requireContext(), passcode)
+            intent.putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollection.id)
+            passcodeConfirmResultLauncher.launch(intent)
         }
+    }
+
+    private fun goToBookmarkListItem(bookmarkCollectionId: String) {
+        startActivity(appRouter.bookmarkListItemIntent(requireContext(), bookmarkCollectionId))
     }
 }

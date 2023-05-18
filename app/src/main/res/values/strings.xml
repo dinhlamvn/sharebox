@@ -172,5 +172,6 @@
     <string name="action_done">Done</string>
     <string name="action_toggle_passcode">Toggle passcode\'s visibility</string>
     <string name="action_clear_passcode">Clear passcode</string>
+    <string name="desc_image_bookmark_list_thumbnail">The thumbnail of bookmark collection</string>
 
 </resources>

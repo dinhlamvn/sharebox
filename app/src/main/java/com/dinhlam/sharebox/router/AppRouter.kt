@@ -6,10 +6,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
+import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -41,13 +41,22 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
         context.startActivity(intent)
     }
 
-    fun bookmarkCollectionCreatorIntent(context: Context): Intent {
+    fun bookmarkCollectionFormIntent(context: Context): Intent {
         return Intent(context, BookmarkCollectionFormActivity::class.java)
     }
 
-    fun bookmarkCollectionEditorIntent(context: Context, bookmarkCollection: BookmarkCollectionDetail): Intent {
+    fun bookmarkCollectionFormIntent(
+        context: Context,
+        bookmarkCollection: BookmarkCollectionDetail
+    ): Intent {
         return Intent(context, BookmarkCollectionFormActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
+        }
+    }
+
+    fun bookmarkListItemIntent(context: Context, bookmarkCollectionId: String): Intent {
+        return Intent(context, BookmarkListItemActivity::class.java).apply {
+            putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollectionId)
         }
     }
 
