@@ -79,7 +79,7 @@
         <item name="android:buttonTint">@color/primaryColor</item>
     </style>
 
-    <style name="AppTheme.ProgressBar" parent="AppTheme">
+    <style name="AppTheme.ProgressBar" parent="Widget.AppCompat.ProgressBar">
         <item name="colorAccent">@color/primaryColor</item>
     </style>
 

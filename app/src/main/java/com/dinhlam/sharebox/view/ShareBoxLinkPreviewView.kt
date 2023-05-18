@@ -68,20 +68,16 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         var type: String? = null
     )
 
-    private var binding: ViewShareBoxLinkPreviewBinding
-
-    init {
-        inflate(context, R.layout.view_share_box_link_preview, this).apply {
-            binding = ViewShareBoxLinkPreviewBinding.bind(this)
+    private val binding: ViewShareBoxLinkPreviewBinding =
+        inflate(context, R.layout.view_share_box_link_preview, this).run {
+            ViewShareBoxLinkPreviewBinding.bind(this)
         }
-    }
 
     fun resetUi() {
         binding.textViewUrl.text = null
         binding.textViewTitle.text = null
         binding.textViewDescription.text = null
         binding.imageView.setImageDrawable(null)
-
     }
 
     fun setLink(url: String?, block: () -> Style = { Style() }) {
