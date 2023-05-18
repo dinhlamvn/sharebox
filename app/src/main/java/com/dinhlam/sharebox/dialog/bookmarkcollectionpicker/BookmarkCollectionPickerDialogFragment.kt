@@ -44,6 +44,13 @@ class BookmarkCollectionPickerDialogFragment :
             }
         }
 
+    private val resultLauncherVerifyOriginalPasscode =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                doAfterOriginalPasscodeVerified()
+            }
+        }
+
     private val resultLauncherCreateBookmarkCollection =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -79,6 +86,7 @@ class BookmarkCollectionPickerDialogFragment :
                     "picker_${bookmarkCollection.id}",
                     bookmarkCollection.name,
                     height = 50.dp(),
+                    startIcon = if (bookmarkCollection.passcode == null) 0 else R.drawable.ic_lock_black,
                     isPicked = state.pickedBookmarkCollectionId == bookmarkCollection.id
                 ) {
                     viewModel.onPickBookmarkCollection(
@@ -103,15 +111,8 @@ class BookmarkCollectionPickerDialogFragment :
         viewBinding.buttonDone.setOnClickListener {
             getState(viewModel) { state ->
                 if (state.pickedBookmarkCollectionId != state.originalPickedBookmarkCollectionId) {
-                    val passcode = state.passcode ?: return@getState run {
-                        listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
-                        dismiss()
-                    }
-                    resultLauncherVerifyPasscode.launch(
-                        appRouter.passcodeIntent(
-                            requireContext(), passcode
-                        )
-                    )
+                    state.originalPasscode?.let(::requestVerifyOriginalPasscode)
+                        ?: doAfterOriginalPasscodeVerified()
                 } else {
                     dismiss()
                 }
@@ -125,5 +126,26 @@ class BookmarkCollectionPickerDialogFragment :
                 )
             )
         }
+    }
+
+    private fun requestVerifyOriginalPasscode(passcode: String) {
+        resultLauncherVerifyOriginalPasscode.launch(
+            appRouter.passcodeIntent(
+                requireContext(),
+                passcode
+            )
+        )
+    }
+
+    private fun doAfterOriginalPasscodeVerified() = getState(viewModel) { state ->
+        val passcode = state.passcode ?: return@getState run {
+            listener.onBookmarkCollectionDone(state.pickedBookmarkCollectionId)
+            dismiss()
+        }
+        resultLauncherVerifyPasscode.launch(
+            appRouter.passcodeIntent(
+                requireContext(), passcode
+            )
+        )
     }
 }

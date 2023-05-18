@@ -19,6 +19,7 @@ data class TextPickerModelView(
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextAppearance_Body,
     val isPicked: Boolean = false,
+    @DrawableRes val startIcon: Int = 0,
     @DrawableRes val pickedIcon: Int = R.drawable.ic_done_black,
     val actionClick: OnClickListener? = null,
 ) : BaseListAdapter.BaseModelView("text_$id") {
@@ -41,7 +42,10 @@ data class TextPickerModelView(
                 model.actionClick?.let { listener ->
                     binding.textView.setOnClickListener(listener)
                 }
-                binding.textView.setDrawableCompat(end = if (model.isPicked) pickedIcon else 0)
+                binding.textView.setDrawableCompat(
+                    start = model.startIcon,
+                    end = if (model.isPicked) pickedIcon else 0
+                )
             }
 
             override fun onUnBind() {

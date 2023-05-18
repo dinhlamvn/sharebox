@@ -11,8 +11,8 @@ class BookmarkRepository @Inject constructor(
     private val bookmarkDao: BookmarkDao,
 ) {
 
-    fun bookmark(shareId: String, bookmarkCollectionId: String): Boolean {
-        val bookmark = Bookmark(shareId = shareId, bookmarkCollectionId = bookmarkCollectionId)
+    fun bookmark(id: Int, shareId: String, bookmarkCollectionId: String): Boolean {
+        val bookmark = Bookmark(id, shareId = shareId, bookmarkCollectionId = bookmarkCollectionId)
         return bookmarkDao.runCatching {
             upsert(bookmark)
             true
@@ -29,6 +29,7 @@ class BookmarkRepository @Inject constructor(
     fun findOne(shareId: String): BookmarkDetail? = bookmarkDao.runCatching {
         find(shareId)?.let { bookmark ->
             BookmarkDetail(
+                bookmark.id,
                 bookmark.shareId,
                 bookmark.bookmarkCollectionId
             )

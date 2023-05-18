@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.StarRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -89,7 +90,8 @@ class CommunityViewModel @Inject constructor(
         bookmarkCollectionId?.let { id ->
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {
-                val bookmarked = bookmarkRepository.bookmark(shareId, id)
+                val bookmarked =
+                    bookmarkRepository.bookmark(bookmarkDetail?.id.orElse(0), shareId, id)
                 if (bookmarked) {
                     setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(shareId)) }
                 }

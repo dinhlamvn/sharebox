@@ -34,7 +34,7 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
                 isLoading = false,
                 pickedBookmarkCollectionId = bookmarkCollection?.id,
                 originalPickedBookmarkCollectionId = bookmarkCollection?.id,
-                passcode = bookmarkCollection?.passcode
+                originalPasscode = bookmarkCollection?.passcode
             )
         }
     }

@@ -10,4 +10,5 @@ data class BookmarkCollectionPickerState(
     val pickedBookmarkCollectionId: String? = null,
     val passcode: String? = null,
     val originalPickedBookmarkCollectionId: String? = null,
+    val originalPasscode: String? = null,
 ) : BaseViewModel.BaseState
