@@ -143,7 +143,6 @@ class ProfileFragment :
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
 
-
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> {
                 shareHelper.openUrl(

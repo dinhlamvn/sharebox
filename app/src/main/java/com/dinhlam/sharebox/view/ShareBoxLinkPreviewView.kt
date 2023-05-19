@@ -121,7 +121,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
 
     private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
-        ImageLoader.instance.load(context, R.drawable.no_preview_image, binding.imageView)
+        ImageLoader.instance.load(context, R.drawable.image_no_preview, binding.imageView)
         binding.textViewUrl.text = url
         binding.shimmerContainer.hideShimmer()
         binding.shimmerContainer.isVisible = false

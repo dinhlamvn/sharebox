@@ -14,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -94,8 +95,24 @@ object GlideImageLoader : ImageLoader() {
         }
 
         val config = block.invoke(ImageLoadConfig())
+        val errorRequestBuilder =
+            Glide.with(toContext).load(config.errorDrawable).onlyRetrieveFromCache(false).run {
+                if (config.transformType is TransformType.Circle) {
+                    apply(RequestOptions.circleCropTransform())
+                } else {
+                    this
+                }
+            }
 
-        return buildRequest(Glide.with(toContext).load(any), config)
+        val thumbnailRequestBuilder = Glide.with(toContext).load(config.thumbnailDrawable)
+
+        return buildRequest(
+            Glide.with(toContext)
+                .load(any)
+                .thumbnail(thumbnailRequestBuilder)
+                .error(errorRequestBuilder),
+            config
+        )
     }
 
     private fun buildRequest(
