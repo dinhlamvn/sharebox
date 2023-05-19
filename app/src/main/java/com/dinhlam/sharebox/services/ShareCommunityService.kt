@@ -25,7 +25,7 @@ import javax.inject.Inject
 class ShareCommunityService : Service() {
 
     companion object {
-        private const val TIME_DELAY = 5000L
+        private const val TIME_DELAY = 60_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
