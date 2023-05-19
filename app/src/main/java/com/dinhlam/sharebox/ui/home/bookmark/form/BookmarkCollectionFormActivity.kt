@@ -16,6 +16,8 @@ import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionFormBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
+import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.AppRouter
 import dagger.hilt.android.AndroidEntryPoint
@@ -143,6 +145,8 @@ class BookmarkCollectionFormActivity :
     private fun showThumbnail(data: Intent?) {
         val uri = data?.data ?: return
         viewModel.setThumbnail(uri)
-        ImageLoader.instance.load(this, uri, viewBinding.imageThumbnail)
+        ImageLoader.instance.load(this, uri, viewBinding.imageThumbnail) {
+            copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
+        }
     }
 }

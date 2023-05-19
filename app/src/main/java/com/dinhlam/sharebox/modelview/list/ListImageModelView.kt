@@ -32,8 +32,6 @@ data class ListImageModelView(
     val actionVote: Function1<String, Unit>? = null,
     val actionComment: Function1<String, Unit>? = null,
     val actionStar: Function1<String, Unit>? = null,
-    val showUpVote: Boolean = true,
-    val showStar: Boolean = true,
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(

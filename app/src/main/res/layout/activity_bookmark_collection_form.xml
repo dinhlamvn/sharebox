@@ -52,7 +52,7 @@
                     android:id="@+id/image_thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:scaleType="centerCrop"
+                    android:scaleType="centerInside"
                     android:src="@drawable/no_preview_image"
                     app:layout_constraintTop_toTopOf="parent" />
 
