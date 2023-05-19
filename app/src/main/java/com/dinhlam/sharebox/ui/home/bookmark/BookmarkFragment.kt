@@ -34,16 +34,6 @@ class BookmarkFragment :
             }
         }
 
-    private val passcodeConfirmResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val bookmarkCollectionId =
-                    result.data?.getStringExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID)
-                        ?: return@registerForActivityResult
-                goToBookmarkListItem(bookmarkCollectionId)
-            }
-        }
-
     companion object {
         private const val COLLECTION_SPAN_COUNT = 2
     }
@@ -74,7 +64,7 @@ class BookmarkFragment :
                         if (idx % COLLECTION_SPAN_COUNT == 0) 0 else 8.dp(),
                         if (idx >= COLLECTION_SPAN_COUNT) 8.dp() else 0,
                     ) {
-                        openBookmarkCollection(bookmarkCollection)
+                        goToBookmarkListItem(bookmarkCollection.id)
                     }
                 })
             }
@@ -108,17 +98,6 @@ class BookmarkFragment :
             createBookmarkCollectionResultLauncher.launch(
                 appRouter.bookmarkCollectionFormIntent(requireContext())
             )
-        }
-    }
-
-    private fun openBookmarkCollection(bookmarkCollection: BookmarkCollectionDetail) {
-        val passcode = bookmarkCollection.passcode ?: ""
-        if (passcode.isEmpty()) {
-            goToBookmarkListItem(bookmarkCollection.id)
-        } else {
-            val intent = appRouter.passcodeIntent(requireContext(), passcode)
-            intent.putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollection.id)
-            passcodeConfirmResultLauncher.launch(intent)
         }
     }
 

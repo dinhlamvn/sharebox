@@ -5,5 +5,6 @@ import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 
 data class BookmarkListItemState(
     val bookmarkCollectionId: String,
-    val bookmarkCollection: BookmarkCollectionDetail? = null
+    val bookmarkCollection: BookmarkCollectionDetail? = null,
+    val requestVerifyPasscode: Boolean = false,
 ) : BaseViewModel.BaseState

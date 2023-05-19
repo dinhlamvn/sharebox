@@ -20,6 +20,11 @@ class BookmarkListItemViewModel @Inject constructor(
 
     private fun loadBookmarkCollectionDetail() = execute { state ->
         val bookmarkCollection = bookmarkCollectionRepository.find(state.bookmarkCollectionId)
-        setState { copy(bookmarkCollection = bookmarkCollection) }
+        val passcode = bookmarkCollection?.passcode ?: ""
+        setState { copy(bookmarkCollection = bookmarkCollection, requestVerifyPasscode = passcode.isNotEmpty()) }
+    }
+
+    fun markPasscodeVerified() = setState {
+        copy(requestVerifyPasscode = false)
     }
 }
