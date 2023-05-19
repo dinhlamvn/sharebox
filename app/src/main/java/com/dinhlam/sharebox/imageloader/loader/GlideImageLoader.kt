@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -57,9 +58,9 @@ object GlideImageLoader : ImageLoader() {
         }
     }
 
-    private fun createTransformRequest(
-        builder: RequestBuilder<*>, transformType: TransformType
-    ): RequestBuilder<*> = builder.run {
+    private fun <T> createTransformRequest(
+        builder: RequestBuilder<T>, transformType: TransformType
+    ): RequestBuilder<T> = builder.run {
         when (transformType) {
             is TransformType.Rounded -> {
                 val transform = transformType.castNonNull<TransformType.Rounded>()
@@ -95,6 +96,7 @@ object GlideImageLoader : ImageLoader() {
         }
 
         val config = block.invoke(ImageLoadConfig())
+
         val errorRequestBuilder =
             Glide.with(toContext).load(config.errorDrawable).onlyRetrieveFromCache(false).run {
                 if (config.transformType is TransformType.Circle) {
@@ -106,18 +108,15 @@ object GlideImageLoader : ImageLoader() {
 
         val thumbnailRequestBuilder = Glide.with(toContext).load(config.thumbnailDrawable)
 
-        return buildRequest(
-            Glide.with(toContext)
-                .load(any)
-                .thumbnail(thumbnailRequestBuilder)
-                .error(errorRequestBuilder),
-            config
+        return buildRequest<Drawable>(
+            Glide.with(toContext).load(any).thumbnail(thumbnailRequestBuilder)
+                .error(errorRequestBuilder), config
         )
     }
 
-    private fun buildRequest(
-        builder: RequestBuilder<*>, config: ImageLoadConfig
-    ): RequestBuilder<*> = builder.run {
+    private fun <T> buildRequest(
+        builder: RequestBuilder<T>, config: ImageLoadConfig
+    ): RequestBuilder<T> = builder.run {
         createTransformRequest(this, config.transformType)
     }
 
@@ -156,7 +155,11 @@ object GlideImageLoader : ImageLoader() {
 
         val config = block.invoke(ImageLoadConfig())
 
-        return buildRequest(Glide.with(toContext).asBitmap().load(model), config).submit().get()
-            .cast()
+        return buildRequest<Bitmap>(
+            Glide.with(toContext).asBitmap().load(model),
+            config
+        ).runCatching {
+            submit().get()
+        }.getOrNull()
     }
 }
