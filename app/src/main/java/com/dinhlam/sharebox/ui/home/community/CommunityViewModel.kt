@@ -1,9 +1,8 @@
 package com.dinhlam.sharebox.ui.home.community
 
-import android.util.Log
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
 import com.dinhlam.sharebox.extensions.orElse
@@ -13,6 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
+    private val shareCommunityRepository: ShareCommunityRepository,
     private val shareRepository: ShareRepository,
     private val voteRepository: VoteRepository,
     private val userSharePref: UserSharePref,
@@ -38,10 +38,11 @@ class CommunityViewModel @Inject constructor(
 
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
-        backgroundTask(onError = {
-            Log.e("DinhLam", it.toString())
-        }) {
-            val shares = shareRepository.find(shareMode = ShareMode.ShareModeCommunity)
+        backgroundTask {
+            val shareCommunityDetails = shareCommunityRepository.findAll()
+            val ids =
+                shareCommunityDetails.map { shareCommunityDetail -> shareCommunityDetail.shareId }
+            val shares = shareRepository.find(ids)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -49,7 +50,10 @@ class CommunityViewModel @Inject constructor(
     fun loadMores() {
         setState { copy(isLoadMore = true) }
         backgroundTask {
-            val shares = shareRepository.find(shareMode = ShareMode.ShareModeCommunity)
+            val shareCommunityDetails = shareCommunityRepository.findAll()
+            val ids =
+                shareCommunityDetails.map { shareCommunityDetail -> shareCommunityDetail.shareId }
+            val shares = shareRepository.find(ids)
             setState { copy(shares = this.shares.plus(shares), isLoadMore = false) }
         }
     }
