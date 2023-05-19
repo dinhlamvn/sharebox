@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
 import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
-import com.dinhlam.sharebox.data.local.dao.StarDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VoteDao
 import com.google.gson.Gson
@@ -59,13 +58,6 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): CommentDao {
         return appDatabase.commentDao()
-    }
-
-    @Provides
-    fun provideStarDao(
-        appDatabase: AppDatabase
-    ): StarDao {
-        return appDatabase.starDao()
     }
 
     @Provides

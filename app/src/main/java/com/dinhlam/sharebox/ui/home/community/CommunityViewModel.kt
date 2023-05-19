@@ -5,7 +5,6 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.StarRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.pref.UserSharePref
@@ -17,7 +16,6 @@ class CommunityViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val voteRepository: VoteRepository,
     private val userSharePref: UserSharePref,
-    private val starRepository: StarRepository,
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<CommunityState>(CommunityState()) {
 
@@ -71,19 +69,6 @@ class CommunityViewModel @Inject constructor(
     private suspend fun syncVote(shareId: String) {
         val voteCount = voteRepository.countVote(shareId)
         setState { copy(voteMap = voteMap.plus(shareId to voteCount)) }
-    }
-
-    fun starred(shareId: String) = backgroundTask {
-        val star = starRepository.findOne(shareId) ?: return@backgroundTask run {
-            val result = starRepository.starred(shareId)
-            if (result) {
-                setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.plus(shareId)) }
-            }
-        }
-        val result = starRepository.unStarred(star.shareId)
-        if (result) {
-            setState { copy(bookmarkedShareIdSet = bookmarkedShareIdSet.minus(star.shareId)) }
-        }
     }
 
     fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {
