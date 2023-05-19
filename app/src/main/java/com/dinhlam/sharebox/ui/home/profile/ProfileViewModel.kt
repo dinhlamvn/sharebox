@@ -75,7 +75,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private suspend fun syncVote(shareId: String) {
-        val voteCount = voteRepository.countVote(shareId)
+        val voteCount = voteRepository.count(shareId)
         setState { copy(shareVoteMap = shareVoteMap.plus(shareId to voteCount)) }
     }
 

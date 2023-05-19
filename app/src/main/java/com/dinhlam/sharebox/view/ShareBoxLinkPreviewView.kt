@@ -10,7 +10,6 @@ import com.dinhlam.sharebox.extensions.setNonBlankText
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +93,6 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
                     val openGraphResult =
                         LinkPreviewCacheUtils.getCache(nonNullUrl) ?: getLinkInfo(nonNullUrl, agent)
                     openGraphResult?.let { nonNullResult ->
-                        Logger.debug(nonNullResult.toString())
                         LinkPreviewCacheUtils.setCache(nonNullUrl, nonNullResult)
                         handleResult(nonNullResult)
                         return@launch

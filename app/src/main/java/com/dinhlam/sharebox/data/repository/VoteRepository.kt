@@ -18,7 +18,7 @@ class VoteRepository @Inject constructor(
         }.getOrDefault(false)
     }
 
-    suspend fun countVote(shareId: String) = voteDao.runCatching {
+    suspend fun count(shareId: String) = voteDao.runCatching {
         countVote(shareId)
     }.getOrDefault(0)
 }

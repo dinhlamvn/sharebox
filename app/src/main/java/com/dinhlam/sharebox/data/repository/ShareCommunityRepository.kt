@@ -20,7 +20,18 @@ class ShareCommunityRepository @Inject constructor(
             true
         }.getOrDefault(false)
 
+    suspend fun insert(id: Int, shareId: String, sharePower: Int = 0): Boolean =
+        shareCommunityDao.runCatching {
+            val shareCommunity = ShareCommunity(id, shareId = shareId, sharePower = sharePower)
+            upsert(shareCommunity)
+            true
+        }.getOrDefault(false)
+
     suspend fun findAll(): List<ShareCommunityDetail> = shareCommunityDao.runCatching {
         find().map { shareCommunity -> mapper.map(shareCommunity) }
     }.getOrDefault(emptyList())
+
+    suspend fun findOne(shareId: String): ShareCommunityDetail? = shareCommunityDao.runCatching {
+        find(shareId)?.let { shareCommunity -> mapper.map(shareCommunity) }
+    }.getOrDefault(null)
 }

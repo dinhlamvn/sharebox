@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.ui.home.community
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
-import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
 import com.dinhlam.sharebox.extensions.orElse
@@ -12,7 +11,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
-    private val shareCommunityRepository: ShareCommunityRepository,
     private val shareRepository: ShareRepository,
     private val voteRepository: VoteRepository,
     private val userSharePref: UserSharePref,
@@ -39,10 +37,7 @@ class CommunityViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shareCommunityDetails = shareCommunityRepository.findAll()
-            val ids =
-                shareCommunityDetails.map { shareCommunityDetail -> shareCommunityDetail.shareId }
-            val shares = shareRepository.find(ids)
+            val shares = shareRepository.findShareCommunity()
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -50,10 +45,7 @@ class CommunityViewModel @Inject constructor(
     fun loadMores() {
         setState { copy(isLoadMore = true) }
         backgroundTask {
-            val shareCommunityDetails = shareCommunityRepository.findAll()
-            val ids =
-                shareCommunityDetails.map { shareCommunityDetail -> shareCommunityDetail.shareId }
-            val shares = shareRepository.find(ids)
+            val shares = shareRepository.findShareCommunity()
             setState { copy(shares = this.shares.plus(shares), isLoadMore = false) }
         }
     }
@@ -71,7 +63,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     private suspend fun syncVote(shareId: String) {
-        val voteCount = voteRepository.countVote(shareId)
+        val voteCount = voteRepository.count(shareId)
         setState { copy(shareVoteMap = shareVoteMap.plus(shareId to voteCount)) }
     }
 

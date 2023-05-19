@@ -1,6 +1,11 @@
 package com.dinhlam.sharebox.ui.home.community
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +16,7 @@ import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.screenWidth
@@ -20,6 +26,7 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.services.ShareCommunityService
 import com.dinhlam.sharebox.ui.home.profile.ProfileState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -32,6 +39,20 @@ class CommunityFragment :
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentCommunityBinding {
         return FragmentCommunityBinding.inflate(inflater, container, false)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+
+        private var bound = false
+
+        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
+            binder.cast<ShareCommunityService.LocalBinder>()?.getService()?.syncShareCommunityData()
+            bound = true
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName?) {
+            bound = false
+        }
     }
 
     private val layoutManager by lazy {
@@ -108,6 +129,18 @@ class CommunityFragment :
 
     override fun onStateChanged(state: CommunityState) {
         shareAdapter.requestBuildModelViews()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(requireContext(), ShareCommunityService::class.java).also { intent ->
+            context?.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        context?.unbindService(serviceConnection)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
