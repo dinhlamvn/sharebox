@@ -164,11 +164,12 @@
     <string name="bookmark_collection_error_require_name">Name can\'t be empty</string>
     <string name="bookmark_collection_error_require_desc">Desc can\'t be empty</string>
     <string name="bookmark_collection_error_require_thumbnail">Thumbnail must be set</string>
+    <string name="bookmark_collection_hint_passcode">Passcode</string>
     <string name="action_done">Done</string>
     <string name="action_toggle_passcode">Toggle passcode\'s visibility</string>
     <string name="action_clear_passcode">Clear passcode</string>
     <string name="desc_image_bookmark_list_thumbnail">The thumbnail of bookmark collection</string>
-    <string name="dialog_bookmark_collection_picker_title">Bookmark share to...</string>
+    <string name="dialog_bookmark_collection_picker_title">Bookmark share to…</string>
     <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
     <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
