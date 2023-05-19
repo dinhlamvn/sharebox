@@ -23,7 +23,7 @@ class CommunityViewModel @Inject constructor(
         consume(CommunityState::shares, true) { shares ->
             execute { state ->
                 shares.forEach { share ->
-                    if (state.voteMap[share.shareId] == null) {
+                    if (state.shareVoteMap[share.shareId] == null) {
                         syncVote(share.shareId)
                     }
                     bookmarkRepository.findOne(share.shareId)?.let { bookmark ->
@@ -55,7 +55,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { copy(bookmarkedShareIdSet = emptySet(), voteMap = emptyMap()) }
+        setState { CommunityState() }
         loadShares()
     }
 
@@ -68,7 +68,7 @@ class CommunityViewModel @Inject constructor(
 
     private suspend fun syncVote(shareId: String) {
         val voteCount = voteRepository.countVote(shareId)
-        setState { copy(voteMap = voteMap.plus(shareId to voteCount)) }
+        setState { copy(shareVoteMap = shareVoteMap.plus(shareId to voteCount)) }
     }
 
     fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {

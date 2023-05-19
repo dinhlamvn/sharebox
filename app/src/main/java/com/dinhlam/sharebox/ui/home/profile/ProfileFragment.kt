@@ -8,11 +8,11 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -20,7 +20,6 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.ui.comment.CommentFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -83,16 +82,14 @@ class ProfileFragment :
                     shareDetail.createdAt,
                     shareDetail.shareNote,
                     shareDetail.user,
-                    0,
+                    state.shareVoteMap[shareDetail.shareId].orElse(0),
                     shareComment = shareDetail.commentCount,
-                    bookmarked = false,
+                    bookmarked = state.bookmarkedShareIdSet.contains(shareDetail.shareId),
                     actionOpen = ::onOpen,
                     actionShareToOther = ::onShareToOther,
                     actionVote = ::onVote,
                     actionComment = ::onComment,
-                    actionBookmark = ::onStar,
-                    showUpVote = false,
-                    showStar = false
+                    actionBookmark = ::onBookmark
                 )
             }
             if (models.isNotEmpty()) {
@@ -175,11 +172,13 @@ class ProfileFragment :
     }
 
     private fun onVote(shareId: String) {
-        //viewModel.vote(shareId)
+        viewModel.vote(shareId)
     }
 
-    private fun onStar(shareId: String) {
-        //viewModel.starred(shareId)
+    private fun onBookmark(shareId: String) {
+        shareHelper.bookmark(requireActivity(), shareId) { pickedId ->
+            viewModel.bookmark(shareId, pickedId)
+        }
     }
 
     private fun onComment(shareId: String) {

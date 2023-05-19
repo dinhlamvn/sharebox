@@ -7,6 +7,6 @@ data class CommunityState(
     val isRefreshing: Boolean = false,
     val shares: List<ShareDetail> = emptyList(),
     val isLoadMore: Boolean = false,
-    val voteMap: Map<String, Int> = emptyMap(),
+    val shareVoteMap: Map<String, Int> = emptyMap(),
     val bookmarkedShareIdSet: Set<String> = emptySet(),
 ) : BaseViewModel.BaseState

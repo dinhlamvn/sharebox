@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -64,7 +63,7 @@ class CommunityFragment :
                         shareDetail.createdAt,
                         shareDetail.shareNote,
                         shareDetail.user,
-                        state.voteMap[shareDetail.shareId].orElse(0),
+                        state.shareVoteMap[shareDetail.shareId].orElse(0),
                         shareComment = shareDetail.commentCount,
                         bookmarked = state.bookmarkedShareIdSet.contains(shareDetail.shareId),
                         actionOpen = ::onOpen,
@@ -163,7 +162,6 @@ class CommunityFragment :
 
     private fun onBookmark(shareId: String) {
         shareHelper.bookmark(requireActivity(), shareId) { pickedId ->
-            Logger.debug("pick collection ${pickedId.toString()}")
             viewModel.bookmark(shareId, pickedId)
         }
     }
