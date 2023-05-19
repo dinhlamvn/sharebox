@@ -10,4 +10,5 @@ data class BookmarkCollectionDetail(
     val thumbnail: String,
     val desc: String,
     val passcode: String?,
+    val shareCount: Int
 ) : Parcelable

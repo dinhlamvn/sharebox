@@ -30,7 +30,7 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:lines="1"
-            android:textAppearance="@style/TextAppearance.HeaderMedium"
+            android:textAppearance="@style/TextAppearance.BodyMedium"
             app:layout_constraintTop_toBottomOf="@id/image_thumbnail"
             tools:text="My Album" />
 
@@ -40,11 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:lines="2"
             android:textAppearance="@style/TextAppearance.Caption"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_name"
             tools:text="Listen to music by Sam Interface on Apple Music. Find top songs and albums by Sam Interface including Alive" />
 
@@ -52,13 +50,30 @@
             android:id="@+id/image_lock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/ic_lock_black"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_desc"
             tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textAppearance="@style/TextAppearance.BodyMedium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_desc"
+            tools:text="0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -12,8 +12,6 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.databinding.FragmentBookmarkBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -61,6 +59,7 @@ class BookmarkFragment :
                         bookmarkCollection.thumbnail,
                         bookmarkCollection.desc,
                         bookmarkCollection.passcode,
+                        bookmarkCollection.shareCount,
                         if (idx % COLLECTION_SPAN_COUNT == 0) 0 else 8.dp(),
                         if (idx >= COLLECTION_SPAN_COUNT) 8.dp() else 0,
                     ) {

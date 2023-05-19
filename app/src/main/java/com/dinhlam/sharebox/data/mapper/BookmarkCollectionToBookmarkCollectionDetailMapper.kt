@@ -8,9 +8,9 @@ import javax.inject.Singleton
 @Singleton
 class BookmarkCollectionToBookmarkCollectionDetailMapper @Inject constructor() {
 
-    fun map(bookmarkCollection: BookmarkCollection): BookmarkCollectionDetail {
+    fun map(bookmarkCollection: BookmarkCollection, shareCount: Int): BookmarkCollectionDetail {
         return bookmarkCollection.run {
-            BookmarkCollectionDetail(id, name, thumbnail, description, passcode)
+            BookmarkCollectionDetail(id, name, thumbnail, description, passcode, shareCount)
         }
     }
 }

@@ -34,4 +34,8 @@ class BookmarkRepository @Inject constructor(
     suspend fun find(bookmarkCollectionId: String): List<BookmarkDetail> = bookmarkDao.runCatching {
         findAll(bookmarkCollectionId).map { bookmark -> mapper.map(bookmark) }
     }.getOrDefault(emptyList())
+
+    suspend fun count(bookmarkCollectionId: String): Int = bookmarkDao.runCatching {
+        this.count(bookmarkCollectionId)
+    }.getOrDefault(0)
 }

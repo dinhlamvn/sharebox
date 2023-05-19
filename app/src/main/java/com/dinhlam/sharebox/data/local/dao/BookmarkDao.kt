@@ -26,4 +26,7 @@ interface BookmarkDao {
 
     @Query("SELECT * FROM bookmark WHERE bookmark_collection_id = :bookmarkCollectionId")
     suspend fun findAll(bookmarkCollectionId: String): List<Bookmark>
+
+    @Query("SELECT COUNT(*) FROM bookmark WHERE bookmark_collection_id = :bookmarkCollectionId")
+    suspend fun count(bookmarkCollectionId: String): Int
 }

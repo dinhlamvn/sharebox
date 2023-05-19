@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBookmarkCollectionBinding
+import com.dinhlam.sharebox.extensions.asDisplayCountValue
 import com.dinhlam.sharebox.imageloader.ImageLoader
 
 data class BookmarkCollectionModelView(
@@ -16,6 +17,7 @@ data class BookmarkCollectionModelView(
     val thumbnail: String,
     val desc: String,
     val passcode: String?,
+    val shareCount: Int,
     val marginStart: Int = 0,
     val marginTop: Int = 0,
     val onClickListener: OnClickListener? = null
@@ -23,25 +25,32 @@ data class BookmarkCollectionModelView(
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object :
-            BaseListAdapter.BaseViewHolder<BookmarkCollectionModelView, ModelViewBookmarkCollectionBinding>(
-                ModelViewBookmarkCollectionBinding.inflate(inflater, container, false)
-            ) {
-            override fun onBind(model: BookmarkCollectionModelView, position: Int) {
-                binding.root.updateLayoutParams<MarginLayoutParams> {
-                    marginStart = model.marginStart
-                    topMargin = model.marginTop
-                }
-                binding.container.setOnClickListener(model.onClickListener)
-                ImageLoader.instance.load(buildContext, model.thumbnail, binding.imageThumbnail)
-                binding.textName.text = model.name
-                binding.textDesc.text = model.desc
-                binding.imageLock.isVisible = !model.passcode.isNullOrBlank()
-            }
+        return ModelViewBookmarkCollectionViewHolder(
+            ModelViewBookmarkCollectionBinding.inflate(
+                inflater, container, false
+            )
+        )
+    }
 
-            override fun onUnBind() {
-
+    private class ModelViewBookmarkCollectionViewHolder(binding: ModelViewBookmarkCollectionBinding) :
+        BaseListAdapter.BaseViewHolder<BookmarkCollectionModelView, ModelViewBookmarkCollectionBinding>(
+            binding
+        ) {
+        override fun onBind(model: BookmarkCollectionModelView, position: Int) {
+            binding.root.updateLayoutParams<MarginLayoutParams> {
+                marginStart = model.marginStart
+                topMargin = model.marginTop
             }
+            binding.container.setOnClickListener(model.onClickListener)
+            ImageLoader.instance.load(buildContext, model.thumbnail, binding.imageThumbnail)
+            binding.textName.text = model.name
+            binding.textDesc.text = model.desc
+            binding.imageLock.isVisible = !model.passcode.isNullOrBlank()
+            binding.textNumber.text = model.shareCount.asDisplayCountValue()
+        }
+
+        override fun onUnBind() {
+
         }
     }
 }
