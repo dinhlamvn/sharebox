@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "64151986643",
+    "project_id": "share-box-6c293",
+    "storage_bucket": "share-box-6c293.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64151986643:android:d03f8ddaf90090eaf40f26",
+        "android_client_info": {
+          "package_name": "com.dinhlam.sharebox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64151986643-1rqpud9qe19a8jhvq9p43qovv3202hkr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dinhlam.sharebox",
+            "certificate_hash": "e0c1c0b97f1914af60463ba0a52be6c00eee885f"
+          }
+        },
+        {
+          "client_id": "64151986643-u8d34nv9cfttguenboafl50idola3j2h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXcrxqIT3NaSKeacfNzKBXJvLVMXl5zGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64151986643-u8d34nv9cfttguenboafl50idola3j2h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
