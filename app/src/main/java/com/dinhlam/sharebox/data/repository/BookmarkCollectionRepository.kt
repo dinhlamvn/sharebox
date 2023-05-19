@@ -15,7 +15,7 @@ class BookmarkCollectionRepository @Inject constructor(
     private val bookmarkCollectionDao: BookmarkCollectionDao,
     private val mapper: BookmarkCollectionToBookmarkCollectionDetailMapper
 ) {
-    fun createCollection(name: String, desc: String, thumbnail: String, passcode: String): Boolean {
+    suspend fun createCollection(name: String, desc: String, thumbnail: String, passcode: String): Boolean {
         val collectionId = BookmarkUtils.createBookmarkCollectionId()
         val passCode = passcode.takeIfNotNullOrBlank()
         val bookmarkCollection =
@@ -26,12 +26,12 @@ class BookmarkCollectionRepository @Inject constructor(
         }.getOrDefault(false)
     }
 
-    fun find(): List<BookmarkCollectionDetail> = bookmarkCollectionDao.runCatching {
+    suspend fun find(): List<BookmarkCollectionDetail> = bookmarkCollectionDao.runCatching {
         val bookmarkCollections = find()
         bookmarkCollections.map { bookmarkCollection -> mapper.map(bookmarkCollection) }
     }.getOrDefault(emptyList())
 
-    fun find(id: String): BookmarkCollectionDetail? = bookmarkCollectionDao.runCatching {
+    suspend fun find(id: String): BookmarkCollectionDetail? = bookmarkCollectionDao.runCatching {
         val bookmarkCollection = find(id) ?: return@runCatching null
         mapper.map(bookmarkCollection)
     }.getOrNull()

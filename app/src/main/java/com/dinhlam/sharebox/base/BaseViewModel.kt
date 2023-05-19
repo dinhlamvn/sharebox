@@ -37,7 +37,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private data class ConsumerInternal(
         val consumeField: String,
-        val changeNotifier: (Any?) -> Unit,
+        val changeNotifier: suspend (Any?) -> Unit,
         val notifyOnChanged: Boolean = false
     )
 
@@ -75,7 +75,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    private fun notifyConsumer(oldState: T, newState: T) {
+    private suspend fun notifyConsumer(oldState: T, newState: T) {
         notifyConsumerInternal(oldState, newState)
         notifyConsumerExternal(oldState, newState)
     }
@@ -98,7 +98,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    private fun notifyConsumerInternal(oldState: T, newState: T) {
+    private suspend fun notifyConsumerInternal(oldState: T, newState: T) {
         val consumerIterator = internalConsumers.iterator()
         while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
             val consumer = consumerIterator.next()
@@ -126,7 +126,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     protected fun execute(
         context: CoroutineContext = Dispatchers.IO,
-        onError: ((Throwable) -> Unit)? = null, block: suspend (T) -> Unit
+        onError: ((Throwable) -> Unit)? = null,
+        block: suspend (T) -> Unit
     ) {
         getState { state ->
             viewModelScope.launch(context) {
@@ -168,9 +169,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     protected fun <T> consume(
-        property: KProperty<T>,
-        notifyOnChanged: Boolean = true,
-        block: (T) -> Unit
+        property: KProperty<T>, notifyOnChanged: Boolean = true, block: suspend (T) -> Unit
     ) {
         val consumerInternal = ConsumerInternal(property.name, block.castNonNull(), notifyOnChanged)
         internalConsumers.add(consumerInternal)
@@ -178,7 +177,9 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             val valueField = this::class.java.getDeclaredField(property.name)
             valueField.isAccessible = true
             val value = valueField.get(this)
-            consumerInternal.changeNotifier.invoke(value)
+            viewModelScope.launch {
+                consumerInternal.changeNotifier.invoke(value)
+            }
         }
     }
 

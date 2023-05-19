@@ -9,11 +9,11 @@ import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 interface BookmarkCollectionDao {
 
     @Insert
-    fun insert(vararg bookmarkCollections: BookmarkCollection)
+    suspend fun insert(vararg bookmarkCollections: BookmarkCollection)
 
     @Query("SELECT * FROM bookmark_collection ORDER BY id DESC")
-    fun find(): List<BookmarkCollection>
+    suspend fun find(): List<BookmarkCollection>
 
     @Query("SELECT * FROM bookmark_collection WHERE id = :id")
-    fun find(id: String): BookmarkCollection?
+    suspend fun find(id: String): BookmarkCollection?
 }

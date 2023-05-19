@@ -8,12 +8,12 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -44,9 +43,6 @@ class CommunityFragment :
         }
     }
 
-    @Inject
-    lateinit var appSharePref: AppSharePref
-
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
@@ -63,7 +59,7 @@ class CommunityFragment :
             } else {
                 val models = state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
-                        requireContext(),
+                        screenWidth(),
                         shareDetail.shareId,
                         shareDetail.createdAt,
                         shareDetail.shareNote,
@@ -75,7 +71,7 @@ class CommunityFragment :
                         actionShareToOther = ::onShareToOther,
                         actionVote = ::onVote,
                         actionComment = ::onComment,
-                        actionStar = ::onBookmark
+                        actionBookmark = ::onBookmark
                     )
                 }
                 models.forEachIndexed { idx, model ->
@@ -106,6 +102,9 @@ class CommunityFragment :
     @Inject
     lateinit var shareHelper: ShareHelper
 
+    @Inject
+    lateinit var appSharePref: AppSharePref
+
     override val viewModel: CommunityViewModel by viewModels()
 
     override fun onStateChanged(state: CommunityState) {
@@ -131,8 +130,6 @@ class CommunityFragment :
     private fun onOpen(shareId: String) = getState(viewModel) { state ->
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-
-
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> {
                 shareHelper.openUrl(
@@ -172,10 +169,6 @@ class CommunityFragment :
     }
 
     private fun onComment(shareId: String) {
-        CommentFragment().apply {
-            arguments = Bundle().apply {
-                putString(AppExtras.EXTRA_SHARE_ID, shareId)
-            }
-        }.show(childFragmentManager, "CommentFragment")
+        shareHelper.showComment(childFragmentManager, shareId)
     }
 }

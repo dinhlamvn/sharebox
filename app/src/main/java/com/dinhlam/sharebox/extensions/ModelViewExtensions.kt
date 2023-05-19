@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.extensions
 
-import android.content.Context
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
@@ -13,7 +12,7 @@ import com.dinhlam.sharebox.modelview.list.ListUrlModelView
 import com.dinhlam.sharebox.utils.IconUtils
 
 fun ShareData.buildShareModelViews(
-    context: Context,
+    screenWidth: Int,
     shareId: String,
     createdAt: Long,
     shareNote: String?,
@@ -25,7 +24,7 @@ fun ShareData.buildShareModelViews(
     actionShareToOther: Function1<String, Unit>? = null,
     actionVote: Function1<String, Unit>? = null,
     actionComment: Function1<String, Unit>? = null,
-    actionStar: Function1<String, Unit>? = null,
+    actionBookmark: Function1<String, Unit>? = null,
     showUpVote: Boolean = true,
     showStar: Boolean = true
 ): BaseListAdapter.BaseModelView {
@@ -46,7 +45,7 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar,
+                actionBookmark,
                 showUpVote,
                 showStar,
             )
@@ -67,7 +66,7 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar,
+                actionBookmark,
                 showUpVote,
                 showStar,
             )
@@ -87,7 +86,7 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar,
+                actionBookmark,
                 showUpVote,
                 showStar,
             )
@@ -102,8 +101,6 @@ fun ShareData.buildShareModelViews(
             }
 
             fun getImageWidth(size: Int, index: Int): Int {
-                val screenWidth = context.screenWidth()
-
                 return when (size) {
                     4 -> screenWidth.div(2)
                     AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> if (index < 2) screenWidth.div(2) else screenWidth.div(
@@ -154,7 +151,7 @@ fun ShareData.buildShareModelViews(
                 actionShareToOther,
                 actionVote,
                 actionComment,
-                actionStar,
+                actionBookmark,
                 showUpVote,
                 showStar,
             )

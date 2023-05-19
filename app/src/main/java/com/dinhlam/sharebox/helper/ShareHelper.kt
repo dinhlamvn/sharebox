@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
@@ -16,6 +17,7 @@ import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -143,5 +145,13 @@ class ShareHelper @Inject constructor(
         }.show(
             activity.supportFragmentManager, "BookmarkCollectionPickerDialogFragment"
         )
+    }
+
+    fun showComment(fragmentManager: FragmentManager, shareId: String) {
+        CommentFragment().apply {
+            arguments = Bundle().apply {
+                putString(AppExtras.EXTRA_SHARE_ID, shareId)
+            }
+        }.show(fragmentManager, "CommentFragment")
     }
 }

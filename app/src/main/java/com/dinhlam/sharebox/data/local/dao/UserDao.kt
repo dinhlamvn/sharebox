@@ -9,8 +9,8 @@ import com.dinhlam.sharebox.data.local.entity.User
 interface UserDao {
 
     @Insert
-    fun insert(vararg users: User)
+    suspend fun insert(vararg users: User)
 
     @Query("SELECT * FROM user WHERE user_id = :userId")
-    fun findOne(userId: String): User?
+    suspend fun findOne(userId: String): User?
 }

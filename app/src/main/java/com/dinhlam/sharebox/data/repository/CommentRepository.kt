@@ -13,14 +13,13 @@ class CommentRepository @Inject constructor(
     private val commentToCommentDetailMapper: CommentToCommentDetailMapper,
     private val userRepository: UserRepository,
 ) {
-
-    fun insert(shareId: String, userId: String, content: String?): Boolean =
+    suspend fun insert(shareId: String, userId: String, content: String?): Boolean =
         commentDao.runCatching {
             insert(Comment(shareId = shareId, shareUserId = userId, content = content))
             true
         }.getOrDefault(false)
 
-    fun find(shareId: String): List<CommentDetail> {
+    suspend fun find(shareId: String): List<CommentDetail> {
         return commentDao.runCatching {
             val comments = find(shareId)
             comments.mapNotNull { comment ->
@@ -31,7 +30,7 @@ class CommentRepository @Inject constructor(
         }.getOrDefault(emptyList())
     }
 
-    fun count(shareId: String): Int = commentDao.runCatching {
+    suspend fun count(shareId: String): Int = commentDao.runCatching {
         commentDao.count(shareId)
     }.getOrDefault(0)
 }

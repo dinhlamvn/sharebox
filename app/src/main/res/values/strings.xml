@@ -177,5 +177,9 @@
     <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
     <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_confirm_remove_bookmark">Are you sure to remove this bookmark?</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
 
 </resources>

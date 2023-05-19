@@ -9,11 +9,11 @@ import com.dinhlam.sharebox.data.local.entity.Comment
 interface CommentDao {
 
     @Insert
-    fun insert(vararg comments: Comment)
+    suspend fun insert(vararg comments: Comment)
 
     @Query("SELECT * FROM comment WHERE share_id = :shareId ORDER BY id DESC")
-    fun find(shareId: String): List<Comment>
+    suspend fun find(shareId: String): List<Comment>
 
     @Query("SELECT COUNT(*) FROM comment WHERE share_id = :shareId")
-    fun count(shareId: String): Int
+    suspend fun count(shareId: String): Int
 }

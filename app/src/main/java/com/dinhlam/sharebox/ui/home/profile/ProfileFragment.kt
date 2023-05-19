@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
@@ -77,7 +78,7 @@ class ProfileFragment :
 
             val models = state.shares.map { shareDetail ->
                 shareDetail.shareData.buildShareModelViews(
-                    requireContext(),
+                    screenWidth(),
                     shareDetail.shareId,
                     shareDetail.createdAt,
                     shareDetail.shareNote,
@@ -89,7 +90,7 @@ class ProfileFragment :
                     actionShareToOther = ::onShareToOther,
                     actionVote = ::onVote,
                     actionComment = ::onComment,
-                    actionStar = ::onStar,
+                    actionBookmark = ::onStar,
                     showUpVote = false,
                     showStar = false
                 )
@@ -182,10 +183,6 @@ class ProfileFragment :
     }
 
     private fun onComment(shareId: String) {
-        CommentFragment().apply {
-            arguments = Bundle().apply {
-                putString(AppExtras.EXTRA_SHARE_ID, shareId)
-            }
-        }.show(childFragmentManager, "CommentFragment")
+        shareHelper.showComment(childFragmentManager, shareId)
     }
 }

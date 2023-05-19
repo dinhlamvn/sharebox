@@ -9,8 +9,8 @@ import com.dinhlam.sharebox.data.local.entity.Vote
 interface VoteDao {
 
     @Insert
-    fun insert(vararg vote: Vote)
+    suspend fun insert(vararg vote: Vote)
 
     @Query("SELECT COUNT(*) FROM vote WHERE share_id = :shareId")
-    fun countVote(shareId: String): Int
+    suspend fun countVote(shareId: String): Int
 }

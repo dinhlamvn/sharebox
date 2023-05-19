@@ -14,7 +14,7 @@ class UserRepository @Inject constructor(
     private val userToUserDetailMapper: UserToUserDetailMapper
 ) {
 
-    fun insert(user: User): Boolean = user.runCatching {
+    suspend fun insert(user: User): Boolean = user.runCatching {
         userDao.insert(user)
         true
     }.onFailure {
@@ -22,7 +22,7 @@ class UserRepository @Inject constructor(
     }.getOrDefault(false)
 
 
-    fun findOne(userId: String): UserDetail? = userId.runCatching {
+    suspend fun findOne(userId: String): UserDetail? = userId.runCatching {
         userDao.findOne(userId)?.let(::mapUserToUserDetail)
     }.getOrDefault(null)
 

@@ -57,7 +57,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { copy() }
+        setState { copy(bookmarkedShareIdSet = emptySet(), voteMap = emptyMap()) }
         loadShares()
     }
 
@@ -68,7 +68,7 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun syncVote(shareId: String) {
+    private suspend fun syncVote(shareId: String) {
         val voteCount = voteRepository.countVote(shareId)
         setState { copy(voteMap = voteMap.plus(shareId to voteCount)) }
     }

@@ -10,13 +10,22 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
+import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.absoluteValue
@@ -30,7 +39,44 @@ class BookmarkListItemActivity :
     }
 
     private val shareAdapter = BaseListAdapter.createAdapter {
-        add(TextModelView("text_empty", "No shares"))
+        getState(viewModel) { state ->
+            if (state.isSharesLoading) {
+                add(LoadingModelView("loading_share"))
+                return@getState
+            }
+
+            if (state.shares.isEmpty()) {
+                add(TextModelView("text_empty", "No shares"))
+            } else {
+                val models = state.shares.map { shareDetail ->
+                    shareDetail.shareData.buildShareModelViews(
+                        screenWidth(),
+                        shareDetail.shareId,
+                        shareDetail.createdAt,
+                        shareDetail.shareNote,
+                        shareDetail.user,
+                        0,
+                        shareComment = shareDetail.commentCount,
+                        bookmarked = true,
+                        actionOpen = ::onOpen,
+                        actionShareToOther = ::onShareToOther,
+                        actionVote = ::onVote,
+                        actionComment = ::onComment,
+                        actionBookmark = ::onBookmark
+                    )
+                }
+                models.forEachIndexed { idx, model ->
+                    add(model)
+                    add(
+                        SizedBoxModelView(
+                            "divider_$idx",
+                            height = 1.dp(),
+                            backgroundColor = R.color.colorDividerLightV2
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private val passcodeConfirmResultLauncher =
@@ -44,6 +90,12 @@ class BookmarkListItemActivity :
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
+    @Inject
+    lateinit var appSharePref: AppSharePref
 
     override val viewModel: BookmarkListItemViewModel by viewModels()
 
@@ -99,5 +151,54 @@ class BookmarkListItemActivity :
             getString(R.string.dialog_bookmark_collection_picker_verify_passcode, name)
         )
         passcodeConfirmResultLauncher.launch(intent)
+    }
+
+    private fun onOpen(shareId: String) = getState(viewModel) { state ->
+        val share =
+            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> {
+                shareHelper.openUrl(
+                    this, shareData.url, appSharePref.isCustomTabEnabled()
+                )
+            }
+
+            is ShareData.ShareText -> {
+                shareHelper.openTextViewer(this, shareData.text)
+            }
+
+            is ShareData.ShareImage -> {
+                shareHelper.viewShareImage(this, shareData.uri)
+            }
+
+            is ShareData.ShareImages -> {
+                shareHelper.viewShareImages(this, shareData.uris)
+            }
+        }
+    }
+
+    private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
+        val share =
+            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+        shareHelper.shareToOther(share)
+    }
+
+    private fun onVote(shareId: String) {
+
+    }
+
+    private fun onBookmark(shareId: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_confirm)
+            .setMessage(R.string.dialog_confirm_remove_bookmark)
+            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                viewModel.removeBookmark(shareId)
+            }
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .show()
+    }
+
+    private fun onComment(shareId: String) {
+        shareHelper.showComment(supportFragmentManager, shareId)
     }
 }

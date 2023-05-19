@@ -14,14 +14,14 @@ class ShareRepository @Inject constructor(
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
 ) {
-    fun insert(data: Share): Boolean = data.runCatching {
+    suspend fun insert(data: Share): Boolean = data.runCatching {
         shareDao.insertAll(data)
         true
     }.onFailure {
         Log.d("DinhLam", "hehe")
     }.getOrDefault(false)
 
-    fun find(shareUserId: String) = shareDao.runCatching {
+    suspend fun find(shareUserId: String) = shareDao.runCatching {
         val shares = find(shareUserId)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
@@ -37,7 +37,7 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    fun find(shareMode: ShareMode) = shareDao.runCatching {
+    suspend fun find(shareMode: ShareMode) = shareDao.runCatching {
         val shares = find(shareMode)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
@@ -53,7 +53,7 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    fun find(shareIds: List<String>) = shareDao.runCatching {
+    suspend fun find(shareIds: List<String>) = shareDao.runCatching {
         val shares = find(shareIds)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null

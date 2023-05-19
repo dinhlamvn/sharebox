@@ -10,7 +10,7 @@ class VoteRepository @Inject constructor(
     private val voteDao: VoteDao
 ) {
 
-    fun vote(shareId: String, userId: String): Boolean {
+    suspend fun vote(shareId: String, userId: String): Boolean {
         val vote = Vote(shareId = shareId, userId = userId)
         return voteDao.runCatching {
             voteDao.insert(vote)
@@ -18,7 +18,7 @@ class VoteRepository @Inject constructor(
         }.getOrDefault(false)
     }
 
-    fun countVote(shareId: String) = voteDao.runCatching {
+    suspend fun countVote(shareId: String) = voteDao.runCatching {
         countVote(shareId)
     }.getOrDefault(0)
 }

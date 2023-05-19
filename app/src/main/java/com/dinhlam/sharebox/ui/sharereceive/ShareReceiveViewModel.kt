@@ -18,6 +18,8 @@ import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.utils.ShareUtils
 import com.dinhlam.sharebox.utils.UserUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -76,7 +78,7 @@ class ShareReceiveViewModel @Inject constructor(
         }
     }
 
-    private fun shareUrl(
+    private suspend fun shareUrl(
         note: String?, shareData: ShareData.ShareUrl, shareMode: ShareMode
     ) {
         val share = Share(
@@ -90,7 +92,7 @@ class ShareReceiveViewModel @Inject constructor(
         setState { copy(isSaveSuccess = true) }
     }
 
-    private fun shareText(
+    private suspend fun shareText(
         note: String?, shareData: ShareData.ShareText, shareMode: ShareMode
     ) {
         val share = Share(
@@ -104,7 +106,7 @@ class ShareReceiveViewModel @Inject constructor(
         setState { copy(isSaveSuccess = true) }
     }
 
-    private fun shareImage(
+    private suspend fun shareImage(
         context: Context,
         note: String?,
         shareData: ShareData.ShareImage,
@@ -116,7 +118,11 @@ class ShareReceiveViewModel @Inject constructor(
             imagePath.mkdir()
         }
         val imageFile = File(imagePath, "share_image_${System.currentTimeMillis()}.jpg")
-        imageFile.createNewFile()
+
+        withContext(Dispatchers.IO) {
+            imageFile.createNewFile()
+        }
+
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
         val newUri = FileProvider.getUriForFile(
             context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
@@ -133,7 +139,7 @@ class ShareReceiveViewModel @Inject constructor(
         setState { copy(isSaveSuccess = true) }
     }
 
-    private fun shareImages(
+    private suspend fun shareImages(
         context: Context,
         note: String?,
         shareData: ShareData.ShareImages,

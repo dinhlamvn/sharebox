@@ -10,17 +10,20 @@ import com.dinhlam.sharebox.data.local.entity.Bookmark
 interface BookmarkDao {
 
     @Insert
-    fun insert(vararg bookmarks: Bookmark)
+    suspend fun insert(vararg bookmarks: Bookmark)
 
     @Upsert
-    fun upsert(bookmark: Bookmark)
+    suspend fun upsert(bookmark: Bookmark)
 
     @Query("DELETE FROM bookmark WHERE share_id = :shareId")
-    fun delete(shareId: String)
+    suspend fun delete(shareId: String)
 
     @Query("DELETE FROM bookmark WHERE share_id = :shareId AND bookmark_collection_id = :bookmarkCollectionId")
-    fun delete(shareId: String, bookmarkCollectionId: String)
+    suspend fun delete(shareId: String, bookmarkCollectionId: String)
 
     @Query("SELECT * FROM bookmark WHERE share_id = :shareId")
-    fun find(shareId: String): Bookmark?
+    suspend fun find(shareId: String): Bookmark?
+
+    @Query("SELECT * FROM bookmark WHERE bookmark_collection_id = :bookmarkCollectionId")
+    suspend fun findAll(bookmarkCollectionId: String): List<Bookmark>
 }
