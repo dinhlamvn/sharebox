@@ -32,6 +32,7 @@ import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.setNonBlankText
@@ -132,7 +133,7 @@ class ShareReceiveActivity :
                 )
 
                 is ShareData.ShareImage -> add(
-                    ImageModelView(shareData.uri)
+                    ImageModelView(shareData.uri, screenHeight().times(0.4).toInt())
                 )
 
                 is ShareData.ShareImages -> {

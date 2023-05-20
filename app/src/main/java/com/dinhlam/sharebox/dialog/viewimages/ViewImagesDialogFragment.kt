@@ -12,15 +12,13 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogViewImagesBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
+import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.modelview.ImageModelView
 
 class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
-
-    companion object {
-        const val EXTRA_LIST_URI = "extra-uris"
-    }
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -31,10 +29,11 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uris =
-            arguments?.getParcelableArrayListExtraCompat<Uri>(EXTRA_LIST_URI) ?: return dismiss()
+            arguments?.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
+                ?: return dismiss()
 
         val adapter = BaseListAdapter.createAdapter {
-            addAll(uris.map { ImageModelView(it) })
+            addAll(uris.map { uri -> ImageModelView(uri, screenHeight().times(0.8f).toInt()) })
         }
 
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)

@@ -116,7 +116,7 @@ class ShareHelper @Inject constructor(
         ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(
-                    ViewImagesDialogFragment.EXTRA_LIST_URI, arrayListOf(uri)
+                    AppExtras.EXTRA_IMAGE_URIS, arrayListOf(uri)
                 )
             }
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
@@ -126,7 +126,7 @@ class ShareHelper @Inject constructor(
         ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
                 putParcelableArrayList(
-                    ViewImagesDialogFragment.EXTRA_LIST_URI, arrayListOf(*uris.toTypedArray())
+                    AppExtras.EXTRA_IMAGE_URIS, arrayListOf(*uris.toTypedArray())
                 )
             }
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
