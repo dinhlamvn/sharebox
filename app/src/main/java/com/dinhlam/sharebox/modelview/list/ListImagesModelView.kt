@@ -73,12 +73,12 @@ data class ListImagesModelView(
         }
 
         override fun onBind(model: ListImagesModelView, position: Int) {
+            models.clear()
+            adapter.requestBuildModelViews()
             binding.recyclerViewImage.layoutManager =
                 GridLayoutManager(buildContext, model.spanCount).apply {
                     spanSizeLookup = BaseSpanSizeLookup(adapter, model.spanCount)
                 }
-
-            models.clear()
             models.addAll(model.modelViews)
             adapter.requestBuildModelViews()
 
@@ -134,6 +134,8 @@ data class ListImagesModelView(
         }
 
         override fun onUnBind() {
+            models.clear()
+            adapter.requestBuildModelViews()
         }
 
     }
