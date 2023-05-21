@@ -1,11 +1,10 @@
 package com.dinhlam.sharebox.extensions
 
-import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
-import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
+import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImagesModelView
 import com.dinhlam.sharebox.modelview.list.ListTextModelView
@@ -88,45 +87,10 @@ fun ShareData.buildShareModelViews(
         }
 
         is ShareData.ShareImages -> {
-            fun getSpanSize(size: Int, index: Int): Int {
-                return when (size) {
-                    AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> if (index < 2) 3 else 2
-                    else -> 1
-                }
-            }
-
-            fun getImageWidth(size: Int, index: Int): Int {
-                return when (size) {
-                    4 -> screenWidth.div(2)
-                    AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> if (index < 2) screenWidth.div(2) else screenWidth.div(
-                        3
-                    )
-
-                    else -> screenWidth.div(size)
-                }
-            }
-
-            fun getNumber(realSize: Int, takeSize: Int, index: Int): Int {
-                return when {
-                    realSize > takeSize && index == takeSize - 1 -> realSize - takeSize
-                    else -> 0
-                }
-            }
-
             val shareData = this.castNonNull<ShareData.ShareImages>()
-            val pickItems = shareData.uris.take(AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT)
 
-            val modelViews = pickItems.mapIndexed { index, uri ->
-                ImageViewMoreModelView(
-                    uri,
-                    getSpanSize(pickItems.size, index),
-                    getImageWidth(pickItems.size, index),
-                    getImageWidth(pickItems.size, index),
-                    getNumber(shareData.uris.size, pickItems.size, index),
-                    BaseListAdapter.NoHashProp(View.OnClickListener {
-                        actionOpen?.invoke(shareId)
-                    })
-                )
+            val modelViews = shareData.uris.map { uri ->
+                ImageModelView(uri, height = 300.dp())
             }
 
             val spanCount = when {

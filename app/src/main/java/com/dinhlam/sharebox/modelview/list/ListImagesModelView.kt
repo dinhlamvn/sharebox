@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
+import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImagesModelView(
@@ -27,7 +27,7 @@ data class ListImagesModelView(
     val createdAt: Long,
     val note: String?,
     val spanCount: Int,
-    val modelViews: List<ImageViewMoreModelView>,
+    val modelViews: List<ImageModelView>,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail,
@@ -76,20 +76,18 @@ data class ListImagesModelView(
             addAll(models)
         }
 
-        private val models = mutableListOf<ImageViewMoreModelView>()
+        private val models = mutableListOf<ImageModelView>()
 
         init {
+            PagerSnapHelper().apply {
+                page
+            }.attachToRecyclerView(binding.recyclerViewImage)
             binding.recyclerViewImage.adapter = adapter
             adapter.requestBuildModelViews()
         }
 
         override fun onBind(model: ListImagesModelView, position: Int) {
             models.clear()
-            adapter.requestBuildModelViews()
-            binding.recyclerViewImage.layoutManager =
-                GridLayoutManager(buildContext, model.spanCount).apply {
-                    spanSizeLookup = BaseSpanSizeLookup(adapter, model.spanCount)
-                }
             models.addAll(model.modelViews)
             adapter.requestBuildModelViews()
 
