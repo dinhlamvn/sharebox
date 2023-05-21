@@ -1,8 +1,10 @@
 package com.dinhlam.sharebox.modelview
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.annotation.GravityInt
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -16,7 +18,10 @@ data class TextModelView(
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextAppearance_Body,
-    val actionClick: OnClickListener? = null,
+    @GravityInt val gravity: Int = Gravity.CENTER,
+    val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView("text_$id") {
 
     override fun createViewHolder(
@@ -32,9 +37,10 @@ data class TextModelView(
                     width = model.width
                     height = model.height
                 }
+                binding.textView.gravity = model.gravity
                 binding.textView.setTextAppearanceCompat(model.textAppearance)
                 binding.textView.text = model.text
-                model.actionClick?.let { listener ->
+                model.actionClick.prop?.let { listener ->
                     binding.textView.setOnClickListener(listener)
                 }
             }

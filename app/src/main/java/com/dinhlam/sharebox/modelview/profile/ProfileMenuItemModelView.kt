@@ -14,7 +14,7 @@ data class ProfileMenuItemModelView(
     val text: String?,
     @DrawableRes val icon: Int,
     @ColorRes val textColor: Int = R.color.colorTextBlack,
-    val listener: ((Int) -> Unit)? = null
+    val listener: BaseListAdapter.NoHashProp<Function1<Int, Unit>> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("profile_menu_item_$id") {
 
     override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
@@ -29,7 +29,7 @@ data class ProfileMenuItemModelView(
 
         override fun onBind(model: ProfileMenuItemModelView, position: Int) {
             binding.root.setOnClickListener {
-                model.listener?.invoke(position)
+                model.listener.prop?.invoke(position)
             }
             binding.textView.setTextColor(ContextCompat.getColor(buildContext, model.textColor))
             binding.textView.text = model.text

@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.data.repository.VoteRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,6 +39,7 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isRefreshing = true) }
         backgroundTask {
             val shares = shareRepository.findShareCommunity()
+            delay(2000)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -51,7 +53,6 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { CommunityState() }
         loadShares()
     }
 

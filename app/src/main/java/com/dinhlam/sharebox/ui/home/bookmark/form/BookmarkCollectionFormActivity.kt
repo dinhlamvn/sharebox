@@ -54,7 +54,7 @@ class BookmarkCollectionFormActivity :
     override val viewModel: BookmarkCollectionFormViewModel by viewModels()
 
     override fun onStateChanged(state: BookmarkCollectionFormState) {
-        if (state.passcode.isEmpty()) {
+        if (state.passcode.isNullOrBlank()) {
             viewBinding.textLayoutPasscode.endIconDrawable = null
         } else {
             if (state.isPasscodeVisible) {
@@ -67,8 +67,8 @@ class BookmarkCollectionFormActivity :
                     PasswordTransformationMethod.getInstance()
             }
         }
-        viewBinding.imageClear.isVisible = state.passcode.isNotEmpty()
-        viewBinding.textLayoutPasscode.setEndIconActivated(state.passcode.isNotEmpty())
+        viewBinding.imageClear.isVisible = !state.passcode.isNullOrBlank()
+        viewBinding.textLayoutPasscode.setEndIconActivated(!state.passcode.isNullOrBlank())
         viewBinding.textErrorThumbnail.isVisible = state.errorThumbnail
         viewBinding.textEditPasscode.setText(state.passcode)
     }
@@ -105,7 +105,7 @@ class BookmarkCollectionFormActivity :
         viewBinding.imageDone.setOnClickListener {
             val name = viewBinding.textEditName.getTrimmedText()
             val desc = viewBinding.textEditDesc.getTrimmedText()
-            viewModel.createBookmarkCollection(this, name, desc)
+            viewModel.performActionDone(this, name, desc)
         }
 
         viewBinding.textEditName.doAfterTextChanged { editable ->
@@ -122,14 +122,29 @@ class BookmarkCollectionFormActivity :
             errorRes?.let { res ->
                 viewBinding.textEditName.error = getString(res)
                 viewBinding.textEditName.requestFocus()
-            } ?: viewBinding.textEditName.apply { text = null }
+            } ?: viewBinding.textEditName.apply { error = null }
         }
 
         viewModel.consume(this, BookmarkCollectionFormState::errorDesc, true) { errorRes ->
             errorRes?.let { res ->
                 viewBinding.textEditDesc.error = getString(res)
                 viewBinding.textEditDesc.requestFocus()
-            } ?: viewBinding.textEditDesc.apply { text = null }
+            } ?: viewBinding.textEditDesc.apply { error = null }
+        }
+
+        getState(viewModel) { state ->
+            state.bookmarkCollectionDetail?.let { collectionDetail ->
+                ImageLoader.instance.load(
+                    this,
+                    collectionDetail.thumbnail,
+                    viewBinding.imageThumbnail
+                ) {
+                    copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
+                }
+                viewBinding.textEditName.setText(collectionDetail.name)
+                viewBinding.textEditDesc.setText(collectionDetail.desc)
+                viewBinding.textEditPasscode.setText(collectionDetail.passcode)
+            }
         }
     }
 

@@ -27,11 +27,22 @@ data class ListImageModelView(
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val userDetail: UserDetail,
-    val actionOpen: Function1<String, Unit>? = null,
-    val actionShareToOther: Function1<String, Unit>? = null,
-    val actionVote: Function1<String, Unit>? = null,
-    val actionComment: Function1<String, Unit>? = null,
-    val actionStar: Function1<String, Unit>? = null,
+    val bookmarked: Boolean = false,
+    val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val actionVote: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val actionComment: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
@@ -66,28 +77,26 @@ data class ListImageModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.container.setOnClickListener {
-                model.actionOpen?.invoke(model.shareId)
-            }
+            binding.bottomAction.updateBookmarkStatus(model.bookmarked)
 
-            binding.imageShare.setOnClickListener {
-                model.actionOpen?.invoke(model.shareId)
+            binding.container.setOnClickListener {
+                model.actionOpen.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setOnShareClickListener {
-                model.actionShareToOther?.invoke(model.shareId)
+                model.actionShareToOther.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setOnCommentClickListener {
-                model.actionComment?.invoke(model.shareId)
+                model.actionComment.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setOnLikeClickListener {
-                model.actionVote?.invoke(model.shareId)
+                model.actionVote.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setOnBookmarkClickListener {
-                model.actionStar?.invoke(model.shareId)
+                model.actionStar.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setLikeNumber(model.shareUpVote)

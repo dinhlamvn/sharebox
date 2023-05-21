@@ -89,10 +89,11 @@ class BookmarkCollectionPickerDialogFragment :
                     bookmarkCollection.name,
                     height = 50.dp(),
                     startIcon = if (bookmarkCollection.passcode == null) 0 else R.drawable.ic_lock_black,
-                    isPicked = state.pickedBookmarkCollection?.id == bookmarkCollection.id
-                ) {
-                    viewModel.onPickBookmarkCollection(bookmarkCollection)
-                }
+                    isPicked = state.pickedBookmarkCollection?.id == bookmarkCollection.id,
+                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        viewModel.onPickBookmarkCollection(bookmarkCollection)
+                    })
+                )
             })
         }
     }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DefaultItemAnimator
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
@@ -67,16 +68,16 @@ class CommunityFragment :
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 add(LoadingModelView("top_loading"))
-                return@getState
             }
-            if (state.shares.isEmpty()) {
+
+            if (state.shares.isEmpty() && !state.isRefreshing) {
                 add(
                     TextModelView(
                         "text_empty",
                         getString(R.string.no_result)
                     )
                 )
-            } else {
+            } else if (state.shares.isNotEmpty()) {
                 val models = state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
                         screenWidth(),
@@ -146,6 +147,8 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewBinding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
+            false
         viewBinding.recyclerView.layoutManager = layoutManager
         viewBinding.recyclerView.adapter = shareAdapter
 

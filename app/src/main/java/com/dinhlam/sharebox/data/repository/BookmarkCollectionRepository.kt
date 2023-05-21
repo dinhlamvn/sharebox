@@ -6,7 +6,7 @@ import com.dinhlam.sharebox.data.mapper.BookmarkCollectionToBookmarkCollectionDe
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.utils.BookmarkUtils
+import com.dinhlam.sharebox.logger.Logger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,18 +17,28 @@ class BookmarkCollectionRepository @Inject constructor(
     private val mapper: BookmarkCollectionToBookmarkCollectionDetailMapper
 ) {
     suspend fun createCollection(
-        name: String,
-        desc: String,
-        thumbnail: String,
-        passcode: String
+        collectionId: String, name: String, desc: String, thumbnail: String, passcode: String?
     ): Boolean {
-        val collectionId = BookmarkUtils.createBookmarkCollectionId()
         val passCode = passcode.takeIfNotNullOrBlank()
         val bookmarkCollection =
             BookmarkCollection(collectionId, name, thumbnail, desc, passCode?.md5())
         return bookmarkCollectionDao.runCatching {
             insert(bookmarkCollection)
             true
+        }.onFailure {
+            Logger.error(it.toString())
+        }.getOrDefault(false)
+    }
+
+    suspend fun updateCollection(
+        collectionId: String, block: BookmarkCollection.() -> BookmarkCollection
+    ): Boolean {
+        return bookmarkCollectionDao.runCatching {
+            val bookmarkCollection = find(collectionId) ?: return false
+            update(bookmarkCollection.run(block))
+            true
+        }.onFailure {
+            Logger.error(it.toString())
         }.getOrDefault(false)
     }
 

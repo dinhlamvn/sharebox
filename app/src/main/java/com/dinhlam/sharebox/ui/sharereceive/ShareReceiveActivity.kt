@@ -81,10 +81,10 @@ class ShareReceiveActivity :
         getState(viewModel) { state ->
             if (state.hashTags.isNotEmpty()) {
                 addAll(state.hashTags.map { ht ->
-                    HashTagModelView(ht.hashTagId, ht.hashTagName, null)
+                    HashTagModelView(ht.hashTagId, ht.hashTagName)
                 })
             } else {
-                add(HashTagModelView(HASHTAG_DEFAULT_ID, "+", null))
+                add(HashTagModelView(HASHTAG_DEFAULT_ID, "+"))
             }
         }
     }

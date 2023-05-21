@@ -6,14 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.databinding.FragmentBookmarkBinding
+import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.helper.BookmarkHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
@@ -23,9 +30,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BookmarkFragment :
-    BaseViewModelFragment<BookmarkState, BookmarkViewModel, FragmentBookmarkBinding>() {
+    BaseViewModelFragment<BookmarkState, BookmarkViewModel, FragmentBookmarkBinding>(),
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
-    private val createBookmarkCollectionResultLauncher =
+    private val bookmarkCollectionFormResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.doOnRefresh()
@@ -46,12 +54,11 @@ class BookmarkFragment :
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 add(LoadingModelView("loading_collections"))
-                return@getState
             }
 
-            if (state.bookmarkCollections.isEmpty()) {
+            if (state.bookmarkCollections.isEmpty() && !state.isRefreshing) {
                 add(TextModelView("text_empty", getString(R.string.no_bookmark_collections)))
-            } else {
+            } else if (state.bookmarkCollections.isNotEmpty()) {
                 addAll(state.bookmarkCollections.mapIndexed { idx, bookmarkCollection ->
                     BookmarkCollectionModelView(
                         bookmarkCollection.id,
@@ -62,9 +69,10 @@ class BookmarkFragment :
                         bookmarkCollection.shareCount,
                         if (idx % COLLECTION_SPAN_COUNT == 0) 0 else 8.dp(),
                         if (idx >= COLLECTION_SPAN_COUNT) 8.dp() else 0,
-                    ) {
-                        goToBookmarkListItem(bookmarkCollection.id)
-                    }
+                        BaseListAdapter.NoHashProp(View.OnClickListener {
+                            showOptionMenu(bookmarkCollection.id)
+                        })
+                    )
                 })
             }
         }
@@ -72,6 +80,9 @@ class BookmarkFragment :
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var bookmarkHelper: BookmarkHelper
 
     override val viewModel: BookmarkViewModel by viewModels()
 
@@ -94,13 +105,43 @@ class BookmarkFragment :
         }
 
         viewBinding.buttonAdd.setOnClickListener {
-            createBookmarkCollectionResultLauncher.launch(
+            bookmarkCollectionFormResultLauncher.launch(
                 appRouter.bookmarkCollectionFormIntent(requireContext())
             )
         }
     }
 
-    private fun goToBookmarkListItem(bookmarkCollectionId: String) {
-        startActivity(appRouter.bookmarkListItemIntent(requireContext(), bookmarkCollectionId))
+    private fun showOptionMenu(bookmarkCollectionId: String) {
+        getState(viewModel) { state ->
+            val collectionDetail =
+                state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
+            bookmarkHelper.showOptionMenu(
+                childFragmentManager,
+                resources.getStringArray(R.array.bookmark_collection_option_menu_items),
+                bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail)
+            )
+        }
+    }
+
+    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+        val bookmarkCollection =
+            args.getParcelableExtraCompat<BookmarkCollectionDetail>(AppExtras.EXTRA_BOOKMARK_COLLECTION)
+                ?: return
+        Logger.debug("Hello $position --- $bookmarkCollection")
+        when (position) {
+            0 -> startActivity(
+                appRouter.bookmarkListItemIntent(
+                    requireContext(), bookmarkCollection.id
+                )
+            )
+
+            1 -> {
+                bookmarkCollectionFormResultLauncher.launch(
+                    appRouter.bookmarkCollectionFormIntent(
+                        requireContext(), bookmarkCollection
+                    )
+                )
+            }
+        }
     }
 }

@@ -112,7 +112,7 @@ class CommentFragment :
         }
     }
 
-    override fun onConfigBottomBehavior(behavior: BottomSheetBehavior<*>) {
+    override fun onConfigBottomSheetBehavior(behavior: BottomSheetBehavior<*>) {
         behavior.peekHeight = 0
         behavior.skipCollapsed = true
         behavior.state = BottomSheetBehavior.STATE_EXPANDED

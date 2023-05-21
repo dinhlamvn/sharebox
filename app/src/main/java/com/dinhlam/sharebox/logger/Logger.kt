@@ -19,6 +19,12 @@ object Logger {
         }
     }
 
+    fun error(message: String) {
+        if (enableLog) {
+            Log.e(TAG, message)
+        }
+    }
+
     fun warning(message: String, t: Throwable?) {
         if (enableLog) {
             Log.w(TAG, message, t)

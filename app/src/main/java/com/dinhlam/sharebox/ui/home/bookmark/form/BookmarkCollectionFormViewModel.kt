@@ -4,12 +4,18 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.core.content.FileProvider
+import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
+import com.dinhlam.sharebox.extensions.md5
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.utils.BookmarkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import java.io.File
@@ -17,16 +23,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkCollectionFormViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val bookmarkCollectionRepository: BookmarkCollectionRepository
-) : BaseViewModel<BookmarkCollectionFormState>(BookmarkCollectionFormState()) {
+) : BaseViewModel<BookmarkCollectionFormState>(BookmarkCollectionFormState().run {
+    val collectionDetail: BookmarkCollectionDetail? =
+        savedStateHandle[AppExtras.EXTRA_BOOKMARK_COLLECTION]
+    copy(bookmarkCollectionDetail = collectionDetail,
+        thumbnail = collectionDetail?.let { collection -> Uri.parse(collection.thumbnail) })
+}) {
 
     fun setThumbnail(uri: Uri) {
         setState { copy(thumbnail = uri, errorThumbnail = false) }
     }
 
-    fun createBookmarkCollection(context: Context, name: String, desc: String) {
+    fun performActionDone(context: Context, name: String, desc: String) {
         execute(Dispatchers.IO, onError = {
-            Logger.debug("error $it")
+            Logger.error("$it")
         }) { state ->
             setState { copy(errorName = null, errorDesc = null) }
 
@@ -52,13 +64,21 @@ class BookmarkCollectionFormViewModel @Inject constructor(
                 context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
             )
 
-            val result =
-                bookmarkCollectionRepository.createCollection(
-                    name,
-                    desc,
-                    newUri.toString(),
-                    state.passcode
-                )
+            val result = state.bookmarkCollectionDetail?.id?.let { collectionId ->
+                bookmarkCollectionRepository.updateCollection(collectionId) {
+                    copy(name = name, description = desc, thumbnail = newUri.toString()).run {
+                        state.passcode.takeIfNotNullOrBlank()?.let { newPasscode ->
+                            copy(passcode = newPasscode.md5())
+                        } ?: this
+                    }
+                }
+            } ?: bookmarkCollectionRepository.createCollection(
+                BookmarkUtils.createBookmarkCollectionId(),
+                name,
+                desc,
+                newUri.toString(),
+                state.passcode
+            )
 
             if (result) {
                 setState { copy(success = true) }

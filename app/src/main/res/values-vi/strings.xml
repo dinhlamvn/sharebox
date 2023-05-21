@@ -178,4 +178,10 @@
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
 
+    <string-array name="bookmark_collection_option_menu_items">
+        <item>OPEN</item>
+        <item>EDIT</item>
+        <item>DELETE</item>
+    </string-array>
+
 </resources>

@@ -8,7 +8,7 @@ import com.dinhlam.sharebox.databinding.ModelViewHashtagBinding
 data class HashTagModelView(
     val id: String,
     val text: String,
-    val onClick: Function1<String, Unit>?
+    val onClick: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("hashtag_$text") {
 
     override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
@@ -18,7 +18,7 @@ data class HashTagModelView(
 
             override fun onBind(model: HashTagModelView, position: Int) {
                 binding.container.setOnClickListener {
-                    model.onClick?.invoke(model.id)
+                    model.onClick.prop?.invoke(model.id)
                 }
                 binding.textHashtag.text = "#${model.text}"
             }

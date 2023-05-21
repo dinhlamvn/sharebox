@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
+import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
@@ -39,11 +40,11 @@ fun ShareData.buildShareModelViews(
                 shareComment,
                 bookmarked,
                 user,
-                actionOpen,
-                actionShareToOther,
-                actionVote,
-                actionComment,
-                actionBookmark,
+                BaseListAdapter.NoHashProp(actionOpen),
+                BaseListAdapter.NoHashProp(actionShareToOther),
+                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionComment),
+                BaseListAdapter.NoHashProp(actionBookmark),
             )
         }
 
@@ -58,11 +59,12 @@ fun ShareData.buildShareModelViews(
                 shareVote,
                 shareComment,
                 user,
-                actionOpen,
-                actionShareToOther,
-                actionVote,
-                actionComment,
-                actionBookmark,
+                bookmarked,
+                BaseListAdapter.NoHashProp(actionOpen),
+                BaseListAdapter.NoHashProp(actionShareToOther),
+                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionComment),
+                BaseListAdapter.NoHashProp(actionBookmark),
             )
         }
 
@@ -76,11 +78,12 @@ fun ShareData.buildShareModelViews(
                 shareVote,
                 shareComment,
                 user,
-                actionOpen,
-                actionShareToOther,
-                actionVote,
-                actionComment,
-                actionBookmark,
+                bookmarked,
+                BaseListAdapter.NoHashProp(actionOpen),
+                BaseListAdapter.NoHashProp(actionShareToOther),
+                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionComment),
+                BaseListAdapter.NoHashProp(actionBookmark),
             )
         }
 
@@ -119,8 +122,11 @@ fun ShareData.buildShareModelViews(
                     getSpanSize(pickItems.size, index),
                     getImageWidth(pickItems.size, index),
                     getImageWidth(pickItems.size, index),
-                    getNumber(shareData.uris.size, pickItems.size, index)
-                ) { actionOpen?.invoke(shareId) }
+                    getNumber(shareData.uris.size, pickItems.size, index),
+                    BaseListAdapter.NoHashProp(View.OnClickListener {
+                        actionOpen?.invoke(shareId)
+                    })
+                )
             }
 
             val spanCount = when {
@@ -139,11 +145,12 @@ fun ShareData.buildShareModelViews(
                 shareVote,
                 shareComment,
                 user,
-                actionOpen,
-                actionShareToOther,
-                actionVote,
-                actionComment,
-                actionBookmark,
+                bookmarked,
+                BaseListAdapter.NoHashProp(actionOpen),
+                BaseListAdapter.NoHashProp(actionShareToOther),
+                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionComment),
+                BaseListAdapter.NoHashProp(actionBookmark),
             )
         }
     }

@@ -21,7 +21,9 @@ data class TextPickerModelView(
     val isPicked: Boolean = false,
     @DrawableRes val startIcon: Int = 0,
     @DrawableRes val pickedIcon: Int = R.drawable.ic_done_black,
-    val actionClick: OnClickListener? = null,
+    val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView("text_$id") {
 
     override fun createViewHolder(
@@ -39,7 +41,7 @@ data class TextPickerModelView(
                 }
                 binding.textView.setTextAppearanceCompat(model.textAppearance)
                 binding.textView.text = model.text
-                model.actionClick?.let { listener ->
+                model.actionClick.prop?.let { listener ->
                     binding.textView.setOnClickListener(listener)
                 }
                 binding.textView.setDrawableCompat(

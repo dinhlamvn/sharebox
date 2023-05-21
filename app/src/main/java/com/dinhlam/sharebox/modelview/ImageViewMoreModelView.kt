@@ -19,7 +19,7 @@ data class ImageViewMoreModelView(
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     val number: Int = 0,
-    val actionClick: OnClickListener? = null
+    val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("image_view_more_model_view_$uri") {
 
     override fun createViewHolder(
@@ -31,7 +31,7 @@ data class ImageViewMoreModelView(
             ) {
 
             override fun onBind(model: ImageViewMoreModelView, position: Int) {
-                binding.root.setOnClickListener(model.actionClick)
+                binding.root.setOnClickListener(model.actionClick.prop)
 
                 binding.root.updateLayoutParams {
                     width = model.width

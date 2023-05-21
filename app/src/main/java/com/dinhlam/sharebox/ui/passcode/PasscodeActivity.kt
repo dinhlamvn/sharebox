@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.ui.passcode
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.animation.AnimationUtils
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
@@ -71,42 +72,54 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
     private val keypadAdapter = BaseListAdapter.createAdapter {
         repeat(9) { number ->
-            add(TextModelView(
-                "text_number_$number",
-                "${number + 1}",
-                height = 70.dp(),
-                textAppearance = R.style.TextAppearance_HeaderMedium
-            ) {
-                onNumberClicked(number + 1)
-            })
+            add(
+                TextModelView(
+                    "text_number_$number",
+                    "${number + 1}",
+                    height = 70.dp(),
+                    textAppearance = R.style.TextAppearance_HeaderMedium,
+                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        onNumberClicked(number + 1)
+                    })
+                )
+            )
         }
 
-        add(TextModelView(
-            "text_done",
-            CHARACTER_CODE_DONE,
-            height = 70.dp(),
-            textAppearance = R.style.TextAppearance_HeaderMedium
-        ) {
-            onDone()
-        })
+        add(
+            TextModelView(
+                "text_done",
+                CHARACTER_CODE_DONE,
+                height = 70.dp(),
+                textAppearance = R.style.TextAppearance_HeaderMedium,
+                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    onDone()
+                })
+            )
+        )
 
-        add(TextModelView(
-            "text_zero",
-            "0",
-            height = 70.dp(),
-            textAppearance = R.style.TextAppearance_HeaderMedium
-        ) {
-            onNumberClicked(0)
-        })
+        add(
+            TextModelView(
+                "text_zero",
+                "0",
+                height = 70.dp(),
+                textAppearance = R.style.TextAppearance_HeaderMedium,
+                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    onNumberClicked(0)
+                })
+            )
+        )
 
-        add(TextModelView(
-            "text_backspace",
-            CHARACTER_CODE_BACKSPACE,
-            height = 70.dp(),
-            textAppearance = R.style.TextAppearance_HeaderMedium
-        ) {
-            onBackspace()
-        })
+        add(
+            TextModelView(
+                "text_backspace",
+                CHARACTER_CODE_BACKSPACE,
+                height = 70.dp(),
+                textAppearance = R.style.TextAppearance_HeaderMedium,
+                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    onBackspace()
+                })
+            )
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -121,6 +121,16 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         return currentList.getOrNull(position)
     }
 
+    class NoHashProp<T>(val prop: T?) {
+        override fun equals(other: Any?): Boolean {
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return 0
+        }
+    }
+
     abstract class BaseModelView private constructor() {
 
         constructor(id: String) : this() {
@@ -143,7 +153,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         }
 
         open fun areContentsTheSame(other: BaseModelView): Boolean {
-            return this === other
+            return this == other
         }
 
         open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =

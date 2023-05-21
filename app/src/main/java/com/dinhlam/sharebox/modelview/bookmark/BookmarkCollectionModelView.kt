@@ -20,7 +20,7 @@ data class BookmarkCollectionModelView(
     val shareCount: Int,
     val marginStart: Int = 0,
     val marginTop: Int = 0,
-    val onClickListener: OnClickListener? = null
+    val onClickListener: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("bookmark_collection_$id") {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
@@ -41,7 +41,7 @@ data class BookmarkCollectionModelView(
                 marginStart = model.marginStart
                 topMargin = model.marginTop
             }
-            binding.container.setOnClickListener(model.onClickListener)
+            binding.container.setOnClickListener(model.onClickListener.prop)
             ImageLoader.instance.load(buildContext, model.thumbnail, binding.imageThumbnail)
             binding.textName.text = model.name
             binding.textDesc.text = model.desc

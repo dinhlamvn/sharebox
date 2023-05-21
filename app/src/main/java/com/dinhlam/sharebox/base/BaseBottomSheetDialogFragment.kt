@@ -50,10 +50,10 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
 
     override fun onStart() {
         dialog?.cast<BottomSheetDialog>()?.behavior?.apply {
-            onConfigBottomBehavior(this)
+            onConfigBottomSheetBehavior(this)
         }
         super.onStart()
     }
 
-    open fun onConfigBottomBehavior(behavior: BottomSheetBehavior<*>) {}
+    open fun onConfigBottomSheetBehavior(behavior: BottomSheetBehavior<*>) {}
 }
