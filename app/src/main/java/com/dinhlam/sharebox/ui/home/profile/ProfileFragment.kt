@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -71,29 +70,26 @@ class ProfileFragment :
             )
 
             if (state.isRefreshing) {
-                add(LoadingModelView("loading_profile"))
-                return@getState
+                add(LoadingModelView("loading_shares"))
             }
-
-            val models = state.shares.map { shareDetail ->
-                shareDetail.shareData.buildShareModelViews(
-                    screenWidth(),
-                    shareDetail.shareId,
-                    shareDetail.createdAt,
-                    shareDetail.shareNote,
-                    shareDetail.user,
-                    state.shareVoteMap[shareDetail.shareId].orElse(0),
-                    shareComment = shareDetail.commentCount,
-                    bookmarked = state.bookmarkedShareIdSet.contains(shareDetail.shareId),
-                    actionOpen = ::onOpen,
-                    actionShareToOther = ::onShareToOther,
-                    actionVote = ::onVote,
-                    actionComment = ::onComment,
-                    actionBookmark = ::onBookmark
-                )
-            }
-            if (models.isNotEmpty()) {
-                models.forEachIndexed { idx, model ->
+            if (state.shares.isNotEmpty()) {
+                val models = state.shares.map { shareDetail ->
+                    shareDetail.shareData.buildShareModelViews(
+                        screenWidth(),
+                        shareDetail.shareId,
+                        shareDetail.createdAt,
+                        shareDetail.shareNote,
+                        shareDetail.user,
+                        shareDetail.voteCount,
+                        shareComment = shareDetail.commentCount,
+                        bookmarked = shareDetail.bookmarked,
+                        actionOpen = ::onOpen,
+                        actionShareToOther = ::onShareToOther,
+                        actionVote = ::onVote,
+                        actionComment = ::onComment,
+                        actionBookmark = ::onBookmark
+                    )
+                }.forEachIndexed { idx, model ->
                     add(model)
                     add(
                         SizedBoxModelView(

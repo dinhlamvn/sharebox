@@ -6,5 +6,7 @@ data class ShareDetail(
     val shareNote: String?,
     val createdAt: Long,
     val shareData: ShareData,
-    val commentCount: Int
+    val commentCount: Int,
+    val voteCount: Int,
+    val bookmarked: Boolean
 )

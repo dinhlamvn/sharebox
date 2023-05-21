@@ -14,6 +14,8 @@ class ShareRepository @Inject constructor(
     private val shareDao: ShareDao,
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
+    private val bookmarkRepository: BookmarkRepository,
+    private val voteRepository: VoteRepository,
     private val mapper: ShareToShareDetailMapper,
 ) {
     suspend fun insert(data: Share): Boolean = data.runCatching {
@@ -27,7 +29,9 @@ class ShareRepository @Inject constructor(
         find().mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
-            mapper.map(share, user, commentCount)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
     }.getOrDefault(emptyList())
 
@@ -36,7 +40,9 @@ class ShareRepository @Inject constructor(
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
-            mapper.map(share, user, commentCount)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
     }.getOrDefault(emptyList())
 
@@ -45,7 +51,9 @@ class ShareRepository @Inject constructor(
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
-            mapper.map(share, user, commentCount)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
     }.getOrDefault(emptyList())
 
@@ -54,7 +62,9 @@ class ShareRepository @Inject constructor(
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
-            mapper.map(share, user, commentCount)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
     }.getOrDefault(emptyList())
 
@@ -63,7 +73,9 @@ class ShareRepository @Inject constructor(
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
-            mapper.map(share, user, commentCount)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
     }.getOrDefault(emptyList())
 
@@ -72,7 +84,9 @@ class ShareRepository @Inject constructor(
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
-            mapper.map(share, user, commentCount)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
     }.getOrDefault(emptyList())
 }

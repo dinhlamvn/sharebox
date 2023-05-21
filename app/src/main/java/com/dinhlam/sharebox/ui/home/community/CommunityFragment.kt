@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -85,9 +84,9 @@ class CommunityFragment :
                         shareDetail.createdAt,
                         shareDetail.shareNote,
                         shareDetail.user,
-                        state.shareVoteMap[shareDetail.shareId].orElse(0),
+                        shareDetail.voteCount,
                         shareComment = shareDetail.commentCount,
-                        bookmarked = state.bookmarkedShareIdSet.contains(shareDetail.shareId),
+                        bookmarked = shareDetail.bookmarked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
                         actionVote = ::onVote,

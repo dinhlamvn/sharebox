@@ -9,6 +9,4 @@ data class ProfileState(
     val shares: List<ShareDetail> = emptyList(),
     val isLoadMore: Boolean = false,
     val activeUser: UserDetail? = null,
-    val shareVoteMap: Map<String, Int> = emptyMap(),
-    val bookmarkedShareIdSet: Set<String> = emptySet(),
 ) : BaseViewModel.BaseState

@@ -9,14 +9,18 @@ import javax.inject.Singleton
 @Singleton
 class ShareToShareDetailMapper @Inject constructor() {
 
-    fun map(share: Share, user: UserDetail, commentCount: Int): ShareDetail {
+    fun map(
+        share: Share, user: UserDetail, commentCount: Int, voteCount: Int, bookmarked: Boolean
+    ): ShareDetail {
         return ShareDetail(
             share.shareId,
             user,
             share.shareNote,
             share.createdAt,
             share.shareData,
-            commentCount
+            commentCount,
+            voteCount,
+            bookmarked
         )
     }
 }
