@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.databinding.FragmentBookmarkBinding
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.BookmarkHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -37,6 +38,20 @@ class BookmarkFragment :
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.doOnRefresh()
+            }
+        }
+
+    private val requestPasscodeEditResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val bookmarkCollection =
+                    result.data?.getParcelableExtraCompat<BookmarkCollectionDetail>(AppExtras.EXTRA_BOOKMARK_COLLECTION)
+                        ?: return@registerForActivityResult
+                bookmarkCollectionFormResultLauncher.launch(
+                    appRouter.bookmarkCollectionFormIntent(
+                        requireContext(), bookmarkCollection
+                    )
+                )
             }
         }
 
@@ -136,11 +151,17 @@ class BookmarkFragment :
             )
 
             1 -> {
-                bookmarkCollectionFormResultLauncher.launch(
-                    appRouter.bookmarkCollectionFormIntent(
-                        requireContext(), bookmarkCollection
+                val passcode = bookmarkCollection.passcode.takeIfNotNullOrBlank()
+                    ?: return bookmarkCollectionFormResultLauncher.launch(
+                        appRouter.bookmarkCollectionFormIntent(
+                            requireContext(), bookmarkCollection
+                        )
                     )
-                )
+                requestPasscodeEditResultLauncher.launch(appRouter.passcodeIntent(
+                    requireContext(), passcode
+                ).apply {
+                    putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
+                })
             }
         }
     }
