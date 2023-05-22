@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -79,7 +80,7 @@ class CommunityFragment :
             } else if (state.shares.isNotEmpty()) {
                 val models = state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
-                        screenWidth(),
+                        screenHeight(),
                         shareDetail.shareId,
                         shareDetail.createdAt,
                         shareDetail.shareNote,

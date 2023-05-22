@@ -27,7 +27,6 @@ data class ListImagesModelView(
     val uris: List<Uri>,
     val createdAt: Long,
     val note: String?,
-    val spanCount: Int,
     val modelViews: List<ImageModelView>,
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
@@ -149,8 +148,6 @@ data class ListImagesModelView(
         }
 
         override fun onUnBind() {
-            models.clear()
-            adapter.requestBuildModelViews()
         }
 
     }

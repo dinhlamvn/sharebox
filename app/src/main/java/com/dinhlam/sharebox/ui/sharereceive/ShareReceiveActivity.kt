@@ -14,12 +14,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelActivity
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.model.UserDetail
@@ -35,7 +34,6 @@ import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -44,9 +42,9 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.HashTagModelView
 import com.dinhlam.sharebox.modelview.ImageModelView
-import com.dinhlam.sharebox.modelview.ImageViewMoreModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
+import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
@@ -95,34 +93,6 @@ class ShareReceiveActivity :
     }
 
     private val shareContentAdapter = BaseListAdapter.createAdapter {
-
-        fun getSpanSize(size: Int, index: Int): Int {
-            return when (size) {
-                AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> if (index < 2) 3 else 2
-                else -> 1
-            }
-        }
-
-        fun getImageWidth(size: Int, index: Int): Int {
-            val screenWidth = screenWidth()
-
-            return when (size) {
-                4 -> screenWidth.div(2)
-                AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> if (index < 2) screenWidth.div(2) else screenWidth.div(
-                    3
-                )
-
-                else -> screenWidth.div(size)
-            }
-        }
-
-        fun getNumber(realSize: Int, takeSize: Int, index: Int): Int {
-            return when {
-                realSize > takeSize && index == takeSize - 1 -> realSize - takeSize
-                else -> 0
-            }
-        }
-
         getState(viewModel) { state ->
             when (val shareData = state.shareData) {
                 is ShareData.ShareText -> add(
@@ -138,22 +108,13 @@ class ShareReceiveActivity :
                 )
 
                 is ShareData.ShareImage -> add(
-                    ImageModelView(shareData.uri, screenHeight().times(0.4).toInt())
+                    ImageModelView(shareData.uri, screenHeight().times(0.5).toInt())
                 )
 
                 is ShareData.ShareImages -> {
-                    val pickItems = shareData.uris.take(AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT)
-
-                    addAll(pickItems.mapIndexed { index, uri ->
-                        ImageViewMoreModelView(
-                            uri,
-                            getSpanSize(pickItems.size, index),
-                            getImageWidth(pickItems.size, index),
-                            getImageWidth(pickItems.size, index),
-                            getNumber(shareData.uris.size, pickItems.size, index)
-                        )
+                    addAll(shareData.uris.map { uri ->
+                        ImageModelView(uri, height = screenHeight().times(0.5).toInt())
                     })
-
                 }
 
                 else -> add(LoadingModelView("loading"))
@@ -256,7 +217,7 @@ class ShareReceiveActivity :
             }
 
             action == Intent.ACTION_SEND_MULTIPLE && type?.startsWith("image/") == true -> {
-                handleShareMultipleImage(intent)
+                handleShareImages(intent)
             }
 
             action == Intent.ACTION_PROCESS_TEXT && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
@@ -292,18 +253,17 @@ class ShareReceiveActivity :
             }
     }
 
-    private fun handleShareMultipleImage(intent: Intent) {
+    private fun handleShareImages(intent: Intent) {
         intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
             val data = list.mapNotNull { it.cast<Uri>() }
-            val spanCount = when {
-                data.size == 4 -> 2
-                data.size > AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> 6
-                else -> data.size
-            }
-            viewBinding.recyclerView.layoutManager = GridLayoutManager(this, spanCount).apply {
-                spanSizeLookup = BaseSpanSizeLookup(shareContentAdapter, spanCount)
-            }
-
+            viewBinding.recyclerView.layoutManager =
+                LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            PagerSnapHelper().attachToRecyclerView(viewBinding.recyclerView)
+            viewBinding.recyclerView.addItemDecoration(
+                HorizontalCirclePagerItemDecoration(
+                    colorActive = ContextCompat.getColor(this, R.color.primaryDarkColor)
+                )
+            )
             viewModel.setShareInfo(ShareData.ShareImages(data))
         }
     }

@@ -111,7 +111,7 @@ class ShareCommunityService : Service() {
         sharePower += voteCount
 
         val elapsed = Calendar.getInstance().timeInMillis - createdAt
-        val hours = elapsed.div(3600 * 1000 * 24).toInt()
+        val hours = elapsed.div(3600 * 1000).toInt()
 
         return sharePower - hours
     }

@@ -183,6 +183,7 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="bookmark_collection_delete_confirm_message">Are you sure to delete this collection?</string>
     <string name="share_receive_no_bookmark">No bookmark</string>
+    <string name="action_send">Send</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -50,7 +51,7 @@ class BookmarkListItemActivity :
             } else {
                 val models = state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
-                        screenWidth(),
+                        screenHeight(),
                         shareDetail.shareId,
                         shareDetail.createdAt,
                         shareDetail.shareNote,

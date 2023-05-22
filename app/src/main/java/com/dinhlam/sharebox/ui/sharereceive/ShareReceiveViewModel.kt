@@ -87,7 +87,7 @@ class ShareReceiveViewModel @Inject constructor(
             state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                 bookmarkRepository.bookmark(0, shareIdInserted, pickedBookmarkCollectionId)
                 setState { copy(isSaveSuccess = true, showLoading = false) }
-            }
+            } ?: setState { copy(isSaveSuccess = true, showLoading = false) }
         } ?: setState { copy(isSaveSuccess = false, showLoading = false) }
     }
 

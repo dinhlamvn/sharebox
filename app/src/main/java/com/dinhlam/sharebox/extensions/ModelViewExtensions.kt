@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
@@ -12,7 +11,7 @@ import com.dinhlam.sharebox.modelview.list.ListUrlModelView
 import com.dinhlam.sharebox.utils.IconUtils
 
 fun ShareData.buildShareModelViews(
-    screenWidth: Int,
+    screenHeight: Int,
     shareId: String,
     createdAt: Long,
     shareNote: String?,
@@ -90,13 +89,7 @@ fun ShareData.buildShareModelViews(
             val shareData = this.castNonNull<ShareData.ShareImages>()
 
             val modelViews = shareData.uris.map { uri ->
-                ImageModelView(uri, height = 300.dp())
-            }
-
-            val spanCount = when {
-                shareData.uris.size == 4 -> 2
-                shareData.uris.size >= AppConsts.SHARE_IMAGES_PICK_ITEM_LIMIT -> 6
-                else -> shareData.uris.size
+                ImageModelView(uri, height = screenHeight.times(0.5f).toInt())
             }
 
             ListImagesModelView(
@@ -104,7 +97,6 @@ fun ShareData.buildShareModelViews(
                 shareData.uris,
                 createdAt,
                 shareNote,
-                spanCount,
                 modelViews,
                 shareVote,
                 shareComment,
