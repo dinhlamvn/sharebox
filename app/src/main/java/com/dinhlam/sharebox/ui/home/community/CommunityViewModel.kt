@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.home.community
 
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
@@ -27,20 +28,29 @@ class CommunityViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shares = shareRepository.findShareCommunity()
+            val shares = shareRepository.findShareCommunity(offset = 0)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
 
     fun loadMores() {
-        setState { copy(isLoadMore = true) }
-        backgroundTask {
-            val shares = shareRepository.findShareCommunity()
-            setState { copy(shares = this.shares.plus(shares), isLoadMore = false) }
+        execute { state ->
+            setState { copy(isLoadingMore = true) }
+            val shares =
+                shareRepository.findShareCommunity(offset = state.currentPage * AppConsts.SHARE_LOADING_LIMIT_ITEM_PER_PAGE)
+            setState {
+                copy(
+                    shares = this.shares.plus(shares),
+                    isLoadingMore = false,
+                    canLoadMore = shares.isNotEmpty(),
+                    currentPage = state.currentPage + 1
+                )
+            }
         }
     }
 
     fun doOnRefresh() {
+        setState { copy(currentPage = 1, isLoadingMore = false, canLoadMore = true) }
         loadShares()
     }
 
@@ -96,10 +106,11 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun showBookmarkCollectionPicker(shareId: String, @UiThread block:  (String?) -> Unit) = backgroundTask {
-        val bookmarkDetail = bookmarkRepository.findOne(shareId)
-        withContext(Dispatchers.Main) {
-            block(bookmarkDetail?.bookmarkCollectionId)
+    fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
+        backgroundTask {
+            val bookmarkDetail = bookmarkRepository.findOne(shareId)
+            withContext(Dispatchers.Main) {
+                block(bookmarkDetail?.bookmarkCollectionId)
+            }
         }
-    }
 }

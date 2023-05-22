@@ -31,7 +31,9 @@ interface ShareDao {
         FROM share as s
         INNER JOIN share_community sc ON sc.share_id = s.share_id
         ORDER BY sc.share_power DESC
+        LIMIT :limit
+        OFFSET :offset
     """
     )
-    suspend fun findShareCommunity(): List<Share>
+    suspend fun findShareCommunity(limit: Int, offset: Int): List<Share>
 }

@@ -28,7 +28,6 @@ import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.services.ShareCommunityService
-import com.dinhlam.sharebox.ui.home.profile.ProfileState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -58,7 +57,7 @@ class CommunityFragment :
 
     private val layoutManager by lazy {
         LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
-            return@LoadMoreLinearLayoutManager false
+            return@LoadMoreLinearLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
         }) {
             viewModel.loadMores()
         }
@@ -73,8 +72,7 @@ class CommunityFragment :
             if (state.shares.isEmpty() && !state.isRefreshing) {
                 add(
                     TextModelView(
-                        "text_empty",
-                        getString(R.string.no_result)
+                        "text_empty", getString(R.string.no_result)
                     )
                 )
             } else if (state.shares.isNotEmpty()) {
@@ -107,15 +105,8 @@ class CommunityFragment :
                     )
                 }
 
-                if (state.isLoadMore) {
-                    add(LoadingModelView("home_load_more"))
-                    add(
-                        SizedBoxModelView(
-                            "sizeBoxLoadMore",
-                            height = 50.dp(),
-                            backgroundColor = android.R.color.transparent
-                        )
-                    )
+                if (state.isLoadingMore) {
+                    add(LoadingModelView("home_load_more_${state.currentPage}"))
                 }
             }
         }
@@ -158,7 +149,7 @@ class CommunityFragment :
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consume(this, ProfileState::isLoadMore, true) { isLoadMore ->
+        viewModel.consume(this, CommunityState::isLoadingMore, true) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }
