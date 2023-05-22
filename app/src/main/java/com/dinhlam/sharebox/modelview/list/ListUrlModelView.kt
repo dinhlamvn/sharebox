@@ -121,8 +121,7 @@ data class ListUrlModelView(
         }
 
         override fun onUnBind() {
-            binding.shareLinkPreview.resetUi()
-            binding.textViewNote.text = null
+            
         }
 
     }

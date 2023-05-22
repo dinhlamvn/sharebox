@@ -72,11 +72,13 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
             ViewShareBoxLinkPreviewBinding.bind(this)
         }
 
-    fun resetUi() {
+    private fun resetUi() {
         binding.textViewUrl.text = null
         binding.textViewTitle.text = null
         binding.textViewDescription.text = null
         binding.imageView.setImageDrawable(null)
+        binding.shimmerContainer.isVisible = true
+        binding.shimmerContainer.showShimmer(true)
     }
 
     fun setLink(url: String?, block: () -> Style = { Style() }) {
