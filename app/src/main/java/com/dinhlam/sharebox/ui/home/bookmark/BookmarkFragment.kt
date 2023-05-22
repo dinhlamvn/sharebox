@@ -26,6 +26,7 @@ import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
 import com.dinhlam.sharebox.router.AppRouter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -52,6 +53,16 @@ class BookmarkFragment :
                         requireContext(), bookmarkCollection
                     )
                 )
+            }
+        }
+
+    private val requestPasscodeDeleteResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val bookmarkCollectionId =
+                    result.data?.getStringExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID)
+                        ?: return@registerForActivityResult ?: return@registerForActivityResult
+                viewModel.deleteBookmarkCollection(bookmarkCollectionId)
             }
         }
 
@@ -130,9 +141,21 @@ class BookmarkFragment :
         getState(viewModel) { state ->
             val collectionDetail =
                 state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
+
+            val arrayIcons = arrayOf(
+                R.drawable.ic_open_black, R.drawable.ic_edit_black, R.drawable.ic_delete_black
+            )
+            val choiceItems =
+                resources.getStringArray(R.array.bookmark_collection_option_menu_items)
+                    .mapIndexed { index, text ->
+                        SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                            arrayIcons[index], text
+                        )
+                    }.toTypedArray()
+
             bookmarkHelper.showOptionMenu(
                 childFragmentManager,
-                resources.getStringArray(R.array.bookmark_collection_option_menu_items),
+                choiceItems,
                 bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail)
             )
         }
@@ -162,6 +185,25 @@ class BookmarkFragment :
                 ).apply {
                     putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
                 })
+            }
+
+            2 -> {
+                MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.confirmation)
+                    .setMessage(R.string.bookmark_collection_delete_confirm_message)
+                    .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                        val passcode = bookmarkCollection.passcode.takeIfNotNullOrBlank()
+                            ?: return@setPositiveButton viewModel.deleteBookmarkCollection(
+                                bookmarkCollection.id
+                            )
+                        requestPasscodeDeleteResultLauncher.launch(appRouter.passcodeIntent(
+                            requireContext(), passcode
+                        ).apply {
+                            putExtra(
+                                AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollection.id
+                            )
+                        })
+                    }.setNegativeButton(R.string.dialog_cancel, null)
+                    .show()
             }
         }
     }

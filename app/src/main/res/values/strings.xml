@@ -181,11 +181,12 @@
     <string name="dialog_confirm_remove_bookmark">Are you sure to remove this bookmark?</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
-    
+    <string name="bookmark_collection_delete_confirm_message">Are you sure to delete this collection?</string>
+
     <string-array name="bookmark_collection_option_menu_items">
-        <item>OPEN</item>
-        <item>EDIT</item>
-        <item>DELETE</item>
+        <item>Open</item>
+        <item>Edit</item>
+        <item>Delete</item>
     </string-array>
 
 </resources>

@@ -15,7 +15,11 @@ class BookmarkHelper @Inject constructor(
     @ApplicationContext context: Context
 ) {
 
-    fun showOptionMenu(fragmentManager: FragmentManager, items: Array<String>, args: Bundle) {
+    fun showOptionMenu(
+        fragmentManager: FragmentManager,
+        items: Array<SingleChoiceBottomSheetDialogFragment.SingleChoiceItem>,
+        args: Bundle
+    ) {
         SingleChoiceBottomSheetDialogFragment().apply {
             arguments = bundleOf(
                 AppExtras.EXTRA_CHOICE_ITEMS to items

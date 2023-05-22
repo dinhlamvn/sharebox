@@ -57,6 +57,14 @@ inline fun <reified T : Parcelable> Bundle.getParcelableArrayListExtraCompat(key
     return getParcelableArrayList(key)
 }
 
+@Suppress("DEPRECATION")
+inline fun <reified T : Parcelable> Bundle.getParcelableArrayExtraCompat(key: String): Array<T>? {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return getParcelableArray(key, T::class.java)
+    }
+    return getParcelableArray(key).cast()
+}
+
 inline fun <reified T> Context.getSystemServiceCompat(name: String): T {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         getSystemService(T::class.java)

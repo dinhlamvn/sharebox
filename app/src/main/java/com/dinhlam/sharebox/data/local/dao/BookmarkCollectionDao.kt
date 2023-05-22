@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -14,6 +15,9 @@ interface BookmarkCollectionDao {
 
     @Update
     suspend fun update(bookmarkCollection: BookmarkCollection)
+
+    @Delete
+    suspend fun delete(bookmarkCollection: BookmarkCollection)
 
     @Query("SELECT * FROM bookmark_collection ORDER BY id DESC")
     suspend fun find(): List<BookmarkCollection>

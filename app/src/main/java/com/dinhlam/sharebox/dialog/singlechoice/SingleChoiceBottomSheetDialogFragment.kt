@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.dialog.singlechoice
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,18 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogSingleChoiceBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.extensions.getParcelableArrayExtraCompat
+import com.dinhlam.sharebox.modelview.IconTextModelView
+import kotlinx.parcelize.Parcelize
 
 class SingleChoiceBottomSheetDialogFragment :
     BaseBottomSheetDialogFragment<DialogSingleChoiceBinding>() {
+
+    @Parcelize
+    data class SingleChoiceItem(
+        val icon: Int,
+        val text: String,
+    ) : Parcelable
 
     fun interface OnOptionItemSelectedListener {
         fun onOptionItemSelected(position: Int, item: String, args: Bundle)
@@ -26,17 +35,20 @@ class SingleChoiceBottomSheetDialogFragment :
         return DialogSingleChoiceBinding.inflate(inflater, container, false)
     }
 
-    private val choiceItems: Array<String> by lazy {
-        arguments?.getStringArray(AppExtras.EXTRA_CHOICE_ITEMS) ?: emptyArray()
+    private val choiceItems: Array<SingleChoiceItem> by lazy {
+        arguments?.getParcelableArrayExtraCompat(AppExtras.EXTRA_CHOICE_ITEMS) ?: arrayOf()
     }
 
     private val choiceAdapter = BaseListAdapter.createAdapter {
         choiceItems.forEachIndexed { index, choiceItem ->
             add(
-                TextModelView(
-                    "choice_$index", choiceItem, height = 50.dp(),
+                IconTextModelView(
+                    "choice_$index",
+                    choiceItem.icon,
+                    choiceItem.text,
+                    height = 50.dp(),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        onItemSelected(index, choiceItem)
+                        onItemSelected(index, choiceItem.text)
                     })
                 )
             )
@@ -45,6 +57,10 @@ class SingleChoiceBottomSheetDialogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (choiceItems.isEmpty()) {
+            return dismiss()
+        }
 
         viewBinding.root.updateLayoutParams {
             height = choiceItems.size.coerceAtMost(6) * 50.dp()

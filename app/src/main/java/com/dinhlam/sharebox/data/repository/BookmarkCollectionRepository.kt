@@ -55,4 +55,10 @@ class BookmarkCollectionRepository @Inject constructor(
         val shareCount = bookmarkRepository.count(bookmarkCollection.id)
         mapper.map(bookmarkCollection, shareCount)
     }.getOrNull()
+
+    suspend fun delete(id: String): Boolean = bookmarkCollectionDao.runCatching {
+        val bookmarkCollection = find(id) ?: return@runCatching false
+        delete(bookmarkCollection)
+        true
+    }.getOrDefault(false)
 }

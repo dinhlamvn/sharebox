@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/text_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:drawablePadding="16dp"
+    android:ellipsize="middle"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="16dp"
+    android:textAppearance="@style/TextAppearance.Body"
+    tools:drawableStart="@tools:sample/avatars" />
