@@ -19,6 +19,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -87,7 +88,7 @@ class ShareCommunityService : Service() {
                     if (shareCommunityRepository.insert(
                             shareCommunity?.id.orElse(0),
                             shareDetail.shareId,
-                            calcSharePower(shareDetail.shareId)
+                            calcSharePower(shareDetail.shareId, shareDetail.createdAt)
                         )
                     ) {
                         ids.add(shareDetail.shareId)
@@ -100,7 +101,7 @@ class ShareCommunityService : Service() {
         }
     }
 
-    private suspend fun calcSharePower(shareId: String): Int {
+    private suspend fun calcSharePower(shareId: String, createdAt: Long): Int {
         var sharePower = 0
 
         val commentCount = commentRepository.count(shareId)
@@ -109,6 +110,9 @@ class ShareCommunityService : Service() {
         val voteCount = voteRepository.count(shareId)
         sharePower += voteCount
 
-        return sharePower
+        val elapsed = Calendar.getInstance().timeInMillis - createdAt
+        val hours = elapsed.div(3600 * 1000 * 24).toInt().coerceAtMost(sharePower)
+
+        return sharePower - hours
     }
 }
