@@ -185,7 +185,7 @@ class BookmarkListItemActivity :
     }
 
     private fun onVote(shareId: String) {
-
+        viewModel.vote(shareId)
     }
 
     private fun onBookmark(shareId: String) {
