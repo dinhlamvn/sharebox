@@ -1,13 +1,15 @@
 package com.dinhlam.sharebox.view
 
 import android.content.Context
-import android.text.TextPaint
+import android.graphics.Rect
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 
@@ -104,17 +106,24 @@ class ShareBoxReadMoreTextView @JvmOverloads constructor(
     }
 
     private fun calcEndIndex(text: CharSequence): Int {
-        var totalTextWidth = 0
         var endIndex = 0
-        val allowTextWidth = collapsedLine * width
-        val textPaint = TextPaint()
-        textPaint.textSize = textSize
+        val allowTextWidth = getAllowCollapsedTextWidth()
+
+        if (allowTextWidth <= 0) {
+            return text.length
+        }
+
+        val bounds = Rect()
 
         do {
-            totalTextWidth += textPaint.measureText(text[endIndex].toString()).toInt()
+            paint.getTextBounds(text.toString(), 0, endIndex, bounds)
             endIndex++
-        } while (totalTextWidth <= allowTextWidth && endIndex < text.length)
+        } while (bounds.width() < allowTextWidth && endIndex < text.length)
 
         return endIndex
+    }
+
+    private fun getAllowCollapsedTextWidth(): Int {
+        return (width - marginEnd - marginStart - paddingStart - paddingEnd) * collapsedLine
     }
 }
