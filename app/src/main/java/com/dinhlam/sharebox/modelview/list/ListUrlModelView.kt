@@ -113,7 +113,7 @@ data class ListUrlModelView(
 
             model.note.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
-                binding.textViewNote.text = text
+                binding.textViewNote.setReadMoreText(text)
             } ?: binding.textViewNote.apply {
                 text = null
                 isVisible = false

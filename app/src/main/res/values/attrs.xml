@@ -4,4 +4,11 @@
         <attr name="point_icon" format="reference" />
         <attr name="point_name" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="ShareBoxReadMoreTextView">
+        <attr name="collapsed_line" format="integer" />
+        <attr name="collapsed_text" format="string" />
+        <attr name="expanded_text" format="string" />
+        <attr name="read_more_text_color" format="color" />
+    </declare-styleable>
 </resources>

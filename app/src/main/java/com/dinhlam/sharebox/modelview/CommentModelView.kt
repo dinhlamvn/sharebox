@@ -40,7 +40,7 @@ data class CommentModelView(
             ImageLoader.instance.load(buildContext, model.avatar, binding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
-            binding.textContent.text = model.content
+            binding.textContent.setReadMoreText(model.content)
         }
 
         override fun onUnBind() {

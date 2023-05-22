@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageViewMoreBinding
 import com.dinhlam.sharebox.extensions.asViewMoreDisplayCountValue
-import com.dinhlam.sharebox.extensions.takeIfNotZero
+import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.imageloader.ImageLoader
 
 data class ImageViewMoreModelView(
@@ -45,7 +45,7 @@ data class ImageViewMoreModelView(
 
                 ImageLoader.instance.load(buildContext, model.uri, binding.imageView)
 
-                model.number.takeIfNotZero()?.let { num ->
+                model.number.takeIfGreaterThanZero()?.let { num ->
                     binding.textNumber.isVisible = true
                     binding.textNumber.text = num.asViewMoreDisplayCountValue()
                 } ?: binding.textNumber.apply {

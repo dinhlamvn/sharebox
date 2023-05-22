@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dpF
-import com.dinhlam.sharebox.extensions.takeIfNotZero
+import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 
 class HorizontalCirclePagerItemDecoration constructor(
     private val strokeWidth: Float = 1.dpF(),
@@ -29,7 +29,7 @@ class HorizontalCirclePagerItemDecoration constructor(
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 
-        val totalItem = parent.adapter?.itemCount?.takeIfNotZero() ?: return
+        val totalItem = parent.adapter?.itemCount?.takeIfGreaterThanZero() ?: return
         val width = parent.width
         val height = parent.height
 

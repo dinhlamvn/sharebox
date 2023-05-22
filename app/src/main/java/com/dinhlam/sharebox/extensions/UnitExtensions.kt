@@ -28,4 +28,4 @@ fun Int.coerceMinMax(min: Int, max: Int) = this.coerceAtLeast(min).coerceAtMost(
 
 fun Int?.orElse(other: Int) = this ?: other
 
-fun Int.takeIfNotZero() = takeIf { it > 0 }
+fun Int.takeIfGreaterThanZero() = takeIf { it > 0 }
