@@ -121,7 +121,7 @@ data class ListUrlModelView(
         }
 
         override fun onUnBind() {
-            
+
         }
 
     }

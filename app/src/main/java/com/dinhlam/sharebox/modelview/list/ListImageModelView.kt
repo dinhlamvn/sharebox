@@ -102,7 +102,9 @@ data class ListImageModelView(
             binding.bottomAction.setLikeNumber(model.shareUpVote)
             binding.bottomAction.setCommentNumber(model.shareComment)
 
-            ImageLoader.instance.load(buildContext, model.uri, binding.imageShare)
+            ImageLoader.instance.load(buildContext, model.uri, binding.imageShare) {
+                copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
+            }
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
