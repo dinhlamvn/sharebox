@@ -132,14 +132,14 @@ class ShareHelper @Inject constructor(
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
     }
 
-    fun bookmark(
+    fun showBookmarkCollectionPicker(
         activity: FragmentActivity,
-        shareId: String,
+        collectionId: String?,
         listener: BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener
     ) {
         BookmarkCollectionPickerDialogFragment().apply {
             arguments = Bundle().apply {
-                putString(AppExtras.EXTRA_SHARE_ID, shareId)
+                putString(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, collectionId)
             }
             this.listener = listener
         }.show(

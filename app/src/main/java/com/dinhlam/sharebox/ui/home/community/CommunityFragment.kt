@@ -197,8 +197,10 @@ class CommunityFragment :
     }
 
     private fun onBookmark(shareId: String) {
-        shareHelper.bookmark(requireActivity(), shareId) { pickedId ->
-            viewModel.bookmark(shareId, pickedId)
+        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
+            shareHelper.showBookmarkCollectionPicker(requireActivity(), collectionId) { pickedId ->
+                viewModel.bookmark(shareId, pickedId)
+            }
         }
     }
 

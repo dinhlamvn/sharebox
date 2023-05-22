@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.home.community
 
+import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
@@ -7,6 +8,8 @@ import com.dinhlam.sharebox.data.repository.VoteRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,6 +93,13 @@ class CommunityViewModel @Inject constructor(
                     copy(shares = shareList)
                 }
             }
+        }
+    }
+
+    fun showBookmarkCollectionPicker(shareId: String, @UiThread block:  (String?) -> Unit) = backgroundTask {
+        val bookmarkDetail = bookmarkRepository.findOne(shareId)
+        withContext(Dispatchers.Main) {
+            block(bookmarkDetail?.bookmarkCollectionId)
         }
     }
 }

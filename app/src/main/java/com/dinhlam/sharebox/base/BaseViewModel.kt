@@ -90,7 +90,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
             afterField.isAccessible = true
             val afterValue = afterField.get(newState)
-            if (consumer.notifyOnChanged && beforeValue !== afterValue) {
+            if (consumer.notifyOnChanged && beforeValue != afterValue) {
                 consumer.liveData.postValue(afterValue)
             } else if (!consumer.notifyOnChanged) {
                 consumer.liveData.postValue(afterValue)
@@ -108,7 +108,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
             afterField.isAccessible = true
             val afterValue = afterField.get(newState)
-            if (consumer.notifyOnChanged && beforeValue !== afterValue) {
+            if (consumer.notifyOnChanged && beforeValue != afterValue) {
                 consumer.changeNotifier.invoke(afterValue)
             } else if (!consumer.notifyOnChanged) {
                 consumer.changeNotifier.invoke(afterValue)

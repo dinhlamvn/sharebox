@@ -6,7 +6,6 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
-import com.dinhlam.sharebox.extensions.getNonNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<BookmarkCollectionPickerState>(
-    BookmarkCollectionPickerState(savedStateHandle.getNonNull(AppExtras.EXTRA_SHARE_ID))
+    BookmarkCollectionPickerState(savedStateHandle[AppExtras.EXTRA_BOOKMARK_COLLECTION_ID])
 ) {
 
 
@@ -26,10 +25,8 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
 
     private fun loadBookmarkCollections() = execute { state ->
         val collections = bookmarkCollectionRepository.find()
-        val bookmarkDetail = bookmarkRepository.findOne(state.shareId)
-        val bookmarkCollection = bookmarkDetail?.bookmarkCollectionId?.let { collectionId ->
-            bookmarkCollectionRepository.find(collectionId)
-        }
+        val bookmarkCollection =
+            state.collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
         setState {
             copy(
                 bookmarkCollections = collections,

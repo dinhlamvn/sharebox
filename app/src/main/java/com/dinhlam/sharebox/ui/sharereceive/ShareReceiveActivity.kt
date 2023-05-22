@@ -13,6 +13,7 @@ import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -25,6 +26,7 @@ import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemIconWithTextSubtextBinding
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
@@ -35,8 +37,8 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.extensions.setNonBlankText
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -61,6 +63,9 @@ class ShareReceiveActivity :
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var shareHelper: ShareHelper
 
     @Inject
     lateinit var appPref: AppSharePref
@@ -179,6 +184,14 @@ class ShareReceiveActivity :
             finishAndRemoveTask()
         }
 
+        viewModel.consume(this, ShareReceiveState::showLoading, true) { isShow ->
+            if (isShow) {
+                viewBinding.viewLoading.show()
+            } else {
+                viewBinding.viewLoading.hide()
+            }
+        }
+
         viewBinding.recyclerView.adapter = shareContentAdapter
 
         viewModel.consume(this, ShareReceiveState::isSaveSuccess) { isSaveSuccess ->
@@ -188,15 +201,39 @@ class ShareReceiveActivity :
             }
         }
 
-        viewBinding.buttonPost.setOnClickListener {
+        viewBinding.containerButtonPost.setOnClickListener {
             hideKeyboard()
             val shareNote = viewBinding.textInputNote.getTrimmedText()
             viewModel.share(shareNote, this@ShareReceiveActivity)
         }
 
+        viewBinding.containerShareBookmark.setOnClickListener {
+            showBookmarkCollectionPicker()
+        }
+
         viewModel.consume(this, ShareReceiveState::shareMode) { shareMode ->
-            viewBinding.textShareMode.setDrawableCompat(start = shareMode.icon)
-            viewBinding.textShareMode.setNonBlankText(getString(shareMode.text))
+            viewBinding.imageShareMode.setImageResource(shareMode.icon)
+        }
+
+        viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
+            collectionDetail?.let { collection ->
+                viewBinding.textShareBookmark.setTextColor(
+                    ContextCompat.getColor(
+                        this, R.color.primaryColor
+                    )
+                )
+                viewBinding.textShareBookmark.text = collection.name
+                viewBinding.textShareBookmark.setDrawableCompat(start = R.drawable.ic_bookmarked)
+            } ?: viewBinding.textShareBookmark.apply {
+                setTextColor(
+                    ContextCompat.getColor(
+                        this@ShareReceiveActivity,
+                        R.color.colorTextHint
+                    )
+                )
+                setText(R.string.share_receive_no_bookmark)
+                viewBinding.textShareBookmark.setDrawableCompat(start = R.drawable.ic_bookmark)
+            }
         }
 
         viewBinding.containerShareMode.setOnClickListener {
@@ -313,6 +350,13 @@ class ShareReceiveActivity :
             popupView.addView(binding.root, layoutParams)
         }
         popupWindow.contentView = popupView
-        popupWindow.showAsDropDown(viewBinding.containerShareMode)
+
+        popupWindow.showAsDropDown(viewBinding.containerShareMode, 0, -1 * (70 * 2).dp())
+    }
+
+    private fun showBookmarkCollectionPicker() = getState(viewModel) { state ->
+        shareHelper.showBookmarkCollectionPicker(this, state.bookmarkCollection?.id) { pickedId ->
+            viewModel.setBookmarkCollection(pickedId)
+        }
     }
 }
