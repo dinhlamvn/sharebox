@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.ImageModelView
+import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImagesModelView(
@@ -79,9 +80,12 @@ data class ListImagesModelView(
         private val models = mutableListOf<ImageModelView>()
 
         init {
-            PagerSnapHelper().apply {
-                page
-            }.attachToRecyclerView(binding.recyclerViewImage)
+            PagerSnapHelper().attachToRecyclerView(binding.recyclerViewImage)
+            binding.recyclerViewImage.addItemDecoration(
+                HorizontalCirclePagerItemDecoration(
+                    colorActive = ContextCompat.getColor(buildContext, R.color.primaryDarkColor)
+                )
+            )
             binding.recyclerViewImage.adapter = adapter
             adapter.requestBuildModelViews()
         }

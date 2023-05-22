@@ -99,6 +99,7 @@ class CommunityFragment :
                     add(
                         SizedBoxModelView(
                             "divider_$idx",
+                            width = screenWidth().times(0.9).toInt(),
                             height = 1.dp(),
                             backgroundColor = R.color.colorDividerLightV2
                         )

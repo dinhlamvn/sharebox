@@ -63,22 +63,15 @@
 
         <!-- bottom action button -->
 
-        <View
-            android:id="@+id/divider_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="12dp"
-            android:background="@color/colorDividerLightV2"
-            app:layout_constraintTop_toBottomOf="@id/text_created_date" />
-
         <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
             android:id="@+id/bottom_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider_bottom" />
+            app:layout_constraintTop_toBottomOf="@id/text_created_date" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
