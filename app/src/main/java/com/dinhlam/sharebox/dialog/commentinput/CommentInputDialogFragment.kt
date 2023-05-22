@@ -50,6 +50,9 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
             sendComment()
         }
 
+        viewBinding.editComment.setHorizontallyScrolling(false)
+        viewBinding.editComment.maxLines = 5
+
         viewBinding.editComment.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendComment()
