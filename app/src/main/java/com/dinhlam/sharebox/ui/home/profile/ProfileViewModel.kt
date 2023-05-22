@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.home.profile
 
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
@@ -37,20 +38,34 @@ class ProfileViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shares = shareRepository.find(userSharePref.getActiveUserId())
+            val shares = shareRepository.find(
+                userSharePref.getActiveUserId(), AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
+            )
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
 
     fun loadMores() {
-        setState { copy(isLoadMore = true) }
-        backgroundTask {
-            val others = shareRepository.find(userSharePref.getActiveUserId())
-            setState { copy(shares = shares.plus(others), isLoadMore = false) }
+        execute { state ->
+            setState { copy(isLoadingMore = true) }
+            val others = shareRepository.find(
+                userSharePref.getActiveUserId(),
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+            )
+            setState {
+                copy(
+                    shares = shares.plus(others),
+                    isLoadingMore = false,
+                    currentPage = state.currentPage + 1,
+                    canLoadMore = others.isNotEmpty()
+                )
+            }
         }
     }
 
     fun doOnRefresh() {
+        setState { copy(currentPage = 1, canLoadMore = true) }
         getActiveUserInfo()
         loadShares()
     }
@@ -71,12 +86,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun showBookmarkCollectionPicker(shareId: String, @UiThread block:  (String?) -> Unit) = backgroundTask {
-        val bookmarkDetail = bookmarkRepository.findOne(shareId)
-        withContext(Dispatchers.Main) {
-            block(bookmarkDetail?.bookmarkCollectionId)
+    fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
+        backgroundTask {
+            val bookmarkDetail = bookmarkRepository.findOne(shareId)
+            withContext(Dispatchers.Main) {
+                block(bookmarkDetail?.bookmarkCollectionId)
+            }
         }
-    }
 
     fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {
         bookmarkCollectionId?.let { id ->

@@ -28,7 +28,10 @@ class CommunityViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shares = shareRepository.findShareCommunity(offset = 0)
+            val shares = shareRepository.findShareCommunity(
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                offset = 0
+            )
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -37,7 +40,10 @@ class CommunityViewModel @Inject constructor(
         execute { state ->
             setState { copy(isLoadingMore = true) }
             val shares =
-                shareRepository.findShareCommunity(offset = state.currentPage * AppConsts.SHARE_LOADING_LIMIT_ITEM_PER_PAGE)
+                shareRepository.findShareCommunity(
+                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                    offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                )
             setState {
                 copy(
                     shares = this.shares.plus(shares),

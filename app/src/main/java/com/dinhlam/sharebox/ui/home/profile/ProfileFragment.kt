@@ -34,7 +34,11 @@ class ProfileFragment :
     }
 
     private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = { false }) {
+        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
+            getState(viewModel) { state ->
+                state.canLoadMore && !state.isLoadingMore
+            }
+        }) {
             viewModel.loadMores()
         }
     }
@@ -102,8 +106,8 @@ class ProfileFragment :
                     )
                 }
 
-                if (state.isLoadMore) {
-                    add(LoadingModelView("loading_more"))
+                if (state.isLoadingMore) {
+                    add(LoadingModelView("loading_more_${state.currentPage}"))
                 }
             }
         }
@@ -132,7 +136,7 @@ class ProfileFragment :
             viewModel.doOnRefresh()
         }
 
-        viewModel.consume(this, ProfileState::isLoadMore, true) { isLoadMore ->
+        viewModel.consume(this, ProfileState::isLoadingMore, true) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }

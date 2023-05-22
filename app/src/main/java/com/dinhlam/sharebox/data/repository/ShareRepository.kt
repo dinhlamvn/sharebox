@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.data.repository
 
 import android.util.Log
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
@@ -36,8 +35,8 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    suspend fun find(shareUserId: String) = shareDao.runCatching {
-        val shares = find(shareUserId)
+    suspend fun find(shareUserId: String, limit: Int, offset: Int) = shareDao.runCatching {
+        val shares = find(shareUserId, limit, offset)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
             val commentCount = commentRepository.count(share.shareId)
@@ -80,9 +79,7 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
-    suspend fun findShareCommunity(
-        limit: Int = AppConsts.SHARE_LOADING_LIMIT_ITEM_PER_PAGE, offset: Int
-    ) = shareDao.runCatching {
+    suspend fun findShareCommunity(limit: Int, offset: Int) = shareDao.runCatching {
         val shares = findShareCommunity(limit, offset)
         shares.mapNotNull { share ->
             val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
