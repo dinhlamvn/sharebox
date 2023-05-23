@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ec4e333bfc5512b129f6e900b171e0aa",
+    "identityHash": "0d9a05d8bfc3d96239618303e60576ea",
     "entities": [
       {
         "tableName": "Share",
@@ -748,7 +748,7 @@
       },
       {
         "tableName": "video_mixer",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `original_url` TEXT NOT NULL, `source` TEXT NOT NULL, `cdn_url` TEXT, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `original_url` TEXT NOT NULL, `source` TEXT NOT NULL, `source_id` TEXT NOT NULL, `cdn_url` TEXT, `trending_score` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -769,8 +769,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "videoSource",
+            "fieldPath": "source",
             "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceId",
+            "columnName": "source_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -779,6 +785,12 @@
             "columnName": "cdn_url",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "trendingScore",
+            "columnName": "trending_score",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "createdAt",
@@ -828,7 +840,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ec4e333bfc5512b129f6e900b171e0aa')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0d9a05d8bfc3d96239618303e60576ea')"
     ]
   }
 }

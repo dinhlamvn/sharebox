@@ -1,6 +1,8 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.graphics.Color
 import android.os.Bundle
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -41,10 +43,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         super.onCreate(savedInstanceState)
 
         viewBinding.viewPager.isUserInputEnabled = false
-
         viewBinding.viewPager.adapter = pageAdapter
+
         viewBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                adjustWindowStatusBar(position != 1)
                 when (position) {
                     0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_community
                     1 -> viewBinding.bottomNavigationView.selectedItemId =
@@ -66,5 +69,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             viewBinding.viewPager.setCurrentItem(pos, false)
             return@setOnItemSelectedListener true
         }
+    }
+
+    private fun adjustWindowStatusBar(isUseLight: Boolean) {
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+            isUseLight
+        window.statusBarColor = if (isUseLight) Color.WHITE else Color.BLACK
     }
 }

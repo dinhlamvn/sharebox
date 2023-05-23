@@ -13,6 +13,9 @@ interface ShareDao {
     @Query("SELECT * FROM share ORDER BY id DESC")
     suspend fun find(): List<Share>
 
+    @Query("SELECT * FROM share WHERE share_id = :shareId")
+    suspend fun findOne(shareId: String): Share?
+
     @Query("SELECT * FROM share WHERE share_user_id = :shareUserId ORDER BY id DESC LIMIT :limit OFFSET :offset")
     suspend fun find(shareUserId: String, limit: Int, offset: Int): List<Share>
 
