@@ -46,7 +46,7 @@
             android:ellipsize="end"
             android:maxLines="10"
             android:padding="8dp"
-            android:textColor="@color/colorTextHint"
+            android:textColor="@color/colorHint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_view_note" />
@@ -58,7 +58,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:textAppearance="@style/TextAppearance.Body"
-            android:textColor="@color/colorTextHint"
+            android:textColor="@color/colorHint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_share"
             tools:text="2022-09-14" />

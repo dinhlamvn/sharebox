@@ -35,7 +35,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Caption"
-        android:textColor="@color/colorTextHint"
+        android:textColor="@color/colorHint"
         app:layout_constraintBottom_toBottomOf="@id/image_point_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_point_icon"

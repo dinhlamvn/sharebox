@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0d9a05d8bfc3d96239618303e60576ea",
+    "identityHash": "f4f0cdf0fc54b9af5a215f0d0997e773",
     "entities": [
       {
         "tableName": "Share",
@@ -748,7 +748,7 @@
       },
       {
         "tableName": "video_mixer",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `original_url` TEXT NOT NULL, `source` TEXT NOT NULL, `source_id` TEXT NOT NULL, `cdn_url` TEXT, `trending_score` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `original_url` TEXT NOT NULL, `source` TEXT NOT NULL, `source_id` TEXT NOT NULL, `uri` TEXT, `trending_score` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -781,8 +781,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "cdnUrl",
-            "columnName": "cdn_url",
+            "fieldPath": "uri",
+            "columnName": "uri",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -840,7 +840,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0d9a05d8bfc3d96239618303e60576ea')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f4f0cdf0fc54b9af5a215f0d0997e773')"
     ]
   }
 }

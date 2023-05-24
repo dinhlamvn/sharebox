@@ -39,4 +39,21 @@ interface ShareDao {
     """
     )
     suspend fun findShareCommunity(limit: Int, offset: Int): List<Share>
+
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s
+        WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
+        AND s.share_mode = :shareMode
+        ORDER BY s.id ASC
+        LIMIT :limit
+        OFFSET :offset
+    """
+    )
+    suspend fun findForVideoMixer(
+        limit: Int,
+        offset: Int,
+        shareMode: ShareMode = ShareMode.ShareModeCommunity,
+    ): List<Share>
 }

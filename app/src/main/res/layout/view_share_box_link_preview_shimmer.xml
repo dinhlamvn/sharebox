@@ -26,7 +26,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Body"
-        android:textColor="@color/colorTextHint"
+        android:textColor="@color/colorHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frame_1" />
@@ -55,7 +55,7 @@
         android:ellipsize="end"
         android:lines="2"
         android:textAppearance="@style/TextAppearance.Caption"
-        android:textColor="@color/colorTextHint"
+        android:textColor="@color/colorHint"
         app:layout_constraintEnd_toEndOf="@id/frame_3"
         app:layout_constraintStart_toStartOf="@id/frame_3"
         app:layout_constraintTop_toBottomOf="@id/frame_3" />

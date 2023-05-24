@@ -78,6 +78,17 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
+    suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
+        val shares = findForVideoMixer(limit, offset)
+        shares.mapNotNull { share ->
+            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
+            val commentCount = commentRepository.count(share.shareId)
+            val voteCount = voteRepository.count(share.shareId)
+            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+            mapper.map(share, user, commentCount, voteCount, bookmarked)
+        }
+    }.getOrDefault(emptyList())
+
     suspend fun find(shareIds: List<String>) = shareDao.runCatching {
         val shares = find(shareIds)
         shares.mapNotNull { share ->

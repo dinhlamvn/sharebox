@@ -29,12 +29,12 @@ class VideoMixerRepository @Inject constructor(
         originUrl: String,
         source: VideoSource,
         sourceId: String,
-        cdnUrl: String?,
+        uri: String?,
         trendingScore: Int = 0
     ): Boolean {
         return videoMixerDao.runCatching {
             val videoMixer =
-                VideoMixer(id, shareId, originUrl, source, sourceId, cdnUrl, trendingScore)
+                VideoMixer(id, shareId, originUrl, source, sourceId, uri, trendingScore)
             upsert(videoMixer)
             true
         }.getOrDefault(false)

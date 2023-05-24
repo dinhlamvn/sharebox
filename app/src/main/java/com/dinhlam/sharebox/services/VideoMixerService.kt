@@ -29,7 +29,7 @@ import javax.inject.Inject
 class VideoMixerService : Service() {
 
     companion object {
-        private const val TIME_DELAY = 60_000L
+        private const val TIME_DELAY = 10_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
@@ -77,9 +77,7 @@ class VideoMixerService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.find(
-                    ShareMode.ShareModeCommunity, LIMIT_ITEM_SYNC, currentOffset
-                )
+                val shares = shareRepository.findForVideoMixer(LIMIT_ITEM_SYNC, currentOffset)
 
                 if (shares.isEmpty()) {
                     Logger.debug("Reset sync in offset $currentOffset")
@@ -95,24 +93,29 @@ class VideoMixerService : Service() {
                 }.filterValuesNotNull()
 
                 takenMapData.forEach { pair ->
-                    val shareId = pair.key
-                    val videoMixerDetail = videoMixerRepository.findOne(shareId)
-                    val shareUrl = pair.value.url
-                    val videoSource = videoHelper.getVideoSource(shareUrl)
-                    val videoSourceId = videoHelper.getVideoSourceId(shareUrl)
+                    pair.runCatching {
+                        val shareId = key
+                        val videoMixerDetail = videoMixerRepository.findOne(shareId)
+                        val shareUrl = value.url
+                        val videoSource = videoHelper.getVideoSource(shareUrl)
+                        val videoSourceId = videoHelper.getVideoSourceId(shareUrl)
+                        val videoUri = videoHelper.getVideoUri(this@VideoMixerService, shareUrl)
 
-                    val result = videoMixerRepository.upsert(
-                        videoMixerDetail?.id.orElse(0),
-                        shareId,
-                        shareUrl,
-                        videoSource,
-                        videoSourceId,
-                        null,
-                        0
-                    )
+                        val result = videoMixerRepository.upsert(
+                            videoMixerDetail?.id.orElse(0),
+                            shareId,
+                            shareUrl,
+                            videoSource,
+                            videoSourceId,
+                            videoUri?.toString(),
+                            0
+                        )
 
-                    if (result) {
-                        ids.add(shareId)
+                        if (result) {
+                            ids.add(shareId)
+                        }
+                    }.onFailure { error ->
+                        Logger.error("Had error while sync video content for share ${pair.key} - $error")
                     }
                 }
                 Logger.debug("Success sync $ids - offset $currentOffset")

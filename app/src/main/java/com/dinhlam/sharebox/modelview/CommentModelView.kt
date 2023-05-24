@@ -32,7 +32,7 @@ data class CommentModelView(
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.name)
                 }
-                color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
                     append(" • ")
                     append(model.createdAt.asCommentDisplayTime())
                 }

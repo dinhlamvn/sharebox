@@ -110,7 +110,7 @@ data class ListImageModelView(
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(buildContext, R.color.colorTextHint)) {
+                color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
                     append(" shares an image")
                 }
             }

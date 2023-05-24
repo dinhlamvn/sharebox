@@ -22,7 +22,7 @@ data class VideoMixer(
     @ColumnInfo(name = "original_url") val originalUrl: String,
     @ColumnInfo(name = "source") val source: VideoSource,
     @ColumnInfo(name = "source_id") val sourceId: String,
-    @ColumnInfo(name = "cdn_url") val cdnUrl: String?,
+    @ColumnInfo(name = "uri") val uri: String?,
     @ColumnInfo(name = "trending_score") val trendingScore: Int = 0,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "updated_at") val updatedAt: Long = System.currentTimeMillis()

@@ -13,10 +13,12 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.services.VideoMixerService
+import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,15 +49,25 @@ class VideoMixerFragment :
                 return@getState
             }
 
-            state.videos.forEach { videoMixerDetail ->
-                add(
-                    YoutubeVideoModelView(
+            state.videos.mapNotNull { videoMixerDetail ->
+                when (videoMixerDetail.source) {
+                    VideoSource.Youtube -> YoutubeVideoModelView(
                         "video_youtube_${videoMixerDetail.id}",
                         videoMixerDetail.sourceId,
                         videoMixerDetail.shareDetail
                     )
-                )
-            }
+
+                    VideoSource.Tiktok -> videoMixerDetail.uri?.let { uri ->
+                        TiktokVideoModelView(
+                            "tiktok_video_$uri",
+                            uri,
+                            videoMixerDetail.shareDetail
+                        )
+                    }
+
+                    else -> null
+                }
+            }.forEach { modelView -> add(modelView) }
         }
     }
 

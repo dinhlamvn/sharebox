@@ -29,7 +29,7 @@
             android:gravity="center"
             android:text="@string/up_vote"
             android:textAppearance="@style/TextAppearance.BodyMedium"
-            android:textColor="@color/colorTextHint" />
+            android:textColor="@color/colorHint" />
 
     </FrameLayout>
 
@@ -56,7 +56,7 @@
             android:gravity="center"
             android:text="@string/comment"
             android:textAppearance="@style/TextAppearance.BodyMedium"
-            android:textColor="@color/colorTextHint" />
+            android:textColor="@color/colorHint" />
 
     </FrameLayout>
 

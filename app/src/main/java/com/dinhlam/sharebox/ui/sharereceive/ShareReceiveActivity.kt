@@ -189,7 +189,7 @@ class ShareReceiveActivity :
                 setTextColor(
                     ContextCompat.getColor(
                         this@ShareReceiveActivity,
-                        R.color.colorTextHint
+                        R.color.colorHint
                     )
                 )
                 setText(R.string.share_receive_no_bookmark)

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <files-path
-        name="share_images"
-        path="external_files" />
-
     <external-files-path
         name="share_images"
-        path="/" />
-
-    <files-path
-        name="bookmark_collection_thumbnails"
-        path="external_files" />
+        path="share_images/" />
 
     <external-files-path
         name="bookmark_collection_thumbnails"
-        path="/" />
+        path="bookmark_collection_thumbnails/" />
+
+    <files-path
+        name="tiktok_videos"
+        path="tiktok_videos/" />
+
+    <cache-path
+        name="okhttp_caches"
+        path="okhttp_caches/" />
 </paths>

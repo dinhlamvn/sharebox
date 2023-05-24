@@ -113,7 +113,7 @@ data class YoutubeVideoModelView(
         }
 
         override fun onBind(model: YoutubeVideoModelView, position: Int) {
-            val html = buildContext.assets.open("youtube_embed/embedded.html").reader().readText()
+            val html = buildContext.assets.open("youtube_embed/embed.html").reader().readText()
             val formatHtml = String.format(html, model.videoId)
             val encodeHtml = Base64.encodeToString(formatHtml.toByteArray(), Base64.NO_PADDING)
             binding.webView.loadData(encodeHtml, "text/html", "base64")
@@ -129,8 +129,7 @@ data class YoutubeVideoModelView(
             }
 
             binding.bottomAction.setOnLikeClickListener {
-                binding.webView.evaluateJavascript("javascript:playVideo()", null)
-                //model.actionVote.prop?.invoke(model.shareDetail.shareId)
+                model.actionVote.prop?.invoke(model.shareDetail.shareId)
             }
 
             binding.bottomAction.setOnBookmarkClickListener {

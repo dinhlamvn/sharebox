@@ -6,23 +6,24 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <WebView
-        android:id="@+id/web_view"
+    <VideoView
+        android:id="@+id/video_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/container_bottom"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/content_loading_progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/web_view"
-        app:layout_constraintEnd_toEndOf="@id/web_view"
-        app:layout_constraintStart_toStartOf="@id/web_view"
-        app:layout_constraintTop_toTopOf="@id/web_view" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_play"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@id/container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@drawable/ic_play_white" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_bottom"

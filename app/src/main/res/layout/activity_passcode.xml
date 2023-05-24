@@ -47,7 +47,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.Caption"
-        android:textColor="@color/colorTextHint"
+        android:textColor="@color/colorHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recycler_view_code"
