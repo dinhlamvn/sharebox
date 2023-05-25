@@ -6,21 +6,20 @@ import androidx.core.content.FileProvider
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
-import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.logger.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class VideoHelper @Inject constructor(private val loveTikServices: LoveTikServices, private val okHttpClient: OkHttpClient) {
+class VideoHelper @Inject constructor(
+    private val loveTikServices: LoveTikServices,
+    private val okHttpClient: OkHttpClient
+) {
 
     fun getVideoSource(url: String): VideoSource {
         return when {
@@ -31,12 +30,12 @@ class VideoHelper @Inject constructor(private val loveTikServices: LoveTikServic
         }
     }
 
-    fun getVideoSourceId(url: String): String {
-        return when {
-            isYoutubeVideo(url) -> getYoutubeVideoSourceId(url)
-            isTiktokVideo(url) -> getTiktokVideoSourceId(url)
-            isFacebookVideo(url) -> getFacebookVideoSourceId(url)
-            else -> error("No source id found for url $url")
+    suspend fun getVideoSourceId(videoSource: VideoSource, url: String): String {
+        return when(videoSource) {
+            is VideoSource.Youtube -> getYoutubeVideoSourceId(url)
+            is VideoSource.Tiktok -> getTiktokVideoSourceId(url)
+            is VideoSource.Facebook -> getFacebookVideoSourceId(url)
+            else -> error("No source id found for url $url - video source: $videoSource")
         }
     }
 
@@ -113,12 +112,34 @@ class VideoHelper @Inject constructor(private val loveTikServices: LoveTikServic
         }
     }
 
-    private fun getTiktokVideoSourceId(url: String): String {
-        return ""
+    private suspend fun getTiktokVideoSourceId(url: String): String {
+        val tiktokUrl = formatUrlForTiktok(url)
+        return Uri.parse(tiktokUrl).lastPathSegment!!
     }
 
-    private fun getFacebookVideoSourceId(url: String): String {
-        return ""
+    private suspend fun getFacebookVideoSourceId(url: String): String {
+        val fullUrl = getFullFacebookUrl(url)
+        if (!fullUrl.contains("/videos/")) {
+            error("Facebook $url isn't contain videos in path")
+        }
+        return Uri.parse(fullUrl).lastPathSegment!!
+    }
+
+    private suspend fun getFullFacebookUrl(s: String): String = withContext(Dispatchers.IO) {
+        val call = okHttpClient.newCall(Request.Builder().url(s).build())
+        val body = call.execute()
+
+        if (body.isRedirect) {
+            return@withContext body.header("Location")!!
+        }
+
+        val url = body.request().url().url().toString()
+
+        if (url.contains("login.php?next=")) {
+            Uri.parse(url).getQueryParameter("next")!!
+        } else {
+            url
+        }
     }
 
     private fun isYoutubeVideo(url: String): Boolean {
@@ -130,7 +151,9 @@ class VideoHelper @Inject constructor(private val loveTikServices: LoveTikServic
     }
 
     private fun isFacebookVideo(url: String): Boolean {
-        return url.contains("tiktok.com")
+        return url.contains(Regex("facebook.com|fb.com|fb.watch")) && (url.contains("watch") || url.contains(
+            "/videos/"
+        ))
     }
 
     private suspend fun downloadVideoTiktok(url: String, output: File) {

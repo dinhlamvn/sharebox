@@ -16,8 +16,10 @@ import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.services.VideoMixerService
+import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,19 +53,31 @@ class VideoMixerFragment :
 
             state.videos.mapNotNull { videoMixerDetail ->
                 when (videoMixerDetail.source) {
-                    VideoSource.Youtube -> YoutubeVideoModelView(
-                        "video_youtube_${videoMixerDetail.id}",
-                        videoMixerDetail.sourceId,
-                        videoMixerDetail.shareDetail
-                    )
+                    VideoSource.Youtube -> videoMixerDetail.sourceId.takeIfNotNullOrBlank()
+                        ?.let { sourceId ->
+                            YoutubeVideoModelView(
+                                "video_youtube_$sourceId",
+                                sourceId,
+                                videoMixerDetail.shareDetail
+                            )
+                        }
 
                     VideoSource.Tiktok -> videoMixerDetail.uri?.let { uri ->
                         TiktokVideoModelView(
-                            "tiktok_video_$uri",
+                            "video_tiktok_$uri",
                             uri,
                             videoMixerDetail.shareDetail
                         )
                     }
+
+                    VideoSource.Facebook -> videoMixerDetail.sourceId.takeIfNotNullOrBlank()
+                        ?.let { sourceId ->
+                            FacebookVideoModelView(
+                                "video_facebook_$sourceId",
+                                sourceId,
+                                videoMixerDetail.shareDetail
+                            )
+                        }
 
                     else -> null
                 }
