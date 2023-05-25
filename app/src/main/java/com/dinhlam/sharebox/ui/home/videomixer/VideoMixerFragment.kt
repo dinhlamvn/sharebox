@@ -140,6 +140,10 @@ class VideoMixerFragment :
             viewBinding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnPullRefresh()
         }
+
+        viewModel.consume(this, VideoMixerState::isLoadingMore, true) { isLoadMore ->
+            layoutManager.hadTriggerLoadMore = isLoadMore
+        }
     }
 
     override fun onStart() {

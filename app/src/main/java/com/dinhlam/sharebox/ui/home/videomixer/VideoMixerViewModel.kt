@@ -35,11 +35,10 @@ class VideoMixerViewModel @Inject constructor(
     fun loadMores() {
         execute { state ->
             setState { copy(isLoadingMore = true) }
-            val videos =
-                videoMixerRepository.find(
-                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                    offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
-                )
+            val videos = videoMixerRepository.find(
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+            )
             setState {
                 copy(
                     videos = this.videos.plus(videos),
