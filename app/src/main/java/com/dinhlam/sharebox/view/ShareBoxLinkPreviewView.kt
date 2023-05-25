@@ -182,4 +182,9 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
             null
         }
     }
+
+    fun release() {
+        ImageLoader.instance.release(context, binding.imageView)
+        resetUi()
+    }
 }

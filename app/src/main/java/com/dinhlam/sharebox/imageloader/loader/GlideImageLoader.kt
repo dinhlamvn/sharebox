@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadConfig
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.logger.Logger
 import java.io.File
 
 object GlideImageLoader : ImageLoader() {
@@ -161,5 +162,15 @@ object GlideImageLoader : ImageLoader() {
         ).runCatching {
             submit().get()
         }.getOrNull()
+    }
+
+    override fun release(context: Context, iv: ImageView) {
+        val toContext = toActivityContext(context) ?: context.applicationContext
+
+        if (!isValidContext(context)) {
+            return
+        }
+
+        Glide.with(toContext).clear(iv)
     }
 }

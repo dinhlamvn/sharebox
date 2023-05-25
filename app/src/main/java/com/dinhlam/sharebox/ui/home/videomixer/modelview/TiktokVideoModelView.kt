@@ -52,7 +52,7 @@ data class TiktokVideoModelView(
         private var mediaPlayer: MediaPlayer? = null
 
         init {
-            binding.imagePlay.setOnClickListener {
+            binding.imagePlay.setOnClickListener { view ->
                 if (mediaPlayer?.isPlaying == true) {
                     mediaPlayer?.pause()
                     binding.imagePlay.setImageResource(R.drawable.ic_play_white)
@@ -60,12 +60,14 @@ data class TiktokVideoModelView(
                     mediaPlayer?.start()
                     binding.imagePlay.setImageResource(R.drawable.ic_pause_white)
                 }
+                view.postDelayed({
+                    binding.imagePlay.setImageDrawable(null)
+                }, 2000)
             }
             binding.videoView.setOnPreparedListener { mediaPlayer ->
                 this.mediaPlayer = mediaPlayer
                 mediaPlayer.isLooping = true
                 binding.videoView.start()
-                binding.imagePlay.setImageResource(R.drawable.ic_pause_white)
             }
             binding.videoView.requestFocus()
         }
@@ -106,7 +108,7 @@ data class TiktokVideoModelView(
 
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textNote.isVisible = true
-                binding.textNote.setReadMoreText(model.shareDetail.shareNote)
+                binding.textNote.setReadMoreText(text)
             } ?: binding.textNote.apply {
                 text = null
                 isVisible = false
@@ -115,8 +117,12 @@ data class TiktokVideoModelView(
 
         override fun onUnBind() {
             if (binding.videoView.isPlaying) {
+                binding.videoView.pause()
                 binding.videoView.stopPlayback()
             }
+            binding.textNote.text = null
+            binding.bottomAction.release()
+            ImageLoader.instance.release(buildContext, binding.imageAvatar)
         }
     }
 }

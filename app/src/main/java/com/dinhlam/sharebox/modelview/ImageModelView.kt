@@ -12,13 +12,11 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 
 data class ImageModelView(
-    val uri: Uri,
-    val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT
+    val uri: Uri, val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT
 ) : BaseListAdapter.BaseModelView("image_model_view_$uri") {
 
     override fun createViewHolder(
-        inflater: LayoutInflater,
-        container: ViewGroup
+        inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return object : BaseListAdapter.BaseViewHolder<ImageModelView, ModelViewImageBinding>(
             ModelViewImageBinding.inflate(inflater, container, false)
@@ -35,6 +33,7 @@ data class ImageModelView(
             }
 
             override fun onUnBind() {
+                ImageLoader.instance.release(buildContext, binding.image)
             }
         }
     }

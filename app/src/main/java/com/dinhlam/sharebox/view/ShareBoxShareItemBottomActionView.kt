@@ -48,4 +48,11 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
             }
         )
     }
+
+    fun release() {
+        binding.buttonShare.setImageDrawable(null)
+        binding.buttonBookmark.setImageDrawable(null)
+        binding.textComment.text = null
+        binding.textUpvote.text = null
+    }
 }

@@ -150,7 +150,7 @@ data class YoutubeVideoModelView(
 
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textNote.isVisible = true
-                binding.textNote.setReadMoreText(model.shareDetail.shareNote)
+                binding.textNote.setReadMoreText(text)
             } ?: binding.textNote.apply {
                 text = null
                 isVisible = false
@@ -158,7 +158,10 @@ data class YoutubeVideoModelView(
         }
 
         override fun onUnBind() {
-            binding.webView.evaluateJavascript("javascript:pauseVideo()", null)
+            binding.webView.loadUrl("auto:blank")
+            binding.textNote.text = null
+            binding.bottomAction.release()
+            ImageLoader.instance.release(buildContext, binding.imageAvatar)
         }
     }
 }

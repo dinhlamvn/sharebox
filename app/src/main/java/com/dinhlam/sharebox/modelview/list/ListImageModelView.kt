@@ -46,14 +46,11 @@ data class ListImageModelView(
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
-        inflater: LayoutInflater,
-        container: ViewGroup
+        inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return ShareListImageViewHolder(
             ModelViewListImageBinding.inflate(
-                inflater,
-                container,
-                false
+                inflater, container, false
             )
         )
     }
@@ -70,9 +67,7 @@ data class ListImageModelView(
 
         override fun onBind(model: ListImageModelView, position: Int) {
             ImageLoader.instance.load(
-                buildContext,
-                model.userDetail.avatar,
-                binding.layoutUserInfo.imageAvatar
+                buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
@@ -127,7 +122,17 @@ data class ListImageModelView(
         }
 
         override fun onUnBind() {
+            ImageLoader.instance.release(buildContext, binding.imageShare)
+            releaseUI()
         }
 
+        private fun releaseUI() {
+            binding.textViewNote.text = null
+            binding.bottomAction.release()
+            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            binding.layoutUserInfo.textViewName.text = null
+            binding.layoutUserInfo.textUserLevel.text = null
+            binding.textCreatedDate.text = null
+        }
     }
 }

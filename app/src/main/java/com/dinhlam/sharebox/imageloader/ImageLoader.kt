@@ -53,4 +53,6 @@ abstract class ImageLoader {
         model: Any?,
         block: ImageLoadConfig.() -> ImageLoadConfig = { ImageLoadConfig() }
     ): Bitmap?
+
+    abstract fun release(context: Context, iv: ImageView)
 }

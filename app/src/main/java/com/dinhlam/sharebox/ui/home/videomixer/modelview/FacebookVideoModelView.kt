@@ -14,7 +14,7 @@ import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareDetail
-import com.dinhlam.sharebox.databinding.ModelViewFacebookVideoBinding
+import com.dinhlam.sharebox.databinding.ModelViewVideoFacebookBinding
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -44,15 +44,15 @@ data class FacebookVideoModelView(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return FacebookVideoViewHolder(
-            ModelViewFacebookVideoBinding.inflate(
+            ModelViewVideoFacebookBinding.inflate(
                 inflater, container, false
             )
         )
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private class FacebookVideoViewHolder(binding: ModelViewFacebookVideoBinding) :
-        BaseListAdapter.BaseViewHolder<FacebookVideoModelView, ModelViewFacebookVideoBinding>(
+    private class FacebookVideoViewHolder(binding: ModelViewVideoFacebookBinding) :
+        BaseListAdapter.BaseViewHolder<FacebookVideoModelView, ModelViewVideoFacebookBinding>(
             binding
         ) {
 
@@ -131,7 +131,7 @@ data class FacebookVideoModelView(
 
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textNote.isVisible = true
-                binding.textNote.setReadMoreText(model.shareDetail.shareNote)
+                binding.textNote.setReadMoreText(text)
             } ?: binding.textNote.apply {
                 text = null
                 isVisible = false
@@ -139,7 +139,10 @@ data class FacebookVideoModelView(
         }
 
         override fun onUnBind() {
-            binding.webView.evaluateJavascript("javascript:pauseVideo()", null)
+            binding.webView.loadUrl("auto:blank")
+            binding.textNote.text = null
+            binding.bottomAction.release()
+            ImageLoader.instance.release(buildContext, binding.imageAvatar)
         }
     }
 }

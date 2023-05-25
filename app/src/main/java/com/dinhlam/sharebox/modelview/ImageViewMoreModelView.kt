@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.databinding.ModelViewImageViewMoreBinding
 import com.dinhlam.sharebox.extensions.asViewMoreDisplayCountValue
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.logger.Logger
 
 data class ImageViewMoreModelView(
     val uri: Uri,
@@ -55,6 +56,7 @@ data class ImageViewMoreModelView(
             }
 
             override fun onUnBind() {
+                ImageLoader.instance.release(buildContext, binding.imageView)
             }
         }
     }

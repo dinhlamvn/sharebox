@@ -148,7 +148,18 @@ data class ListImagesModelView(
         }
 
         override fun onUnBind() {
+            models.clear()
+            adapter.requestBuildModelViews()
+            releaseUI()
         }
 
+        private fun releaseUI() {
+            binding.textViewNote.text = null
+            binding.bottomAction.release()
+            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            binding.layoutUserInfo.textViewName.text = null
+            binding.layoutUserInfo.textUserLevel.text = null
+            binding.textCreatedDate.text = null
+        }
     }
 }

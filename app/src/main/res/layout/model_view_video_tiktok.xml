@@ -15,14 +15,14 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image_play"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toTopOf="@id/container_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_play_white" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

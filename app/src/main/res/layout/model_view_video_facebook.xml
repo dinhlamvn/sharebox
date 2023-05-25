@@ -10,18 +10,17 @@
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/container_bottom"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/container_bottom" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/content_loading_progress"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/web_view"
-        app:layout_constraintEnd_toEndOf="@id/web_view"
-        app:layout_constraintStart_toStartOf="@id/web_view"
-        app:layout_constraintTop_toTopOf="@id/web_view" />
+        app:layout_constraintBottom_toTopOf="@id/container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_bottom"

@@ -116,7 +116,17 @@ data class ListTextModelView(
         }
 
         override fun onUnBind() {
+            binding.textShare.text = null
+            releaseUI()
         }
 
+        private fun releaseUI() {
+            binding.textViewNote.text = null
+            binding.bottomAction.release()
+            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            binding.layoutUserInfo.textViewName.text = null
+            binding.layoutUserInfo.textUserLevel.text = null
+            binding.textCreatedDate.text = null
+        }
     }
 }
