@@ -16,4 +16,7 @@ interface VideoMixerDao {
 
     @Query("SELECT * from video_mixer ORDER BY id DESC")
     suspend fun find(): List<VideoMixer>
+
+    @Query("SELECT * from video_mixer ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    suspend fun find(limit: Int, offset: Int): List<VideoMixer>
 }

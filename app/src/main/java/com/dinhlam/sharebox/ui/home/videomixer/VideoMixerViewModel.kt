@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.home.videomixer
 
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.data.repository.VoteRepository
@@ -27,8 +28,27 @@ class VideoMixerViewModel @Inject constructor(
 
     private fun loadVideoMixers() = backgroundTask {
         setState { copy(isRefreshing = true) }
-        val videos = videoMixerRepository.find()
+        val videos = videoMixerRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
         setState { copy(videos = videos, isRefreshing = false) }
+    }
+
+    fun loadMores() {
+        execute { state ->
+            setState { copy(isLoadingMore = true) }
+            val videos =
+                videoMixerRepository.find(
+                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                    offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                )
+            setState {
+                copy(
+                    videos = this.videos.plus(videos),
+                    isLoadingMore = false,
+                    canLoadMore = videos.isNotEmpty(),
+                    currentPage = state.currentPage + 1
+                )
+            }
+        }
     }
 
     fun doOnPullRefresh() {

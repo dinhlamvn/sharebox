@@ -9,8 +9,9 @@
     <WebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/container_bottom" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/container_bottom"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/content_loading_progress"

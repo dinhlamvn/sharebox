@@ -49,4 +49,14 @@ class VideoMixerRepository @Inject constructor(
             }
         }.getOrDefault(emptyList())
     }
+
+    suspend fun find(limit: Int, offset: Int): List<VideoMixerDetail> {
+        return videoMixerDao.runCatching {
+            find(limit, offset).mapNotNull { videoMixer ->
+                val shareDetail =
+                    shareRepository.findOne(videoMixer.shareId) ?: return@mapNotNull null
+                mapper.map(videoMixer, shareDetail)
+            }
+        }.getOrDefault(emptyList())
+    }
 }

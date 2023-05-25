@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.services.VideoMixerService
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
@@ -49,7 +50,7 @@ class VideoMixerFragment :
     private val videoAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("loading_video"))
+                add(LoadingModelView("loading_video", height = ViewGroup.LayoutParams.MATCH_PARENT))
                 return@getState
             }
 
@@ -96,6 +97,15 @@ class VideoMixerFragment :
                     else -> null
                 }
             }.forEach { modelView -> add(modelView) }
+
+            if (state.isLoadingMore) {
+                add(
+                    LoadingModelView(
+                        "video_load_more_${state.currentPage}",
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+            }
         }
     }
 
@@ -103,6 +113,14 @@ class VideoMixerFragment :
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentVideoMixerBinding {
         return FragmentVideoMixerBinding.inflate(inflater, container, false)
+    }
+
+    private val layoutManager by lazy {
+        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
+            return@LoadMoreLinearLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
+        }) {
+            viewModel.loadMores()
+        }
     }
 
     override val viewModel: VideoMixerViewModel by viewModels()
@@ -114,6 +132,7 @@ class VideoMixerFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewBinding.viewPager.layoutManager = layoutManager
         PagerSnapHelper().attachToRecyclerView(viewBinding.viewPager)
         viewBinding.viewPager.adapter = videoAdapter
 
