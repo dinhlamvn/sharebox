@@ -157,7 +157,7 @@ class ShareReceiveActivity :
 
         viewModel.consume(this, ShareReceiveState::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
-                Toast.makeText(this, R.string.save_share_successfully, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.snap_success, Toast.LENGTH_SHORT).show()
                 finishAndRemoveTask()
             }
         }

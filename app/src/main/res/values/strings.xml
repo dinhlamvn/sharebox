@@ -186,6 +186,9 @@
     <string name="action_send">Send</string>
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
+    <string name="snap">Snap</string>
+    <string name="snap_error">Can\'t snap this content</string>
+    <string name="snap_success">Snap successfully</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

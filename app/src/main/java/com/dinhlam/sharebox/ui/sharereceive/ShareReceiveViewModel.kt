@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.ui.sharereceive
 
 import android.content.Context
-import android.graphics.Bitmap
+import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
 import com.dinhlam.sharebox.utils.UserUtils
@@ -45,8 +44,7 @@ class ShareReceiveViewModel @Inject constructor(
         setState { copy(activeUser = user) }
     }
 
-    fun setShareInfo(shareInfo: ShareData) =
-        setState { copy(shareData = shareInfo) }
+    fun setShareInfo(shareInfo: ShareData) = setState { copy(shareData = shareInfo) }
 
     fun share(note: String?, context: Context) = execute(onError = {
         postShowToast(R.string.share_receive_error_share)
@@ -88,7 +86,10 @@ class ShareReceiveViewModel @Inject constructor(
                 bookmarkRepository.bookmark(0, shareIdInserted, pickedBookmarkCollectionId)
                 setState { copy(isSaveSuccess = true, showLoading = false) }
             } ?: setState { copy(isSaveSuccess = true, showLoading = false) }
-        } ?: setState { copy(isSaveSuccess = false, showLoading = false) }
+        } ?: run {
+            postShowToast(R.string.snap_error)
+            setState { copy(isSaveSuccess = false, showLoading = false) }
+        }
     }
 
     private suspend fun shareUrl(
@@ -120,23 +121,25 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareImage(
-        context: Context,
-        note: String?,
-        shareData: ShareData.ShareImage,
-        shareMode: ShareMode
-    ): String {
-        val bitmap = ImageLoader.instance.get(context, shareData.uri) ?: return ""
-        val imagePath = context.getExternalFilesDir("share_images")!!
-        if (!imagePath.exists()) {
-            imagePath.mkdir()
+        context: Context, note: String?, shareData: ShareData.ShareImage, shareMode: ShareMode
+    ): String = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
+        val imageFileDir = context.getExternalFilesDir("share_images") ?: return@use ""
+        if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
+            return@use ""
         }
-        val imageFile = File(imagePath, "share_image_${System.currentTimeMillis()}.jpg")
+        val extension = MimeTypeMap.getSingleton()
+            .getExtensionFromMimeType(context.contentResolver.getType(shareData.uri))
+            ?: return@use ""
+        val imageFile = File(imageFileDir, "share_image_${System.currentTimeMillis()}.$extension")
 
         withContext(Dispatchers.IO) {
             imageFile.createNewFile()
         }
 
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
+        imageFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+
         val newUri = FileProvider.getUriForFile(
             context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
         )
@@ -150,26 +153,33 @@ class ShareReceiveViewModel @Inject constructor(
         )
         shareRepository.insert(share)
         return share.shareId
-    }
+    } ?: ""
 
     private suspend fun shareImages(
-        context: Context,
-        note: String?,
-        shareData: ShareData.ShareImages,
-        shareMode: ShareMode
+        context: Context, note: String?, shareData: ShareData.ShareImages, shareMode: ShareMode
     ): String {
+        val imageFileDir = context.getExternalFilesDir("share_images") ?: return ""
+        if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
+            return ""
+        }
         val uris = shareData.uris.mapNotNull { uri ->
-            val bitmap = ImageLoader.instance.get(context, uri) ?: return@mapNotNull null
-            val imagePath = context.getExternalFilesDir("share_images")!!
-            if (!imagePath.exists()) {
-                imagePath.mkdir()
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val extension = MimeTypeMap.getSingleton()
+                    .getExtensionFromMimeType(context.contentResolver.getType(uri))
+                    ?: return@use null
+
+                val imageFile =
+                    File(imageFileDir, "share_image_${System.currentTimeMillis()}.$extension")
+                imageFile.createNewFile()
+
+                imageFile.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+
+                FileProvider.getUriForFile(
+                    context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
+                )
             }
-            val imageFile = File(imagePath, "share_image_${System.currentTimeMillis()}.jpg")
-            imageFile.createNewFile()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
-            FileProvider.getUriForFile(
-                context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
-            )
         }
 
         val saveShareImages = shareData.copy(uris = uris)

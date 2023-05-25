@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.ui.home.bookmark.form
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.BuildConfig
@@ -13,7 +13,6 @@ import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.BookmarkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,39 +51,54 @@ class BookmarkCollectionFormViewModel @Inject constructor(
 
             val thumbnail =
                 state.thumbnail ?: return@execute setState { copy(errorThumbnail = true) }
-            val bitmap = ImageLoader.instance.get(context, thumbnail) ?: return@execute
-            val imagePath = context.getExternalFilesDir("bookmark_collection_thumbnails")!!
-            if (!imagePath.exists()) {
-                imagePath.mkdir()
-            }
-            val imageFile = File(imagePath, "thumbnail_${System.currentTimeMillis()}.jpg")
-            imageFile.createNewFile()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, imageFile.outputStream())
-            val newUri = FileProvider.getUriForFile(
-                context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
-            )
+            context.contentResolver.openInputStream(thumbnail)?.use { inputStream ->
+                val thumbnailFileDir =
+                    context.getExternalFilesDir("bookmark_collection_thumbnails")!!
 
-            val result = state.bookmarkCollectionDetail?.id?.let { collectionId ->
-                bookmarkCollectionRepository.updateCollection(collectionId) {
-                    copy(name = name, description = desc, thumbnail = newUri.toString()).run {
-                        state.passcode.takeIfNotNullOrBlank()?.let { newPasscode ->
-                            copy(passcode = newPasscode.md5())
-                        } ?: this
-                    }
+                if (!thumbnailFileDir.exists() && !thumbnailFileDir.mkdir()) {
+                    return@use null
                 }
-            } ?: bookmarkCollectionRepository.createCollection(
-                BookmarkUtils.createBookmarkCollectionId(),
-                name,
-                desc,
-                newUri.toString(),
-                state.passcode
-            )
+                val extension = MimeTypeMap.getSingleton()
+                    .getExtensionFromMimeType(context.contentResolver.getType(thumbnail))
+                    ?: return@use null
 
-            if (result) {
-                setState { copy(success = true) }
-            } else {
-                postShowToast(R.string.bookmark_collection_create_error)
-            }
+                val imageFile =
+                    File(thumbnailFileDir, "thumbnail_${System.currentTimeMillis()}.$extension")
+
+                if (!imageFile.createNewFile()) {
+                    return@use null
+                }
+
+                imageFile.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+
+                val newUri = FileProvider.getUriForFile(
+                    context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
+                )
+
+                val result = state.bookmarkCollectionDetail?.id?.let { collectionId ->
+                    bookmarkCollectionRepository.updateCollection(collectionId) {
+                        copy(name = name, description = desc, thumbnail = newUri.toString()).run {
+                            state.passcode.takeIfNotNullOrBlank()?.let { newPasscode ->
+                                copy(passcode = newPasscode.md5())
+                            } ?: this
+                        }
+                    }
+                } ?: bookmarkCollectionRepository.createCollection(
+                    BookmarkUtils.createBookmarkCollectionId(),
+                    name,
+                    desc,
+                    newUri.toString(),
+                    state.passcode
+                )
+
+                if (result) {
+                    setState { copy(success = true) }
+                } else {
+                    postShowToast(R.string.bookmark_collection_create_error)
+                }
+            } ?: return@execute postShowToast(R.string.bookmark_collection_create_error)
         }
     }
 
