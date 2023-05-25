@@ -12,9 +12,11 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.databinding.ModelViewVideoFacebookBinding
+import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -64,6 +66,13 @@ data class FacebookVideoModelView(
         }
 
         init {
+            binding.bottomAction.apply {
+                setVoteIcon(R.drawable.ic_arrow_up_white)
+                setCommentIcon(R.drawable.ic_comment_white)
+                setShareIcon(R.drawable.ic_share_white)
+                setVoteTextColor(Color.WHITE)
+                setCommentTextColor(Color.WHITE)
+            }
             binding.webView.setBackgroundColor(Color.BLACK)
             binding.webView.settings.apply {
                 javaScriptEnabled = true
@@ -99,7 +108,12 @@ data class FacebookVideoModelView(
             val encodeHtml = Base64.encodeToString(formatHtml.toByteArray(), Base64.NO_PADDING)
             binding.webView.loadData(encodeHtml, "text/html", "base64")
 
-            binding.bottomAction.updateBookmarkStatus(model.shareDetail.bookmarked)
+            binding.bottomAction.setBookmarkIcon(
+                model.shareDetail.bookmarked.asBookmarkIcon(
+                    R.drawable.ic_bookmarked_white,
+                    R.drawable.ic_bookmark_white
+                )
+            )
 
             binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
@@ -117,7 +131,7 @@ data class FacebookVideoModelView(
                 model.actionStar.prop?.invoke(model.shareDetail.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareDetail.voteCount)
+            binding.bottomAction.setVoteNumber(model.shareDetail.voteCount)
             binding.bottomAction.setCommentNumber(model.shareDetail.commentCount)
 
             binding.textViewName.text = model.shareDetail.user.name

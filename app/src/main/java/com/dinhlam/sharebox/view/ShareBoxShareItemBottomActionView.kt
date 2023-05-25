@@ -2,9 +2,13 @@ package com.dinhlam.sharebox.view
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareItemBottomActionBinding
+import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.imageloader.ImageLoader
 
 class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
@@ -15,8 +19,32 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
             ViewShareItemBottomActionBinding.bind(this)
         }
 
+    fun setVoteIcon(@DrawableRes icon: Int) {
+        binding.textVote.setDrawableCompat(start = icon)
+    }
+
+    fun setCommentIcon(@DrawableRes icon: Int) {
+        binding.textComment.setDrawableCompat(start = icon)
+    }
+
+    fun setShareIcon(@DrawableRes icon: Int) {
+        ImageLoader.instance.load(context, icon, binding.buttonShare)
+    }
+
+    fun setBookmarkIcon(@DrawableRes icon: Int) {
+        ImageLoader.instance.load(context, icon, binding.buttonBookmark)
+    }
+
+    fun setVoteTextColor(@ColorInt color: Int) {
+        binding.textVote.setTextColor(color)
+    }
+
+    fun setCommentTextColor(@ColorInt color: Int) {
+        binding.textComment.setTextColor(color)
+    }
+
     fun setOnLikeClickListener(listener: OnClickListener?) {
-        binding.buttonUpVote.setOnClickListener(listener)
+        binding.buttonVote.setOnClickListener(listener)
     }
 
     fun setOnCommentClickListener(listener: OnClickListener?) {
@@ -31,28 +59,16 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
         binding.buttonBookmark.setOnClickListener(listener)
     }
 
-    fun setLikeNumber(number: Int) {
-        binding.textUpvote.text = resources.getString(R.string.up_vote, number)
+    fun setVoteNumber(number: Int) {
+        binding.textVote.text = resources.getString(R.string.up_vote, number)
     }
 
     fun setCommentNumber(number: Int) {
         binding.textComment.text = resources.getString(R.string.comment, number)
     }
 
-    fun updateBookmarkStatus(isBookmarked: Boolean) {
-        binding.buttonBookmark.setImageResource(
-            if (isBookmarked) {
-                R.drawable.ic_bookmarked
-            } else {
-                R.drawable.ic_bookmark
-            }
-        )
-    }
-
     fun release() {
-        binding.buttonShare.setImageDrawable(null)
-        binding.buttonBookmark.setImageDrawable(null)
         binding.textComment.text = null
-        binding.textUpvote.text = null
+        binding.textVote.text = null
     }
 }

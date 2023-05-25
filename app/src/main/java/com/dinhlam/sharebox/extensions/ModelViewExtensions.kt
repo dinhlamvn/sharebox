@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.extensions
 
+import androidx.annotation.DrawableRes
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
@@ -110,4 +112,11 @@ fun ShareData.buildShareModelViews(
             )
         }
     }
+}
+
+fun Boolean.asBookmarkIcon(
+    @DrawableRes iconOn: Int = R.drawable.ic_bookmarked,
+    @DrawableRes iconOff: Int = R.drawable.ic_bookmark
+): Int {
+    return if (this) iconOn else iconOff
 }

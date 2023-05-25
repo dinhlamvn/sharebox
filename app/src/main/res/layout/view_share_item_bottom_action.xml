@@ -7,7 +7,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <FrameLayout
-        android:id="@+id/button_up_vote"
+        android:id="@+id/button_vote"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_upvote"
+            android:id="@+id/text_vote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,7 +43,7 @@
         android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_share"
-        app:layout_constraintStart_toEndOf="@id/button_up_vote"
+        app:layout_constraintStart_toEndOf="@id/button_vote"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView

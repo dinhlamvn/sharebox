@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListTextBinding
+import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -69,7 +70,7 @@ data class ListTextModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.bottomAction.updateBookmarkStatus(model.bookmarked)
+            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon())
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
@@ -91,7 +92,7 @@ data class ListTextModelView(
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareUpVote)
+            binding.bottomAction.setVoteNumber(model.shareUpVote)
             binding.bottomAction.setCommentNumber(model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {

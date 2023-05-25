@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.home.videomixer.modelview
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.net.Uri
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.databinding.ModelViewVideoTiktokBinding
+import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -52,6 +54,13 @@ data class TiktokVideoModelView(
         private var mediaPlayer: MediaPlayer? = null
 
         init {
+            binding.bottomAction.apply {
+                setVoteIcon(R.drawable.ic_arrow_up_white)
+                setCommentIcon(R.drawable.ic_comment_white)
+                setShareIcon(R.drawable.ic_share_white)
+                setVoteTextColor(Color.WHITE)
+                setCommentTextColor(Color.WHITE)
+            }
             binding.imagePlay.setOnClickListener { view ->
                 if (mediaPlayer?.isPlaying == true) {
                     mediaPlayer?.pause()
@@ -76,7 +85,12 @@ data class TiktokVideoModelView(
             binding.videoView.stopPlayback()
             binding.videoView.setVideoURI(Uri.parse(model.videoUri))
 
-            binding.bottomAction.updateBookmarkStatus(model.shareDetail.bookmarked)
+            binding.bottomAction.setBookmarkIcon(
+                model.shareDetail.bookmarked.asBookmarkIcon(
+                    R.drawable.ic_bookmarked_white,
+                    R.drawable.ic_bookmark_white
+                )
+            )
 
             binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
@@ -94,7 +108,7 @@ data class TiktokVideoModelView(
                 model.actionStar.prop?.invoke(model.shareDetail.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareDetail.voteCount)
+            binding.bottomAction.setVoteNumber(model.shareDetail.voteCount)
             binding.bottomAction.setCommentNumber(model.shareDetail.commentCount)
 
             binding.textViewName.text = model.shareDetail.user.name
