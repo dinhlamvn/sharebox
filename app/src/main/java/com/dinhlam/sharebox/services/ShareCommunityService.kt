@@ -26,7 +26,7 @@ import javax.inject.Inject
 class ShareCommunityService : Service() {
 
     companion object {
-        private const val TIME_DELAY = 60_000L
+        private const val TIME_DELAY_WHEN_EMPTY = 60_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
@@ -78,7 +78,7 @@ class ShareCommunityService : Service() {
                 if (shares.isEmpty()) {
                     Logger.debug("Reset sync in offset $currentOffset")
                     currentOffset = 0
-                    delay(TIME_DELAY)
+                    delay(TIME_DELAY_WHEN_EMPTY)
                     continue
                 }
 
@@ -95,7 +95,6 @@ class ShareCommunityService : Service() {
                     }
                 }
                 Logger.debug("Success sync $ids - offset $currentOffset")
-                delay(TIME_DELAY)
                 currentOffset += LIMIT_ITEM_SYNC
             }
         }

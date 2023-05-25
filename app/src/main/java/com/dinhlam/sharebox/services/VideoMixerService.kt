@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
@@ -29,7 +28,7 @@ import javax.inject.Inject
 class VideoMixerService : Service() {
 
     companion object {
-        private const val TIME_DELAY = 10_000L
+        private const val TIME_DELAY_WHEN_EMPTY = 30_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
@@ -77,12 +76,12 @@ class VideoMixerService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.findForVideoMixer(10, currentOffset)
+                val shares = shareRepository.findForVideoMixer(LIMIT_ITEM_SYNC, currentOffset)
 
                 if (shares.isEmpty()) {
                     Logger.debug("Reset sync in offset $currentOffset")
                     currentOffset = 0
-                    delay(TIME_DELAY)
+                    delay(TIME_DELAY_WHEN_EMPTY)
                     continue
                 }
 
@@ -119,7 +118,6 @@ class VideoMixerService : Service() {
                     }
                 }
                 Logger.debug("Success sync $ids - offset $currentOffset")
-                delay(TIME_DELAY)
                 currentOffset += LIMIT_ITEM_SYNC
             }
         }
