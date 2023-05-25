@@ -46,7 +46,6 @@ class CommunityFragment :
         private var bound = false
 
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
-            binder.cast<ShareCommunityService.LocalBinder>()?.getService()?.syncShareCommunityData()
             bound = true
         }
 

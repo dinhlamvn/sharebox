@@ -17,8 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class VideoHelper @Inject constructor(
-    private val loveTikServices: LoveTikServices,
-    private val okHttpClient: OkHttpClient
+    private val loveTikServices: LoveTikServices, private val okHttpClient: OkHttpClient
 ) {
 
     fun getVideoSource(url: String): VideoSource {
@@ -31,7 +30,7 @@ class VideoHelper @Inject constructor(
     }
 
     suspend fun getVideoSourceId(videoSource: VideoSource, url: String): String {
-        return when(videoSource) {
+        return when (videoSource) {
             is VideoSource.Youtube -> getYoutubeVideoSourceId(url)
             is VideoSource.Tiktok -> getTiktokVideoSourceId(url)
             is VideoSource.Facebook -> getFacebookVideoSourceId(url)
@@ -39,11 +38,11 @@ class VideoHelper @Inject constructor(
         }
     }
 
-    suspend fun getVideoUri(context: Context, url: String): Uri? {
-        return when {
-            isYoutubeVideo(url) -> null
-            isTiktokVideo(url) -> getTiktokVideoUri(context, url)
-            isFacebookVideo(url) -> null
+    suspend fun getVideoUri(context: Context, videoSource: VideoSource, url: String): Uri? {
+        return when (videoSource) {
+            is VideoSource.Youtube -> null
+            is VideoSource.Tiktok -> getTiktokVideoUri(context, url)
+            is VideoSource.Facebook -> null
             else -> null
         }
     }
@@ -82,13 +81,8 @@ class VideoHelper @Inject constructor(
         val fullUrl = getFullTiktokUrl(url)
         val uri = Uri.parse(fullUrl)
         return Uri.decode(
-            Uri.Builder()
-                .scheme(uri.scheme)
-                .authority(uri.authority)
-                .path(uri.path)
-                .fragment(uri.fragment)
-                .build()
-                .toString()
+            Uri.Builder().scheme(uri.scheme).authority(uri.authority).path(uri.path)
+                .fragment(uri.fragment).build().toString()
         )
     }
 
@@ -118,8 +112,12 @@ class VideoHelper @Inject constructor(
     }
 
     private suspend fun getFacebookVideoSourceId(url: String): String {
+        val originalUri = Uri.parse(url)
+        if (originalUri.path?.contains("videos") == true || originalUri.path?.contains("reel") == true) {
+            return originalUri.lastPathSegment!!
+        }
         val fullUrl = getFullFacebookUrl(url)
-        if (!fullUrl.contains("/videos/")) {
+        if (!fullUrl.contains("/videos/") && !fullUrl.contains("/reel/")) {
             error("Facebook $url isn't contain videos in path")
         }
         return Uri.parse(fullUrl).lastPathSegment!!
@@ -151,9 +149,9 @@ class VideoHelper @Inject constructor(
     }
 
     private fun isFacebookVideo(url: String): Boolean {
-        return url.contains(Regex("facebook.com|fb.com|fb.watch")) && (url.contains("watch") || url.contains(
+        return (url.contains(Regex("facebook.com|fb.com|fb.watch")) && (url.contains("watch") || url.contains(
             "/videos/"
-        ))
+        ) || url.contains("reel"))) || url.contains("fb.gg/v/")
     }
 
     private suspend fun downloadVideoTiktok(url: String, output: File) {

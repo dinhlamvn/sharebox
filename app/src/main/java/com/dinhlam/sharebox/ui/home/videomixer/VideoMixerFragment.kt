@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -36,7 +35,6 @@ class VideoMixerFragment :
         private var bound = false
 
         override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
-            binder.cast<VideoMixerService.LocalBinder>()?.getService()?.startMixVideoFromShareData()
             bound = true
         }
 

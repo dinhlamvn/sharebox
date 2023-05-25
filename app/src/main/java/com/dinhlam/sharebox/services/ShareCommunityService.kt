@@ -53,6 +53,7 @@ class ShareCommunityService : Service() {
 
     override fun onBind(intent: Intent?): IBinder {
         Logger.debug("ShareCommunityService bind")
+        syncShareCommunityData()
         return binder
     }
 
@@ -67,7 +68,7 @@ class ShareCommunityService : Service() {
         return super.onUnbind(intent)
     }
 
-    fun syncShareCommunityData() {
+    private fun syncShareCommunityData() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {

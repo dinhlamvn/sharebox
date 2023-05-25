@@ -58,6 +58,7 @@ class VideoMixerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder {
         Logger.debug("VideoMixerService bind")
+        startMixVideoFromShareData()
         return binder
     }
 
@@ -72,7 +73,7 @@ class VideoMixerService : Service() {
         return super.onUnbind(intent)
     }
 
-    fun startMixVideoFromShareData() {
+    private fun startMixVideoFromShareData() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
@@ -98,7 +99,8 @@ class VideoMixerService : Service() {
                         val shareUrl = value.url
                         val videoSource = videoHelper.getVideoSource(shareUrl)
                         val videoSourceId = videoHelper.getVideoSourceId(videoSource, shareUrl)
-                        val videoUri = videoHelper.getVideoUri(this@VideoMixerService, shareUrl)
+                        val videoUri =
+                            videoHelper.getVideoUri(this@VideoMixerService, videoSource, shareUrl)
 
                         val result = videoMixerRepository.upsert(
                             videoMixerDetail?.id.orElse(0),
