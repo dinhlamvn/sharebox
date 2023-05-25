@@ -77,7 +77,7 @@ class VideoMixerService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.findShareCommunity(10, currentOffset)
+                val shares = shareRepository.findForVideoMixer(10, currentOffset)
 
                 if (shares.isEmpty()) {
                     Logger.debug("Reset sync in offset $currentOffset")
