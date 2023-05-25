@@ -29,9 +29,6 @@ data class YoutubeVideoModelView(
     val id: String,
     val videoId: String,
     val shareDetail: ShareDetail,
-    val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
     val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -41,7 +38,7 @@ data class YoutubeVideoModelView(
     val actionComment: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+    val actionBookmark: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
 ) : BaseListAdapter.BaseModelView(id) {
@@ -147,7 +144,7 @@ data class YoutubeVideoModelView(
             }
 
             binding.bottomAction.setOnBookmarkClickListener {
-                model.actionStar.prop?.invoke(model.shareDetail.shareId)
+                model.actionBookmark.prop?.invoke(model.shareDetail.shareId)
             }
 
             binding.bottomAction.setVoteNumber(model.shareDetail.voteCount)

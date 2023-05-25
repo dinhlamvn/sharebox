@@ -17,12 +17,14 @@ import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.services.VideoMixerService
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -43,6 +45,8 @@ class VideoMixerFragment :
         }
     }
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
 
     private val videoAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
@@ -58,7 +62,11 @@ class VideoMixerFragment :
                             YoutubeVideoModelView(
                                 "video_youtube_$sourceId",
                                 sourceId,
-                                videoMixerDetail.shareDetail
+                                videoMixerDetail.shareDetail,
+                                actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                                actionVote = BaseListAdapter.NoHashProp(::onVote),
+                                actionComment = BaseListAdapter.NoHashProp(::onComment),
+                                actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                             )
                         }
 
@@ -66,7 +74,11 @@ class VideoMixerFragment :
                         TiktokVideoModelView(
                             "video_tiktok_$uri",
                             uri,
-                            videoMixerDetail.shareDetail
+                            videoMixerDetail.shareDetail,
+                            actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                            actionVote = BaseListAdapter.NoHashProp(::onVote),
+                            actionComment = BaseListAdapter.NoHashProp(::onComment),
+                            actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                         )
                     }
 
@@ -75,7 +87,11 @@ class VideoMixerFragment :
                             FacebookVideoModelView(
                                 "video_facebook_$sourceId",
                                 sourceId,
-                                videoMixerDetail.shareDetail
+                                videoMixerDetail.shareDetail,
+                                actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                                actionVote = BaseListAdapter.NoHashProp(::onVote),
+                                actionComment = BaseListAdapter.NoHashProp(::onComment),
+                                actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                             )
                         }
 
@@ -121,5 +137,27 @@ class VideoMixerFragment :
     override fun onStop() {
         super.onStop()
         context?.unbindService(serviceConnection)
+    }
+
+    private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
+        val video =
+            state.videos.firstOrNull { video -> video.shareId == shareId } ?: return@getState
+        shareHelper.shareToOther(video.shareDetail)
+    }
+
+    private fun onVote(shareId: String) {
+        viewModel.vote(shareId)
+    }
+
+    private fun onBookmark(shareId: String) {
+        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
+            shareHelper.showBookmarkCollectionPicker(requireActivity(), collectionId) { pickedId ->
+                viewModel.bookmark(shareId, pickedId)
+            }
+        }
+    }
+
+    private fun onComment(shareId: String) {
+        shareHelper.showComment(childFragmentManager, shareId)
     }
 }
