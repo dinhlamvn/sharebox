@@ -1,10 +1,14 @@
 package com.dinhlam.sharebox.di
 
+import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImagesJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareTextJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareUrlJsonSerializerDeserializer
-import com.dinhlam.sharebox.data.model.ShareData
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -42,5 +46,10 @@ object AppModule {
             ShareData.ShareImages::class.java, ShareImagesJsonSerializerDeserializer()
         )
         return gsonBuilder.create()
+    }
+
+    @Provides
+    fun provideFirebaseDatabase(): FirebaseDatabase {
+        return Firebase.database(BuildConfig.FIREBASE_DATABASE_URL)
     }
 }

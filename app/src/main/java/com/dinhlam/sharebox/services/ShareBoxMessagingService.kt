@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.firebase
+package com.dinhlam.sharebox.services
 
 import com.dinhlam.sharebox.logger.Logger
 import com.google.firebase.messaging.FirebaseMessagingService

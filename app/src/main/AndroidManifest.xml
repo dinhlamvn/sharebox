@@ -151,7 +151,7 @@
 
 
         <service
-            android:name=".firebase.ShareBoxMessagingService"
+            android:name=".services.ShareBoxMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -34,7 +34,6 @@ class VideoHelper @Inject constructor(
             is VideoSource.Youtube -> getYoutubeVideoSourceId(url)
             is VideoSource.Tiktok -> getTiktokVideoSourceId(url)
             is VideoSource.Facebook -> getFacebookVideoSourceId(url)
-            else -> error("No source id found for url $url - video source: $videoSource")
         }
     }
 
@@ -43,7 +42,6 @@ class VideoHelper @Inject constructor(
             is VideoSource.Youtube -> null
             is VideoSource.Tiktok -> getTiktokVideoUri(context, url)
             is VideoSource.Facebook -> null
-            else -> null
         }
     }
 

@@ -93,8 +93,6 @@ class VideoMixerFragment :
                                 actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                             )
                         }
-
-                    else -> null
                 }
             }.forEach { modelView -> add(modelView) }
 

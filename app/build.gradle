@@ -66,12 +66,14 @@ android {
             manifestPlaceholders["APPLICATION_ID"] = "$applicationId" + "$applicationIdSuffix"
             dimension "version"
             applicationIdSuffix ".dev"
+            buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
         }
 
         prod {
             manifestPlaceholders["APPLICATION_NAME"] = "Sharebox"
             manifestPlaceholders["APPLICATION_ID"] = "$applicationId"
             dimension "version"
+            buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
         }
     }
 
@@ -138,6 +140,7 @@ dependencies {
     // Firebase service
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
 
     // Firebase crashlytics
     implementation 'com.google.firebase:firebase-crashlytics'

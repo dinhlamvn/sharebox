@@ -61,7 +61,7 @@ class BookmarkFragment :
             if (result.resultCode == Activity.RESULT_OK) {
                 val bookmarkCollectionId =
                     result.data?.getStringExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID)
-                        ?: return@registerForActivityResult ?: return@registerForActivityResult
+                        ?: return@registerForActivityResult
                 viewModel.deleteBookmarkCollection(bookmarkCollectionId)
             }
         }

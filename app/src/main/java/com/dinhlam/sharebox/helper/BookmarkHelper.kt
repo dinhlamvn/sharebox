@@ -1,19 +1,15 @@
 package com.dinhlam.sharebox.helper
 
-import android.content.Context
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BookmarkHelper @Inject constructor(
-    @ApplicationContext context: Context
-) {
+class BookmarkHelper @Inject constructor() {
 
     fun showOptionMenu(
         fragmentManager: FragmentManager,
