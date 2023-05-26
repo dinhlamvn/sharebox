@@ -37,12 +37,44 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file("store/key.keystore")
+            storePassword System.getenv("KSTOREPWD")
+            keyAlias System.getenv("KSTOREALS")
+            keyPassword System.getenv("KEYPWD")
+        }
+    }
+
+
     buildTypes {
+        debug {
+            minifyEnabled false
+        }
+
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions "version"
+    productFlavors {
+        dev {
+            manifestPlaceholders["APPLICATION_NAME"] = "Sharebox Dev"
+            manifestPlaceholders["APPLICATION_ID"] = "$applicationId" + "$applicationIdSuffix"
+            dimension "version"
+            applicationIdSuffix ".dev"
+        }
+
+        prod {
+            manifestPlaceholders["APPLICATION_NAME"] = "Sharebox"
+            manifestPlaceholders["APPLICATION_ID"] = "$applicationId"
+            dimension "version"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
