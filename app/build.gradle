@@ -24,10 +24,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        manifestPlaceholders = [
-                APPLICATION_ID: "$applicationId"
-        ]
-
         javaCompileOptions {
             annotationProcessorOptions {
                 compilerArgumentProviders(
@@ -62,16 +58,18 @@ android {
     flavorDimensions "version"
     productFlavors {
         dev {
-            manifestPlaceholders["APPLICATION_NAME"] = "Sharebox Dev"
-            manifestPlaceholders["APPLICATION_ID"] = "$applicationId" + "$applicationIdSuffix"
+            manifestPlaceholders = [
+                    applicationName: "Sharebox Dev"
+            ]
             dimension "version"
             applicationIdSuffix ".dev"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
         }
 
         prod {
-            manifestPlaceholders["APPLICATION_NAME"] = "Sharebox"
-            manifestPlaceholders["APPLICATION_ID"] = "$applicationId"
+            manifestPlaceholders = [
+                    applicationName: "Sharebox"
+            ]
             dimension "version"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
         }
@@ -92,6 +90,10 @@ android {
 }
 
 dependencies {
+    // Testing
+    def junit_version = "4.13.2"
+    testImplementation "junit:junit:$junit_version"
+
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     def androidx_core_ktx_version = "1.9.0"
