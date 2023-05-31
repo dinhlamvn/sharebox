@@ -1,7 +1,12 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
 import android.os.Bundle
+import android.os.IBinder
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -9,6 +14,9 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
+import com.dinhlam.sharebox.services.RealtimeDatabaseService
+import com.dinhlam.sharebox.services.ShareCommunityService
+import com.dinhlam.sharebox.services.VideoMixerService
 import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
@@ -35,12 +43,44 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
+    private val realtimeDatabaseService by lazy { Intent(this, RealtimeDatabaseService::class.java) }
+
+    private val communityServiceConnection = object : ServiceConnection {
+
+        var bound = false
+            private set
+
+        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
+            bound = true
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName?) {
+            bound = false
+        }
+    }
+
+    private val videoMixerServiceConnection = object : ServiceConnection {
+
+        var bound = false
+            private set
+
+        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
+            bound = true
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName?) {
+            bound = false
+        }
+    }
+
     override fun onCreateViewBinding(): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        startService(realtimeDatabaseService)
 
         viewBinding.viewPager.isUserInputEnabled = false
         viewBinding.viewPager.adapter = pageAdapter
@@ -75,5 +115,30 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
             isUseLight
         window.statusBarColor = if (isUseLight) Color.WHITE else Color.BLACK
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(realtimeDatabaseService)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, ShareCommunityService::class.java).also { intent ->
+            bindService(intent, communityServiceConnection, Context.BIND_AUTO_CREATE)
+        }
+        Intent(this, VideoMixerService::class.java).also { intent ->
+            bindService(intent, communityServiceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (communityServiceConnection.bound) {
+            unbindService(communityServiceConnection)
+        }
+        if (videoMixerServiceConnection.bound) {
+            unbindService(videoMixerServiceConnection)
+        }
     }
 }

@@ -73,7 +73,7 @@ class ShareCommunityService : Service() {
             var currentOffset = 0
             while (isActive) {
                 val shares = shareRepository.find(
-                    ShareMode.ShareModeCommunity, LIMIT_ITEM_SYNC, currentOffset
+                    ShareMode.ShareModeCommunity, LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
                 )
 
                 if (shares.isEmpty()) {
@@ -96,7 +96,7 @@ class ShareCommunityService : Service() {
                     }
                 }
                 Logger.debug("Success sync $ids - offset $currentOffset")
-                currentOffset += LIMIT_ITEM_SYNC
+                currentOffset++
             }
         }
     }

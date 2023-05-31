@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionFormBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -109,13 +109,11 @@ class BookmarkCollectionFormActivity :
         }
 
         viewBinding.textEditName.doAfterTextChanged { editable ->
-            val text = editable.toString().takeIfNotNullOrBlank()
-            viewModel.clearErrorName(text)
+            viewModel.clearErrorName(editable.trimmedString())
         }
 
         viewBinding.textEditDesc.doAfterTextChanged { editable ->
-            val text = editable.toString().takeIfNotNullOrBlank()
-            viewModel.clearErrorDesc(text)
+            viewModel.clearErrorDesc(editable.trimmedString())
         }
 
         viewModel.consume(this, BookmarkCollectionFormState::errorName, true) { errorRes ->

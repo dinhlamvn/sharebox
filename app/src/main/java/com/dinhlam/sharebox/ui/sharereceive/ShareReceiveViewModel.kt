@@ -11,13 +11,12 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.utils.ShareUtils
-import com.dinhlam.sharebox.utils.UserUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,6 +30,7 @@ class ShareReceiveViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState(shareMode = userSharePref.getActiveShareMode())) {
 
     init {
@@ -44,14 +44,14 @@ class ShareReceiveViewModel @Inject constructor(
         setState { copy(activeUser = user) }
     }
 
-    fun setShareInfo(shareInfo: ShareData) = setState { copy(shareData = shareInfo) }
+    fun setShareData(shareData: ShareData) = setState { copy(shareData = shareData) }
 
     fun share(note: String?, context: Context) = execute(onError = {
         postShowToast(R.string.share_receive_error_share)
     }) { state ->
         setState { copy(showLoading = true) }
 
-        val shareId = when (val shareData = state.shareData) {
+        val share = when (val shareData = state.shareData) {
             is ShareData.ShareUrl -> shareUrl(
                 note,
                 shareData.castNonNull(),
@@ -78,12 +78,15 @@ class ShareReceiveViewModel @Inject constructor(
                 state.shareMode,
             )
 
-            else -> ""
+            else -> null
         }
 
-        shareId.takeIfNotNullOrBlank()?.let { shareIdInserted ->
+        share?.let { insertedShare ->
+            if (state.shareMode is ShareMode.ShareModeCommunity) {
+                realtimeDatabaseRepository.push(insertedShare)
+            }
             state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
-                bookmarkRepository.bookmark(0, shareIdInserted, pickedBookmarkCollectionId)
+                bookmarkRepository.bookmark(0, insertedShare.shareId, pickedBookmarkCollectionId)
                 setState { copy(isSaveSuccess = true, showLoading = false) }
             } ?: setState { copy(isSaveSuccess = true, showLoading = false) }
         } ?: run {
@@ -94,42 +97,36 @@ class ShareReceiveViewModel @Inject constructor(
 
     private suspend fun shareUrl(
         note: String?, shareData: ShareData.ShareUrl, shareMode: ShareMode
-    ): String {
-        val share = Share(
-            shareId = ShareUtils.createShareId(),
+    ): Share? {
+        return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
             shareMode = shareMode,
-            shareUserId = UserUtils.fakeUserId
+            shareUserId = userSharePref.getActiveUserId()
         )
-        shareRepository.insert(share)
-        return share.shareId
     }
 
     private suspend fun shareText(
         note: String?, shareData: ShareData.ShareText, shareMode: ShareMode
-    ): String {
-        val share = Share(
-            shareId = ShareUtils.createShareId(),
+    ): Share? {
+        return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
             shareMode = shareMode,
-            shareUserId = UserUtils.fakeUserId
+            shareUserId = userSharePref.getActiveUserId()
         )
-        shareRepository.insert(share)
-        return share.shareId
     }
 
     private suspend fun shareImage(
         context: Context, note: String?, shareData: ShareData.ShareImage, shareMode: ShareMode
-    ): String = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
-        val imageFileDir = context.getExternalFilesDir("share_images") ?: return@use ""
+    ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
+        val imageFileDir = context.getExternalFilesDir("share_images") ?: return@use null
         if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
-            return@use ""
+            return@use null
         }
         val extension = MimeTypeMap.getSingleton()
             .getExtensionFromMimeType(context.contentResolver.getType(shareData.uri))
-            ?: return@use ""
+            ?: return@use null
         val imageFile = File(imageFileDir, "share_image_${System.currentTimeMillis()}.$extension")
 
         withContext(Dispatchers.IO) {
@@ -144,23 +141,20 @@ class ShareReceiveViewModel @Inject constructor(
             context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
         )
         val saveShareImage = shareData.copy(uri = newUri)
-        val share = Share(
-            shareId = ShareUtils.createShareId(),
+        shareRepository.insert(
             shareData = saveShareImage,
             shareNote = note,
             shareMode = shareMode,
-            shareUserId = UserUtils.fakeUserId
+            shareUserId = userSharePref.getActiveUserId()
         )
-        shareRepository.insert(share)
-        return share.shareId
-    } ?: ""
+    }
 
     private suspend fun shareImages(
         context: Context, note: String?, shareData: ShareData.ShareImages, shareMode: ShareMode
-    ): String {
-        val imageFileDir = context.getExternalFilesDir("share_images") ?: return ""
+    ): Share? {
+        val imageFileDir = context.getExternalFilesDir("share_images") ?: return null
         if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
-            return ""
+            return null
         }
         val uris = shareData.uris.mapNotNull { uri ->
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -183,15 +177,12 @@ class ShareReceiveViewModel @Inject constructor(
         }
 
         val saveShareImages = shareData.copy(uris = uris)
-        val share = Share(
-            shareId = ShareUtils.createShareId(),
+        return shareRepository.insert(
             shareData = saveShareImages,
             shareNote = note,
             shareMode = shareMode,
             shareUserId = userSharePref.getActiveUserId()
         )
-        shareRepository.insert(share)
-        return share.shareId
     }
 
     fun setShareMode(shareMode: ShareMode) {

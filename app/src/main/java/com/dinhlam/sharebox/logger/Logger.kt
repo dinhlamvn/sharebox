@@ -25,6 +25,11 @@ object Logger {
         }
     }
 
+    fun error(error: Throwable) {
+        val message = error.message ?: return
+        error(message)
+    }
+
     fun warning(message: String, t: Throwable?) {
         if (enableLog) {
             Log.w(TAG, message, t)

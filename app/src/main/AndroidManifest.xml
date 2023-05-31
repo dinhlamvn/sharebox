@@ -166,6 +166,10 @@
             android:name=".services.VideoMixerService"
             android:exported="false" />
 
+        <service
+            android:name=".services.RealtimeDatabaseService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

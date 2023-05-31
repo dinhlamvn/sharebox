@@ -243,13 +243,13 @@ class ShareReceiveActivity :
             text.isWebLink() -> ShareData.ShareUrl(text)
             else -> ShareData.ShareText(text)
         }
-        viewModel.setShareInfo(shareInfo)
+        viewModel.setShareData(shareInfo)
     }
 
     private fun handleShareImage(intent: Intent) {
         intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM).cast<Uri>()
             ?.let { shareUri ->
-                viewModel.setShareInfo(ShareData.ShareImage(shareUri))
+                viewModel.setShareData(ShareData.ShareImage(shareUri))
             }
     }
 
@@ -264,7 +264,7 @@ class ShareReceiveActivity :
                     colorActive = ContextCompat.getColor(this, R.color.primaryDarkColor)
                 )
             )
-            viewModel.setShareInfo(ShareData.ShareImages(data))
+            viewModel.setShareData(ShareData.ShareImages(data))
         }
     }
 

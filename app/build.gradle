@@ -42,6 +42,12 @@ android {
         }
     }
 
+    sourceSets {
+        dev {
+            res.srcDirs = ['src/dev/res']
+        }
+    }
+
 
     buildTypes {
         debug {

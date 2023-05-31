@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f4f0cdf0fc54b9af5a215f0d0997e773",
+    "identityHash": "cac117ccd18da578b6ab2ace158bc695",
     "entities": [
       {
         "tableName": "Share",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_data` TEXT NOT NULL, `share_note` TEXT, `share_mode` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_data` TEXT NOT NULL, `share_note` TEXT, `share_mode` TEXT NOT NULL, `share_date` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -42,6 +42,12 @@
             "fieldPath": "shareMode",
             "columnName": "share_mode",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareDate",
+            "columnName": "share_date",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -840,7 +846,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f4f0cdf0fc54b9af5a215f0d0997e773')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cac117ccd18da578b6ab2ace158bc695')"
     ]
   }
 }

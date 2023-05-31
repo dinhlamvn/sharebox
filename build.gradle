@@ -25,14 +25,14 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task installDebug() {
+task installDevDebug() {
     println("Starting build debug APK")
     dependsOn(":app:clean")
-    dependsOn(":app:assembleDebug")
+    dependsOn(":app:assembleDevDebug")
 
     doLast {
         println("Installing debug APK")
-        def process = "adb install app/build/outputs/apk/debug/app-debug.apk".execute()
+        def process = "adb install app/build/outputs/apk/dev/debug/app-debug.apk".execute()
         process.waitForProcessOutput()
 
         println("Starting app...")

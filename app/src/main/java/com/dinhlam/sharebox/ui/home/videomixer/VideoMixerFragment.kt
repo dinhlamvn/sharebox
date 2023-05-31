@@ -1,11 +1,6 @@
 package com.dinhlam.sharebox.ui.home.videomixer
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +14,6 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.services.VideoMixerService
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
@@ -30,19 +24,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class VideoMixerFragment :
     BaseViewModelFragment<VideoMixerState, VideoMixerViewModel, FragmentVideoMixerBinding>() {
-
-    private val serviceConnection = object : ServiceConnection {
-
-        private var bound = false
-
-        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
-            bound = true
-        }
-
-        override fun onServiceDisconnected(componentName: ComponentName?) {
-            bound = false
-        }
-    }
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -142,20 +123,6 @@ class VideoMixerFragment :
         viewModel.consume(this, VideoMixerState::isLoadingMore, true) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        context?.bindService(
-            Intent(requireContext(), VideoMixerService::class.java),
-            serviceConnection,
-            Context.BIND_AUTO_CREATE
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        context?.unbindService(serviceConnection)
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

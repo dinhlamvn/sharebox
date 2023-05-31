@@ -77,7 +77,10 @@ class VideoMixerService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.findForVideoMixer(LIMIT_ITEM_SYNC, currentOffset)
+                val shares = shareRepository.findForVideoMixer(
+                    LIMIT_ITEM_SYNC,
+                    currentOffset * LIMIT_ITEM_SYNC
+                )
 
                 if (shares.isEmpty()) {
                     Logger.debug("Reset sync in offset $currentOffset")
@@ -120,7 +123,7 @@ class VideoMixerService : Service() {
                     }
                 }
                 Logger.debug("Success sync $ids - offset $currentOffset")
-                currentOffset += LIMIT_ITEM_SYNC
+                currentOffset++
             }
         }
     }

@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.showKeyboard
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.extensions.trimmedString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -62,9 +63,7 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
 
         viewBinding.imageSend.isEnabled = false
         viewBinding.editComment.doAfterTextChanged { editable ->
-            val text = editable?.toString() ?: ""
-            val trimmedText = text.trim()
-            viewBinding.imageSend.isEnabled = trimmedText.isNotEmpty()
+            viewBinding.imageSend.isEnabled = editable.trimmedString().isNotEmpty()
         }
 
         viewBinding.editComment.requestFocus()

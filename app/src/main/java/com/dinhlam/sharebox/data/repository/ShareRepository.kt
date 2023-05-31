@@ -1,11 +1,14 @@
 package com.dinhlam.sharebox.data.repository
 
-import android.util.Log
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
+import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.data.model.ShareMode
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.utils.ShareUtils
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,11 +21,29 @@ class ShareRepository @Inject constructor(
     private val voteRepository: VoteRepository,
     private val mapper: ShareToShareDetailMapper,
 ) {
-    suspend fun insert(data: Share): Boolean = data.runCatching {
-        shareDao.insertAll(data)
+    suspend fun insert(
+        shareId: String = ShareUtils.createShareId(),
+        shareData: ShareData,
+        shareNote: String?,
+        shareMode: ShareMode,
+        shareUserId: String,
+        shareDate: Long = Calendar.getInstance().nowUTCTimeInMillis()
+    ): Share? = shareDao.runCatching {
+        val share = Share(
+            shareId = shareId,
+            shareUserId = shareUserId,
+            shareData = shareData,
+            shareNote = shareNote,
+            shareMode = shareMode,
+            shareDate = shareDate,
+        )
+        insertAll(share)
+        share
+    }.getOrNull()
+
+    suspend fun update(share: Share): Boolean = shareDao.runCatching {
+        update(share)
         true
-    }.onFailure {
-        Log.d("DinhLam", "hehe")
     }.getOrDefault(false)
 
     suspend fun findOne(shareId: String) = shareDao.runCatching {
@@ -33,6 +54,10 @@ class ShareRepository @Inject constructor(
             val bookmarked = bookmarkRepository.findOne(share.shareId) != null
             mapper.map(share, user, commentCount, voteCount, bookmarked)
         }
+    }.getOrNull()
+
+    suspend fun findOneRaw(shareId: String) = shareDao.runCatching {
+        findOne(shareId)
     }.getOrNull()
 
     suspend fun findAll(): List<ShareDetail> = shareDao.runCatching {

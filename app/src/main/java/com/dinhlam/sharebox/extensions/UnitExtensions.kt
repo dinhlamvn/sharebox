@@ -3,6 +3,8 @@ package com.dinhlam.sharebox.extensions
 import android.content.res.Resources
 import android.util.TypedValue
 import java.text.DecimalFormat
+import java.util.Calendar
+import java.util.TimeZone
 
 fun Number.dp() = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics
@@ -29,3 +31,8 @@ fun Int.coerceMinMax(min: Int, max: Int) = this.coerceAtLeast(min).coerceAtMost(
 fun Int?.orElse(other: Int) = this ?: other
 
 fun Int.takeIfGreaterThanZero() = takeIf { it > 0 }
+
+fun Calendar.nowUTCTimeInMillis() = run {
+    timeZone = TimeZone.getTimeZone("UTC")
+    timeInMillis
+}
