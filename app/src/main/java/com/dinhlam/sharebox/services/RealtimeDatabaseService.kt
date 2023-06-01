@@ -3,6 +3,10 @@ package com.dinhlam.sharebox.services
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
@@ -29,7 +33,7 @@ import javax.inject.Inject
 class RealtimeDatabaseService : Service() {
 
     companion object {
-        private const val LIMIT_NUMBER_SYNC = 20
+        private const val SERVICE_ID = 69919090
     }
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -56,6 +60,14 @@ class RealtimeDatabaseService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug("$this is start command")
+        startForeground(
+            SERVICE_ID, NotificationCompat.Builder(this, AppConsts.DEFAULT_NOTIFICATION_CHANNEL_ID)
+                .setContentText("We are listening the world sharing and bring its to you.")
+                .setSubText("Listening the world sharing...")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .build()
+        )
+
         realtimeDatabaseRepository.consumeShares(::handleShareAdded)
         realtimeDatabaseRepository.consumeUsers(::handleUserAdded)
         realtimeDatabaseRepository.consumeComments(::handleCommentAdded)
@@ -133,5 +145,6 @@ class RealtimeDatabaseService : Service() {
         super.onDestroy()
         Logger.debug("$this has been stopped")
         realtimeDatabaseRepository.cancel()
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 }
