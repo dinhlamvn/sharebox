@@ -63,7 +63,7 @@ class CommentFragment :
                             comment.userDetail.name,
                             comment.userDetail.avatar,
                             comment.content,
-                            comment.createdAt
+                            comment.commentDate
                         )
                     )
                 }

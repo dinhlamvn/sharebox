@@ -16,6 +16,7 @@ class ShareToShareDetailMapper @Inject constructor() {
             share.shareId,
             user,
             share.shareNote,
+            share.shareDate,
             share.createdAt,
             share.shareData,
             commentCount,

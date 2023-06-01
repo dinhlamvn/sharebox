@@ -60,7 +60,7 @@ class CommunityFragment :
                     shareDetail.shareData.buildShareModelViews(
                         screenHeight(),
                         shareDetail.shareId,
-                        shareDetail.createdAt,
+                        shareDetail.shareDate,
                         shareDetail.shareNote,
                         shareDetail.user,
                         shareDetail.voteCount,

@@ -12,7 +12,13 @@ class UserToUserDetailMapper @Inject constructor(
 ) {
     fun map(user: User): UserDetail {
         return UserDetail(
-            user.userId, user.name, user.avatar, user.level, user.drama, user.createdAt
+            user.userId,
+            user.name,
+            user.avatar,
+            user.level,
+            user.drama,
+            user.createdAt,
+            user.joinDate
         )
     }
 }

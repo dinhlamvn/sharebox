@@ -10,7 +10,12 @@ import javax.inject.Singleton
 class CommentToCommentDetailMapper @Inject constructor() {
     fun map(comment: Comment, userDetail: UserDetail): CommentDetail {
         return CommentDetail(
-            comment.id, comment.shareId, comment.content, comment.createdAt, userDetail
+            comment.id,
+            comment.shareId,
+            comment.content,
+            comment.commentDate,
+            comment.createdAt,
+            userDetail
         )
     }
 }

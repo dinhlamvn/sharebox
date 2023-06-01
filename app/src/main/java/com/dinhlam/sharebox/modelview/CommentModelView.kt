@@ -18,7 +18,7 @@ data class CommentModelView(
     val name: String,
     val avatar: String,
     val content: String?,
-    val createdAt: Long,
+    val commentDate: Long,
 ) : BaseListAdapter.BaseModelView("comment_$id") {
 
     override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
@@ -34,7 +34,7 @@ data class CommentModelView(
                 }
                 color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
                     append(" • ")
-                    append(model.createdAt.asCommentDisplayTime())
+                    append(model.commentDate.asCommentDisplayTime())
                 }
             }
             ImageLoader.instance.load(buildContext, model.avatar, binding.imageAvatar) {

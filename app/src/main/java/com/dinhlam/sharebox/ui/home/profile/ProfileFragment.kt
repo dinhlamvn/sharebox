@@ -56,7 +56,7 @@ class ProfileFragment :
                     nonNullUser.name,
                     nonNullUser.drama,
                     nonNullUser.level,
-                    nonNullUser.createdAt
+                    nonNullUser.joinDate
                 )
             )
             add(
@@ -82,7 +82,7 @@ class ProfileFragment :
                     shareDetail.shareData.buildShareModelViews(
                         screenHeight(),
                         shareDetail.shareId,
-                        shareDetail.createdAt,
+                        shareDetail.shareDate,
                         shareDetail.shareNote,
                         shareDetail.user,
                         shareDetail.voteCount,

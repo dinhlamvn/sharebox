@@ -26,7 +26,7 @@ import com.dinhlam.sharebox.utils.UserUtils
 data class ListImagesModelView(
     val shareId: String,
     val uris: List<Uri>,
-    val createdAt: Long,
+    val shareDate: Long,
     val note: String?,
     val modelViews: List<ImageModelView>,
     val shareUpVote: Int = 0,
@@ -138,7 +138,7 @@ data class ListImagesModelView(
             }
             binding.layoutUserInfo.textUserLevel.text =
                 UserUtils.getLevelTitle(model.userDetail.level)
-            binding.textCreatedDate.text = model.createdAt.formatForFeed()
+            binding.textCreatedDate.text = model.shareDate.formatForFeed()
             model.note.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
                 binding.textViewNote.setReadMoreText(text)

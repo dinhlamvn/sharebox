@@ -17,7 +17,7 @@ data class ProfileInfoModelView(
     val name: String,
     val drama: Int,
     val level: Int,
-    val createdAt: Long,
+    val joinDate: Long,
 ) : BaseListAdapter.BaseModelView("user_info_$id") {
 
     override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
@@ -37,7 +37,7 @@ data class ProfileInfoModelView(
             binding.textViewName.text = model.name
             binding.pointDrama.setPointText(model.drama.asDisplayPoint())
             binding.pointLevel.setPointText(UserUtils.getLevelTitle(model.level))
-            binding.pointLevel.setPointNameText(model.createdAt.asProfileAge())
+            binding.pointLevel.setPointNameText(model.joinDate.asProfileAge())
         }
 
         override fun onUnBind() {

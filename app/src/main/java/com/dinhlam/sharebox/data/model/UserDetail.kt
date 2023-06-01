@@ -6,5 +6,6 @@ data class UserDetail(
     val avatar: String,
     val level: Int,
     val drama: Int,
-    val createdAt: Long
+    val createdAt: Long,
+    val joinDate: Long,
 )
