@@ -6,6 +6,7 @@ import androidx.core.content.FileProvider
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
+import com.dinhlam.sharebox.utils.FileUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -59,9 +60,7 @@ class VideoHelper @Inject constructor(
             val outputFile = File(outputDir, "${response.videoId}.mp4")
             if (outputFile.exists()) {
                 if (outputFile.length() > 0L) {
-                    return@withContext FileProvider.getUriForFile(
-                        context, "${BuildConfig.APPLICATION_ID}.file_provider", outputFile
-                    )
+                    return@withContext FileUtils.getUriFromFile(context, outputFile)
                 }
                 outputFile.delete()
             }
@@ -70,9 +69,7 @@ class VideoHelper @Inject constructor(
                 return@withContext null
             }
             downloadVideoTiktok(link, outputFile)
-            FileProvider.getUriForFile(
-                context, "${BuildConfig.APPLICATION_ID}.file_provider", outputFile
-            )
+            FileUtils.getUriFromFile(context, outputFile)
         }
 
     private suspend fun formatUrlForTiktok(url: String): String {

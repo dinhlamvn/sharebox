@@ -15,6 +15,7 @@ import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.BookmarkUtils
+import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import java.io.File
@@ -73,9 +74,7 @@ class BookmarkCollectionFormViewModel @Inject constructor(
                     inputStream.copyTo(outputStream)
                 }
 
-                val newUri = FileProvider.getUriForFile(
-                    context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
-                )
+                val newUri = FileUtils.getUriFromFile(context, imageFile)
 
                 val result = state.bookmarkCollectionDetail?.id?.let { collectionId ->
                     bookmarkCollectionRepository.updateCollection(collectionId) {

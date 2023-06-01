@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -137,9 +138,7 @@ class ShareReceiveViewModel @Inject constructor(
             inputStream.copyTo(outputStream)
         }
 
-        val newUri = FileProvider.getUriForFile(
-            context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
-        )
+        val newUri = FileUtils.getUriFromFile(context, imageFile)
         val saveShareImage = shareData.copy(uri = newUri)
         shareRepository.insert(
             shareData = saveShareImage,
@@ -170,9 +169,7 @@ class ShareReceiveViewModel @Inject constructor(
                     inputStream.copyTo(outputStream)
                 }
 
-                FileProvider.getUriForFile(
-                    context, "${BuildConfig.APPLICATION_ID}.file_provider", imageFile
-                )
+                FileUtils.getUriFromFile(context,imageFile)
             }
         }
 
