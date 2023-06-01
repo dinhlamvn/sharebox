@@ -26,7 +26,7 @@ import javax.inject.Inject
 class ShareCommunityService : Service() {
 
     companion object {
-        private const val TIME_DELAY_WHEN_EMPTY = 60_000L
+        private const val TIME_DELAY_WHEN_EMPTY = 10_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
@@ -72,30 +72,30 @@ class ShareCommunityService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.find(
+                val shares = shareRepository.findRaw(
                     ShareMode.ShareModeCommunity, LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
                 )
 
                 if (shares.isEmpty()) {
-                    Logger.debug("Reset sync in offset $currentOffset")
+                    Logger.debug("Share community reset sync in offset $currentOffset")
                     currentOffset = 0
                     delay(TIME_DELAY_WHEN_EMPTY)
                     continue
                 }
 
                 val ids = mutableListOf<String>()
-                shares.forEach { shareDetail ->
-                    val shareCommunity = shareCommunityRepository.findOne(shareDetail.shareId)
+                shares.forEach { share ->
+                    val shareCommunity = shareCommunityRepository.findOne(share.shareId)
                     if (shareCommunityRepository.insert(
                             shareCommunity?.id.orElse(0),
-                            shareDetail.shareId,
-                            calcSharePower(shareDetail.shareId, shareDetail.createdAt)
+                            share.shareId,
+                            calcSharePower(share.shareId, share.shareDate)
                         )
                     ) {
-                        ids.add(shareDetail.shareId)
+                        ids.add(share.shareId)
                     }
                 }
-                Logger.debug("Success sync $ids - offset $currentOffset")
+                Logger.debug("Share community success sync $ids - offset $currentOffset")
                 currentOffset++
             }
         }

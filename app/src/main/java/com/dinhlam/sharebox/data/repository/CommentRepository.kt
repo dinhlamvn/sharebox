@@ -4,6 +4,7 @@ import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.mapper.CommentToCommentDetailMapper
 import com.dinhlam.sharebox.data.model.CommentDetail
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,11 +14,23 @@ class CommentRepository @Inject constructor(
     private val commentToCommentDetailMapper: CommentToCommentDetailMapper,
     private val userRepository: UserRepository,
 ) {
-    suspend fun insert(shareId: String, userId: String, content: String?): Boolean =
-        commentDao.runCatching {
-            insert(Comment(shareId = shareId, shareUserId = userId, content = content))
-            true
-        }.getOrDefault(false)
+    suspend fun insert(
+        commentId: String,
+        shareId: String,
+        userId: String,
+        content: String?,
+        commentDate: Long = nowUTCTimeInMillis()
+    ): Comment? = commentDao.runCatching {
+        val comment = Comment(
+            commentId = commentId,
+            shareId = shareId,
+            shareUserId = userId,
+            content = content,
+            commentDate = commentDate
+        )
+        insert(comment)
+        comment
+    }.getOrNull()
 
     suspend fun find(shareId: String): List<CommentDetail> {
         return commentDao.runCatching {
@@ -28,6 +41,12 @@ class CommentRepository @Inject constructor(
                 commentToCommentDetailMapper.map(comment, userDetail)
             }
         }.getOrDefault(emptyList())
+    }
+
+    suspend fun findOneRaw(commentId: String): Comment? {
+        return commentDao.runCatching {
+            findOne(commentId)
+        }.getOrNull()
     }
 
     suspend fun count(shareId: String): Int = commentDao.runCatching {

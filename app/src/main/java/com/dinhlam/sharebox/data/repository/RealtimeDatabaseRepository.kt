@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.data.repository
 
+import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
-import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBShareObj
-import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBUserObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeShareObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeUserObj
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.logger.Logger
 import com.google.firebase.database.ChildEventListener
@@ -25,13 +27,17 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private var userChildEventListener: SimpleRealtimeChildEventListener? = null
 
+    private var commentChildEventListener: SimpleRealtimeChildEventListener? = null
+
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
     private val userRef: DatabaseReference by lazyOf(database.getReference("users"))
 
+    private val commentRef: DatabaseReference by lazyOf(database.getReference("comments"))
+
     suspend fun push(share: Share) {
         try {
-            shareRef.child(share.shareId).setValue(RealtimeDBShareObj.from(gson, share)).await()
+            shareRef.child(share.shareId).setValue(RealtimeShareObj.from(gson, share)).await()
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -39,7 +45,15 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     suspend fun push(user: User) {
         try {
-            userRef.child(user.userId).setValue(RealtimeDBUserObj.from(user)).await()
+            userRef.child(user.userId).setValue(RealtimeUserObj.from(user)).await()
+        } catch (e: Exception) {
+            Logger.error(e)
+        }
+    }
+
+    suspend fun push(comment: Comment) {
+        try {
+            commentRef.child(comment.commentId).setValue(RealtimeCommentObj.from(comment)).await()
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -59,12 +73,17 @@ class RealtimeDatabaseRepository @Inject constructor(
             }
     }
 
-    fun cancelConsumeShares() {
-        shareChildEventListener?.let { listener -> shareRef.removeEventListener(listener) }
+    fun consumeComments(childAddedHandler: (String, Map<String, Any>) -> Unit) {
+        commentChildEventListener =
+            SimpleRealtimeChildEventListener(childAddedHandler).also { listener ->
+                commentRef.addChildEventListener(listener)
+            }
     }
 
-    fun cancelConsumeUsers() {
+    fun cancel() {
+        shareChildEventListener?.let { listener -> shareRef.removeEventListener(listener) }
         userChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
+        commentChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
     }
 
     private class SimpleRealtimeChildEventListener(private val block: (String, Map<String, Any>) -> Unit) :

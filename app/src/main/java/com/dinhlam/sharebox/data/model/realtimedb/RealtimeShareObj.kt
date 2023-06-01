@@ -6,7 +6,7 @@ import com.dinhlam.sharebox.extensions.getOrThrow
 import com.google.firebase.database.PropertyName
 import com.google.gson.Gson
 
-data class RealtimeDBShareObj(
+data class RealtimeShareObj(
     @get:PropertyName("share_id") val shareId: String,
     @get:PropertyName("share_user_id") val shareUserId: String,
     @get:PropertyName("share_note") val shareNote: String?,
@@ -16,22 +16,22 @@ data class RealtimeDBShareObj(
 
     companion object {
         @JvmStatic
-        fun from(gson: Gson, share: Share): RealtimeDBShareObj {
+        fun from(gson: Gson, share: Share): RealtimeShareObj {
             val shareDataStr = gson.toJson(share.shareData)
-            return RealtimeDBShareObj(
+            return RealtimeShareObj(
                 share.shareId, share.shareUserId, share.shareNote, shareDataStr, share.shareDate
             )
         }
 
         @JvmStatic
-        fun from(jsonMap: Map<String, Any>): RealtimeDBShareObj {
+        fun from(jsonMap: Map<String, Any>): RealtimeShareObj {
             val shareId = jsonMap.getOrThrow("share_id").castNonNull<String>()
             val shareUserId = jsonMap.getOrThrow("share_user_id").castNonNull<String>()
             val shareNote = jsonMap["share_note"]?.toString()
             val shareData = jsonMap.getOrThrow("share_data").castNonNull<String>()
             val shareDate = jsonMap.getOrThrow("share_date").castNonNull<Long>()
 
-            return RealtimeDBShareObj(
+            return RealtimeShareObj(
                 shareId, shareUserId, shareNote, shareData, shareDate
             )
         }

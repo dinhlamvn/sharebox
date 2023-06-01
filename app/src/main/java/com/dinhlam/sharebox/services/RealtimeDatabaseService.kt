@@ -7,8 +7,10 @@ import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.model.ShareType
-import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBShareObj
-import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBUserObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeShareObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeUserObj
+import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
@@ -42,6 +44,9 @@ class RealtimeDatabaseService : Service() {
     lateinit var userRepository: UserRepository
 
     @Inject
+    lateinit var commentRepository: CommentRepository
+
+    @Inject
     lateinit var gson: Gson
 
     override fun onCreate() {
@@ -53,14 +58,15 @@ class RealtimeDatabaseService : Service() {
         Logger.debug("$this is start command")
         realtimeDatabaseRepository.consumeShares(::handleShareAdded)
         realtimeDatabaseRepository.consumeUsers(::handleUserAdded)
+        realtimeDatabaseRepository.consumeComments(::handleCommentAdded)
         return START_STICKY
     }
 
     private fun handleShareAdded(shareId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
-            shareRepository.findOneRaw(shareId) ?: return@launch run {
-                val realtimeDBShareObj = RealtimeDBShareObj.from(jsonMap)
-                val json = gson.fromJson(realtimeDBShareObj.shareData, JsonObject::class.java)
+            shareRepository.findOneRaw(shareId) ?: run {
+                val realtimeShareObj = RealtimeShareObj.from(jsonMap)
+                val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
                 val shareData =
                     when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
                         ShareType.URL -> gson.fromJson(json, ShareData.ShareUrl::class.java)
@@ -72,10 +78,10 @@ class RealtimeDatabaseService : Service() {
                 shareRepository.insert(
                     shareId,
                     shareData,
-                    realtimeDBShareObj.shareNote,
+                    realtimeShareObj.shareNote,
                     ShareMode.ShareModeCommunity,
-                    realtimeDBShareObj.shareUserId,
-                    realtimeDBShareObj.shareDate
+                    realtimeShareObj.shareUserId,
+                    realtimeShareObj.shareDate
                 )
             }
         }
@@ -83,19 +89,37 @@ class RealtimeDatabaseService : Service() {
 
     private fun handleUserAdded(userId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
-            val realtimeDBUserObj = RealtimeDBUserObj.from(jsonMap)
+            val realtimeUserObj = RealtimeUserObj.from(jsonMap)
             val user = userRepository.findOneRaw(userId) ?: User(
-                userId = realtimeDBUserObj.userId,
-                name = realtimeDBUserObj.name,
-                avatar = realtimeDBUserObj.avatar,
-                joinDate = realtimeDBUserObj.joinDate
+                userId = realtimeUserObj.userId,
+                name = realtimeUserObj.name,
+                avatar = realtimeUserObj.avatar,
+                joinDate = realtimeUserObj.joinDate
             )
 
-            val newUser =
-                user.copy(level = realtimeDBUserObj.level, drama = realtimeDBUserObj.drama)
+            val newUser = user.copy(level = realtimeUserObj.level, drama = realtimeUserObj.drama)
 
             if (!userRepository.upsert(newUser)) {
                 Logger.error("Upsert new user to database failed.")
+            }
+        }
+    }
+
+    private fun handleCommentAdded(commentId: String, jsonMap: Map<String, Any>) {
+        serviceScope.launch {
+            val realtimeCommentObj = RealtimeCommentObj.from(jsonMap)
+            commentRepository.findOneRaw(commentId) ?: run {
+                val commentEntity = commentRepository.insert(
+                    commentId,
+                    realtimeCommentObj.shareId,
+                    realtimeCommentObj.userId,
+                    realtimeCommentObj.content,
+                    realtimeCommentObj.commentDate
+                )
+
+                if (commentEntity == null) {
+                    Logger.error("Insert comment from cloud to database failed.")
+                }
             }
         }
     }
@@ -108,7 +132,6 @@ class RealtimeDatabaseService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Logger.debug("$this has been stopped")
-        realtimeDatabaseRepository.cancelConsumeShares()
-        realtimeDatabaseRepository.cancelConsumeUsers()
+        realtimeDatabaseRepository.cancel()
     }
 }

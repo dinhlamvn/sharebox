@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "bd496ad2bdf4de9c231956dfa4e981fd",
+    "identityHash": "1caa92fb4cd7f71ea93a3ebd96f26134",
     "entities": [
       {
         "tableName": "Share",
@@ -462,12 +462,18 @@
       },
       {
         "tableName": "Comment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `content` TEXT, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `comment_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `content` TEXT, `comment_date` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commentId",
+            "columnName": "comment_id",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -487,6 +493,12 @@
             "columnName": "content",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "commentDate",
+            "columnName": "comment_date",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "createdAt",
@@ -852,7 +864,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bd496ad2bdf4de9c231956dfa4e981fd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1caa92fb4cd7f71ea93a3ebd96f26134')"
     ]
   }
 }

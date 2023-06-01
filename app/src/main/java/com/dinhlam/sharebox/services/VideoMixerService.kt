@@ -28,7 +28,7 @@ import javax.inject.Inject
 class VideoMixerService : Service() {
 
     companion object {
-        private const val TIME_DELAY_WHEN_EMPTY = 30_000L
+        private const val TIME_DELAY_WHEN_EMPTY = 10_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
@@ -83,7 +83,7 @@ class VideoMixerService : Service() {
                 )
 
                 if (shares.isEmpty()) {
-                    Logger.debug("Reset sync in offset $currentOffset")
+                    Logger.debug("Video mixer reset sync in offset $currentOffset")
                     currentOffset = 0
                     delay(TIME_DELAY_WHEN_EMPTY)
                     continue
@@ -122,7 +122,7 @@ class VideoMixerService : Service() {
                         Logger.error("Had error while sync video content for share ${pair.key} - $error")
                     }
                 }
-                Logger.debug("Success sync $ids - offset $currentOffset")
+                Logger.debug("Video mixer success sync $ids - offset $currentOffset")
                 currentOffset++
             }
         }

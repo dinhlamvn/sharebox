@@ -5,7 +5,7 @@ import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.getOrThrow
 import com.google.firebase.database.PropertyName
 
-data class RealtimeDBUserObj(
+data class RealtimeUserObj(
     @get:PropertyName("user_id") val userId: String,
     @get:PropertyName("name") val name: String,
     @get:PropertyName("avatar") val avatar: String,
@@ -16,14 +16,14 @@ data class RealtimeDBUserObj(
 
     companion object {
         @JvmStatic
-        fun from(user: User): RealtimeDBUserObj {
-            return RealtimeDBUserObj(
+        fun from(user: User): RealtimeUserObj {
+            return RealtimeUserObj(
                 user.userId, user.name, user.avatar, user.level, user.drama, user.joinDate
             )
         }
 
         @JvmStatic
-        fun from(jsonMap: Map<String, Any>): RealtimeDBUserObj {
+        fun from(jsonMap: Map<String, Any>): RealtimeUserObj {
             val userId = jsonMap.getOrThrow("user_id").castNonNull<String>()
             val name = jsonMap.getOrThrow("name").castNonNull<String>()
             val avatar = jsonMap.getOrThrow("avatar").castNonNull<String>()
@@ -31,7 +31,7 @@ data class RealtimeDBUserObj(
             val drama = jsonMap.getOrThrow("drama").castNonNull<Long>().toInt()
             val joinDate = jsonMap.getOrThrow("join_date").castNonNull<Long>()
 
-            return RealtimeDBUserObj(
+            return RealtimeUserObj(
                 userId, name, avatar, level, drama, joinDate
             )
         }

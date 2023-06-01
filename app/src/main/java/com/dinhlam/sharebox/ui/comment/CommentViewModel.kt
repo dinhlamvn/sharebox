@@ -5,10 +5,12 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.utils.CommentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,6 +19,7 @@ class CommentViewModel @Inject constructor(
     private val commentRepository: CommentRepository,
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CommentState>(CommentState(savedStateHandle.getNonNull(AppExtras.EXTRA_SHARE_ID))) {
 
@@ -44,12 +47,13 @@ class CommentViewModel @Inject constructor(
     }
 
     fun sendComment(comment: String) = execute { state ->
-        val status =
-            commentRepository.insert(state.shareId, userSharePref.getActiveUserId(), comment)
-        if (status) {
+        val commentEntity = commentRepository.insert(
+            CommentUtils.createCommentId(), state.shareId, userSharePref.getActiveUserId(), comment
+        )
+
+        commentEntity?.let { cmtEntity ->
+            realtimeDatabaseRepository.push(cmtEntity)
             reloadComments()
-        } else {
-            postShowToast(R.string.error_send_comment)
-        }
+        } ?: postShowToast(R.string.error_send_comment)
     }
 }

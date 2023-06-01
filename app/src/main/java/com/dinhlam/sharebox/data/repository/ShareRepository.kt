@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.utils.ShareUtils
-import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -103,15 +102,12 @@ class ShareRepository @Inject constructor(
         }
     }.getOrDefault(emptyList())
 
+    suspend fun findRaw(shareMode: ShareMode, limit: Int, offset: Int) = shareDao.runCatching {
+        find(shareMode, limit, offset)
+    }.getOrDefault(emptyList())
+
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findForVideoMixer(limit, offset)
-        shares.mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        findForVideoMixer(limit, offset)
     }.getOrDefault(emptyList())
 
     suspend fun find(shareIds: List<String>) = shareDao.runCatching {
