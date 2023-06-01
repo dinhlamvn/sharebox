@@ -32,7 +32,7 @@ fun Int?.orElse(other: Int) = this ?: other
 
 fun Int.takeIfGreaterThanZero() = takeIf { it > 0 }
 
-fun Calendar.nowUTCTimeInMillis() = run {
+fun nowUTCTimeInMillis() = Calendar.getInstance().run {
     timeZone = TimeZone.getTimeZone("UTC")
     timeInMillis
 }

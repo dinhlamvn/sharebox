@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import java.util.Calendar
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -23,6 +22,6 @@ data class Share(
     @ColumnInfo(name = "share_note") val shareNote: String?,
     @ColumnInfo(name = "share_mode") val shareMode: ShareMode,
     @ColumnInfo(name = "share_date") val shareDate: Long,
-    @ColumnInfo(name = "created_at") val createdAt: Long = Calendar.getInstance().nowUTCTimeInMillis(),
-    @ColumnInfo(name = "updated_at") val updatedAt: Long = Calendar.getInstance().nowUTCTimeInMillis()
+    @ColumnInfo(name = "created_at") val createdAt: Long = nowUTCTimeInMillis(),
+    @ColumnInfo(name = "updated_at") val updatedAt: Long = nowUTCTimeInMillis()
 )

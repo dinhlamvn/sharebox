@@ -3,7 +3,6 @@ import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import org.junit.Test
 import java.time.Instant
-import java.util.Calendar
 import kotlin.random.Random
 
 class UnitExtensionsTest {
@@ -17,7 +16,7 @@ class UnitExtensionsTest {
     @Test
     fun nowInUtcMillisTime_test() {
         val t1 = Instant.now().epochSecond
-        val t2 = Calendar.getInstance().nowUTCTimeInMillis() / 1000
+        val t2 = nowUTCTimeInMillis() / 1000
         assert(t1 == t2)
     }
 

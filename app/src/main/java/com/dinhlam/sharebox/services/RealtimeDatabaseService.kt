@@ -3,12 +3,15 @@ package com.dinhlam.sharebox.services
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.model.ShareType
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBShareObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBUserObj
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.logger.Logger
 import com.google.gson.Gson
@@ -36,6 +39,9 @@ class RealtimeDatabaseService : Service() {
     lateinit var shareRepository: ShareRepository
 
     @Inject
+    lateinit var userRepository: UserRepository
+
+    @Inject
     lateinit var gson: Gson
 
     override fun onCreate() {
@@ -45,13 +51,15 @@ class RealtimeDatabaseService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug("$this is start command")
-        realtimeDatabaseRepository.consumeDataShares(::insertNewShareIfNeeded)
+        realtimeDatabaseRepository.consumeShares(::handleShareAdded)
+        realtimeDatabaseRepository.consumeUsers(::handleUserAdded)
         return START_STICKY
     }
 
-    private fun insertNewShareIfNeeded(shareId: String, realtimeDBShareObj: RealtimeDBShareObj) {
+    private fun handleShareAdded(shareId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
             shareRepository.findOneRaw(shareId) ?: return@launch run {
+                val realtimeDBShareObj = RealtimeDBShareObj.from(jsonMap)
                 val json = gson.fromJson(realtimeDBShareObj.shareData, JsonObject::class.java)
                 val shareData =
                     when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
@@ -73,6 +81,25 @@ class RealtimeDatabaseService : Service() {
         }
     }
 
+    private fun handleUserAdded(userId: String, jsonMap: Map<String, Any>) {
+        serviceScope.launch {
+            val realtimeDBUserObj = RealtimeDBUserObj.from(jsonMap)
+            val user = userRepository.findOneRaw(userId) ?: User(
+                userId = realtimeDBUserObj.userId,
+                name = realtimeDBUserObj.name,
+                avatar = realtimeDBUserObj.avatar,
+                joinDate = realtimeDBUserObj.joinDate
+            )
+
+            val newUser =
+                user.copy(level = realtimeDBUserObj.level, drama = realtimeDBUserObj.drama)
+
+            if (!userRepository.upsert(newUser)) {
+                Logger.error("Upsert new user to database failed.")
+            }
+        }
+    }
+
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -81,6 +108,7 @@ class RealtimeDatabaseService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Logger.debug("$this has been stopped")
-        realtimeDatabaseRepository.cancelConsumeDataShares()
+        realtimeDatabaseRepository.cancelConsumeShares()
+        realtimeDatabaseRepository.cancelConsumeUsers()
     }
 }

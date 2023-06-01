@@ -27,7 +27,7 @@ class ShareRepository @Inject constructor(
         shareNote: String?,
         shareMode: ShareMode,
         shareUserId: String,
-        shareDate: Long = Calendar.getInstance().nowUTCTimeInMillis()
+        shareDate: Long = nowUTCTimeInMillis()
     ): Share? = shareDao.runCatching {
         val share = Share(
             shareId = shareId,

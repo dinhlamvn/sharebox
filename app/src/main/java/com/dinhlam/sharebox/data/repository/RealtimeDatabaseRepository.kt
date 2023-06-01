@@ -1,7 +1,9 @@
 package com.dinhlam.sharebox.data.repository
 
 import com.dinhlam.sharebox.data.local.entity.Share
+import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBShareObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeDBUserObj
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.logger.Logger
 import com.google.firebase.database.ChildEventListener
@@ -16,12 +18,16 @@ import javax.inject.Singleton
 
 @Singleton
 class RealtimeDatabaseRepository @Inject constructor(
-    private val database: FirebaseDatabase, private val gson: Gson
+    database: FirebaseDatabase, private val gson: Gson
 ) {
 
-    private var shareChildEventListener: SharesChildEventListener? = null
+    private var shareChildEventListener: SimpleRealtimeChildEventListener? = null
+
+    private var userChildEventListener: SimpleRealtimeChildEventListener? = null
 
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
+
+    private val userRef: DatabaseReference by lazyOf(database.getReference("users"))
 
     suspend fun push(share: Share) {
         try {
@@ -31,38 +37,58 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    fun consumeDataShares(block: (String, RealtimeDBShareObj) -> Unit) {
-        shareChildEventListener = SharesChildEventListener(block).also { listener ->
-            shareRef.addChildEventListener(listener)
+    suspend fun push(user: User) {
+        try {
+            userRef.child(user.userId).setValue(RealtimeDBUserObj.from(user)).await()
+        } catch (e: Exception) {
+            Logger.error(e)
         }
     }
 
-    fun cancelConsumeDataShares() {
+    fun consumeShares(childAddedHandler: (String, Map<String, Any>) -> Unit) {
+        shareChildEventListener =
+            SimpleRealtimeChildEventListener(childAddedHandler).also { listener ->
+                shareRef.addChildEventListener(listener)
+            }
+    }
+
+    fun consumeUsers(childAddedHandler: (String, Map<String, Any>) -> Unit) {
+        userChildEventListener =
+            SimpleRealtimeChildEventListener(childAddedHandler).also { listener ->
+                userRef.addChildEventListener(listener)
+            }
+    }
+
+    fun cancelConsumeShares() {
         shareChildEventListener?.let { listener -> shareRef.removeEventListener(listener) }
     }
 
-    private class SharesChildEventListener(private val block: (String, RealtimeDBShareObj) -> Unit) :
+    fun cancelConsumeUsers() {
+        userChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
+    }
+
+    private class SimpleRealtimeChildEventListener(private val block: (String, Map<String, Any>) -> Unit) :
         ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            val shareId = snapshot.key ?: return
-            Logger.debug("share $shareId added")
+            val dataKey = snapshot.key ?: return
+            Logger.debug("Data with key $dataKey added")
             val value = snapshot.value.cast<Map<String, Any>>() ?: return
-            block.invoke(shareId, RealtimeDBShareObj.from(value))
+            block.invoke(dataKey, value)
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            val shareId = snapshot.key
-            Logger.debug("share $shareId changed")
+            val dataKey = snapshot.key ?: return
+            Logger.debug("Data with key $dataKey changed")
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
-            val shareId = snapshot.key
-            Logger.debug("share $shareId removed")
+            val dataKey = snapshot.key ?: return
+            Logger.debug("Data with key $dataKey removed")
         }
 
         override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            val shareId = snapshot.key
-            Logger.debug("share $shareId moved - previous: $previousChildName")
+            val dataKey = snapshot.key ?: return
+            Logger.debug("Data with key $dataKey moved - previous: $previousChildName")
         }
 
         override fun onCancelled(error: DatabaseError) {

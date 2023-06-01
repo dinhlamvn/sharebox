@@ -5,8 +5,6 @@ import java.util.UUID
 
 object UserUtils {
 
-    val fakeUserId: String by lazy { createUserId("dinhlamvn353@gmail.com") }
-
     fun createUserId(email: String) =
         UUID.nameUUIDFromBytes(email.toByteArray()).toString()
 

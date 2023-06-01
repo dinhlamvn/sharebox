@@ -3,8 +3,6 @@ package com.dinhlam.sharebox.utils
 import com.dinhlam.sharebox.extensions.isWebLink
 
 object IconUtils {
-    const val FAKE_AVATAR = "https://i.pravatar.cc/200"
-
     private const val FB_ICON_URL = "https://img.icons8.com/fluency/144/000000/facebook-new.png"
 
     private const val INSTAGRAM_ICON_URL =

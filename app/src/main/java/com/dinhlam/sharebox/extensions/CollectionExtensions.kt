@@ -5,3 +5,7 @@ fun <T, R> Map<T, R?>.filterValuesNotNull(): Map<T, R> {
         get(key)?.let { value -> key to value }
     }.toMap()
 }
+
+fun <T, R> Map<T, R>.getOrThrow(key: T): R {
+    return get(key) ?: throw NullPointerException("No element found with key $key")
+}

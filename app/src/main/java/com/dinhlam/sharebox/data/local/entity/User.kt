@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 
 @Entity(
     indices = [Index(value = ["user_id"], unique = true)]
@@ -15,5 +16,6 @@ data class User(
     @ColumnInfo("avatar") val avatar: String,
     @ColumnInfo("level") val level: Int = 0,
     @ColumnInfo("drama") val drama: Int = 0,
-    @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
+    @ColumnInfo("join_date") val joinDate: Long,
+    @ColumnInfo(name = "created_at") val createdAt: Long = nowUTCTimeInMillis(),
 )
