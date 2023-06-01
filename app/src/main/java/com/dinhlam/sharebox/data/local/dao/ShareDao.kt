@@ -52,6 +52,7 @@ interface ShareDao {
         FROM share as s
         WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
         AND s.share_mode = :shareMode
+        AND s.is_video_share = 1
         ORDER BY s.id ASC
         LIMIT :limit
         OFFSET :offset

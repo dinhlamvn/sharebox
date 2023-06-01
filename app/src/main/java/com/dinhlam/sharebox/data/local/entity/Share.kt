@@ -19,6 +19,7 @@ data class Share(
     @ColumnInfo(name = "share_id") val shareId: String,
     @ColumnInfo(name = "share_user_id") val shareUserId: String,
     @ColumnInfo(name = "share_data") val shareData: ShareData,
+    @ColumnInfo(name = "is_video_share") val isVideoShare: Boolean,
     @ColumnInfo(name = "share_note") val shareNote: String?,
     @ColumnInfo(name = "share_mode") val shareMode: ShareMode,
     @ColumnInfo(name = "share_date") val shareDate: Long,

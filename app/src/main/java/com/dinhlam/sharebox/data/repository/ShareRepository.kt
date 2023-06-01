@@ -6,7 +6,9 @@ import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.data.model.ShareMode
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.utils.ShareUtils
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,6 +21,7 @@ class ShareRepository @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val voteRepository: VoteRepository,
     private val mapper: ShareToShareDetailMapper,
+    private val videoHelper: VideoHelper,
 ) {
     suspend fun insert(
         shareId: String = ShareUtils.createShareId(),
@@ -28,6 +31,11 @@ class ShareRepository @Inject constructor(
         shareUserId: String,
         shareDate: Long = nowUTCTimeInMillis()
     ): Share? = shareDao.runCatching {
+        val isVideoShare = shareData.cast<ShareData.ShareUrl>()?.runCatching {
+            videoHelper.getVideoSource(url)
+            true
+        }?.getOrDefault(false) ?: false
+
         val share = Share(
             shareId = shareId,
             shareUserId = shareUserId,
@@ -35,6 +43,7 @@ class ShareRepository @Inject constructor(
             shareNote = shareNote,
             shareMode = shareMode,
             shareDate = shareDate,
+            isVideoShare = isVideoShare
         )
         insertAll(share)
         share
