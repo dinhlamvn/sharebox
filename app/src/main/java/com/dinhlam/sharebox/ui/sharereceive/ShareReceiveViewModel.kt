@@ -2,8 +2,6 @@ package com.dinhlam.sharebox.ui.sharereceive
 
 import android.content.Context
 import android.webkit.MimeTypeMap
-import androidx.core.content.FileProvider
-import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.local.entity.Share
@@ -128,7 +126,7 @@ class ShareReceiveViewModel @Inject constructor(
         val extension = MimeTypeMap.getSingleton()
             .getExtensionFromMimeType(context.contentResolver.getType(shareData.uri))
             ?: return@use null
-        val imageFile = File(imageFileDir, "share_image_${System.currentTimeMillis()}.$extension")
+        val imageFile = File(imageFileDir, FileUtils.randomImageFileName(extension))
 
         withContext(Dispatchers.IO) {
             imageFile.createNewFile()
@@ -162,14 +160,14 @@ class ShareReceiveViewModel @Inject constructor(
                     ?: return@use null
 
                 val imageFile =
-                    File(imageFileDir, "share_image_${System.currentTimeMillis()}.$extension")
+                    File(imageFileDir, FileUtils.randomImageFileName(extension))
                 imageFile.createNewFile()
 
                 imageFile.outputStream().use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
 
-                FileUtils.getUriFromFile(context,imageFile)
+                FileUtils.getUriFromFile(context, imageFile)
             }
         }
 
