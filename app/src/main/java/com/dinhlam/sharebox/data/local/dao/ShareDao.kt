@@ -25,14 +25,8 @@ interface ShareDao {
     @Query("SELECT * FROM share WHERE share_user_id = :shareUserId ORDER BY id DESC LIMIT :limit OFFSET :offset")
     suspend fun find(shareUserId: String, limit: Int, offset: Int): List<Share>
 
-    @Query("SELECT * FROM share WHERE share_box = :shareBox ORDER BY id DESC")
-    suspend fun find(shareBox: Box): List<Share>
-
-    @Query("SELECT * FROM share WHERE share_box = :shareBox ORDER BY id DESC LIMIT :limit OFFSET :offset")
-    suspend fun find(shareBox: Box, limit: Int, offset: Int): List<Share>
-
     @Query("SELECT * FROM share WHERE share_box != :shareBox ORDER BY id DESC LIMIT :limit OFFSET :offset")
-    suspend fun findNotBox(shareBox: Box, limit: Int, offset: Int): List<Share>
+    suspend fun findNotInBox(shareBox: Box, limit: Int, offset: Int): List<Share>
 
     @Query("SELECT * FROM share WHERE share_id IN(:shareIds)")
     suspend fun find(shareIds: List<String>): List<Share>

@@ -75,7 +75,7 @@ class ShareRepository @Inject constructor(
     }.getOrDefault(emptyList())
 
     suspend fun findShareSyncToCloud(limit: Int, offset: Int) = shareDao.runCatching {
-        findNotBox(Box.PersonalBox, limit, offset)
+        findNotInBox(Box.PersonalBox, limit, offset)
     }.getOrDefault(emptyList())
 
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
