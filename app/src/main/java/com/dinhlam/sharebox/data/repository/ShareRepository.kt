@@ -87,8 +87,13 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findShareCommunity(limit: Int, offset: Int) = shareDao.runCatching {
+    suspend fun find(limit: Int, offset: Int) = shareDao.runCatching {
         val shares = findShareCommunity(limit, offset)
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
+    }.getOrDefault(emptyList())
+
+    suspend fun find(shareBox: Box, limit: Int, offset: Int) = shareDao.runCatching {
+        val shares = findShareCommunity(shareBox, limit, offset)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 

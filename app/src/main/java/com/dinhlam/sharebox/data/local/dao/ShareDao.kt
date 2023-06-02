@@ -47,6 +47,19 @@ interface ShareDao {
         """
         SELECT s.* 
         FROM share as s
+        INNER JOIN share_community sc ON sc.share_id = s.share_id
+        WHERE s.share_box = :shareBox
+        ORDER BY sc.share_power DESC
+        LIMIT :limit
+        OFFSET :offset
+    """
+    )
+    suspend fun findShareCommunity(shareBox: Box, limit: Int, offset: Int): List<Share>
+
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s
         WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
         AND s.share_box != :shareBox
         AND s.is_video_share = 1

@@ -193,7 +193,7 @@
     <string name="realtime_database_service_noti_content">We are listening the world sharing and bring it to you.</string>
     <string name="box_comedy">Comedy Box</string>
     <string name="box_music">Music Box</string>
-    <string name="box_food"><![CDATA[Foods & Drinks]]></string>
+    <string name="box_food"><![CDATA[Foods & Drinks Box]]></string>
     <string name="box_travel">Travel Box</string>
     <string name="box_sport">Sport Box</string>
     <string name="box_animal">Animals Box</string>
@@ -201,7 +201,7 @@
     <string name="box_health">Health Box</string>
     <string name="box_idol">Idol Box</string>
     <string name="box_tip">Tips Box</string>
-    <string name="box_community">Community Box</string>
+    <string name="box_all">No Specific Box</string>
     <string name="box_personal">Personal Box</string>
 
     <string-array name="bookmark_collection_option_menu_items">

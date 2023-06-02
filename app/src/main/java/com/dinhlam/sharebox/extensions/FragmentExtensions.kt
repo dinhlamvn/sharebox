@@ -9,11 +9,11 @@ import androidx.lifecycle.SavedStateHandle
 fun Fragment.screenWidth() = resources.displayMetrics.widthPixels
 
 fun Fragment.widthPercentage(@IntRange(from = 1, to = 100) percent: Int): Int {
-    return screenWidth().times(percent.div(100))
+    return screenWidth().times(percent.div(100f)).toInt()
 }
 
 fun Fragment.heightPercentage(@IntRange(from = 1, to = 100) percent: Int): Int {
-    return screenHeight().times(percent.div(100))
+    return screenHeight().times(percent.div(100f)).toInt()
 }
 
 fun Fragment.screenHeight() = resources.displayMetrics.heightPixels

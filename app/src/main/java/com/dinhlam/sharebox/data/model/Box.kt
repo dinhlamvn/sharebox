@@ -5,7 +5,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.utils.BoxUtils
 
 sealed class Box(val id: String, @StringRes val name: Int) {
-    object CommunityBox : Box(BoxUtils.createBoxId("community"), R.string.box_community)
+    object All : Box(BoxUtils.createBoxId("community"), R.string.box_all)
     object ComedyBox : Box(BoxUtils.createBoxId("comedy"), R.string.box_comedy)
     object MusicBox : Box(BoxUtils.createBoxId("music"), R.string.box_music)
     object FoodBox : Box(BoxUtils.createBoxId("food"), R.string.box_food)

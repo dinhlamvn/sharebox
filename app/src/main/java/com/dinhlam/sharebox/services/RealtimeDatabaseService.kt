@@ -98,7 +98,7 @@ class RealtimeDatabaseService : Service() {
                     shareId,
                     shareData,
                     realtimeShareObj.shareNote,
-                    BoxUtils.findBoxOrDefault(realtimeShareObj.shareBoxId, Box.CommunityBox),
+                    BoxUtils.findBoxOrDefault(realtimeShareObj.shareBoxId, Box.All),
                     realtimeShareObj.shareUserId,
                     realtimeShareObj.shareDate
                 )

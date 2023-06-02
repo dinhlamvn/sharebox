@@ -22,7 +22,7 @@ object BoxUtils {
             Box.HealthBox,
             Box.IdolBox,
             Box.TipBox,
-            Box.CommunityBox,
+            Box.All,
         )
     }
 

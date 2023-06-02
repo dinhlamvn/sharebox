@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.widthPercentage
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -118,8 +117,9 @@ class CommunityFragment :
 
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
 
-        val box = BoxUtils.getBoxes().first()
-        viewBinding.textTitle.text = getString(box.name)
+        viewModel.consume(this, CommunityState::activeBox, true) { activeBox ->
+            viewBinding.textTitle.text = getString(activeBox.name)
+        }
 
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -148,14 +148,15 @@ class CommunityFragment :
     private fun showListBoxMenu(view: View) {
         val listPopupWindow = ListPopupWindow(requireContext(), null, R.attr.listPopupWindowStyle)
         listPopupWindow.anchorView = view
-        val boxes = BoxUtils.getBoxes().map { getString(it.name) }
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxes)
+        val boxes = BoxUtils.getBoxes()
+        val boxNames = boxes.map { box -> getString(box.name) }
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxNames)
         listPopupWindow.setAdapter(adapter)
         listPopupWindow.setContentWidth(widthPercentage(50))
 
         listPopupWindow.setOnItemClickListener { _, _, position, _ ->
             listPopupWindow.dismiss()
-            showToast(boxes[position])
+            viewModel.selectShareBox(boxes[position])
         }
 
         listPopupWindow.show()

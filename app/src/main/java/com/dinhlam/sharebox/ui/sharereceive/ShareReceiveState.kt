@@ -19,5 +19,5 @@ data class ShareReceiveState(
     val hashTags: List<HashTag> = emptyList(),
     val bookmarkCollection: BookmarkCollectionDetail? = null,
     val showLoading: Boolean = false,
-    val shareBox: Box = Box.CommunityBox
+    val shareBox: Box = Box.All
 ) : BaseViewModel.BaseState
