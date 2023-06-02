@@ -189,6 +189,8 @@
     <string name="snap">Snap</string>
     <string name="snap_error">Can\'t snap this content</string>
     <string name="snap_success">Snap successfully</string>
+    <string name="realtime_database_service_noti_subtext">Listening the world sharing…</string>
+    <string name="realtime_database_service_noti_content">We are listening the world sharing and bring it to you.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

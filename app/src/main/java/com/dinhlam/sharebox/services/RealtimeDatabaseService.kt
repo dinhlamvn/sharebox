@@ -68,8 +68,8 @@ class RealtimeDatabaseService : Service() {
         startForeground(
             SERVICE_ID,
             NotificationCompat.Builder(this, AppConsts.DEFAULT_NOTIFICATION_CHANNEL_ID)
-                .setContentText("We are listening the world sharing and bring its to you.")
-                .setSubText("Listening the world sharing...")
+                .setContentText(getString(R.string.realtime_database_service_noti_content))
+                .setSubText(getString(R.string.realtime_database_service_noti_subtext))
                 .setSmallIcon(R.drawable.ic_launcher_foreground).build()
         )
 

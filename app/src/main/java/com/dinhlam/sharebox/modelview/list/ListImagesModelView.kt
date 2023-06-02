@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListImagesBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -33,6 +34,7 @@ data class ListImagesModelView(
     val commentNumber: Int = 0,
     val userDetail: UserDetail,
     val bookmarked: Boolean = false,
+    val liked: Boolean = false,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -104,6 +106,7 @@ data class ListImagesModelView(
             }
 
             binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
+            binding.bottomAction.setLikeIcon(model.liked.asLikeIcon(buildContext))
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
