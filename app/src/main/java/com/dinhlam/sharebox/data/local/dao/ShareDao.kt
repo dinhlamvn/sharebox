@@ -2,7 +2,7 @@ package com.dinhlam.sharebox.data.local.dao
 
 import androidx.room.*
 import com.dinhlam.sharebox.data.local.entity.Share
-import com.dinhlam.sharebox.data.model.ShareMode
+import com.dinhlam.sharebox.data.model.Box
 
 @Dao
 interface ShareDao {
@@ -25,11 +25,14 @@ interface ShareDao {
     @Query("SELECT * FROM share WHERE share_user_id = :shareUserId ORDER BY id DESC LIMIT :limit OFFSET :offset")
     suspend fun find(shareUserId: String, limit: Int, offset: Int): List<Share>
 
-    @Query("SELECT * FROM share WHERE share_mode = :shareMode ORDER BY id DESC")
-    suspend fun find(shareMode: ShareMode): List<Share>
+    @Query("SELECT * FROM share WHERE share_box = :shareBox ORDER BY id DESC")
+    suspend fun find(shareBox: Box): List<Share>
 
-    @Query("SELECT * FROM share WHERE share_mode = :shareMode ORDER BY id DESC LIMIT :limit OFFSET :offset")
-    suspend fun find(shareMode: ShareMode, limit: Int, offset: Int): List<Share>
+    @Query("SELECT * FROM share WHERE share_box = :shareBox ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    suspend fun find(shareBox: Box, limit: Int, offset: Int): List<Share>
+
+    @Query("SELECT * FROM share WHERE share_box != :shareBox ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    suspend fun findNotBox(shareBox: Box, limit: Int, offset: Int): List<Share>
 
     @Query("SELECT * FROM share WHERE share_id IN(:shareIds)")
     suspend fun find(shareIds: List<String>): List<Share>
@@ -51,7 +54,7 @@ interface ShareDao {
         SELECT s.* 
         FROM share as s
         WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
-        AND s.share_mode = :shareMode
+        AND s.share_box != :shareBox
         AND s.is_video_share = 1
         ORDER BY s.id ASC
         LIMIT :limit
@@ -61,6 +64,6 @@ interface ShareDao {
     suspend fun findForVideoMixer(
         limit: Int,
         offset: Int,
-        shareMode: ShareMode = ShareMode.ShareModeCommunity,
+        shareBox: Box = Box.PersonalBox,
     ): List<Share>
 }

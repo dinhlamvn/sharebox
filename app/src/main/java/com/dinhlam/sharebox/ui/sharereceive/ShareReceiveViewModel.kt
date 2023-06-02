@@ -5,8 +5,8 @@ import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.local.entity.Share
+import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
@@ -30,7 +30,7 @@ class ShareReceiveViewModel @Inject constructor(
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
-) : BaseViewModel<ShareReceiveState>(ShareReceiveState(shareMode = userSharePref.getActiveShareMode())) {
+) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
         getActiveUserInfo()
@@ -54,34 +54,34 @@ class ShareReceiveViewModel @Inject constructor(
             is ShareData.ShareUrl -> shareUrl(
                 note,
                 shareData.castNonNull(),
-                state.shareMode,
+                state.shareBox,
             )
 
             is ShareData.ShareText -> shareText(
                 note,
                 shareData.castNonNull(),
-                state.shareMode,
+                state.shareBox,
             )
 
             is ShareData.ShareImage -> shareImage(
                 context,
                 note,
                 shareData.castNonNull(),
-                state.shareMode,
+                state.shareBox,
             )
 
             is ShareData.ShareImages -> shareImages(
                 context,
                 note,
                 shareData.castNonNull(),
-                state.shareMode,
+                state.shareBox,
             )
 
             else -> null
         }
 
         share?.let { insertedShare ->
-            if (state.shareMode is ShareMode.ShareModeCommunity) {
+            if (state.shareBox !is Box.PersonalBox) {
                 realtimeDatabaseRepository.push(insertedShare)
             }
             state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
@@ -95,29 +95,29 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareUrl(
-        note: String?, shareData: ShareData.ShareUrl, shareMode: ShareMode
+        note: String?, shareData: ShareData.ShareUrl, shareBox: Box
     ): Share? {
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareMode = shareMode,
+            shareBox = shareBox,
             shareUserId = userSharePref.getActiveUserId()
         )
     }
 
     private suspend fun shareText(
-        note: String?, shareData: ShareData.ShareText, shareMode: ShareMode
+        note: String?, shareData: ShareData.ShareText, shareBox: Box
     ): Share? {
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareMode = shareMode,
+            shareBox = shareBox,
             shareUserId = userSharePref.getActiveUserId()
         )
     }
 
     private suspend fun shareImage(
-        context: Context, note: String?, shareData: ShareData.ShareImage, shareMode: ShareMode
+        context: Context, note: String?, shareData: ShareData.ShareImage, shareBox: Box
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
         val imageFileDir = context.getExternalFilesDir("share_images") ?: return@use null
         if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
@@ -141,13 +141,13 @@ class ShareReceiveViewModel @Inject constructor(
         shareRepository.insert(
             shareData = saveShareImage,
             shareNote = note,
-            shareMode = shareMode,
+            shareBox = shareBox,
             shareUserId = userSharePref.getActiveUserId()
         )
     }
 
     private suspend fun shareImages(
-        context: Context, note: String?, shareData: ShareData.ShareImages, shareMode: ShareMode
+        context: Context, note: String?, shareData: ShareData.ShareImages, shareBox: Box
     ): Share? {
         val imageFileDir = context.getExternalFilesDir("share_images") ?: return null
         if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
@@ -159,8 +159,7 @@ class ShareReceiveViewModel @Inject constructor(
                     .getExtensionFromMimeType(context.contentResolver.getType(uri))
                     ?: return@use null
 
-                val imageFile =
-                    File(imageFileDir, FileUtils.randomImageFileName(extension))
+                val imageFile = File(imageFileDir, FileUtils.randomImageFileName(extension))
                 imageFile.createNewFile()
 
                 imageFile.outputStream().use { outputStream ->
@@ -175,14 +174,13 @@ class ShareReceiveViewModel @Inject constructor(
         return shareRepository.insert(
             shareData = saveShareImages,
             shareNote = note,
-            shareMode = shareMode,
+            shareBox = shareBox,
             shareUserId = userSharePref.getActiveUserId()
         )
     }
 
-    fun setShareMode(shareMode: ShareMode) {
-        userSharePref.setActiveShareMode(shareMode)
-        setState { copy(shareMode = shareMode) }
+    fun setShareBox(shareBox: Box) {
+        setState { copy(shareBox = shareBox) }
     }
 
     fun setBookmarkCollection(pickedId: String?) {

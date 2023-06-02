@@ -8,8 +8,8 @@ import androidx.core.app.ServiceCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.User
+import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.model.ShareType
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeLikeObj
@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.utils.BoxUtils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,7 +98,7 @@ class RealtimeDatabaseService : Service() {
                     shareId,
                     shareData,
                     realtimeShareObj.shareNote,
-                    ShareMode.ShareModeCommunity,
+                    BoxUtils.findBoxOrDefault(realtimeShareObj.shareBoxId, Box.CommunityBox),
                     realtimeShareObj.shareUserId,
                     realtimeShareObj.shareDate
                 )

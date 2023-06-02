@@ -119,4 +119,14 @@ object IconUtils {
             colorRes = R.color.colorWhite
         }
     }
+
+    fun boxIcon(context: Context): Drawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_box
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
+        }
+    }
 }

@@ -4,11 +4,10 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,8 +71,8 @@ class ShareCommunityService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.findRaw(
-                    ShareMode.ShareModeCommunity, LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
+                val shares = shareRepository.findShareSyncToCloud(
+                    LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
                 )
 
                 if (shares.isEmpty()) {

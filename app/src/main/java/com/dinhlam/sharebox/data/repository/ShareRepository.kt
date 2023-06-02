@@ -3,9 +3,9 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
+import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
-import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.VideoHelper
@@ -32,7 +32,7 @@ class ShareRepository @Inject constructor(
         shareId: String = ShareUtils.createShareId(),
         shareData: ShareData,
         shareNote: String?,
-        shareMode: ShareMode,
+        shareBox: Box,
         shareUserId: String,
         shareDate: Long = nowUTCTimeInMillis()
     ): Share? = shareDao.runCatching {
@@ -46,7 +46,7 @@ class ShareRepository @Inject constructor(
             shareUserId = shareUserId,
             shareData = shareData,
             shareNote = shareNote,
-            shareMode = shareMode,
+            shareBox = shareBox,
             shareDate = shareDate,
             isVideoShare = isVideoShare
         )
@@ -69,28 +69,13 @@ class ShareRepository @Inject constructor(
         findOne(shareId)
     }.getOrNull()
 
-    suspend fun findAll(): List<ShareDetail> = shareDao.runCatching {
-        val shares = find()
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
-
     suspend fun find(shareUserId: String, limit: Int, offset: Int) = shareDao.runCatching {
         val shares = find(shareUserId, limit, offset)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun find(shareMode: ShareMode) = shareDao.runCatching {
-        val shares = find(shareMode)
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
-
-    suspend fun find(shareMode: ShareMode, limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = find(shareMode, limit, offset)
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
-
-    suspend fun findRaw(shareMode: ShareMode, limit: Int, offset: Int) = shareDao.runCatching {
-        find(shareMode, limit, offset)
+    suspend fun findShareSyncToCloud(limit: Int, offset: Int) = shareDao.runCatching {
+        findNotBox(Box.PersonalBox, limit, offset)
     }.getOrDefault(emptyList())
 
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {

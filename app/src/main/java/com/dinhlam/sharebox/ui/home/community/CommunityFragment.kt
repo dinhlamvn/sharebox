@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +18,17 @@ import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.widthPercentage
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.utils.BoxUtils
+import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -107,6 +114,13 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewBinding.textTitle.setOnClickListener(::showListBoxMenu)
+
+        viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
+
+        val box = BoxUtils.getBoxes().first()
+        viewBinding.textTitle.text = getString(box.name)
+
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
@@ -129,6 +143,22 @@ class CommunityFragment :
         viewModel.consume(this, CommunityState::isLoadingMore, true) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
+    }
+
+    private fun showListBoxMenu(view: View) {
+        val listPopupWindow = ListPopupWindow(requireContext(), null, R.attr.listPopupWindowStyle)
+        listPopupWindow.anchorView = view
+        val boxes = BoxUtils.getBoxes().map { getString(it.name) }
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxes)
+        listPopupWindow.setAdapter(adapter)
+        listPopupWindow.setContentWidth(widthPercentage(50))
+
+        listPopupWindow.setOnItemClickListener { _, _, position, _ ->
+            listPopupWindow.dismiss()
+            showToast(boxes[position])
+        }
+
+        listPopupWindow.show()
     }
 
     private fun onOpen(shareId: String) = getState(viewModel) { state ->

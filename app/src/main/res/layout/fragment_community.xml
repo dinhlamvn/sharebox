@@ -23,7 +23,6 @@
             android:drawablePadding="8dp"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:text="@string/title_community"
             android:textAppearance="@style/TextAppearance.HeaderMedium" />
 
     </androidx.appcompat.widget.Toolbar>

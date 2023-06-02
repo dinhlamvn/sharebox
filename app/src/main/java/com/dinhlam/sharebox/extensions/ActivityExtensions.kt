@@ -9,12 +9,21 @@ import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
+import androidx.annotation.IntRange
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 
 fun Context.screenWidth() = resources.displayMetrics.widthPixels
 
 fun Context.screenHeight() = resources.displayMetrics.heightPixels
 
+fun Context.widthPercentage(@IntRange(from = 1, to = 100) percent: Int): Int {
+    return screenWidth().times(percent.div(100))
+}
+
+fun Context.heightPercentage(@IntRange(from = 1, to = 100) percent: Int): Int {
+    return screenHeight().times(percent.div(100))
+}
 fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         onBackInvokedDispatcher.registerOnBackInvokedCallback(

@@ -33,6 +33,7 @@ task installDevApk() {
 
 task installDevDebug() {
     println("Starting build debug APK")
+    dependsOn(":app:clean")
     dependsOn(":app:assembleDevDebug")
     dependsOn("installDevApk")
 }
