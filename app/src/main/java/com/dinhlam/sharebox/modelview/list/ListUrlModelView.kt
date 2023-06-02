@@ -29,6 +29,7 @@ data class ListUrlModelView(
     val shareUpVote: Int = 0,
     val shareComment: Int = 0,
     val bookmarked: Boolean = false,
+    val liked: Boolean = false,
     val userDetail: UserDetail,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
@@ -36,7 +37,7 @@ data class ListUrlModelView(
     val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionVote: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+    val actionLike: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
     val actionComment: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -86,15 +87,17 @@ data class ListUrlModelView(
             }
 
             binding.bottomAction.setOnLikeClickListener {
-                model.actionVote.prop?.invoke(model.shareId)
+                model.actionLike.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setOnBookmarkClickListener {
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setVoteNumber(model.shareUpVote)
+            binding.bottomAction.setLikeNumber(model.shareUpVote)
             binding.bottomAction.setCommentNumber(model.shareComment)
+
+            binding.bottomAction.setLikeIcon(if (model.liked) R.drawable.ic_liked else R.drawable.ic_like)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {

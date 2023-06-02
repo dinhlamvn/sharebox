@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -56,12 +55,12 @@ class BookmarkListItemActivity :
                         shareDetail.shareDate,
                         shareDetail.shareNote,
                         shareDetail.user,
-                        shareDetail.voteCount,
-                        shareComment = shareDetail.commentCount,
+                        shareDetail.likeNumber,
+                        shareComment = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
-                        actionVote = ::onVote,
+                        actionLike = ::onLike,
                         actionComment = ::onComment,
                         actionBookmark = ::onBookmark
                     )
@@ -184,8 +183,8 @@ class BookmarkListItemActivity :
         shareHelper.shareToOther(share)
     }
 
-    private fun onVote(shareId: String) {
-        viewModel.vote(shareId)
+    private fun onLike(shareId: String) {
+        viewModel.like(shareId)
     }
 
     private fun onBookmark(shareId: String) {

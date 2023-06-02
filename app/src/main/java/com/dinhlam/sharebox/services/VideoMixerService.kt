@@ -8,7 +8,7 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
 import com.dinhlam.sharebox.extensions.orElse
@@ -49,7 +49,7 @@ class VideoMixerService : Service() {
     lateinit var commentRepository: CommentRepository
 
     @Inject
-    lateinit var voteRepository: VoteRepository
+    lateinit var likeRepository: LikeRepository
 
 
     inner class LocalBinder : Binder() {

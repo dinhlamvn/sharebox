@@ -64,10 +64,10 @@ data class FacebookVideoModelView(
 
         init {
             binding.bottomAction.apply {
-                setVoteIcon(R.drawable.ic_arrow_up_white)
+                setLikeIcon(R.drawable.ic_arrow_up_white)
                 setCommentIcon(R.drawable.ic_comment_white)
                 setShareIcon(R.drawable.ic_share_white)
-                setVoteTextColor(Color.WHITE)
+                setLikeTextColor(Color.WHITE)
                 setCommentTextColor(Color.WHITE)
             }
             binding.webView.setBackgroundColor(Color.BLACK)
@@ -128,8 +128,8 @@ data class FacebookVideoModelView(
                 model.actionBookmark.prop?.invoke(model.shareDetail.shareId)
             }
 
-            binding.bottomAction.setVoteNumber(model.shareDetail.voteCount)
-            binding.bottomAction.setCommentNumber(model.shareDetail.commentCount)
+            binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)
+            binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
             binding.textViewName.text = model.shareDetail.user.name
             ImageLoader.instance.load(

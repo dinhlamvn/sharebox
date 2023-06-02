@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "44dc388bdb34411b8e3bcc5787806dc5",
+    "identityHash": "e3a0e81a2db00ad0a62120a38bc19feb",
     "entities": [
       {
         "tableName": "Share",
@@ -302,7 +302,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "Vote",
+        "tableName": "Like",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
@@ -338,23 +338,23 @@
         },
         "indices": [
           {
-            "name": "index_Vote_share_id_user_id",
+            "name": "index_Like_share_id_user_id",
             "unique": true,
             "columnNames": [
               "share_id",
               "user_id"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Vote_share_id_user_id` ON `${TABLE_NAME}` (`share_id`, `user_id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Like_share_id_user_id` ON `${TABLE_NAME}` (`share_id`, `user_id`)"
           },
           {
-            "name": "index_Vote_user_id",
+            "name": "index_Like_user_id",
             "unique": false,
             "columnNames": [
               "user_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_Vote_user_id` ON `${TABLE_NAME}` (`user_id`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Like_user_id` ON `${TABLE_NAME}` (`user_id`)"
           }
         ],
         "foreignKeys": [
@@ -870,7 +870,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '44dc388bdb34411b8e3bcc5787806dc5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e3a0e81a2db00ad0a62120a38bc19feb')"
     ]
   }
 }

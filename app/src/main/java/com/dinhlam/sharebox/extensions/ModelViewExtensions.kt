@@ -21,9 +21,10 @@ fun ShareData.buildShareModelViews(
     shareVote: Int = 0,
     shareComment: Int = 0,
     bookmarked: Boolean = false,
+    liked: Boolean = false,
     actionOpen: Function1<String, Unit>? = null,
     actionShareToOther: Function1<String, Unit>? = null,
-    actionVote: Function1<String, Unit>? = null,
+    actionLike: Function1<String, Unit>? = null,
     actionComment: Function1<String, Unit>? = null,
     actionBookmark: Function1<String, Unit>? = null,
 ): BaseListAdapter.BaseModelView {
@@ -39,10 +40,11 @@ fun ShareData.buildShareModelViews(
                 shareVote,
                 shareComment,
                 bookmarked,
+                liked,
                 user,
                 BaseListAdapter.NoHashProp(actionOpen),
                 BaseListAdapter.NoHashProp(actionShareToOther),
-                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
             )
@@ -62,7 +64,7 @@ fun ShareData.buildShareModelViews(
                 bookmarked,
                 BaseListAdapter.NoHashProp(actionOpen),
                 BaseListAdapter.NoHashProp(actionShareToOther),
-                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
             )
@@ -81,7 +83,7 @@ fun ShareData.buildShareModelViews(
                 bookmarked,
                 BaseListAdapter.NoHashProp(actionOpen),
                 BaseListAdapter.NoHashProp(actionShareToOther),
-                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
             )
@@ -106,7 +108,7 @@ fun ShareData.buildShareModelViews(
                 bookmarked,
                 BaseListAdapter.NoHashProp(actionOpen),
                 BaseListAdapter.NoHashProp(actionShareToOther),
-                BaseListAdapter.NoHashProp(actionVote),
+                BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
             )

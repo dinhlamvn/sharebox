@@ -6,7 +6,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ class BookmarkListItemViewModel @Inject constructor(
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val shareRepository: ShareRepository,
-    private val voteRepository: VoteRepository,
+    private val likeRepository: LikeRepository,
     private val userSharePref: UserSharePref,
 ) : BaseViewModel<BookmarkListItemState>(BookmarkListItemState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID))) {
 
@@ -60,13 +60,13 @@ class BookmarkListItemViewModel @Inject constructor(
         }
     }
 
-    fun vote(shareId: String) = backgroundTask {
-        val result = voteRepository.vote(shareId, userSharePref.getActiveUserId())
+    fun like(shareId: String) = backgroundTask {
+        val result = likeRepository.like(shareId, userSharePref.getActiveUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->
                     if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(voteCount = shareDetail.voteCount + 1)
+                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1)
                     } else {
                         shareDetail
                     }

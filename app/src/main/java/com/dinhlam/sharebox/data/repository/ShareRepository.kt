@@ -9,7 +9,11 @@ import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.VideoHelper
+import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,9 +23,10 @@ class ShareRepository @Inject constructor(
     private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
     private val bookmarkRepository: BookmarkRepository,
-    private val voteRepository: VoteRepository,
+    private val likeRepository: LikeRepository,
     private val mapper: ShareToShareDetailMapper,
     private val videoHelper: VideoHelper,
+    private val userSharePref: UserSharePref,
 ) {
     suspend fun insert(
         shareId: String = ShareUtils.createShareId(),
@@ -56,11 +61,7 @@ class ShareRepository @Inject constructor(
 
     suspend fun findOne(shareId: String) = shareDao.runCatching {
         findOne(shareId)?.let { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@let null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
+            buildShareDetail(share)
         }
     }.getOrNull()
 
@@ -69,46 +70,23 @@ class ShareRepository @Inject constructor(
     }.getOrNull()
 
     suspend fun findAll(): List<ShareDetail> = shareDao.runCatching {
-        find().mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        val shares = find()
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
     suspend fun find(shareUserId: String, limit: Int, offset: Int) = shareDao.runCatching {
         val shares = find(shareUserId, limit, offset)
-        shares.mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
     suspend fun find(shareMode: ShareMode) = shareDao.runCatching {
         val shares = find(shareMode)
-        shares.mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
     suspend fun find(shareMode: ShareMode, limit: Int, offset: Int) = shareDao.runCatching {
         val shares = find(shareMode, limit, offset)
-        shares.mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
     suspend fun findRaw(shareMode: ShareMode, limit: Int, offset: Int) = shareDao.runCatching {
@@ -121,23 +99,20 @@ class ShareRepository @Inject constructor(
 
     suspend fun find(shareIds: List<String>) = shareDao.runCatching {
         val shares = find(shareIds)
-        shares.mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
     suspend fun findShareCommunity(limit: Int, offset: Int) = shareDao.runCatching {
         val shares = findShareCommunity(limit, offset)
-        shares.mapNotNull { share ->
-            val user = userRepository.findOne(share.shareUserId) ?: return@mapNotNull null
-            val commentCount = commentRepository.count(share.shareId)
-            val voteCount = voteRepository.count(share.shareId)
-            val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-            mapper.map(share, user, commentCount, voteCount, bookmarked)
-        }
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
+
+    private suspend fun buildShareDetail(share: Share): ShareDetail? {
+        val user = userRepository.findOne(share.shareUserId) ?: return null
+        val commentCount = commentRepository.count(share.shareId)
+        val voteCount = likeRepository.count(share.shareId)
+        val bookmarked = bookmarkRepository.findOne(share.shareId) != null
+        val liked = likeRepository.find(share.shareId, userSharePref.getActiveUserId()) != null
+        return mapper.map(share, user, commentCount, voteCount, bookmarked, liked)
+    }
 }

@@ -61,16 +61,12 @@ class ProfileFragment :
             )
             add(
                 SizedBoxModelView(
-                    "divider",
-                    backgroundColor = android.R.color.transparent,
-                    height = 16.dp()
+                    "divider", backgroundColor = android.R.color.transparent, height = 16.dp()
                 )
             )
             add(
                 SizedBoxModelView(
-                    "divider1",
-                    backgroundColor = R.color.colorDividerLightV2,
-                    height = 1.dp()
+                    "divider1", backgroundColor = R.color.colorDividerLightV2, height = 1.dp()
                 )
             )
 
@@ -85,12 +81,12 @@ class ProfileFragment :
                         shareDetail.shareDate,
                         shareDetail.shareNote,
                         shareDetail.user,
-                        shareDetail.voteCount,
-                        shareComment = shareDetail.commentCount,
+                        shareDetail.likeNumber,
+                        shareComment = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
-                        actionVote = ::onVote,
+                        actionLike = ::onLike,
                         actionComment = ::onComment,
                         actionBookmark = ::onBookmark
                     )
@@ -172,8 +168,8 @@ class ProfileFragment :
         shareHelper.shareToOther(share)
     }
 
-    private fun onVote(shareId: String) {
-        viewModel.vote(shareId)
+    private fun onLike(shareId: String) {
+        viewModel.like(shareId)
     }
 
     private fun onBookmark(shareId: String) {

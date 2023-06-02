@@ -5,7 +5,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VideoMixerViewModel @Inject constructor(
     private val videoMixerRepository: VideoMixerRepository,
-    private val voteRepository: VoteRepository,
+    private val likeRepository: LikeRepository,
     private val userSharePref: UserSharePref,
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
@@ -56,12 +56,12 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun vote(shareId: String) = backgroundTask {
-        val result = voteRepository.vote(shareId, userSharePref.getActiveUserId())
+        val result = likeRepository.like(shareId, userSharePref.getActiveUserId())
         if (result) {
             setState {
                 val videos = videos.map { videoDetail ->
                     if (videoDetail.shareId == shareId) {
-                        videoDetail.copy(shareDetail = videoDetail.shareDetail.copy(voteCount = videoDetail.shareDetail.voteCount + 1))
+                        videoDetail.copy(shareDetail = videoDetail.shareDetail.copy(likeNumber = videoDetail.shareDetail.likeNumber + 1))
                     } else {
                         videoDetail
                     }

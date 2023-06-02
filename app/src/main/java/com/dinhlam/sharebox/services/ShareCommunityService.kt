@@ -8,7 +8,7 @@ import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +44,7 @@ class ShareCommunityService : Service() {
     lateinit var commentRepository: CommentRepository
 
     @Inject
-    lateinit var voteRepository: VoteRepository
+    lateinit var likeRepository: LikeRepository
 
 
     inner class LocalBinder : Binder() {
@@ -107,7 +107,7 @@ class ShareCommunityService : Service() {
         val commentCount = commentRepository.count(shareId)
         sharePower += commentCount
 
-        val voteCount = voteRepository.count(shareId)
+        val voteCount = likeRepository.count(shareId)
         sharePower += voteCount
 
         val elapsed = Calendar.getInstance().timeInMillis - createdAt

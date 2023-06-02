@@ -6,7 +6,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.pref.UserSharePref
@@ -21,7 +21,7 @@ class ProfileViewModel @Inject constructor(
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
     private val bookmarkRepository: BookmarkRepository,
-    private val voteRepository: VoteRepository,
+    private val likeRepository: LikeRepository,
 ) : BaseViewModel<ProfileState>(ProfileState()) {
     init {
         getActiveUserInfo()
@@ -70,13 +70,13 @@ class ProfileViewModel @Inject constructor(
         loadShares()
     }
 
-    fun vote(shareId: String) = backgroundTask {
-        val result = voteRepository.vote(shareId, userSharePref.getActiveUserId())
+    fun like(shareId: String) = backgroundTask {
+        val result = likeRepository.like(shareId, userSharePref.getActiveUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->
                     if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(voteCount = shareDetail.voteCount + 1)
+                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1)
                     } else {
                         shareDetail
                     }

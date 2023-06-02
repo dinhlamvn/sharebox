@@ -19,8 +19,8 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
             ViewShareItemBottomActionBinding.bind(this)
         }
 
-    fun setVoteIcon(@DrawableRes icon: Int) {
-        binding.textVote.setDrawableCompat(start = icon)
+    fun setLikeIcon(@DrawableRes icon: Int) {
+        binding.textLike.setDrawableCompat(start = icon)
     }
 
     fun setCommentIcon(@DrawableRes icon: Int) {
@@ -35,8 +35,8 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
         ImageLoader.instance.load(context, icon, binding.buttonBookmark)
     }
 
-    fun setVoteTextColor(@ColorInt color: Int) {
-        binding.textVote.setTextColor(color)
+    fun setLikeTextColor(@ColorInt color: Int) {
+        binding.textLike.setTextColor(color)
     }
 
     fun setCommentTextColor(@ColorInt color: Int) {
@@ -44,7 +44,7 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
     }
 
     fun setOnLikeClickListener(listener: OnClickListener?) {
-        binding.buttonVote.setOnClickListener(listener)
+        binding.buttonLike.setOnClickListener(listener)
     }
 
     fun setOnCommentClickListener(listener: OnClickListener?) {
@@ -59,8 +59,8 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
         binding.buttonBookmark.setOnClickListener(listener)
     }
 
-    fun setVoteNumber(number: Int) {
-        binding.textVote.text = resources.getString(R.string.up_vote, number)
+    fun setLikeNumber(number: Int) {
+        binding.textLike.text = resources.getString(R.string.up_vote, number)
     }
 
     fun setCommentNumber(number: Int) {
@@ -69,6 +69,6 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
 
     fun release() {
         binding.textComment.text = null
-        binding.textVote.text = null
+        binding.textLike.text = null
     }
 }

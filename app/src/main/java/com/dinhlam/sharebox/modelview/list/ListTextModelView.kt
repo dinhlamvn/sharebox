@@ -35,7 +35,7 @@ data class ListTextModelView(
     val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionVote: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+    val actionLike: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
     val actionComment: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -85,14 +85,14 @@ data class ListTextModelView(
             }
 
             binding.bottomAction.setOnLikeClickListener {
-                model.actionVote.prop?.invoke(model.shareId)
+                model.actionLike.prop?.invoke(model.shareId)
             }
 
             binding.bottomAction.setOnBookmarkClickListener {
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setVoteNumber(model.shareUpVote)
+            binding.bottomAction.setLikeNumber(model.shareUpVote)
             binding.bottomAction.setCommentNumber(model.shareComment)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {

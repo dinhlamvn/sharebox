@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
@@ -15,7 +16,6 @@ import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
@@ -63,23 +63,23 @@ class CommunityFragment :
                         shareDetail.shareDate,
                         shareDetail.shareNote,
                         shareDetail.user,
-                        shareDetail.voteCount,
-                        shareComment = shareDetail.commentCount,
+                        shareDetail.likeNumber,
+                        shareComment = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
+                        liked = shareDetail.liked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
-                        actionVote = ::onVote,
+                        actionLike = ::onLike,
                         actionComment = ::onComment,
                         actionBookmark = ::onBookmark
                     )
                 }
-                models.forEachIndexed { idx, model ->
+                models.forEach { model ->
                     add(model)
                     add(
                         SizedBoxModelView(
-                            "divider_$idx",
-                            width = screenWidth().times(0.9).toInt(),
-                            height = 1.dp(),
+                            "divider_${model.modelId}",
+                            height = 8.dp(),
                             backgroundColor = R.color.colorDividerLightV2
                         )
                     )
@@ -106,6 +106,15 @@ class CommunityFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                if (positionStart == 0) {
+                    layoutManager.scrollToPositionWithOffset(0, 0)
+                }
+            }
+        })
 
         viewBinding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
             false
@@ -152,8 +161,8 @@ class CommunityFragment :
         shareHelper.shareToOther(share)
     }
 
-    private fun onVote(shareId: String) {
-        viewModel.vote(shareId)
+    private fun onLike(shareId: String) {
+        viewModel.like(shareId)
     }
 
     private fun onBookmark(shareId: String) {

@@ -5,7 +5,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.VoteRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.pref.UserSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val voteRepository: VoteRepository,
+    private val likeRepository: LikeRepository,
     private val userSharePref: UserSharePref,
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<CommunityState>(CommunityState()) {
@@ -29,8 +29,7 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isRefreshing = true) }
         backgroundTask {
             val shares = shareRepository.findShareCommunity(
-                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                offset = 0
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
             )
             setState { copy(shares = shares, isRefreshing = false) }
         }
@@ -39,11 +38,10 @@ class CommunityViewModel @Inject constructor(
     fun loadMores() {
         execute { state ->
             setState { copy(isLoadingMore = true) }
-            val shares =
-                shareRepository.findShareCommunity(
-                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                    offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
-                )
+            val shares = shareRepository.findShareCommunity(
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+            )
             setState {
                 copy(
                     shares = this.shares.plus(shares),
@@ -60,13 +58,13 @@ class CommunityViewModel @Inject constructor(
         loadShares()
     }
 
-    fun vote(shareId: String) = backgroundTask {
-        val result = voteRepository.vote(shareId, userSharePref.getActiveUserId())
+    fun like(shareId: String) = backgroundTask {
+        val result = likeRepository.like(shareId, userSharePref.getActiveUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->
                     if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(voteCount = shareDetail.voteCount + 1)
+                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
                     } else {
                         shareDetail
                     }

@@ -7,7 +7,8 @@ data class ShareDetail(
     val shareDate: Long,
     val createdAt: Long,
     val shareData: ShareData,
-    val commentCount: Int,
-    val voteCount: Int,
-    val bookmarked: Boolean
+    val commentNumber: Int,
+    val likeNumber: Int,
+    val bookmarked: Boolean,
+    val liked: Boolean
 )

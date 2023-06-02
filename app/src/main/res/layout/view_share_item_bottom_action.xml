@@ -7,7 +7,7 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <FrameLayout
-        android:id="@+id/button_vote"
+        android:id="@+id/button_like"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackground"
@@ -20,16 +20,15 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_vote"
+            android:id="@+id/text_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:drawableStart="@drawable/ic_arrow_up"
-            android:drawablePadding="2dp"
-            android:gravity="center"
+            android:drawableStart="@drawable/ic_like"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
             android:text="@string/up_vote"
-            android:textAppearance="@style/TextAppearance.BodyMedium"
-            android:textColor="@color/colorHint" />
+            android:textAppearance="@style/TextAppearance.BodyMedium" />
 
     </FrameLayout>
 
@@ -43,7 +42,7 @@
         android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_share"
-        app:layout_constraintStart_toEndOf="@id/button_vote"
+        app:layout_constraintStart_toEndOf="@id/button_like"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -52,11 +51,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableStart="@drawable/ic_comment"
-            android:drawablePadding="2dp"
-            android:gravity="center"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
             android:text="@string/comment"
-            android:textAppearance="@style/TextAppearance.BodyMedium"
-            android:textColor="@color/colorHint" />
+            android:textAppearance="@style/TextAppearance.BodyMedium" />
 
     </FrameLayout>
 

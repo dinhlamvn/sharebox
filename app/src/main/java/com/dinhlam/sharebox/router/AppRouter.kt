@@ -28,8 +28,7 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
     }
 
     fun moveToChromeCustomTab(context: Context, url: String) {
-        val builder = CustomTabsIntent.Builder()
-        val customTabIntent = builder.build()
+        val customTabIntent = CustomTabsIntent.Builder().build()
         customTabIntent.launchUrl(context, Uri.parse(url))
     }
 
@@ -46,8 +45,7 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
     }
 
     fun bookmarkCollectionFormIntent(
-        context: Context,
-        bookmarkCollection: BookmarkCollectionDetail
+        context: Context, bookmarkCollection: BookmarkCollectionDetail
     ): Intent {
         return Intent(context, BookmarkCollectionFormActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)

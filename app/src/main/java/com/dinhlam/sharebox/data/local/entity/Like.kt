@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -20,9 +21,9 @@ import androidx.room.PrimaryKey
     )],
     indices = [Index(value = ["share_id", "user_id"], unique = true), Index(value = ["user_id"])]
 )
-data class Vote(
+data class Like(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo("share_id") val shareId: String,
     @ColumnInfo("user_id") val userId: String,
-    @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
+    @ColumnInfo(name = "created_at") val createdAt: Long = nowUTCTimeInMillis(),
 )
