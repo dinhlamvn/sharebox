@@ -27,10 +27,10 @@ data class ListImagesModelView(
     val shareId: String,
     val uris: List<Uri>,
     val shareDate: Long,
-    val note: String?,
+    val shareNote: String?,
     val modelViews: List<ImageModelView>,
-    val shareUpVote: Int = 0,
-    val shareComment: Int = 0,
+    val likeNumber: Int = 0,
+    val commentNumber: Int = 0,
     val userDetail: UserDetail,
     val bookmarked: Boolean = false,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -103,7 +103,7 @@ data class ListImagesModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon())
+            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
@@ -125,8 +125,8 @@ data class ListImagesModelView(
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareUpVote)
-            binding.bottomAction.setCommentNumber(model.shareComment)
+            binding.bottomAction.setLikeNumber(model.likeNumber)
+            binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
@@ -139,7 +139,7 @@ data class ListImagesModelView(
             binding.layoutUserInfo.textUserLevel.text =
                 UserUtils.getLevelTitle(model.userDetail.level)
             binding.textCreatedDate.text = model.shareDate.formatForFeed()
-            model.note.takeIfNotNullOrBlank()?.let { text ->
+            model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
                 binding.textViewNote.setReadMoreText(text)
             } ?: binding.textViewNote.apply {

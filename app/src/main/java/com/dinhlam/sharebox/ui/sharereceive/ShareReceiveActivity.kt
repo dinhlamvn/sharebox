@@ -48,6 +48,7 @@ import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDec
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
+import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -184,16 +185,19 @@ class ShareReceiveActivity :
                     )
                 )
                 viewBinding.textShareBookmark.text = collection.name
-                viewBinding.textShareBookmark.setDrawableCompat(start = R.drawable.ic_bookmarked)
+                viewBinding.textShareBookmark.setDrawableCompat(
+                    start = IconUtils.bookmarkedIcon(
+                        this
+                    )
+                )
             } ?: viewBinding.textShareBookmark.apply {
                 setTextColor(
                     ContextCompat.getColor(
-                        this@ShareReceiveActivity,
-                        R.color.colorHint
+                        this@ShareReceiveActivity, R.color.colorHint
                     )
                 )
                 setText(R.string.share_receive_no_bookmark)
-                viewBinding.textShareBookmark.setDrawableCompat(start = R.drawable.ic_bookmark)
+                viewBinding.textShareBookmark.setDrawableCompat(start = IconUtils.bookmarkIcon(this@ShareReceiveActivity))
             }
         }
 

@@ -61,7 +61,7 @@ class BookmarkListItemViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = backgroundTask {
-        val result = likeRepository.like(shareId, userSharePref.getActiveUserId())
+        val result = likeRepository.likeAndSyncToCloud(shareId, userSharePref.getActiveUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->

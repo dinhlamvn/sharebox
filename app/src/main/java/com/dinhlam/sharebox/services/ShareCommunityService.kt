@@ -107,8 +107,8 @@ class ShareCommunityService : Service() {
         val commentCount = commentRepository.count(shareId)
         sharePower += commentCount
 
-        val voteCount = likeRepository.count(shareId)
-        sharePower += voteCount
+        val likeCount = likeRepository.count(shareId)
+        sharePower += likeCount
 
         val elapsed = Calendar.getInstance().timeInMillis - createdAt
         val hours = elapsed.div(3600 * 1000).toInt()

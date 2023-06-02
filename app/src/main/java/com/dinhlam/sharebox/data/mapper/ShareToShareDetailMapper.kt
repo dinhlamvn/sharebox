@@ -12,8 +12,8 @@ class ShareToShareDetailMapper @Inject constructor() {
     fun map(
         share: Share,
         user: UserDetail,
-        commentCount: Int,
-        voteCount: Int,
+        commentNumber: Int,
+        likeNumber: Int,
         bookmarked: Boolean,
         liked: Boolean
     ): ShareDetail {
@@ -24,8 +24,8 @@ class ShareToShareDetailMapper @Inject constructor() {
             share.shareDate,
             share.createdAt,
             share.shareData,
-            commentCount,
-            voteCount,
+            commentNumber,
+            likeNumber,
             bookmarked,
             liked
         )

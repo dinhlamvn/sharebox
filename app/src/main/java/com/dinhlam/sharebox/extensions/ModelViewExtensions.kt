@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.extensions
 
-import androidx.annotation.DrawableRes
-import com.dinhlam.sharebox.R
+import android.content.Context
+import android.graphics.drawable.Drawable
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
@@ -18,8 +18,8 @@ fun ShareData.buildShareModelViews(
     shareDate: Long,
     shareNote: String?,
     user: UserDetail,
-    shareVote: Int = 0,
-    shareComment: Int = 0,
+    likeNumber: Int = 0,
+    commentNumber: Int = 0,
     bookmarked: Boolean = false,
     liked: Boolean = false,
     actionOpen: Function1<String, Unit>? = null,
@@ -33,12 +33,11 @@ fun ShareData.buildShareModelViews(
             val shareData = this.castNonNull<ShareData.ShareUrl>()
             ListUrlModelView(
                 shareId,
-                IconUtils.getIconUrl(shareData.url),
                 shareData.url,
                 shareDate,
                 shareNote,
-                shareVote,
-                shareComment,
+                likeNumber,
+                commentNumber,
                 bookmarked,
                 liked,
                 user,
@@ -54,12 +53,11 @@ fun ShareData.buildShareModelViews(
             val shareData = this.castNonNull<ShareData.ShareText>()
             ListTextModelView(
                 shareId,
-                IconUtils.getIconUrl(shareData.text),
                 shareData.text,
                 shareDate,
                 shareNote,
-                shareVote,
-                shareComment,
+                likeNumber,
+                commentNumber,
                 user,
                 bookmarked,
                 BaseListAdapter.NoHashProp(actionOpen),
@@ -77,8 +75,8 @@ fun ShareData.buildShareModelViews(
                 shareData.uri,
                 shareDate,
                 shareNote,
-                shareVote,
-                shareComment,
+                likeNumber,
+                commentNumber,
                 user,
                 bookmarked,
                 BaseListAdapter.NoHashProp(actionOpen),
@@ -102,8 +100,8 @@ fun ShareData.buildShareModelViews(
                 shareDate,
                 shareNote,
                 modelViews,
-                shareVote,
-                shareComment,
+                likeNumber,
+                commentNumber,
                 user,
                 bookmarked,
                 BaseListAdapter.NoHashProp(actionOpen),
@@ -116,9 +114,18 @@ fun ShareData.buildShareModelViews(
     }
 }
 
-fun Boolean.asBookmarkIcon(
-    @DrawableRes iconOn: Int = R.drawable.ic_bookmarked,
-    @DrawableRes iconOff: Int = R.drawable.ic_bookmark
-): Int {
-    return if (this) iconOn else iconOff
+fun Boolean.asBookmarkIcon(context: Context): Drawable {
+    return if (this) IconUtils.bookmarkedIcon(context) else IconUtils.bookmarkIcon(context)
+}
+
+fun Boolean.asBookmarkIconLight(context: Context): Drawable {
+    return if (this) IconUtils.bookmarkedIconLight(context) else IconUtils.bookmarkIconLight(context)
+}
+
+fun Boolean.asLikeIcon(context: Context): Drawable {
+    return if (this) IconUtils.likedIcon(context) else IconUtils.likeIcon(context)
+}
+
+fun Boolean.asLikeIconLight(context: Context): Drawable {
+    return if (this) IconUtils.likedIcon(context) else IconUtils.likeIconLight(context)
 }

@@ -56,7 +56,7 @@ class BookmarkListItemActivity :
                         shareDetail.shareNote,
                         shareDetail.user,
                         shareDetail.likeNumber,
-                        shareComment = shareDetail.commentNumber,
+                        commentNumber = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,

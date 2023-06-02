@@ -49,10 +49,10 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideVoteDao(
+    fun provideLikeDao(
         appDatabase: AppDatabase
     ): LikeDao {
-        return appDatabase.voteDao()
+        return appDatabase.likeDao()
     }
 
     @Provides

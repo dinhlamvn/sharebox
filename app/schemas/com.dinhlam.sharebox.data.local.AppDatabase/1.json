@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e3a0e81a2db00ad0a62120a38bc19feb",
+    "identityHash": "438e6234ef3607dbe3fcf80a1cd7c00a",
     "entities": [
       {
         "tableName": "Share",
@@ -303,12 +303,18 @@
       },
       {
         "tableName": "Like",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `like_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `like_date` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`share_id`) REFERENCES `Share`(`share_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "likeId",
+            "columnName": "like_id",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -321,6 +327,12 @@
             "fieldPath": "userId",
             "columnName": "user_id",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "likeDate",
+            "columnName": "like_date",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -355,6 +367,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_Like_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          },
+          {
+            "name": "index_Like_like_id",
+            "unique": true,
+            "columnNames": [
+              "like_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_Like_like_id` ON `${TABLE_NAME}` (`like_id`)"
           }
         ],
         "foreignKeys": [
@@ -870,7 +891,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e3a0e81a2db00ad0a62120a38bc19feb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '438e6234ef3607dbe3fcf80a1cd7c00a')"
     ]
   }
 }

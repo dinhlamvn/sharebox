@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListUrlBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -22,12 +23,11 @@ import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class ListUrlModelView(
     val shareId: String,
-    val iconUrl: String?,
     val url: String?,
     val shareDate: Long,
-    val note: String?,
-    val shareUpVote: Int = 0,
-    val shareComment: Int = 0,
+    val shareNote: String?,
+    val likeNumber: Int = 0,
+    val commentNumber: Int = 0,
     val bookmarked: Boolean = false,
     val liked: Boolean = false,
     val userDetail: UserDetail,
@@ -59,9 +59,8 @@ data class ListUrlModelView(
     }
 
     private class ShareListUrlWebHolder(
-        binding: ModelViewListUrlBinding,
-
-        ) : BaseListAdapter.BaseViewHolder<ListUrlModelView, ModelViewListUrlBinding>(
+        binding: ModelViewListUrlBinding
+    ) : BaseListAdapter.BaseViewHolder<ListUrlModelView, ModelViewListUrlBinding>(
         binding
     ) {
 
@@ -72,7 +71,8 @@ data class ListUrlModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon())
+            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
+            binding.bottomAction.setLikeIcon(model.liked.asLikeIcon(buildContext))
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
@@ -94,10 +94,8 @@ data class ListUrlModelView(
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareUpVote)
-            binding.bottomAction.setCommentNumber(model.shareComment)
-
-            binding.bottomAction.setLikeIcon(if (model.liked) R.drawable.ic_liked else R.drawable.ic_like)
+            binding.bottomAction.setLikeNumber(model.likeNumber)
+            binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
@@ -115,7 +113,7 @@ data class ListUrlModelView(
 
             binding.textCreatedDate.text = model.shareDate.formatForFeed()
 
-            model.note.takeIfNotNullOrBlank()?.let { text ->
+            model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
                 binding.textViewNote.setReadMoreText(text)
             } ?: binding.textViewNote.apply {

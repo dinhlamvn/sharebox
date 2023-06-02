@@ -1,64 +1,122 @@
 package com.dinhlam.sharebox.utils
 
-import com.dinhlam.sharebox.extensions.isWebLink
+import android.content.Context
+import android.graphics.drawable.Drawable
+import com.dinhlam.sharebox.R
+import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
+import com.mikepenz.iconics.utils.colorRes
+import com.mikepenz.iconics.utils.sizeDp
 
 object IconUtils {
-    private const val FB_ICON_URL = "https://img.icons8.com/fluency/144/000000/facebook-new.png"
 
-    private const val INSTAGRAM_ICON_URL =
-        "https://img.icons8.com/color/144/000000/instagram-new--v1.png"
-
-    private const val TIKTOK_ICON_URL =
-        "https://img.icons8.com/ios-filled/100/000000/tiktok--v1.png"
-
-    private const val YOUTUBE_ICON_URL =
-        "https://img.icons8.com/color/144/000000/youtube-play.png"
-
-    private const val WEB_LINK_ICON = "https://img.icons8.com/3d-fluency/94/null/domain.png"
-
-    fun getIconUrl(shareContent: String?): String {
-        if (isFacebookShare(shareContent)) {
-            return FB_ICON_URL
+    fun shareIcon(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_share
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
         }
-        if (isInstagramShare(shareContent)) {
-            return INSTAGRAM_ICON_URL
-        }
-        if (isYoutubeShare(shareContent)) {
-            return YOUTUBE_ICON_URL
-        }
-        if (isTiktokShare(shareContent)) {
-            return TIKTOK_ICON_URL
-        }
-
-        if (isWebShare(shareContent)) {
-            return WEB_LINK_ICON
-        }
-
-        return ""
     }
 
-    private fun isWebShare(content: String?): Boolean {
-        val nonNull = content ?: return false
-        return nonNull.isWebLink()
+    fun shareIconLight(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_share
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorWhite
+        }
     }
 
-    private fun isFacebookShare(content: String?): Boolean {
-        val nonNull = content ?: return false
-        return nonNull.contains("facebook.com") || nonNull.contains("https://fb")
+    fun likeIcon(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_heart
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
+        }
     }
 
-    private fun isInstagramShare(content: String?): Boolean {
-        val nonNull = content ?: return false
-        return nonNull.contains("instagram.com")
+    fun likeIconLight(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_heart
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorWhite
+        }
     }
 
-    private fun isYoutubeShare(content: String?): Boolean {
-        val nonNull = content ?: return false
-        return nonNull.contains("youtu.be") || nonNull.contains("youtube.com")
+    fun commentIcon(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_comment
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
+        }
     }
 
-    private fun isTiktokShare(content: String?): Boolean {
-        val nonNull = content ?: return false
-        return nonNull.contains("tiktok.com")
+    fun commentIconLight(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_comment
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorWhite
+        }
+    }
+
+    fun likedIcon(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_heart1
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextRed
+        }
+    }
+
+    fun bookmarkIcon(context: Context): Drawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_bookmark
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
+        }
+    }
+
+    fun bookmarkedIcon(context: Context): Drawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_bookmark1
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
+        }
+    }
+
+    fun bookmarkIconLight(context: Context): Drawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_bookmark
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorWhite
+        }
+    }
+
+    fun bookmarkedIconLight(context: Context): Drawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_bookmark1
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorWhite
+        }
     }
 }

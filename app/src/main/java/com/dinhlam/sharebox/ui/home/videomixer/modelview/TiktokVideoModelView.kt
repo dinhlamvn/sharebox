@@ -12,10 +12,13 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.databinding.ModelViewVideoTiktokBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asBookmarkIconLight
+import com.dinhlam.sharebox.extensions.asLikeIconLight
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.utils.IconUtils
 
 data class TiktokVideoModelView(
     val id: String,
@@ -24,7 +27,7 @@ data class TiktokVideoModelView(
     val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionVote: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+    val actionLike: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
     val actionComment: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -52,9 +55,8 @@ data class TiktokVideoModelView(
 
         init {
             binding.bottomAction.apply {
-                setLikeIcon(R.drawable.ic_arrow_up_white)
-                setCommentIcon(R.drawable.ic_comment_white)
-                setShareIcon(R.drawable.ic_share_white)
+                setCommentIcon(IconUtils.commentIconLight(buildContext))
+                setShareIcon(IconUtils.shareIconLight(buildContext))
                 setLikeTextColor(Color.WHITE)
                 setCommentTextColor(Color.WHITE)
             }
@@ -83,11 +85,10 @@ data class TiktokVideoModelView(
             binding.videoView.setVideoURI(Uri.parse(model.videoUri))
 
             binding.bottomAction.setBookmarkIcon(
-                model.shareDetail.bookmarked.asBookmarkIcon(
-                    R.drawable.ic_bookmarked_white,
-                    R.drawable.ic_bookmark_white
-                )
+                model.shareDetail.bookmarked.asBookmarkIconLight(buildContext)
             )
+
+            binding.bottomAction.setLikeIcon(model.shareDetail.liked.asLikeIconLight(buildContext))
 
             binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
@@ -98,7 +99,7 @@ data class TiktokVideoModelView(
             }
 
             binding.bottomAction.setOnLikeClickListener {
-                model.actionVote.prop?.invoke(model.shareDetail.shareId)
+                model.actionLike.prop?.invoke(model.shareDetail.shareId)
             }
 
             binding.bottomAction.setOnBookmarkClickListener {

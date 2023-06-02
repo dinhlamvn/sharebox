@@ -109,10 +109,10 @@ class ShareRepository @Inject constructor(
 
     private suspend fun buildShareDetail(share: Share): ShareDetail? {
         val user = userRepository.findOne(share.shareUserId) ?: return null
-        val commentCount = commentRepository.count(share.shareId)
-        val voteCount = likeRepository.count(share.shareId)
+        val commentNumber = commentRepository.count(share.shareId)
+        val likeNumber = likeRepository.count(share.shareId)
         val bookmarked = bookmarkRepository.findOne(share.shareId) != null
         val liked = likeRepository.find(share.shareId, userSharePref.getActiveUserId()) != null
-        return mapper.map(share, user, commentCount, voteCount, bookmarked, liked)
+        return mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked)
     }
 }

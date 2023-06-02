@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListImageBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asLikeIconLight
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -24,9 +25,9 @@ data class ListImageModelView(
     val shareId: String,
     val uri: Uri,
     val shareDate: Long,
-    val note: String?,
-    val shareUpVote: Int = 0,
-    val shareComment: Int = 0,
+    val shareNote: String?,
+    val likeNumber: Int = 0,
+    val commentNumber: Int = 0,
     val userDetail: UserDetail,
     val bookmarked: Boolean = false,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -73,7 +74,7 @@ data class ListImageModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon())
+            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
@@ -95,8 +96,8 @@ data class ListImageModelView(
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareUpVote)
-            binding.bottomAction.setCommentNumber(model.shareComment)
+            binding.bottomAction.setLikeNumber(model.likeNumber)
+            binding.bottomAction.setCommentNumber(model.commentNumber)
 
             ImageLoader.instance.load(buildContext, model.uri, binding.imageShare) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
@@ -113,7 +114,7 @@ data class ListImageModelView(
             binding.layoutUserInfo.textUserLevel.text =
                 UserUtils.getLevelTitle(model.userDetail.level)
             binding.textCreatedDate.text = model.shareDate.formatForFeed()
-            model.note.takeIfNotNullOrBlank()?.let { text ->
+            model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
                 binding.textViewNote.setReadMoreText(text)
             } ?: binding.textViewNote.apply {

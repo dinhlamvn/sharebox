@@ -21,12 +21,11 @@ import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListTextModelView(
     val shareId: String,
-    val iconUrl: String?,
     val content: String?,
     val shareDate: Long,
-    val note: String?,
-    val shareUpVote: Int = 0,
-    val shareComment: Int = 0,
+    val shareNote: String?,
+    val likeNumber: Int = 0,
+    val commentNumber: Int = 0,
     val userDetail: UserDetail,
     val bookmarked: Boolean = false,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -70,7 +69,7 @@ data class ListTextModelView(
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon())
+            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
@@ -92,8 +91,8 @@ data class ListTextModelView(
                 model.actionStar.prop?.invoke(model.shareId)
             }
 
-            binding.bottomAction.setLikeNumber(model.shareUpVote)
-            binding.bottomAction.setCommentNumber(model.shareComment)
+            binding.bottomAction.setLikeNumber(model.likeNumber)
+            binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
                 color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
@@ -107,7 +106,7 @@ data class ListTextModelView(
             binding.layoutUserInfo.textUserLevel.text =
                 UserUtils.getLevelTitle(model.userDetail.level)
             binding.textCreatedDate.text = model.shareDate.formatForFeed()
-            model.note.takeIfNotNullOrBlank()?.let { text ->
+            model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
                 binding.textViewNote.setReadMoreText(text)
             } ?: binding.textViewNote.apply {

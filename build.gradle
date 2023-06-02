@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.1'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.21"
 
         // Hilt dependencies
@@ -25,18 +25,14 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+task installDevApk() {
+    println("Installing dev APK")
+    def command = "adb install app/build/outputs/apk/dev/debug/app-dev-debug.apk".execute()
+    command.waitFor()
+}
+
 task installDevDebug() {
     println("Starting build debug APK")
-    dependsOn(":app:clean")
     dependsOn(":app:assembleDevDebug")
-
-    doLast {
-        println("Installing debug APK")
-        def process = "adb install app/build/outputs/apk/dev/debug/app-debug.apk".execute()
-        process.waitForProcessOutput()
-
-        println("Starting app...")
-        def processOpenApp = "adb shell am start -a android.intent.action.VIEW -d \"sharebox://home\"".execute()
-        processOpenApp.waitForProcessOutput()
-    }
+    dependsOn("installDevApk")
 }

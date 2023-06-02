@@ -35,7 +35,7 @@ import com.dinhlam.sharebox.data.local.entity.Like
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shareDao(): ShareDao
     abstract fun userDao(): UserDao
-    abstract fun voteDao(): LikeDao
+    abstract fun likeDao(): LikeDao
     abstract fun commentDao(): CommentDao
     abstract fun bookmarkCollectionDao(): BookmarkCollectionDao
     abstract fun bookmarkDao(): BookmarkDao

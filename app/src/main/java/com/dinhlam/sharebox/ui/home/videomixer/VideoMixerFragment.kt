@@ -44,7 +44,7 @@ class VideoMixerFragment :
                                 sourceId,
                                 videoMixerDetail.shareDetail,
                                 actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                                actionVote = BaseListAdapter.NoHashProp(::onVote),
+                                actionLike = BaseListAdapter.NoHashProp(::onLike),
                                 actionComment = BaseListAdapter.NoHashProp(::onComment),
                                 actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                             )
@@ -56,7 +56,7 @@ class VideoMixerFragment :
                             uri,
                             videoMixerDetail.shareDetail,
                             actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                            actionVote = BaseListAdapter.NoHashProp(::onVote),
+                            actionLike = BaseListAdapter.NoHashProp(::onLike),
                             actionComment = BaseListAdapter.NoHashProp(::onComment),
                             actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                         )
@@ -69,7 +69,7 @@ class VideoMixerFragment :
                                 sourceId,
                                 videoMixerDetail.shareDetail,
                                 actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                                actionVote = BaseListAdapter.NoHashProp(::onVote),
+                                actionLike = BaseListAdapter.NoHashProp(::onLike),
                                 actionComment = BaseListAdapter.NoHashProp(::onComment),
                                 actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
                             )
@@ -131,8 +131,8 @@ class VideoMixerFragment :
         shareHelper.shareToOther(video.shareDetail)
     }
 
-    private fun onVote(shareId: String) {
-        viewModel.vote(shareId)
+    private fun onLike(shareId: String) {
+        viewModel.like(shareId)
     }
 
     private fun onBookmark(shareId: String) {

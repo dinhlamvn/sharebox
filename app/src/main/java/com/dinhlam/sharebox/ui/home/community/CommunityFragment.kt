@@ -64,7 +64,7 @@ class CommunityFragment :
                         shareDetail.shareNote,
                         shareDetail.user,
                         shareDetail.likeNumber,
-                        shareComment = shareDetail.commentNumber,
+                        commentNumber = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
                         liked = shareDetail.liked,
                         actionOpen = ::onOpen,

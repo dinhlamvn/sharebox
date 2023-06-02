@@ -12,9 +12,11 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareMode
 import com.dinhlam.sharebox.data.model.ShareType
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeUserObj
 import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
@@ -51,6 +53,9 @@ class RealtimeDatabaseService : Service() {
     lateinit var commentRepository: CommentRepository
 
     @Inject
+    lateinit var likeRepository: LikeRepository
+
+    @Inject
     lateinit var gson: Gson
 
     override fun onCreate() {
@@ -61,16 +66,17 @@ class RealtimeDatabaseService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug("$this is start command")
         startForeground(
-            SERVICE_ID, NotificationCompat.Builder(this, AppConsts.DEFAULT_NOTIFICATION_CHANNEL_ID)
+            SERVICE_ID,
+            NotificationCompat.Builder(this, AppConsts.DEFAULT_NOTIFICATION_CHANNEL_ID)
                 .setContentText("We are listening the world sharing and bring its to you.")
                 .setSubText("Listening the world sharing...")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .build()
+                .setSmallIcon(R.drawable.ic_launcher_foreground).build()
         )
 
         realtimeDatabaseRepository.consumeShares(::handleShareAdded)
         realtimeDatabaseRepository.consumeUsers(::handleUserAdded)
         realtimeDatabaseRepository.consumeComments(::handleCommentAdded)
+        realtimeDatabaseRepository.consumeLikes(::handleLikeAdded)
         return START_STICKY
     }
 
@@ -131,6 +137,24 @@ class RealtimeDatabaseService : Service() {
 
                 if (commentEntity == null) {
                     Logger.error("Insert comment from cloud to database failed.")
+                }
+            }
+        }
+    }
+
+    private fun handleLikeAdded(likeId: String, jsonMap: Map<String, Any>) {
+        serviceScope.launch {
+            val realtimeLikeObj = RealtimeLikeObj.from(jsonMap)
+            likeRepository.findOneRaw(likeId) ?: run {
+                val like = likeRepository.like(
+                    realtimeLikeObj.shareId,
+                    realtimeLikeObj.userId,
+                    realtimeLikeObj.likeId,
+                    realtimeLikeObj.likeDate
+                )
+
+                if (like == null) {
+                    Logger.error("Insert like from cloud to database failed.")
                 }
             }
         }

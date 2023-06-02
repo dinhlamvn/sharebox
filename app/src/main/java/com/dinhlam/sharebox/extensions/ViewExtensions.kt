@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.Editable
 import android.widget.EditText
@@ -14,6 +15,15 @@ fun Editable?.string() = this?.toString() ?: ""
 fun Editable?.trimmedString() = this?.toString()?.trim() ?: ""
 
 fun TextView.setDrawableCompat(start: Int = 0, top: Int = 0, end: Int = 0, bottom: Int = 0) {
+    setCompoundDrawablesWithIntrinsicBounds(start, top, end, bottom)
+}
+
+fun TextView.setDrawableCompat(
+    start: Drawable? = null,
+    top: Drawable? = null,
+    end: Drawable? = null,
+    bottom: Drawable? = null
+) {
     setCompoundDrawablesWithIntrinsicBounds(start, top, end, bottom)
 }
 

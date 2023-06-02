@@ -1,14 +1,14 @@
 package com.dinhlam.sharebox.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareItemBottomActionBinding
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.utils.IconUtils
 
 class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
@@ -19,20 +19,26 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
             ViewShareItemBottomActionBinding.bind(this)
         }
 
-    fun setLikeIcon(@DrawableRes icon: Int) {
+    init {
+        binding.textLike.setDrawableCompat(start = IconUtils.likeIcon(context))
+        binding.textComment.setDrawableCompat(start = IconUtils.commentIcon(context))
+        binding.buttonShare.setImageDrawable(IconUtils.shareIcon(context))
+    }
+
+    fun setLikeIcon(icon: Drawable) {
         binding.textLike.setDrawableCompat(start = icon)
     }
 
-    fun setCommentIcon(@DrawableRes icon: Int) {
+    fun setCommentIcon(icon: Drawable) {
         binding.textComment.setDrawableCompat(start = icon)
     }
 
-    fun setShareIcon(@DrawableRes icon: Int) {
-        ImageLoader.instance.load(context, icon, binding.buttonShare)
+    fun setShareIcon(icon: Drawable) {
+        binding.buttonShare.setImageDrawable(icon)
     }
 
-    fun setBookmarkIcon(@DrawableRes icon: Int) {
-        ImageLoader.instance.load(context, icon, binding.buttonBookmark)
+    fun setBookmarkIcon(icon: Drawable) {
+        binding.buttonBookmark.setImageDrawable(icon)
     }
 
     fun setLikeTextColor(@ColorInt color: Int) {
@@ -60,7 +66,7 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
     }
 
     fun setLikeNumber(number: Int) {
-        binding.textLike.text = resources.getString(R.string.up_vote, number)
+        binding.textLike.text = resources.getString(R.string.like, number)
     }
 
     fun setCommentNumber(number: Int) {

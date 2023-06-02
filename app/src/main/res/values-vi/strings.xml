@@ -131,7 +131,7 @@
     <string name="subtitle_home">Cùng khám phá thế giới đang chia sẻ gì?</string>
     <string name="action_share">Chia sẻ</string>
     <string name="title_community">Cộng đồng</string>
-    <string name="up_vote">Lên(%d)</string>
+    <string name="like">(%d)</string>
     <string name="comment">(%d)</string>
     <string name="drama_point">Drama</string>
     <string name="share_receive_activity_title">Chia sẻ cho mọi người</string>

@@ -12,8 +12,11 @@ interface LikeDao {
     suspend fun insert(vararg like: Like)
 
     @Query("SELECT COUNT(*) FROM `like` WHERE share_id = :shareId")
-    suspend fun countVote(shareId: String): Int
+    suspend fun countByShare(shareId: String): Int
 
     @Query("SELECT * FROM `like` WHERE share_id = :shareId AND user_id = :userId")
     suspend fun find(shareId: String, userId: String): Like?
+
+    @Query("SELECT * FROM `like` WHERE like_id = :likeId")
+    suspend fun find(likeId: String): Like?
 }

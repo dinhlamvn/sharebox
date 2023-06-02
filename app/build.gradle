@@ -172,6 +172,10 @@ dependencies {
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    // FontAwesome
+    implementation "com.mikepenz:iconics-core:5.4.0"
+    implementation 'com.mikepenz:fontawesome-typeface:5.9.0.2-kotlin@aar'
 }
 
 kapt {
