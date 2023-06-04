@@ -44,7 +44,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
-    private val realtimeDatabaseService by lazy { Intent(this, RealtimeDatabaseService::class.java) }
+    private val realtimeDatabaseService by lazy {
+        Intent(
+            this,
+            RealtimeDatabaseService::class.java
+        )
+    }
 
     private val communityServiceConnection = object : ServiceConnection {
 

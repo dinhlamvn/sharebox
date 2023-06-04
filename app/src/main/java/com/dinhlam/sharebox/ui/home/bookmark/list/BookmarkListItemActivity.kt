@@ -65,12 +65,12 @@ class BookmarkListItemActivity :
                         actionBookmark = ::onBookmark
                     )
                 }
-                models.forEachIndexed { idx, model ->
+                models.forEach { model ->
                     add(model)
                     add(
                         SizedBoxModelView(
-                            "divider_$idx",
-                            height = 1.dp(),
+                            "divider_${model.modelId}",
+                            height = 8.dp(),
                             backgroundColor = R.color.colorDividerLightV2
                         )
                     )

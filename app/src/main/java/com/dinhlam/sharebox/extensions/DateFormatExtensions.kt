@@ -29,7 +29,7 @@ fun Long.asProfileAge(): String {
     }
 }
 
-fun Long.asCommentDisplayTime(): String {
+fun Long.asElapsedTimeDisplay(): String {
     val now = Calendar.getInstance()
     val subtractTime = now.timeInMillis - this
 

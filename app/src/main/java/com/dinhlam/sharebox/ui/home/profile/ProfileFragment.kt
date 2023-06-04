@@ -14,7 +14,6 @@ import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -97,13 +96,12 @@ class ProfileFragment :
                         actionComment = ::onComment,
                         actionBookmark = ::onBookmark
                     )
-                }.forEachIndexed { idx, model ->
+                }.forEach { model ->
                     add(model)
                     add(
                         SizedBoxModelView(
-                            "divider_$idx",
-                            width = screenWidth().times(0.9).toInt(),
-                            height = 1.dp(),
+                            "divider_${model.modelId}",
+                            height = 8.dp(),
                             backgroundColor = R.color.colorDividerLightV2
                         )
                     )

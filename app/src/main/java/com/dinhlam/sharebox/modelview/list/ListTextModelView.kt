@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListTextBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -107,8 +108,12 @@ data class ListTextModelView(
             }
             binding.textShare.text = model.content
             binding.layoutUserInfo.textUserLevel.text =
-                UserUtils.getLevelTitle(model.userDetail.level)
-            binding.textCreatedDate.text = model.shareDate.formatForFeed()
+                buildContext.getString(
+                    R.string.user_level_format,
+                    UserUtils.getLevelTitle(model.userDetail.level),
+                    model.shareDate.asElapsedTimeDisplay()
+                )
+
             model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
                 binding.textViewNote.setReadMoreText(text)
@@ -129,7 +134,6 @@ data class ListTextModelView(
             ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
             binding.layoutUserInfo.textViewName.text = null
             binding.layoutUserInfo.textUserLevel.text = null
-            binding.textCreatedDate.text = null
         }
     }
 }

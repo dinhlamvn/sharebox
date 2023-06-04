@@ -8,7 +8,7 @@ import androidx.core.text.color
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewCommentBinding
-import com.dinhlam.sharebox.extensions.asCommentDisplayTime
+import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -34,7 +34,7 @@ data class CommentModelView(
                 }
                 color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
                     append(" • ")
-                    append(model.commentDate.asCommentDisplayTime())
+                    append(model.commentDate.asElapsedTimeDisplay())
                 }
             }
             ImageLoader.instance.load(buildContext, model.avatar, binding.imageAvatar) {
