@@ -8,7 +8,7 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
-import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class CommunityViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val likeRepository: LikeRepository,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<CommunityState>(CommunityState()) {
 
@@ -29,9 +29,9 @@ class CommunityViewModel @Inject constructor(
     private fun loadShares() = getState { state ->
         setState { copy(isRefreshing = true) }
         backgroundTask {
-            val shares = if (state.activeBox !is Box.All) {
+            val shares = if (state.currentBox !is Box.All) {
                 shareRepository.find(
-                    state.activeBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
+                    state.currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
                 )
             } else {
                 shareRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0)
@@ -42,28 +42,26 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun loadMores() {
-        execute { state ->
-            setState { copy(isLoadingMore = true) }
-            val shares = if (state.activeBox !is Box.All) {
+        setState { copy(isLoadingMore = true) }
+        execute {
+            val shares = if (currentBox !is Box.All) {
                 shareRepository.find(
-                    state.activeBox,
+                    currentBox,
                     AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                    state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                    currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
                 )
             } else {
                 shareRepository.find(
                     AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                    state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                    currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
                 )
             }
-            setState {
-                copy(
-                    shares = this.shares.plus(shares),
-                    isLoadingMore = false,
-                    canLoadMore = shares.isNotEmpty(),
-                    currentPage = state.currentPage + 1
-                )
-            }
+            copy(
+                shares = this.shares.plus(shares),
+                isLoadingMore = false,
+                canLoadMore = shares.isNotEmpty(),
+                currentPage = currentPage + 1
+            )
         }
     }
 
@@ -73,7 +71,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = backgroundTask {
-        val result = likeRepository.likeAndSyncToCloud(shareId, userSharePref.getActiveUserId())
+        val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->
@@ -133,8 +131,8 @@ class CommunityViewModel @Inject constructor(
         }
 
     fun selectShareBox(shareBox: Box) = getState { state ->
-        if (state.activeBox != shareBox) {
-            setState { copy(activeBox = shareBox) }
+        if (state.currentBox != shareBox) {
+            setState { copy(currentBox = shareBox) }
             doOnRefresh()
         }
     }

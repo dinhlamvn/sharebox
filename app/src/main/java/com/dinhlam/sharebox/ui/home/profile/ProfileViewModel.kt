@@ -4,12 +4,11 @@ import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.orElse
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,60 +17,56 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
     private val userRepository: UserRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
 ) : BaseViewModel<ProfileState>(ProfileState()) {
     init {
-        getActiveUserInfo()
+        getCurrentUserProfile()
         loadShares()
     }
 
-    private fun getActiveUserInfo() = backgroundTask {
-        val activeUserId =
-            userSharePref.getActiveUserId().takeIfNotNullOrBlank() ?: return@backgroundTask
-        val user = userRepository.findOne(activeUserId) ?: return@backgroundTask
-        setState { copy(activeUser = user) }
+    private fun getCurrentUserProfile() = backgroundTask {
+        val user = userRepository.findOne(userHelper.getCurrentUserId()) ?: return@backgroundTask
+        setState { copy(currentUser = user) }
     }
 
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         backgroundTask {
             val shares = shareRepository.find(
-                userSharePref.getActiveUserId(), AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
+                userHelper.getCurrentUserId(), AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
             )
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
 
     fun loadMores() {
-        execute { state ->
-            setState { copy(isLoadingMore = true) }
+        setState { copy(isLoadingMore = true) }
+        execute {
             val others = shareRepository.find(
-                userSharePref.getActiveUserId(),
+                userHelper.getCurrentUserId(),
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-            setState {
-                copy(
-                    shares = shares.plus(others),
-                    isLoadingMore = false,
-                    currentPage = state.currentPage + 1,
-                    canLoadMore = others.isNotEmpty()
-                )
-            }
+            copy(
+                shares = shares.plus(others),
+                isLoadingMore = false,
+                currentPage = currentPage + 1,
+                canLoadMore = others.isNotEmpty()
+            )
         }
     }
 
     fun doOnRefresh() {
         setState { copy(currentPage = 1, canLoadMore = true) }
-        getActiveUserInfo()
+        getCurrentUserProfile()
         loadShares()
     }
 
     fun like(shareId: String) = backgroundTask {
-        val result = likeRepository.likeAndSyncToCloud(shareId, userSharePref.getActiveUserId())
+        val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->

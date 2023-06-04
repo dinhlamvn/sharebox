@@ -50,6 +50,10 @@ class LikeRepository @Inject constructor(
         find(shareId, userId)
     }.getOrNull()
 
+    suspend fun liked(shareId: String, userId: String) = likeDao.runCatching {
+        find(shareId, userId).let { true }
+    }.getOrDefault(false)
+
     suspend fun findOneRaw(likeId: String) = likeDao.runCatching {
         find(likeId)
     }.getOrNull()

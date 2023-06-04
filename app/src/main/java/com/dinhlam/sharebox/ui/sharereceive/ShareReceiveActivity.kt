@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.sharereceive
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,6 +13,8 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.ScrollView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -36,8 +39,10 @@ import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -62,6 +67,10 @@ class ShareReceiveActivity :
         private const val HASHTAG_DEFAULT_ID = "hashtag-default"
     }
 
+    private val signInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
+    )
+
     @Inject
     lateinit var appRouter: AppRouter
 
@@ -70,6 +79,9 @@ class ShareReceiveActivity :
 
     @Inject
     lateinit var appPref: AppSharePref
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     override fun onCreateViewBinding(): ActivityShareReceiveBinding {
         return ActivityShareReceiveBinding.inflate(layoutInflater)
@@ -191,6 +203,10 @@ class ShareReceiveActivity :
         }
 
         handleShareData()
+
+        if (!userHelper.isSignedIn()) {
+            signInLauncher.launch(appRouter.signIn(true))
+        }
     }
 
     private fun handleShareData() {
@@ -316,4 +332,14 @@ class ShareReceiveActivity :
             viewModel.setBookmarkCollection(pickedId)
         }
     }
+
+    private fun handleSignInResult(activityResult: ActivityResult) {
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            viewModel.getCurrentUserProfile()
+        } else {
+            showToast(R.string.sign_in_error)
+            finishAndRemoveTask()
+        }
+    }
 }
+

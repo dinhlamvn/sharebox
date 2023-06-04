@@ -44,4 +44,10 @@ abstract class SharePref constructor(
         }
         return sharePref.all[key] as? T ?: default
     }
+
+    protected fun remove(key: String, sync: Boolean = false) {
+        sharePref.edit(sync) {
+            remove(key)
+        }
+    }
 }

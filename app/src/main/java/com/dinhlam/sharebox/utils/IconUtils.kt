@@ -129,4 +129,14 @@ object IconUtils {
             colorRes = R.color.colorTextBlack
         }
     }
+
+    fun signOutIcon(context: Context): Drawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_sign_out_alt
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorTextBlack
+        }
+    }
 }

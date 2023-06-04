@@ -5,10 +5,10 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
-import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
-import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ class BookmarkListItemViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val shareRepository: ShareRepository,
     private val likeRepository: LikeRepository,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
 ) : BaseViewModel<BookmarkListItemState>(BookmarkListItemState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID))) {
 
     init {
@@ -27,15 +27,13 @@ class BookmarkListItemViewModel @Inject constructor(
         loadShares()
     }
 
-    private fun loadBookmarkCollectionDetail() = execute { state ->
-        val bookmarkCollection = bookmarkCollectionRepository.find(state.bookmarkCollectionId)
+    private fun loadBookmarkCollectionDetail() = execute {
+        val bookmarkCollection = bookmarkCollectionRepository.find(bookmarkCollectionId)
         val passcode = bookmarkCollection?.passcode ?: ""
-        setState {
-            copy(
-                bookmarkCollection = bookmarkCollection,
-                requestVerifyPasscode = passcode.isNotEmpty()
-            )
-        }
+        copy(
+            bookmarkCollection = bookmarkCollection,
+            requestVerifyPasscode = passcode.isNotEmpty()
+        )
     }
 
     private fun loadShares() = getState { state ->
@@ -61,7 +59,7 @@ class BookmarkListItemViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = backgroundTask {
-        val result = likeRepository.likeAndSyncToCloud(shareId, userSharePref.getActiveUserId())
+        val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
         if (result) {
             setState {
                 val shareList = shares.map { shareDetail ->

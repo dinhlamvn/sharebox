@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
+import com.dinhlam.sharebox.ui.signin.SignInActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,6 +22,11 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
 
     fun home(): Intent {
         return Intent(context, HomeActivity::class.java)
+    }
+
+    fun signIn(signInForResult: Boolean = false): Intent {
+        return Intent(context, SignInActivity::class.java)
+            .putExtra(AppExtras.EXTRA_SIGN_IN_FOR_RESULT, signInForResult)
     }
 
     fun setting(): Intent {

@@ -10,5 +10,5 @@ data class CommunityState(
     val isLoadingMore: Boolean = false,
     val currentPage: Int = 1,
     val canLoadMore: Boolean = true,
-    val activeBox: Box = Box.All
+    val currentBox: Box = Box.All
 ) : BaseViewModel.BaseState

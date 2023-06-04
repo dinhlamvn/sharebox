@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.home.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +15,15 @@ import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.router.AppRouter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -45,7 +49,7 @@ class ProfileFragment :
 
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            val nonNullUser = state.activeUser ?: return@getState run {
+            val nonNullUser = state.currentUser ?: return@getState run {
                 add(LoadingModelView("loading_user"))
             }
 
@@ -56,7 +60,10 @@ class ProfileFragment :
                     nonNullUser.name,
                     nonNullUser.drama,
                     nonNullUser.level,
-                    nonNullUser.joinDate
+                    nonNullUser.joinDate,
+                    BaseListAdapter.NoHashProp(View.OnClickListener {
+                        requestSignOut()
+                    })
                 )
             )
             add(
@@ -114,6 +121,12 @@ class ProfileFragment :
 
     @Inject
     lateinit var appSharePref: AppSharePref
+
+    @Inject
+    lateinit var userHelper: UserHelper
+
+    @Inject
+    lateinit var appRouter: AppRouter
 
     override val viewModel: ProfileViewModel by viewModels()
 
@@ -182,5 +195,16 @@ class ProfileFragment :
 
     private fun onComment(shareId: String) {
         shareHelper.showComment(childFragmentManager, shareId)
+    }
+
+    private fun requestSignOut() {
+        userHelper.signOut(requireContext(), {
+            startActivity(
+                appRouter.signIn()
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }, {
+            showToast(R.string.logged_out_error)
+        })
     }
 }

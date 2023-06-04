@@ -31,6 +31,10 @@ class BookmarkRepository @Inject constructor(
         find(shareId)?.let { bookmark -> mapper.map(bookmark) }
     }.getOrDefault(null)
 
+    suspend fun bookmarked(shareId: String): Boolean = bookmarkDao.runCatching {
+        find(shareId).let { true }
+    }.getOrDefault(false)
+
     suspend fun find(bookmarkCollectionId: String): List<BookmarkDetail> = bookmarkDao.runCatching {
         findAll(bookmarkCollectionId).map { bookmark -> mapper.map(bookmark) }
     }.getOrDefault(emptyList())

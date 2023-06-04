@@ -8,8 +8,8 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -26,7 +26,7 @@ class ShareRepository @Inject constructor(
     private val likeRepository: LikeRepository,
     private val mapper: ShareToShareDetailMapper,
     private val videoHelper: VideoHelper,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
 ) {
     suspend fun insert(
         shareId: String = ShareUtils.createShareId(),
@@ -101,8 +101,8 @@ class ShareRepository @Inject constructor(
         val user = userRepository.findOne(share.shareUserId) ?: return null
         val commentNumber = commentRepository.count(share.shareId)
         val likeNumber = likeRepository.count(share.shareId)
-        val bookmarked = bookmarkRepository.findOne(share.shareId) != null
-        val liked = likeRepository.find(share.shareId, userSharePref.getActiveUserId()) != null
+        val bookmarked = bookmarkRepository.bookmarked(share.shareId)
+        val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
         return mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked)
     }
 }

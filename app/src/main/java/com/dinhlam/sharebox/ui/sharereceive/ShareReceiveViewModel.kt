@@ -13,8 +13,7 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ShareReceiveViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
     private val userRepository: UserRepository,
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
@@ -33,64 +32,71 @@ class ShareReceiveViewModel @Inject constructor(
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
-        getActiveUserInfo()
+        getCurrentUserProfile()
     }
 
-    private fun getActiveUserInfo() = backgroundTask {
-        val activeUserId =
-            userSharePref.getActiveUserId().takeIfNotNullOrBlank() ?: return@backgroundTask
-        val user = userRepository.findOne(activeUserId) ?: return@backgroundTask
-        setState { copy(activeUser = user) }
+    fun getCurrentUserProfile() {
+        setState { copy(showLoading = true) }
+        backgroundTask {
+            val user = userRepository.findOne(userHelper.getCurrentUserId())
+                ?: return@backgroundTask setState { copy(showLoading = false) }
+            setState { copy(activeUser = user, showLoading = false) }
+        }
     }
 
     fun setShareData(shareData: ShareData) = setState { copy(shareData = shareData) }
 
-    fun share(note: String?, context: Context) = execute(onError = {
-        postShowToast(R.string.share_receive_error_share)
-    }) { state ->
+    fun share(note: String?, context: Context) {
         setState { copy(showLoading = true) }
+        execute(onError = {
+            postShowToast(R.string.share_receive_error_share)
+        }) {
+            val share = when (val shareData = shareData) {
+                is ShareData.ShareUrl -> shareUrl(
+                    note,
+                    shareData.castNonNull(),
+                    shareBox,
+                )
 
-        val share = when (val shareData = state.shareData) {
-            is ShareData.ShareUrl -> shareUrl(
-                note,
-                shareData.castNonNull(),
-                state.shareBox,
-            )
+                is ShareData.ShareText -> shareText(
+                    note,
+                    shareData.castNonNull(),
+                    shareBox,
+                )
 
-            is ShareData.ShareText -> shareText(
-                note,
-                shareData.castNonNull(),
-                state.shareBox,
-            )
+                is ShareData.ShareImage -> shareImage(
+                    context,
+                    note,
+                    shareData.castNonNull(),
+                    shareBox,
+                )
 
-            is ShareData.ShareImage -> shareImage(
-                context,
-                note,
-                shareData.castNonNull(),
-                state.shareBox,
-            )
+                is ShareData.ShareImages -> shareImages(
+                    context,
+                    note,
+                    shareData.castNonNull(),
+                    shareBox,
+                )
 
-            is ShareData.ShareImages -> shareImages(
-                context,
-                note,
-                shareData.castNonNull(),
-                state.shareBox,
-            )
-
-            else -> null
-        }
-
-        share?.let { insertedShare ->
-            if (state.shareBox !is Box.PersonalBox) {
-                realtimeDatabaseRepository.push(insertedShare)
+                else -> null
             }
-            state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
-                bookmarkRepository.bookmark(0, insertedShare.shareId, pickedBookmarkCollectionId)
-                setState { copy(isSaveSuccess = true, showLoading = false) }
-            } ?: setState { copy(isSaveSuccess = true, showLoading = false) }
-        } ?: run {
-            postShowToast(R.string.snap_error)
-            setState { copy(isSaveSuccess = false, showLoading = false) }
+
+            share?.let { insertedShare ->
+                if (shareBox !is Box.PersonalBox) {
+                    realtimeDatabaseRepository.push(insertedShare)
+                }
+                bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
+                    bookmarkRepository.bookmark(
+                        0,
+                        insertedShare.shareId,
+                        pickedBookmarkCollectionId
+                    )
+                    copy(isSaveSuccess = true, showLoading = false)
+                } ?: copy(isSaveSuccess = true, showLoading = false)
+            } ?: run {
+                postShowToast(R.string.snap_error)
+                copy(isSaveSuccess = false, showLoading = false)
+            }
         }
     }
 
@@ -101,7 +107,7 @@ class ShareReceiveViewModel @Inject constructor(
             shareData = shareData,
             shareNote = note,
             shareBox = shareBox,
-            shareUserId = userSharePref.getActiveUserId()
+            shareUserId = userHelper.getCurrentUserId()
         )
     }
 
@@ -112,7 +118,7 @@ class ShareReceiveViewModel @Inject constructor(
             shareData = shareData,
             shareNote = note,
             shareBox = shareBox,
-            shareUserId = userSharePref.getActiveUserId()
+            shareUserId = userHelper.getCurrentUserId()
         )
     }
 
@@ -142,7 +148,7 @@ class ShareReceiveViewModel @Inject constructor(
             shareData = saveShareImage,
             shareNote = note,
             shareBox = shareBox,
-            shareUserId = userSharePref.getActiveUserId()
+            shareUserId = userHelper.getCurrentUserId()
         )
     }
 
@@ -175,7 +181,7 @@ class ShareReceiveViewModel @Inject constructor(
             shareData = saveShareImages,
             shareNote = note,
             shareBox = shareBox,
-            shareUserId = userSharePref.getActiveUserId()
+            shareUserId = userHelper.getCurrentUserId()
         )
     }
 

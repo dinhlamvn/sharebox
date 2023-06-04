@@ -43,6 +43,16 @@ class CommentRepository @Inject constructor(
         }.getOrDefault(emptyList())
     }
 
+    suspend fun findOne(commentId: String): CommentDetail? {
+        return commentDao.runCatching {
+            findOne(commentId)?.let { cmt ->
+                val userDetail =
+                    userRepository.findOne(cmt.shareUserId) ?: return@let null
+                commentToCommentDetailMapper.map(cmt, userDetail)
+            }
+        }.getOrNull()
+    }
+
     suspend fun findOneRaw(commentId: String): Comment? {
         return commentDao.runCatching {
             findOne(commentId)

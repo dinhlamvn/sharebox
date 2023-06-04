@@ -42,7 +42,7 @@ class CommentFragment :
 
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            state.activeUser ?: return@getState run {
+            state.currentUser ?: return@getState run {
                 add(LoadingModelView("loading_user"))
             }
 
@@ -73,7 +73,7 @@ class CommentFragment :
 
     override fun onStateChanged(state: CommentState) {
         viewBinding.textTitle.text = getString(R.string.comment_title, state.comments.size)
-        invalidateUserInfo(state.activeUser)
+        invalidateUserInfo(state.currentUser)
         adapter.requestBuildModelViews()
     }
 

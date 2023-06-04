@@ -23,18 +23,15 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
         loadBookmarkCollections()
     }
 
-    private fun loadBookmarkCollections() = execute { state ->
+    private fun loadBookmarkCollections() = execute {
         val collections = bookmarkCollectionRepository.find()
-        val bookmarkCollection =
-            state.collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
-        setState {
-            copy(
-                bookmarkCollections = collections,
-                isLoading = false,
-                pickedBookmarkCollection = bookmarkCollection,
-                originalBookmarkCollection = bookmarkCollection,
-            )
-        }
+        val bookmarkCollection = collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
+        copy(
+            bookmarkCollections = collections,
+            isLoading = false,
+            pickedBookmarkCollection = bookmarkCollection,
+            originalBookmarkCollection = bookmarkCollection,
+        )
     }
 
     fun reloadAfterCreateNewBookmarkCollection() = backgroundTask {

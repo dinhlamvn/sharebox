@@ -117,7 +117,7 @@ class CommunityFragment :
 
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
 
-        viewModel.consume(this, CommunityState::activeBox, true) { activeBox ->
+        viewModel.consume(this, CommunityState::currentBox, true) { activeBox ->
             viewBinding.textTitle.text = getString(activeBox.name)
         }
 

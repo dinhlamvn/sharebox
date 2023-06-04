@@ -7,7 +7,7 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.orElse
-import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class VideoMixerViewModel @Inject constructor(
     private val videoMixerRepository: VideoMixerRepository,
     private val likeRepository: LikeRepository,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
 
@@ -33,20 +33,18 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun loadMores() {
-        execute { state ->
-            setState { copy(isLoadingMore = true) }
+        setState { copy(isLoadingMore = true) }
+        execute {
             val videos = videoMixerRepository.find(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                offset = state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                offset = currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-            setState {
-                copy(
-                    videos = this.videos.plus(videos),
-                    isLoadingMore = false,
-                    canLoadMore = videos.isNotEmpty(),
-                    currentPage = state.currentPage + 1
-                )
-            }
+            copy(
+                videos = this.videos.plus(videos),
+                isLoadingMore = false,
+                canLoadMore = videos.isNotEmpty(),
+                currentPage = currentPage + 1
+            )
         }
     }
 
@@ -56,7 +54,7 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = backgroundTask {
-        if (likeRepository.likeAndSyncToCloud(shareId, userSharePref.getActiveUserId())) {
+        if (likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())) {
             setState {
                 val videos = videos.map { videoDetail ->
                     if (videoDetail.shareId == shareId) {

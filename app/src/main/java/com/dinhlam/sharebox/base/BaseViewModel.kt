@@ -63,8 +63,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
                         val newState = reducer.invoke(currentState)
                         if (newState != currentState) {
                             _state.emit(newState)
+                            notifyConsumer(currentState, newState)
                         }
-                        notifyConsumer(currentState, newState)
                     }
 
                     getStateChannel.onReceive { block ->
@@ -127,12 +127,13 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     protected fun execute(
         context: CoroutineContext = Dispatchers.IO,
         onError: ((Throwable) -> Unit)? = null,
-        block: suspend (T) -> Unit
+        block: suspend T.() -> T
     ) {
         getState { state ->
             viewModelScope.launch(context) {
                 try {
-                    block.invoke(state)
+                    val newState = block.invoke(state)
+                    setState { newState }
                 } catch (e: Exception) {
                     onError?.invoke(e)
                 }

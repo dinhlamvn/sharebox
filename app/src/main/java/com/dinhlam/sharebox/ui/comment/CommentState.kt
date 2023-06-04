@@ -6,7 +6,7 @@ import com.dinhlam.sharebox.data.model.UserDetail
 
 data class CommentState(
     val shareId: String,
-    val activeUser: UserDetail? = null,
+    val currentUser: UserDetail? = null,
     val isRefreshing: Boolean = true,
     val comments: List<CommentDetail> = emptyList(),
 ) : BaseViewModel.BaseState

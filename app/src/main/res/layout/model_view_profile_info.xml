@@ -21,14 +21,25 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.HeaderMedium"
         app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/image_sign_out"
         app:layout_constraintStart_toEndOf="@id/image_avatar"
         app:layout_constraintTop_toTopOf="@id/image_avatar"
         tools:text="Alice" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_sign_out"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="@id/image_avatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/image_avatar" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier_bottom_name"
