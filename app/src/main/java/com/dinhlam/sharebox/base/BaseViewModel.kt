@@ -41,7 +41,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         val notifyOnChanged: Boolean = false
     )
 
-    private val setStateChannel = Channel<T.() -> T>(Channel.UNLIMITED)
+    private val setStateChannel = Channel<suspend T.() -> T>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(T) -> Unit>(Channel.UNLIMITED)
 
     private val consumers = CopyOnWriteArraySet<Consumer>()
@@ -116,7 +116,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    protected fun setState(block: T.() -> T) {
+    protected fun setState(block: suspend T.() -> T) {
         setStateChannel.trySend(block)
     }
 
@@ -129,14 +129,11 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         onError: ((Throwable) -> Unit)? = null,
         block: suspend T.() -> T
     ) {
-        getState { state ->
-            viewModelScope.launch(context) {
-                try {
-                    val newState = block.invoke(state)
-                    setState { newState }
-                } catch (e: Exception) {
-                    onError?.invoke(e)
-                }
+        viewModelScope.launch(context) {
+            try {
+                setState { block(this) }
+            } catch (e: Exception) {
+                onError?.invoke(e)
             }
         }
     }

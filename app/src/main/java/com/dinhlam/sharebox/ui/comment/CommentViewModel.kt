@@ -32,10 +32,12 @@ class CommentViewModel @Inject constructor(
         setState { copy(currentUser = user) }
     }
 
-    private fun loadComments() = execute {
+    private fun loadComments() {
         setState { copy(isRefreshing = true) }
-        val comments = commentRepository.find(shareId)
-        copy(comments = comments, isRefreshing = false)
+        execute {
+            val comments = commentRepository.find(shareId)
+            copy(comments = comments, isRefreshing = false)
+        }
     }
 
     fun sendComment(comment: String) = execute {

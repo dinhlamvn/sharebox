@@ -32,7 +32,7 @@ class BookmarkRepository @Inject constructor(
     }.getOrDefault(null)
 
     suspend fun bookmarked(shareId: String): Boolean = bookmarkDao.runCatching {
-        find(shareId).let { true }
+        find(shareId)?.let { true } ?: false
     }.getOrDefault(false)
 
     suspend fun find(bookmarkCollectionId: String): List<BookmarkDetail> = bookmarkDao.runCatching {
