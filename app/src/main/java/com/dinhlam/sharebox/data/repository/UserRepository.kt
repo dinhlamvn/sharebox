@@ -15,22 +15,28 @@ class UserRepository @Inject constructor(
     private val userToUserDetailMapper: UserToUserDetailMapper
 ) {
 
-    suspend fun insert(email: String, displayName: String, avatarUrl: String): User? = userDao.runCatching {
-        val user = User(
-            userId = UserUtils.createUserId(email),
-            name = displayName,
-            avatar = avatarUrl,
-            joinDate = nowUTCTimeInMillis()
-        )
-        userDao.insert(user)
-        user
-    }.getOrNull()
+    suspend fun insert(email: String, displayName: String, avatarUrl: String): User? =
+        userDao.runCatching {
+            val user = User(
+                userId = UserUtils.createUserId(email),
+                name = displayName,
+                avatar = avatarUrl,
+                joinDate = nowUTCTimeInMillis()
+            )
+            userDao.insert(user)
+            user
+        }.getOrNull()
 
 
     suspend fun upsert(user: User): Boolean = user.runCatching {
         userDao.upsert(user)
         true
     }.getOrDefault(false)
+
+    suspend fun update(user: User): User? = user.runCatching {
+        userDao.update(user)
+        user
+    }.getOrNull()
 
 
     suspend fun findOne(userId: String): UserDetail? = userId.runCatching {

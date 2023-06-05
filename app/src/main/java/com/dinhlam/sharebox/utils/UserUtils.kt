@@ -5,8 +5,8 @@ import java.util.UUID
 
 object UserUtils {
 
-    fun createUserId(email: String) =
-        UUID.nameUUIDFromBytes(email.toByteArray()).toString()
+    fun createUserId(uniqueId: String) =
+        UUID.nameUUIDFromBytes(uniqueId.toByteArray()).toString()
 
     fun getLevelTitle(level: Int) = arrayOf(
         "Newbie",

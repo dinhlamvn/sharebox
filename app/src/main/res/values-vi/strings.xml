@@ -199,12 +199,13 @@
     <string name="box_tip">Tips Box</string>
     <string name="box_all">No Specific Box</string>
     <string name="box_personal">Personal Box</string>
-    <string name="sign_in">Sign In</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
     <string name="sign_in_error">Require sign in before snap share</string>
     <string name="user_level_format">%s • %s</string>
+    <string name="sign_in_hint_user_name">Your name…</string>
+    <string name="sign_in_title_user_name">What should we call you?</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

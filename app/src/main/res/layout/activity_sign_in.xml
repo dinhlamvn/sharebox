@@ -1,21 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_sign_in"
-        style="@style/AppTheme.Button"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_avatar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="100dp"
+        app:layout_constraintDimensionRatio="1,1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.4" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_layout_name"
+        style="@style/AppTextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:visibility="gone"
+        app:endIconDrawable="@drawable/ic_arrow_forward"
+        app:endIconMode="custom"
+        app:endIconTint="@color/colorTextBlack"
+        app:expandedHintEnabled="false"
+        app:hintEnabled="false"
+        app:hintTextAppearance="@style/TextAppearance.HeaderMedium"
+        app:hintTextColor="@color/primaryColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image_avatar"
+        tools:visibility="visible">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/text_input_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sign_in_hint_user_name"
+            android:imeOptions="actionDone"
+            android:inputType="textPersonName"
+            android:maxLength="50"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:textAppearance="@style/TextAppearance.Header"
+            android:textColorHint="@color/colorHint" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_title_user_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/sign_in_title_user_name"
+        android:textAppearance="@style/TextAppearance.Caption.Italic"
+        android:textColor="@color/colorTextBlack"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/text_layout_name"
+        app:layout_constraintStart_toStartOf="@id/text_layout_name"
+        app:layout_constraintTop_toBottomOf="@id/text_layout_name"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/sign_in"
+        android:backgroundTintMode="src_over"
+        android:gravity="center"
+        android:text="@string/fui_sign_in_with_google"
         android:textAppearance="@style/TextAppearance.BodyMedium"
         android:textColor="@color/colorWhite"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible" />
 
     <com.dinhlam.sharebox.view.ShareBoxLoadingView
         android:id="@+id/view_loading"
