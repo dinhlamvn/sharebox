@@ -60,12 +60,16 @@ class UserHelper @Inject constructor(
     ) {
         try {
             val existedUser = withContext(Dispatchers.IO) {
-                userRepository.findOneRaw(UserUtils.createUserId(email))?.copy(name = displayName)
+                userRepository.findOneRaw(UserUtils.createUserId(email))
+                    ?.copy(name = displayName, avatar = avatarUrl)
             }
 
             val shareBoxUser = withContext(Dispatchers.IO) {
-                existedUser?.let { user -> userRepository.update(user) }
-                    ?: userRepository.insert(email, displayName, avatarUrl)
+                existedUser?.let { user -> userRepository.update(user) } ?: userRepository.insert(
+                    email,
+                    displayName,
+                    avatarUrl
+                )
             }
 
             shareBoxUser?.let { createdUser ->
