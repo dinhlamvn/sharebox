@@ -26,7 +26,7 @@ object BoxUtils {
         )
     }
 
-    fun findBox(id: String) = getBoxes().firstOrNull { box -> box.id == id }
+    fun findBox(id: String) = getBoxes().plus(Box.PersonalBox).firstOrNull { box -> box.id == id }
 
     fun findBoxOrDefault(id: String, default: Box) =
         getBoxes().firstOrNull { box -> box.id == id } ?: default

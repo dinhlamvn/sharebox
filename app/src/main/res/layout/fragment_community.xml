@@ -40,9 +40,7 @@
             android:layout_height="match_parent"
             android:background="@color/colorWhite"
             android:clipToPadding="false"
-            android:orientation="vertical"
-            android:overScrollMode="never"
-            android:paddingBottom="90dp" />
+            android:orientation="vertical" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

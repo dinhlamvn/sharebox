@@ -71,7 +71,7 @@ class ShareCommunityService : Service() {
         serviceScope.launch {
             var currentOffset = 0
             while (isActive) {
-                val shares = shareRepository.findShareSyncToCloud(
+                val shares = shareRepository.findForCommunity(
                     LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
                 )
 

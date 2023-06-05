@@ -18,6 +18,7 @@ class ShareToShareDetailMapper @Inject constructor() {
         liked: Boolean
     ): ShareDetail {
         return ShareDetail(
+            share.id,
             share.shareId,
             user,
             share.shareNote,

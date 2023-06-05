@@ -34,11 +34,11 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
-        backgroundTask {
+        execute {
             val shares = shareRepository.find(
                 userHelper.getCurrentUserId(), AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
             )
-            setState { copy(shares = shares, isRefreshing = false) }
+            copy(shares = shares, isRefreshing = false)
         }
     }
 
@@ -60,7 +60,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { copy(currentPage = 1, canLoadMore = true) }
+        setState { ProfileState() }
         getCurrentUserProfile()
         loadShares()
     }

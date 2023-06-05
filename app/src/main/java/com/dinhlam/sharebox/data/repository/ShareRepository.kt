@@ -74,7 +74,7 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findShareSyncToCloud(limit: Int, offset: Int) = shareDao.runCatching {
+    suspend fun findForCommunity(limit: Int, offset: Int) = shareDao.runCatching {
         findNotInBox(Box.PersonalBox, limit, offset)
     }.getOrDefault(emptyList())
 
