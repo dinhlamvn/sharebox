@@ -16,7 +16,7 @@ object IconUtils {
             FontAwesome.Icon.faw_download
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -26,7 +26,7 @@ object IconUtils {
             FontAwesome.Icon.faw_google
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -36,7 +36,7 @@ object IconUtils {
             FontAwesome.Icon.faw_share
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 
@@ -46,7 +46,7 @@ object IconUtils {
             FontAwesome.Icon.faw_share
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -56,7 +56,7 @@ object IconUtils {
             FontAwesome.Icon.faw_heart
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 
@@ -66,7 +66,7 @@ object IconUtils {
             FontAwesome.Icon.faw_heart
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -76,7 +76,7 @@ object IconUtils {
             FontAwesome.Icon.faw_comment
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 
@@ -86,7 +86,7 @@ object IconUtils {
             FontAwesome.Icon.faw_comment
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -96,7 +96,7 @@ object IconUtils {
             FontAwesome.Icon.faw_heart1
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextRed
+            colorRes = R.color.design_default_color_error
         }
     }
 
@@ -106,7 +106,7 @@ object IconUtils {
             FontAwesome.Icon.faw_bookmark
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 
@@ -116,7 +116,7 @@ object IconUtils {
             FontAwesome.Icon.faw_bookmark1
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 
@@ -126,7 +126,7 @@ object IconUtils {
             FontAwesome.Icon.faw_bookmark
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -136,7 +136,7 @@ object IconUtils {
             FontAwesome.Icon.faw_bookmark1
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorWhite
+            colorRes = android.R.color.white
         }
     }
 
@@ -146,7 +146,7 @@ object IconUtils {
             FontAwesome.Icon.faw_box
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 
@@ -156,7 +156,7 @@ object IconUtils {
             FontAwesome.Icon.faw_sign_out_alt
         ).apply {
             sizeDp = 24
-            colorRes = R.color.colorTextBlack
+            colorRes = android.R.color.black
         }
     }
 }

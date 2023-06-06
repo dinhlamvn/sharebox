@@ -17,7 +17,7 @@ data class TextPickerModelView(
     val text: String,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
-    val textAppearance: Int = R.style.TextAppearance_Body,
+    val textAppearance: Int = R.style.TextAppearance_MaterialComponents_Body2,
     val isPicked: Boolean = false,
     @DrawableRes val startIcon: Int = 0,
     @DrawableRes val pickedIcon: Int = R.drawable.ic_done_black,

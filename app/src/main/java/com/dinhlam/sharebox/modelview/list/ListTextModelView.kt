@@ -99,10 +99,10 @@ data class ListTextModelView(
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
+                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
                     append(" shares a text content")
                 }
             }

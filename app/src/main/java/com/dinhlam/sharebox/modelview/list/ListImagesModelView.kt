@@ -86,7 +86,7 @@ data class ListImagesModelView(
             PagerSnapHelper().attachToRecyclerView(binding.recyclerViewImage)
             binding.recyclerViewImage.addItemDecoration(
                 HorizontalCirclePagerItemDecoration(
-                    colorActive = ContextCompat.getColor(buildContext, R.color.primaryDarkColor)
+                    colorActive = ContextCompat.getColor(buildContext, R.color.colorPrimaryDark)
                 )
             )
             binding.recyclerViewImage.adapter = adapter
@@ -135,10 +135,10 @@ data class ListImagesModelView(
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
+                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
                     append(" shares some images")
                 }
             }

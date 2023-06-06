@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorWhite"
+    android:background="@android:color/white"
     android:padding="2dp"
     tools:layout_height="200dp">
 
@@ -20,12 +20,12 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_number"
-        style="@style/TextAppearance.Body"
+        style="@style/TextAppearance.MaterialComponents.Body2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#99000000"
         android:gravity="center"
-        android:textColor="@color/colorWhite"
+        android:textColor="@android:color/white"
         tools:text="+3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,7 @@ data class ProfileMenuItemModelView(
     val id: String,
     val text: String?,
     @DrawableRes val icon: Int,
-    @ColorRes val textColor: Int = R.color.colorTextBlack,
+    @ColorRes val textColor: Int = android.R.color.black,
     val listener: BaseListAdapter.NoHashProp<Function1<Int, Unit>> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("profile_menu_item_$id") {
 

@@ -18,13 +18,11 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:collapsedTitleGravity="center_vertical"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.CollapsingToolbar.Collapsed"
-            app:collapsedTitleTextColor="@color/colorTextBlack"
-            app:contentScrim="@color/colorWhite"
-            app:expandedTitleTextAppearance="@style/TextAppearance.CollapsingToolbar.Expanded"
-            app:expandedTitleTextColor="@color/colorWhite"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:contentScrim="@android:color/white"
+            app:expandedTitleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:statusBarScrim="@color/colorWhite"
+            app:statusBarScrim="@android:color/white"
             app:titleCollapseMode="scale"
             app:titleTextEllipsize="end"
             app:toolbarId="@id/toolbar">
@@ -36,7 +34,7 @@
                 android:contentDescription="@string/desc_image_bookmark_list_thumbnail"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                tools:background="@color/primaryColor" />
+                tools:background="@color/colorPrimary" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -44,9 +42,9 @@
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
                 app:layout_collapseMode="pin"
-                app:subtitleTextAppearance="@style/TextAppearance.Caption"
+                app:subtitleTextAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:titleMarginStart="8dp"
-                app:titleTextAppearance="@style/TextAppearance.Body"
+                app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 tools:subtitle="Hello World"
                 tools:title="Hello">
 
@@ -72,7 +70,6 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/colorWhite"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"

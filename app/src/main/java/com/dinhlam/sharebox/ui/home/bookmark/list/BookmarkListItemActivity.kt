@@ -71,7 +71,6 @@ class BookmarkListItemActivity :
                         SizedBoxModelView(
                             "divider_${model.modelId}",
                             height = 8.dp(),
-                            backgroundColor = R.color.colorDividerLightV2
                         )
                     )
                 }

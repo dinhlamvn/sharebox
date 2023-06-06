@@ -45,7 +45,7 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
     }
 
     override fun getTheme(): Int {
-        return R.style.Theme_AppBottomSheet
+        return R.style.Theme_MaterialComponents_BottomSheetDialog
     }
 
     override fun onStart() {

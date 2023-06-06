@@ -23,7 +23,7 @@
         android:layout_marginStart="4dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Body"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintStart_toEndOf="@id/image_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Personal" />
@@ -36,8 +36,7 @@
         android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Caption"
-        android:textColor="@color/colorHint"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_icon"
         app:layout_constraintTop_toBottomOf="@id/text_title"

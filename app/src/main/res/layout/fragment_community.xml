@@ -23,7 +23,7 @@
             android:drawablePadding="8dp"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.HeaderMedium" />
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -38,7 +38,6 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite"
             android:clipToPadding="false"
             android:orientation="vertical" />
 

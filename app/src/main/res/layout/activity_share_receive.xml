@@ -36,7 +36,7 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.BodyMedium"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 app:layout_constraintBottom_toBottomOf="@id/image_avatar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image_avatar"
@@ -69,7 +69,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="textMultiLine"
                 android:minLines="5"
-                android:textAppearance="@style/TextAppearance.Body"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 android:textColorHint="#757575"
                 android:textSize="22sp"
                 app:layout_constraintTop_toBottomOf="@id/recycler_view" />
@@ -77,22 +77,20 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <View
+    <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider_bottom"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/colorDividerLightV2"
         app:layout_constraintBottom_toTopOf="@id/container_share_box" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/container_share_box"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="12dp"
-        app:cardBackgroundColor="@color/colorWhite"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -110,18 +108,17 @@
             android:maxLines="1"
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
-            android:textAppearance="@style/TextAppearance.Body"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             tools:text="No box" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/container_share_bookmark"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="@color/colorWhite"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="@id/container_share_box"
@@ -139,15 +136,15 @@
             tools:layout_height="24dp"
             tools:layout_width="24dp" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/container_button_snap"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="@color/primaryColor"
+        app:cardBackgroundColor="@color/colorPrimary"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="@id/container_share_box"
@@ -163,10 +160,10 @@
             android:paddingHorizontal="16dp"
             android:paddingVertical="4dp"
             android:text="@string/snap"
-            android:textAppearance="@style/TextAppearance.BodyMedium"
-            android:textColor="@color/colorWhite" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="@android:color/white" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.dinhlam.sharebox.view.ShareBoxLoadingView
         android:id="@+id/view_loading"

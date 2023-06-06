@@ -98,12 +98,8 @@ data class ListUrlModelView(
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
-                    append(model.userDetail.name)
-                }
-                color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
-                    append(" shares a weblink")
-                }
+                append(model.userDetail.name)
+                append(" shares a weblink")
             }
             binding.shareLinkPreview.setLink(model.url) {
                 ShareBoxLinkPreviewView.Style(maxLineDesc = 2, maxLineUrl = 1, maxLineTitle = 1)

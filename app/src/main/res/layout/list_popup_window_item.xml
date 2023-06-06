@@ -5,4 +5,4 @@
     android:ellipsize="end"
     android:maxLines="1"
     android:padding="16dp"
-    android:textAppearance="@style/TextAppearance.BodyMedium" />
+    android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />

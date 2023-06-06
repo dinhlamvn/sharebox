@@ -8,5 +8,5 @@
     android:paddingTop="16dp"
     android:paddingEnd="8dp"
     android:text="@string/recently"
-    android:textAppearance="@style/TextAppearance.HeaderMedium"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
     android:textSize="18sp" />

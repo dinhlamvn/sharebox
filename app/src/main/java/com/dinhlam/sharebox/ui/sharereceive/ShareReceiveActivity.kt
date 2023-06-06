@@ -266,7 +266,7 @@ class ShareReceiveActivity :
             PagerSnapHelper().attachToRecyclerView(viewBinding.recyclerView)
             viewBinding.recyclerView.addItemDecoration(
                 HorizontalCirclePagerItemDecoration(
-                    colorActive = ContextCompat.getColor(this, R.color.primaryDarkColor)
+                    colorActive = ContextCompat.getColor(this, R.color.colorPrimaryDark)
                 )
             )
             viewModel.setShareData(ShareData.ShareImages(data))

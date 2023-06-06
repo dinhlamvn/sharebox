@@ -27,7 +27,7 @@
             android:drawablePadding="6dp"
             android:gravity="center_vertical"
             android:text="@string/like"
-            android:textAppearance="@style/TextAppearance.BodyMedium" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
     </FrameLayout>
 
@@ -52,7 +52,7 @@
             android:drawablePadding="6dp"
             android:gravity="center_vertical"
             android:text="@string/comment"
-            android:textAppearance="@style/TextAppearance.BodyMedium" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
     </FrameLayout>
 

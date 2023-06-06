@@ -20,7 +20,7 @@ data class IconTextModelView(
     val text: String,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
-    val textAppearance: Int = R.style.TextAppearance_Body,
+    val textAppearance: Int = R.style.TextAppearance_MaterialComponents_Body2,
     @GravityInt val gravity: Int = Gravity.CENTER_VERTICAL,
     val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
         null

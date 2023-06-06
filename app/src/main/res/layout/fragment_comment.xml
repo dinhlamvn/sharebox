@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/comment_title"
-            android:textAppearance="@style/TextAppearance.HeaderMedium"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             app:layout_constraintBottom_toBottomOf="@id/image_close"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/image_close" />
@@ -34,12 +34,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
+        <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="1dp"
-            android:background="@color/colorDividerLightV2"
             app:layout_constraintTop_toBottomOf="@id/image_close" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -52,21 +51,19 @@
             app:layout_constraintBottom_toTopOf="@id/divider_bottom"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <View
+        <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider_bottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginBottom="16dp"
-            android:background="@color/colorDividerLightV2"
             app:layout_constraintBottom_toTopOf="@id/barrier" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorDividerLightV2"
             app:barrierDirection="top"
-            app:constraint_referenced_ids="image_avatar,edit_comment" />
+            app:constraint_referenced_ids="image_avatar" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_avatar"
@@ -89,7 +86,7 @@
             android:lines="1"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
-            android:textAppearance="@style/TextAppearance.Body"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toBottomOf="@id/image_avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/image_avatar"

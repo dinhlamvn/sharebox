@@ -72,7 +72,7 @@ class ProfileFragment :
             )
             add(
                 SizedBoxModelView(
-                    "divider1", backgroundColor = R.color.colorDividerLightV2, height = 1.dp()
+                    "divider1", height = 1.dp()
                 )
             )
 
@@ -103,7 +103,6 @@ class ProfileFragment :
                         SizedBoxModelView(
                             "divider_${model.modelId}",
                             height = 8.dp(),
-                            backgroundColor = R.color.colorDividerLightV2
                         )
                     )
                 }

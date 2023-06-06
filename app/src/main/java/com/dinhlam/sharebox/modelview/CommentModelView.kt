@@ -29,10 +29,10 @@ data class CommentModelView(
         BaseListAdapter.BaseViewHolder<CommentModelView, ModelViewCommentBinding>(binding) {
         override fun onBind(model: CommentModelView, position: Int) {
             binding.textName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, R.color.colorTextBlack)) {
+                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
                     append(model.name)
                 }
-                color(ContextCompat.getColor(buildContext, R.color.colorHint)) {
+                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
                     append(" • ")
                     append(model.commentDate.asElapsedTimeDisplay())
                 }
