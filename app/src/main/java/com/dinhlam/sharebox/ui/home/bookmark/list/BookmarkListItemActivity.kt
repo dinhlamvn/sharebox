@@ -167,13 +167,7 @@ class BookmarkListItemActivity :
                 shareHelper.openTextViewer(this, shareData.text)
             }
 
-            is ShareData.ShareImage -> {
-                shareHelper.viewShareImage(this, shareData.uri)
-            }
-
-            is ShareData.ShareImages -> {
-                shareHelper.viewShareImages(this, shareData.uris)
-            }
+            else -> {}
         }
     }
 

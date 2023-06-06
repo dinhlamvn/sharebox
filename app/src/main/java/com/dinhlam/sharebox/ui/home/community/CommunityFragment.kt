@@ -196,13 +196,7 @@ class CommunityFragment :
                 shareHelper.openTextViewer(requireActivity(), shareData.text)
             }
 
-            is ShareData.ShareImage -> {
-                shareHelper.viewShareImage(requireActivity(), shareData.uri)
-            }
-
-            is ShareData.ShareImages -> {
-                shareHelper.viewShareImages(requireActivity(), shareData.uris)
-            }
+            else -> {}
         }
     }
 

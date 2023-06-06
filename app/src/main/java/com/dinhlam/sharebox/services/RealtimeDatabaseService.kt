@@ -100,7 +100,20 @@ class RealtimeDatabaseService : Service() {
                         ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
                         else -> error("Error while parse json string $json to ShareData")
                     }
-                val share = shareRepository.insert(
+
+                val uris =
+                    shareData.cast<ShareData.ShareImage>()?.uri?.let { uri -> arrayListOf(uri) }
+                        ?: shareData.cast<ShareData.ShareImages>()?.uris ?: emptyList()
+
+                uris.forEach { uri ->
+                    if (!FileUtils.isFileExistedFromUri(this@RealtimeDatabaseService, uri)) {
+                        firebaseStorageHelper.downloadImageFile(
+                            this@RealtimeDatabaseService, shareId, uri
+                        )
+                    }
+                }
+
+                shareRepository.insert(
                     shareId,
                     shareData,
                     realtimeShareObj.shareNote,
@@ -108,21 +121,6 @@ class RealtimeDatabaseService : Service() {
                     realtimeShareObj.shareUserId,
                     realtimeShareObj.shareDate
                 )
-
-                share?.let {
-                    val uris =
-                        shareData.cast<ShareData.ShareImage>()?.uri?.let { uri -> arrayListOf(uri) }
-                            ?: shareData.cast<ShareData.ShareImages>()?.uris ?: emptyList()
-
-                    uris.forEach { uri ->
-                        if (!FileUtils.isFileExistedFromUri(this@RealtimeDatabaseService, uri)) {
-                            firebaseStorageHelper.downloadImageFile(
-                                this@RealtimeDatabaseService, shareId, uri
-                            )
-                        }
-                    }
-
-                }
             }
         }
     }
@@ -137,7 +135,12 @@ class RealtimeDatabaseService : Service() {
                 joinDate = realtimeUserObj.joinDate
             )
 
-            val newUser = user.copy(level = realtimeUserObj.level, drama = realtimeUserObj.drama)
+            val newUser = user.copy(
+                name = realtimeUserObj.name,
+                avatar = realtimeUserObj.avatar,
+                level = realtimeUserObj.level,
+                drama = realtimeUserObj.drama,
+            )
 
             if (!userRepository.upsert(newUser)) {
                 Logger.error("Upsert new user to database failed.")

@@ -78,8 +78,10 @@ data class ListImageModelView(
             binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
             binding.bottomAction.setLikeIcon(model.liked.asLikeIcon(buildContext))
 
-            binding.container.setOnClickListener {
-                model.actionOpen.prop?.invoke(model.shareId)
+            model.actionOpen.prop?.let { prop ->
+                binding.container.setOnClickListener {
+                    prop.invoke(model.shareId)
+                }
             }
 
             binding.bottomAction.setOnShareClickListener {
