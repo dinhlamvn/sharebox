@@ -306,7 +306,7 @@ class ShareReceiveActivity :
         )
         popupContentView.orientation = LinearLayout.VERTICAL
         popupContentView.layoutParams = layoutParams
-        val boxes = BoxUtils.getBoxes().plus(Box.PersonalBox)
+        val boxes = BoxUtils.getBoxes().plus(Box.PrivateBox)
 
         boxes.forEach { box ->
             val binding = MenuItemWithTextBinding.inflate(layoutInflater)

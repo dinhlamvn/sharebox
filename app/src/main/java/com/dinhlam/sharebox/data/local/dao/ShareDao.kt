@@ -71,6 +71,6 @@ interface ShareDao {
     suspend fun findForVideoMixer(
         limit: Int,
         offset: Int,
-        shareBox: Box = Box.PersonalBox,
+        shareBox: Box = Box.PrivateBox,
     ): List<Share>
 }

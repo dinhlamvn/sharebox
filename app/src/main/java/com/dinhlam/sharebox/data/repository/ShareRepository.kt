@@ -75,7 +75,7 @@ class ShareRepository @Inject constructor(
     }.getOrDefault(emptyList())
 
     suspend fun findForCommunity(limit: Int, offset: Int) = shareDao.runCatching {
-        findNotInBox(Box.PersonalBox, limit, offset)
+        findNotInBox(Box.PrivateBox, limit, offset)
     }.getOrDefault(emptyList())
 
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
@@ -97,13 +97,13 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    private suspend fun buildShareDetail(share: Share): ShareDetail? {
+    private suspend fun buildShareDetail(share: Share): ShareDetail? = share.runCatching {
         val user = userRepository.findOne(share.shareUserId) ?: return null
         val commentNumber = commentRepository.count(share.shareId)
         val likeNumber = likeRepository.count(share.shareId)
         val bookmarked = bookmarkRepository.bookmarked(share.shareId)
         val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
-        return mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment)
-    }
+        mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment)
+    }.getOrNull()
 }

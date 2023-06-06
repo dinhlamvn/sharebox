@@ -82,7 +82,7 @@ class ShareReceiveViewModel @Inject constructor(
             }
 
             share?.let { insertedShare ->
-                if (shareBox !is Box.PersonalBox) {
+                if (shareBox !is Box.PrivateBox) {
                     realtimeDatabaseRepository.push(insertedShare)
                 }
                 bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->

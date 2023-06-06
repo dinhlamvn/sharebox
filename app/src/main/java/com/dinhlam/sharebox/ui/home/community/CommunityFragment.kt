@@ -95,7 +95,6 @@ class CommunityFragment :
                         add(
                             SizedBoxModelView(
                                 "divider_comment_${commentModelView.modelId}",
-                                width = widthPercentage(80),
                                 height = 1.dp(),
                                 backgroundColor = R.color.colorDividerLightV2
                             )

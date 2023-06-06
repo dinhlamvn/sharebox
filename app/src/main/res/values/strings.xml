@@ -201,8 +201,8 @@
     <string name="box_health">Health Box</string>
     <string name="box_idol">Idol Box</string>
     <string name="box_tip">Tips Box</string>
-    <string name="box_all">No Specific Box</string>
-    <string name="box_personal">Personal Box</string>
+    <string name="box_all">All</string>
+    <string name="box_private">Private Box</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
@@ -210,6 +210,11 @@
     <string name="user_level_format">%s • %s</string>
     <string name="sign_in_hint_user_name">Your name…</string>
     <string name="sign_in_title_user_name">What should we call you?</string>
+    <string name="box_entertainment">Entertainment Box</string>
+    <string name="box_film">Fimls Box</string>
+    <string name="box_pet">Pets Box</string>
+    <string name="box_review">Reviews Box</string>
+    <string name="box_learning">Learning Box</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

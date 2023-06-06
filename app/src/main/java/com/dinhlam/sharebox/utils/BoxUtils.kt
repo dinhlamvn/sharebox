@@ -12,21 +12,26 @@ object BoxUtils {
 
     fun getBoxes(): List<Box> {
         return listOf(
+            Box.All,
             Box.ComedyBox,
+            Box.EntertainmentBox,
+            Box.FilmsBox,
             Box.MusicBox,
             Box.FoodBox,
             Box.TravelBox,
             Box.SportBox,
+            Box.PetsBox,
             Box.AnimalBox,
             Box.LifeStoryBox,
             Box.HealthBox,
             Box.IdolBox,
-            Box.TipBox,
-            Box.All,
+            Box.ReviewsBox,
+            Box.TipsBox,
+            Box.LearningBox,
         )
     }
 
-    fun findBox(id: String) = getBoxes().plus(Box.PersonalBox).firstOrNull { box -> box.id == id }
+    fun findBox(id: String) = getBoxes().plus(Box.PrivateBox).firstOrNull { box -> box.id == id }
 
     fun findBoxOrDefault(id: String, default: Box) =
         getBoxes().firstOrNull { box -> box.id == id } ?: default
