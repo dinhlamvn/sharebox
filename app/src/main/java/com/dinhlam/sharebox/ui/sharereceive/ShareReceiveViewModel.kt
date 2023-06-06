@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,7 @@ class ShareReceiveViewModel @Inject constructor(
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val firebaseStorageHelper: FirebaseStorageHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
@@ -87,9 +89,7 @@ class ShareReceiveViewModel @Inject constructor(
                 }
                 bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
-                        0,
-                        insertedShare.shareId,
-                        pickedBookmarkCollectionId
+                        0, insertedShare.shareId, pickedBookmarkCollectionId
                     )
                     copy(isSaveSuccess = true, showLoading = false)
                 } ?: copy(isSaveSuccess = true, showLoading = false)
@@ -125,10 +125,7 @@ class ShareReceiveViewModel @Inject constructor(
     private suspend fun shareImage(
         context: Context, note: String?, shareData: ShareData.ShareImage, shareBox: Box
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
-        val imageFileDir = context.getExternalFilesDir("share_images") ?: return@use null
-        if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
-            return@use null
-        }
+        val imageFileDir = FileUtils.createShareImagesDir(context) ?: return@use null
         val extension = MimeTypeMap.getSingleton()
             .getExtensionFromMimeType(context.contentResolver.getType(shareData.uri))
             ?: return@use null
@@ -144,21 +141,24 @@ class ShareReceiveViewModel @Inject constructor(
 
         val newUri = FileUtils.getUriFromFile(context, imageFile)
         val saveShareImage = shareData.copy(uri = newUri)
-        shareRepository.insert(
+        val share = shareRepository.insert(
             shareData = saveShareImage,
             shareNote = note,
             shareBox = shareBox,
             shareUserId = userHelper.getCurrentUserId()
         )
+
+        share?.let { insertedShare ->
+            firebaseStorageHelper.uploadShareImageFile(context, insertedShare.shareId, newUri)
+        }
+
+        share
     }
 
     private suspend fun shareImages(
         context: Context, note: String?, shareData: ShareData.ShareImages, shareBox: Box
     ): Share? {
-        val imageFileDir = context.getExternalFilesDir("share_images") ?: return null
-        if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
-            return null
-        }
+        val imageFileDir = FileUtils.createShareImagesDir(context) ?: return null
         val uris = shareData.uris.mapNotNull { uri ->
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 val extension = MimeTypeMap.getSingleton()
@@ -177,12 +177,20 @@ class ShareReceiveViewModel @Inject constructor(
         }
 
         val saveShareImages = shareData.copy(uris = uris)
-        return shareRepository.insert(
+        val share = shareRepository.insert(
             shareData = saveShareImages,
             shareNote = note,
             shareBox = shareBox,
             shareUserId = userHelper.getCurrentUserId()
         )
+
+        share?.let { insertedShare ->
+            uris.forEach { uri ->
+                firebaseStorageHelper.uploadShareImageFile(context, insertedShare.shareId, uri)
+            }
+        }
+
+        return share
     }
 
     fun setShareBox(shareBox: Box) {

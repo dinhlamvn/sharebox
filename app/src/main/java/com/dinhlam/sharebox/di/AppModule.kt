@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.json.ShareUrlJsonSerializerDeserializer
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -51,5 +52,10 @@ object AppModule {
     @Provides
     fun provideFirebaseDatabase(): FirebaseDatabase {
         return Firebase.database(BuildConfig.FIREBASE_DATABASE_URL)
+    }
+
+    @Provides
+    fun provideFirebaseStorage(): FirebaseStorage {
+        return FirebaseStorage.getInstance(BuildConfig.FIREBASE_STORAGE_URL)
     }
 }

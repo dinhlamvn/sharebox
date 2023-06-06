@@ -10,6 +10,16 @@ import com.mikepenz.iconics.utils.sizeDp
 
 object IconUtils {
 
+    fun downloadIconLight(context: Context): IconicsDrawable {
+        return IconicsDrawable(
+            context,
+            FontAwesome.Icon.faw_download
+        ).apply {
+            sizeDp = 24
+            colorRes = R.color.colorWhite
+        }
+    }
+
     fun googleIconLight(context: Context): IconicsDrawable {
         return IconicsDrawable(
             context,

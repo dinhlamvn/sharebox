@@ -20,9 +20,12 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
+import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.BoxUtils
+import com.dinhlam.sharebox.utils.FileUtils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +62,9 @@ class RealtimeDatabaseService : Service() {
     @Inject
     lateinit var gson: Gson
 
+    @Inject
+    lateinit var firebaseStorageHelper: FirebaseStorageHelper
+
     override fun onCreate() {
         super.onCreate()
         Logger.debug("$this is created")
@@ -68,7 +74,7 @@ class RealtimeDatabaseService : Service() {
         Logger.debug("$this is start command")
         startForeground(
             SERVICE_ID,
-            NotificationCompat.Builder(this, AppConsts.DEFAULT_NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
                 .setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
                 .setSmallIcon(R.drawable.ic_launcher_foreground).build()
@@ -94,7 +100,7 @@ class RealtimeDatabaseService : Service() {
                         ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
                         else -> error("Error while parse json string $json to ShareData")
                     }
-                shareRepository.insert(
+                val share = shareRepository.insert(
                     shareId,
                     shareData,
                     realtimeShareObj.shareNote,
@@ -102,6 +108,21 @@ class RealtimeDatabaseService : Service() {
                     realtimeShareObj.shareUserId,
                     realtimeShareObj.shareDate
                 )
+
+                share?.let {
+                    val uris =
+                        shareData.cast<ShareData.ShareImage>()?.uri?.let { uri -> arrayListOf(uri) }
+                            ?: shareData.cast<ShareData.ShareImages>()?.uris ?: emptyList()
+
+                    uris.forEach { uri ->
+                        if (!FileUtils.isFileExistedFromUri(this@RealtimeDatabaseService, uri)) {
+                            firebaseStorageHelper.downloadImageFile(
+                                this@RealtimeDatabaseService, shareId, uri
+                            )
+                        }
+                    }
+
+                }
             }
         }
     }

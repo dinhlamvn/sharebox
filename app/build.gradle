@@ -70,6 +70,7 @@ android {
             dimension "version"
             applicationIdSuffix ".dev"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
+            buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://sharebox-dev-502a2.appspot.com\""
         }
 
         prod {
@@ -78,6 +79,7 @@ android {
             ]
             dimension "version"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
+            buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://sharebox-dev-502a2.appspot.com\""
         }
     }
 
@@ -152,6 +154,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
     // Messaging
     implementation 'com.google.firebase:firebase-messaging-ktx'
