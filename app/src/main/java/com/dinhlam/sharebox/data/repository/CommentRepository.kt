@@ -53,6 +53,16 @@ class CommentRepository @Inject constructor(
         }.getOrNull()
     }
 
+    suspend fun findTopComment(shareId: String): CommentDetail? {
+        return commentDao.runCatching {
+            findLatestComment(shareId)?.let { cmt ->
+                val userDetail =
+                    userRepository.findOne(cmt.shareUserId) ?: return@let null
+                commentToCommentDetailMapper.map(cmt, userDetail)
+            }
+        }.getOrNull()
+    }
+
     suspend fun findOneRaw(commentId: String): Comment? {
         return commentDao.runCatching {
             findOne(commentId)

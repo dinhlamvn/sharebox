@@ -21,6 +21,7 @@ import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.widthPercentage
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -62,29 +63,49 @@ class CommunityFragment :
                     )
                 )
             } else if (state.shares.isNotEmpty()) {
-                val models = state.shares.map { shareDetail ->
-                    shareDetail.shareData.buildShareModelViews(
-                        screenHeight(),
-                        shareDetail.shareId,
-                        shareDetail.shareDate,
-                        shareDetail.shareNote,
-                        shareDetail.user,
-                        shareDetail.likeNumber,
-                        commentNumber = shareDetail.commentNumber,
-                        bookmarked = shareDetail.bookmarked,
-                        liked = shareDetail.liked,
-                        actionOpen = ::onOpen,
-                        actionShareToOther = ::onShareToOther,
-                        actionLike = ::onLike,
-                        actionComment = ::onComment,
-                        actionBookmark = ::onBookmark
+                state.shares.forEach { shareDetail ->
+                    add(
+                        shareDetail.shareData.buildShareModelViews(
+                            screenHeight(),
+                            shareDetail.shareId,
+                            shareDetail.shareDate,
+                            shareDetail.shareNote,
+                            shareDetail.user,
+                            shareDetail.likeNumber,
+                            commentNumber = shareDetail.commentNumber,
+                            bookmarked = shareDetail.bookmarked,
+                            liked = shareDetail.liked,
+                            actionOpen = ::onOpen,
+                            actionShareToOther = ::onShareToOther,
+                            actionLike = ::onLike,
+                            actionComment = ::onComment,
+                            actionBookmark = ::onBookmark
+                        )
                     )
-                }
-                models.forEach { model ->
-                    add(model)
+
+                    shareDetail.commentDetail?.let { commentDetail ->
+                        CommentModelView(
+                            commentDetail.id,
+                            commentDetail.userDetail.name,
+                            commentDetail.userDetail.avatar,
+                            commentDetail.content,
+                            commentDetail.commentDate
+                        )
+                    }?.let { commentModelView ->
+                        add(
+                            SizedBoxModelView(
+                                "divider_comment_${commentModelView.modelId}",
+                                width = widthPercentage(80),
+                                height = 1.dp(),
+                                backgroundColor = R.color.colorDividerLightV2
+                            )
+                        )
+                        add(commentModelView)
+                    }
+
                     add(
                         SizedBoxModelView(
-                            "divider_${model.modelId}",
+                            "divider_${shareDetail.shareId}",
                             height = 8.dp(),
                             backgroundColor = R.color.colorDividerLightV2
                         )

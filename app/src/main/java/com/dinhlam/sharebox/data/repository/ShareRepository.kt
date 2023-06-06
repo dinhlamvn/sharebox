@@ -103,6 +103,7 @@ class ShareRepository @Inject constructor(
         val likeNumber = likeRepository.count(share.shareId)
         val bookmarked = bookmarkRepository.bookmarked(share.shareId)
         val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
-        return mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked)
+        val topComment = commentRepository.findTopComment(share.shareId)
+        return mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment)
     }
 }

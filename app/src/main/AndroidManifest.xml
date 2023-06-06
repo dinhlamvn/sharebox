@@ -54,7 +54,7 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"
-            tools:replace="android:value"/>
+            tools:replace="android:value" />
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token" />
@@ -75,7 +75,9 @@
         <activity
             android:name="com.dinhlam.sharebox.ui.home.HomeActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="LockedOrientationActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

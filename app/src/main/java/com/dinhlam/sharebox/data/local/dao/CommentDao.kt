@@ -17,6 +17,9 @@ interface CommentDao {
     @Query("SELECT * FROM comment WHERE comment_id = :commentId ORDER BY id DESC")
     suspend fun findOne(commentId: String): Comment?
 
+    @Query("SELECT * FROM comment WHERE share_id = :shareId ORDER BY comment_date DESC LIMIT 1")
+    suspend fun findLatestComment(shareId: String): Comment?
+
     @Query("SELECT COUNT(*) FROM comment WHERE share_id = :shareId")
     suspend fun count(shareId: String): Int
 }
