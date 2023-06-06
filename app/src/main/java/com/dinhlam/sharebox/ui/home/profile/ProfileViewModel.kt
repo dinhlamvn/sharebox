@@ -71,7 +71,7 @@ class ProfileViewModel @Inject constructor(
             setState {
                 val shareList = shares.map { shareDetail ->
                     if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1)
+                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
                     } else {
                         shareDetail
                     }

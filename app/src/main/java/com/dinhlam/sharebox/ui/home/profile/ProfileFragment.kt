@@ -90,6 +90,7 @@ class ProfileFragment :
                         shareDetail.likeNumber,
                         commentNumber = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
+                        liked = shareDetail.liked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
                         actionLike = ::onLike,
