@@ -1,58 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="0dp"
-    app:cardElevation="0dp">
+    android:background="?attr/selectableItemBackground">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
+    <include
+        android:id="@+id/layout_user_info"
+        layout="@layout/layout_share_item_user_info" />
+
+    <com.dinhlam.sharebox.view.ShareBoxReadMoreTextView
+        android:id="@+id/text_view_note"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:collapsed_text="@string/collapsed_text"
+        app:expanded_text="@string/expanded_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_user_info"
+        tools:text="This is my note" />
+
+    <com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
+        android:id="@+id/share_link_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_note" />
+
+    <!-- bottom action button -->
+
+    <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
+        android:id="@+id/bottom_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground">
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/share_link_preview" />
 
-        <include
-            android:id="@+id/layout_user_info"
-            layout="@layout/layout_share_item_user_info" />
-
-        <com.dinhlam.sharebox.view.ShareBoxReadMoreTextView
-            android:id="@+id/text_view_note"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:collapsed_text="@string/collapsed_text"
-            app:expanded_text="@string/expanded_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_user_info"
-            tools:text="This is my note" />
-
-        <com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
-            android:id="@+id/share_link_preview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_view_note" />
-
-        <!-- bottom action button -->
-
-        <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
-            android:id="@+id/bottom_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/share_link_preview" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
