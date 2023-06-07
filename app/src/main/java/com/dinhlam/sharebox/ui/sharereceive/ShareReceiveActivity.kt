@@ -15,7 +15,6 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -282,7 +281,7 @@ class ShareReceiveActivity :
     private fun showPopupListShareBox() {
         val width = ViewGroup.LayoutParams.WRAP_CONTENT
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        val popupWindow = PopupWindow(ContextThemeWrapper(this, R.style.AppTheme))
+        val popupWindow = PopupWindow(this, null, R.attr.listPopupWindowStyle)
         popupWindow.width = width
         popupWindow.height = height
         popupWindow.elevation = 10.dpF()
