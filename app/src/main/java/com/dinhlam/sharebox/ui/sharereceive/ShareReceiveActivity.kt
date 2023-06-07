@@ -2,8 +2,6 @@ package com.dinhlam.sharebox.ui.sharereceive
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +15,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -283,10 +282,9 @@ class ShareReceiveActivity :
     private fun showPopupListShareBox() {
         val width = ViewGroup.LayoutParams.WRAP_CONTENT
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        val popupWindow = PopupWindow(this)
+        val popupWindow = PopupWindow(ContextThemeWrapper(this, R.style.AppTheme))
         popupWindow.width = width
         popupWindow.height = height
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
         popupWindow.elevation = 10.dpF()
         popupWindow.isOutsideTouchable = true
 

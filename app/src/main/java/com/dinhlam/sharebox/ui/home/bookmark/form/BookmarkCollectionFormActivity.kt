@@ -20,6 +20,7 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -75,6 +76,14 @@ class BookmarkCollectionFormActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewBinding.toolbar.navigationIcon = IconUtils.leftArrowIcon(this) {
+            copy(sizeDp = 16)
+        }
+
+        viewBinding.imageDone.setImageDrawable(IconUtils.doneIcon(this) {
+            copy(sizeDp = 16)
+        })
 
         viewBinding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()

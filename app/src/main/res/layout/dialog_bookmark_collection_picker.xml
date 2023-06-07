@@ -22,12 +22,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_add"
         android:drawablePadding="4dp"
         android:gravity="center_vertical"
         android:text="@string/dialog_bookmark_collection_picker_create_new"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +56,6 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_done_black"
         android:drawablePadding="6dp"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"

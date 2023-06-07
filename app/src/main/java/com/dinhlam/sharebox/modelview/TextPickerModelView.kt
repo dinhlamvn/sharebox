@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
@@ -19,8 +20,8 @@ data class TextPickerModelView(
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextAppearance_MaterialComponents_Body2,
     val isPicked: Boolean = false,
-    @DrawableRes val startIcon: Int = 0,
-    @DrawableRes val pickedIcon: Int = R.drawable.ic_done_black,
+    val startIcon: Drawable? = null,
+    val pickedIcon: Drawable? = null,
     val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -46,7 +47,7 @@ data class TextPickerModelView(
                 }
                 binding.textView.setDrawableCompat(
                     start = model.startIcon,
-                    end = if (model.isPicked) pickedIcon else 0
+                    end = if (model.isPicked) model.pickedIcon else null
                 )
             }
 

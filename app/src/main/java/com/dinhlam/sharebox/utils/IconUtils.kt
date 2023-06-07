@@ -33,6 +33,24 @@ object IconUtils {
         }
     }
 
+    fun plusIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_add, block(IconBuilder(context)))
+    }
+
+    fun doneIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_done, block(IconBuilder(context)))
+    }
+
+    fun leftArrowIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_arrow_back, block(IconBuilder(context)))
+    }
+
     fun lockIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
