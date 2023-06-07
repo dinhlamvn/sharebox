@@ -104,7 +104,7 @@ class CommunityFragment :
                     add(
                         SizedBoxModelView(
                             "divider_${shareDetail.shareId}",
-                            height = 8.dp(),
+                            height = 4.dp(),
                         )
                     )
                 }

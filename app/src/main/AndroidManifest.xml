@@ -131,6 +131,7 @@
         <activity
             android:name=".ui.home.bookmark.list.BookmarkListItemActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.TranslucentStatusBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 

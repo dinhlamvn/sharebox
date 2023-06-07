@@ -143,7 +143,7 @@ class BookmarkFragment :
                 state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
 
             val arrayIcons = arrayOf(
-                R.drawable.ic_open_black, R.drawable.ic_edit_black, R.drawable.ic_delete_black
+                R.drawable.ic_open, R.drawable.ic_edit, R.drawable.ic_delete
             )
             val choiceItems =
                 resources.getStringArray(R.array.bookmark_collection_option_menu_items)

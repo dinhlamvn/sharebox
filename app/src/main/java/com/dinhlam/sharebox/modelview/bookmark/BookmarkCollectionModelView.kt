@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBookmarkCollectionBinding
 import com.dinhlam.sharebox.extensions.asDisplayCountValue
 import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.utils.IconUtils
 
 data class BookmarkCollectionModelView(
     val id: String,
@@ -20,7 +21,9 @@ data class BookmarkCollectionModelView(
     val shareCount: Int,
     val marginStart: Int = 0,
     val marginTop: Int = 0,
-    val onClickListener: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
+    val onClickListener: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
+        null
+    )
 ) : BaseListAdapter.BaseModelView("bookmark_collection_$id") {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
@@ -36,6 +39,11 @@ data class BookmarkCollectionModelView(
         BaseListAdapter.BaseViewHolder<BookmarkCollectionModelView, ModelViewBookmarkCollectionBinding>(
             binding
         ) {
+
+        init {
+            binding.imageLock.setImageDrawable(IconUtils.lockIcon(buildContext) { copy(sizeDp = 20) })
+        }
+
         override fun onBind(model: BookmarkCollectionModelView, position: Int) {
             binding.root.updateLayoutParams<MarginLayoutParams> {
                 marginStart = model.marginStart

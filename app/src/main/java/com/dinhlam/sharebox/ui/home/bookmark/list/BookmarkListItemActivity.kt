@@ -2,9 +2,11 @@ package com.dinhlam.sharebox.ui.home.bookmark.list
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
@@ -116,10 +118,14 @@ class BookmarkListItemActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        ViewCompat.setOnApplyWindowInsetsListener(viewBinding.appbar) { _, insets ->
+            (viewBinding.toolbar.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            WindowInsetsCompat.CONSUMED
+        }
+
         viewBinding.appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
             val eightyPercent = appBar.totalScrollRange * 0.8
-            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
-                verticalOffset.absoluteValue >= eightyPercent
             viewBinding.imageThumbnailSmall.alpha =
                 verticalOffset.absoluteValue / eightyPercent.toFloat()
         }
