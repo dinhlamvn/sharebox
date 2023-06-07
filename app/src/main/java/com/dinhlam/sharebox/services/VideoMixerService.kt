@@ -6,11 +6,12 @@ import android.os.Binder
 import android.os.IBinder
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -78,9 +79,12 @@ class VideoMixerService : Service() {
             var currentOffset = 0
             while (isActive) {
                 val shares = shareRepository.findForVideoMixer(
-                    LIMIT_ITEM_SYNC,
-                    currentOffset * LIMIT_ITEM_SYNC
+                    LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
                 )
+
+                if (shares.isEmpty() && currentOffset == 0) {
+                    continue
+                }
 
                 if (shares.isEmpty()) {
                     Logger.debug("Video mixer reset sync in offset $currentOffset")
@@ -112,7 +116,7 @@ class VideoMixerService : Service() {
                             videoSource,
                             videoSourceId,
                             videoUri?.toString(),
-                            0
+                            calcTrendingScore(shareId)
                         )
 
                         if (result) {
@@ -126,5 +130,22 @@ class VideoMixerService : Service() {
                 currentOffset++
             }
         }
+    }
+
+    private suspend fun calcTrendingScore(shareId: String): Int {
+        val share = shareRepository.findOneRaw(shareId) ?: return 0
+
+        var trendingScore = 0
+
+        val commentCount = commentRepository.count(shareId)
+        trendingScore += commentCount / 5
+
+        val likeCount = likeRepository.count(shareId)
+        trendingScore += likeCount
+
+        val elapsed = nowUTCTimeInMillis() - share.shareDate
+        val hours = elapsed.div(3600 * 1000).toInt()
+
+        return trendingScore.minus(hours).coerceAtLeast(0)
     }
 }

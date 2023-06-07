@@ -88,7 +88,7 @@ class ShareCommunityService : Service() {
                     if (shareCommunityRepository.insert(
                             shareCommunity?.id.orElse(0),
                             share.shareId,
-                            calcSharePower(share.shareId, share.shareDate)
+                            calcSharePower(share.shareId)
                         )
                     ) {
                         ids.add(share.shareId)
@@ -100,18 +100,20 @@ class ShareCommunityService : Service() {
         }
     }
 
-    private suspend fun calcSharePower(shareId: String, createdAt: Long): Int {
+    private suspend fun calcSharePower(shareId: String): Int {
+        val share = shareRepository.findOneRaw(shareId) ?: return 0
+
         var sharePower = 0
 
         val commentCount = commentRepository.count(shareId)
-        sharePower += commentCount
+        sharePower += commentCount / 5
 
         val likeCount = likeRepository.count(shareId)
         sharePower += likeCount
 
-        val elapsed = Calendar.getInstance().timeInMillis - createdAt
+        val elapsed = Calendar.getInstance().timeInMillis - share.shareDate
         val hours = elapsed.div(3600 * 1000).toInt()
 
-        return sharePower - hours
+        return sharePower.minus(hours).coerceAtLeast(0)
     }
 }
