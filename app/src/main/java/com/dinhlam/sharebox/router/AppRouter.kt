@@ -75,4 +75,17 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
             putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
         }
     }
+
+    fun viewIntent(url: String): Intent {
+        return Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    }
+
+    fun playStoreIntent(packageName: String): Intent {
+        return Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(
+                "https://play.google.com/store/apps/details?id=$packageName"
+            )
+            setPackage("com.android.vending")
+        }
+    }
 }

@@ -33,6 +33,16 @@ object IconUtils {
         }
     }
 
+    fun openIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_open_in_new,
+            block(IconBuilder(context))
+        )
+    }
+
     fun plusIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {

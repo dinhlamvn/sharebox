@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.extensions
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -89,5 +91,15 @@ fun Context.vibrate(timing: Long) {
         vibrator.vibrate(VibrationEffect.createOneShot(timing, VibrationEffect.DEFAULT_AMPLITUDE))
     } else {
         vibrator.vibrate(timing)
+    }
+}
+
+fun PackageManager.queryIntentActivitiesCompat(
+    intent: Intent, flags: Int = 0
+): List<ResolveInfo> {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION") queryIntentActivities(intent, flags)
     }
 }

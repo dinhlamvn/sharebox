@@ -6,4 +6,12 @@ object AppConsts {
     const val NOTIFICATION_DEFAULT_CHANNEL_ID = "default_notification_channel"
 
     const val NOTIFICATION_DOWNLOAD_CHANNEL_ID = "download_notification_channel"
+
+    const val YOUTUBE_M_PACKAGE_ID = "com.google.android.youtube"
+
+    const val FACEBOOK_M_PACKAGE_ID = "com.facebook.katana"
+
+    const val TIKTOK_M_PACKAGE_ID = "com.zhiliaoapp.musically"
+
+    const val TIKTOK_O_PACKAGE_ID = "com.ss.android.ugc.trill"
 }

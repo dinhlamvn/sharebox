@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
@@ -71,7 +72,7 @@ class ShareHelper @Inject constructor(
             chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
             context.startActivity(chooser)
         } else {
-            val resolveInfoList = context.packageManager.queryIntentActivities(intent, 0)
+            val resolveInfoList = context.packageManager.queryIntentActivitiesCompat(intent, 0)
             if (resolveInfoList.isNotEmpty()) {
                 val targetIntents = mutableListOf<Intent>()
                 resolveInfoList.forEach { resolveInfo ->

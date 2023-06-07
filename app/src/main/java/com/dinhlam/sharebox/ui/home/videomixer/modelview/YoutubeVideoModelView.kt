@@ -16,10 +16,12 @@ import androidx.core.view.isVisible
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.databinding.ModelViewVideoYoutubeBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIconLight
 import com.dinhlam.sharebox.extensions.asLikeIconLight
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -30,6 +32,9 @@ data class YoutubeVideoModelView(
     val id: String,
     val videoId: String,
     val shareDetail: ShareDetail,
+    val actionViewInSource: BaseListAdapter.NoHashProp<Function1<ShareData, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
     val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -79,6 +84,9 @@ data class YoutubeVideoModelView(
         }
 
         init {
+            binding.textViewInSource.setDrawableCompat(end = IconUtils.openIcon(buildContext) {
+                copy(sizeDp = 16, colorRes = android.R.color.white)
+            })
             binding.bottomAction.apply {
                 setCommentIcon(IconUtils.commentIconLight(buildContext))
                 setShareIcon(IconUtils.shareIconLight(buildContext))
@@ -126,6 +134,10 @@ data class YoutubeVideoModelView(
             binding.bottomAction.setBookmarkIcon(
                 model.shareDetail.bookmarked.asBookmarkIconLight(buildContext)
             )
+
+            binding.textViewInSource.setOnClickListener {
+                model.actionViewInSource.prop?.invoke(model.shareDetail.shareData)
+            }
 
             binding.bottomAction.setLikeIcon(model.shareDetail.liked.asLikeIconLight(buildContext))
 
