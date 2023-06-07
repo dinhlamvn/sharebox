@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,9 @@ class VideoMixerService : Service() {
 
     @Inject
     lateinit var commentRepository: CommentRepository
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     @Inject
     lateinit var likeRepository: LikeRepository
@@ -136,6 +140,14 @@ class VideoMixerService : Service() {
         val share = shareRepository.findOneRaw(shareId) ?: return 0
 
         var trendingScore = 0
+
+        val commentCountByCurrentUser =
+            commentRepository.count(shareId, userId = userHelper.getCurrentUserId())
+        trendingScore += commentCountByCurrentUser
+
+        if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
+            trendingScore += 10
+        }
 
         val commentCount = commentRepository.count(shareId)
         trendingScore += commentCount / 5

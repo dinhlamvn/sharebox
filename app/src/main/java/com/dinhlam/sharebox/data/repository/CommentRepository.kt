@@ -72,4 +72,8 @@ class CommentRepository @Inject constructor(
     suspend fun count(shareId: String): Int = commentDao.runCatching {
         commentDao.count(shareId)
     }.getOrDefault(0)
+
+    suspend fun count(shareId: String, userId: String): Int = commentDao.runCatching {
+        commentDao.count(shareId, userId)
+    }.getOrDefault(0)
 }

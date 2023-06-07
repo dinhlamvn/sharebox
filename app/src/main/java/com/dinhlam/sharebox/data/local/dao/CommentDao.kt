@@ -22,4 +22,7 @@ interface CommentDao {
 
     @Query("SELECT COUNT(*) FROM comment WHERE share_id = :shareId")
     suspend fun count(shareId: String): Int
+
+    @Query("SELECT COUNT(*) FROM comment WHERE share_id = :shareId AND user_id = :userId")
+    suspend fun count(shareId: String, userId: String): Int
 }

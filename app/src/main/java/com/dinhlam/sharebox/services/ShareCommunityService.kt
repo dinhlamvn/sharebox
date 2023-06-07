@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +46,8 @@ class ShareCommunityService : Service() {
     @Inject
     lateinit var likeRepository: LikeRepository
 
+    @Inject
+    lateinit var userHelper: UserHelper
 
     inner class LocalBinder : Binder() {
         fun getService(): ShareCommunityService = this@ShareCommunityService
@@ -104,6 +107,14 @@ class ShareCommunityService : Service() {
         val share = shareRepository.findOneRaw(shareId) ?: return 0
 
         var sharePower = 0
+
+        val commentCountByCurrentUser =
+            commentRepository.count(shareId, userId = userHelper.getCurrentUserId())
+        sharePower += commentCountByCurrentUser
+
+        if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
+            sharePower += 10
+        }
 
         val commentCount = commentRepository.count(shareId)
         sharePower += commentCount / 5
