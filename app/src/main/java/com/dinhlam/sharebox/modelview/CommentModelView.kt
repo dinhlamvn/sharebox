@@ -2,10 +2,8 @@ package com.dinhlam.sharebox.modelview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.text.color
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewCommentBinding
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
@@ -21,7 +19,10 @@ data class CommentModelView(
     val commentDate: Long,
 ) : BaseListAdapter.BaseModelView("comment_$id") {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
+    override fun createViewHolder(
+        inflater: LayoutInflater,
+        container: ViewGroup
+    ): BaseListAdapter.BaseViewHolder<*, *> {
         return CommentViewHolder(ModelViewCommentBinding.inflate(inflater, container, false))
     }
 
@@ -29,13 +30,11 @@ data class CommentModelView(
         BaseListAdapter.BaseViewHolder<CommentModelView, ModelViewCommentBinding>(binding) {
         override fun onBind(model: CommentModelView, position: Int) {
             binding.textName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
+                bold {
                     append(model.name)
                 }
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
-                    append(" • ")
-                    append(model.commentDate.asElapsedTimeDisplay())
-                }
+                append(" • ")
+                append(model.commentDate.asElapsedTimeDisplay())
             }
             ImageLoader.instance.load(buildContext, model.avatar, binding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))

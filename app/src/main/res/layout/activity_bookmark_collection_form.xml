@@ -37,6 +37,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <com.google.android.material.card.MaterialCardView
+            style="@style/AppMaterialCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -102,8 +103,6 @@
                         android:hint="@string/bookmark_collection_hint_name"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:paddingStart="0dp"
-                        android:paddingEnd="0dp"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -127,8 +126,6 @@
                         android:hint="@string/bookmark_collection_hint_desc"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:paddingStart="0dp"
-                        android:paddingEnd="0dp"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -157,8 +154,6 @@
                         android:inputType="numberPassword"
                         android:maxLength="6"
                         android:maxLines="1"
-                        android:paddingStart="0dp"
-                        android:paddingEnd="0dp"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
                 </com.google.android.material.textfield.TextInputLayout>

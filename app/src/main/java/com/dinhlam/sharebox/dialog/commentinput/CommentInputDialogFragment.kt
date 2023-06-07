@@ -47,7 +47,7 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.imageSend.setOnClickListener {
+        viewBinding.buttonSend.setOnClickListener {
             sendComment()
         }
 
@@ -61,9 +61,9 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
             true
         }
 
-        viewBinding.imageSend.isEnabled = false
+        viewBinding.buttonSend.isEnabled = false
         viewBinding.editComment.doAfterTextChanged { editable ->
-            viewBinding.imageSend.isEnabled = editable.trimmedString().isNotEmpty()
+            viewBinding.buttonSend.isEnabled = editable.trimmedString().isNotEmpty()
         }
 
         viewBinding.editComment.requestFocus()

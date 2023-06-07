@@ -2,9 +2,8 @@ package com.dinhlam.sharebox.modelview.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -98,7 +97,9 @@ data class ListUrlModelView(
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                append(model.userDetail.name)
+                bold {
+                    append(model.userDetail.name)
+                }
                 append(" shares a weblink")
             }
             binding.shareLinkPreview.setLink(model.url) {

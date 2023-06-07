@@ -2,18 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/text_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
         android:paddingVertical="12dp"
-        android:text="@string/title_bookmark_collection"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/title_bookmark_collection"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
@@ -32,7 +31,6 @@
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@android:color/white"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
@@ -50,7 +48,6 @@
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/button_add_bookmark_collection"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@android:color/white"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

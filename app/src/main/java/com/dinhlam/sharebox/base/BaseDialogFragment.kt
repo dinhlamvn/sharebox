@@ -1,9 +1,6 @@
 package com.dinhlam.sharebox.base
 
-import android.app.Dialog
 import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +8,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenWidth
 
@@ -27,8 +26,6 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     protected val viewBinding: VB
         get() = binding!!
 
-    var dismissListener: OnDialogDismissListener? = null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -41,10 +38,8 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
         binding = null
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
+    override fun getTheme(): Int {
+        return R.style.MaterialAlertDialog_Material3
     }
 
     override fun onStart() {
@@ -53,13 +48,13 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
             val dialogWidth = screenWidth() - getSpacing().dp()
             val dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT
             wd.setLayout(dialogWidth, dialogHeight)
-            wd.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
     }
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        dismissListener?.onDismiss()
+        activity?.cast<OnDialogDismissListener>()?.onDismiss()
+            ?: parentFragment.cast<OnDialogDismissListener>()?.onDismiss()
     }
 
     open fun getSpacing(): Int {

@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
@@ -135,12 +136,10 @@ data class ListImagesModelView(
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
+                bold {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
-                    append(" shares some images")
-                }
+                append(" shares some images")
             }
             binding.layoutUserInfo.textUserLevel.text =
                 buildContext.getString(

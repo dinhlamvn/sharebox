@@ -3,9 +3,8 @@ package com.dinhlam.sharebox.modelview.list
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -108,12 +107,10 @@ data class ListImageModelView(
             }
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
+                bold {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
-                    append(" shares an image")
-                }
+                append(" shares an image")
             }
             binding.layoutUserInfo.textUserLevel.text =
                 buildContext.getString(

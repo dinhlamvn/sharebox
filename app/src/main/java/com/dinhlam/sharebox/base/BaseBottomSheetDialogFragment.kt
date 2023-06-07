@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDialogFragment() {
 
-    fun interface OnDialogDismissListener {
+    fun interface OnBottomSheetDismissListener {
         fun onDismiss()
     }
 
@@ -24,8 +24,6 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
 
     protected val viewBinding: VB
         get() = binding!!
-
-    var dismissListener: OnDialogDismissListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -41,11 +39,8 @@ abstract class BaseBottomSheetDialogFragment<VB : ViewBinding> : BottomSheetDial
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        dismissListener?.onDismiss()
-    }
-
-    override fun getTheme(): Int {
-        return R.style.Theme_MaterialComponents_BottomSheetDialog
+        activity?.cast<OnBottomSheetDismissListener>()?.onDismiss()
+            ?: parentFragment?.cast<OnBottomSheetDismissListener>()?.onDismiss()
     }
 
     override fun onStart() {

@@ -20,6 +20,7 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.utils.IconUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -79,6 +80,10 @@ class CommentFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewBinding.imageClose.setImageDrawable(IconUtils.closeIcon(requireContext()) {
+            copy(sizeDp = 16)
+        })
 
         viewBinding.textComment.setOnClickListener {
             CommentInputDialogFragment().show(childFragmentManager, "CommentInputDialogFragment")

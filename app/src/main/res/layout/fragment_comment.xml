@@ -30,7 +30,6 @@
             android:clickable="true"
             android:focusable="true"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_close_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,11 +75,11 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_comment"
+            style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
-            android:background="@drawable/rectangle_white_round_4_stroke_2"
             android:gravity="center_vertical"
             android:hint="@string/comment_hint"
             android:lines="1"

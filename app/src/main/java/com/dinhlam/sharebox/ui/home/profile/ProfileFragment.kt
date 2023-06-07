@@ -66,9 +66,7 @@ class ProfileFragment :
                 )
             )
             add(
-                SizedBoxModelView(
-                    "divider", backgroundColor = android.R.color.transparent, height = 16.dp()
-                )
+                SizedBoxModelView("divider", height = 8.dp())
             )
             add(
                 SizedBoxModelView(

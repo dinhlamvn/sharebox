@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.modelview.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isVisible
@@ -99,12 +100,10 @@ data class ListTextModelView(
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
+                bold {
                     append(model.userDetail.name)
                 }
-                color(ContextCompat.getColor(buildContext, android.R.color.black)) {
-                    append(" shares a text content")
-                }
+                append(" shares a text content")
             }
             binding.textShare.text = model.content
             binding.layoutUserInfo.textUserLevel.text =

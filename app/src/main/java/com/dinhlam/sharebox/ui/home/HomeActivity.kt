@@ -93,7 +93,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
         viewBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                adjustWindowStatusBar(position != 1)
                 when (position) {
                     0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_community
                     1 -> viewBinding.bottomNavigationView.selectedItemId =
@@ -115,12 +114,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             viewBinding.viewPager.setCurrentItem(pos, false)
             return@setOnItemSelectedListener true
         }
-    }
-
-    private fun adjustWindowStatusBar(isUseLight: Boolean) {
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
-            isUseLight
-        window.statusBarColor = if (isUseLight) Color.WHITE else Color.BLACK
     }
 
     override fun onDestroy() {
