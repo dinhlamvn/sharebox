@@ -7,5 +7,5 @@ fun <T, R> Map<T, R?>.filterValuesNotNull(): Map<T, R> {
 }
 
 fun <T, R> Map<T, R>.getOrThrow(key: T): R {
-    return get(key) ?: throw NullPointerException("No element found with key $key")
+    return get(key) ?: throw NoSuchElementException("No element found with key $key")
 }

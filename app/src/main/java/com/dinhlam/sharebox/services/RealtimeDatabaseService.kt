@@ -84,6 +84,7 @@ class RealtimeDatabaseService : Service() {
         realtimeDatabaseRepository.consumeUsers(::handleUserAdded)
         realtimeDatabaseRepository.consumeComments(::handleCommentAdded)
         realtimeDatabaseRepository.consumeLikes(::handleLikeAdded)
+
         return START_STICKY
     }
 
@@ -107,9 +108,11 @@ class RealtimeDatabaseService : Service() {
 
                 uris.forEach { uri ->
                     if (!FileUtils.isFileExistedFromUri(this@RealtimeDatabaseService, uri)) {
-                        firebaseStorageHelper.downloadImageFile(
-                            this@RealtimeDatabaseService, shareId, uri
-                        )
+                        firebaseStorageHelper.runCatching {
+                            downloadImageFile(
+                                this@RealtimeDatabaseService, shareId, uri
+                            )
+                        }
                     }
                 }
 
