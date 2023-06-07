@@ -60,7 +60,11 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             return goHome()
         }
 
-        viewBinding.buttonSignIn.setDrawableCompat(IconUtils.googleIconLight(this))
+        viewBinding.textLayoutName.endIconDrawable = IconUtils.rightArrowIcon(this) {
+            copy(sizeDp = 20)
+        }
+
+        viewBinding.buttonSignIn.setDrawableCompat(IconUtils.googleIcon(this))
 
         viewBinding.viewLoading.hide()
         viewBinding.buttonSignIn.isVisible = true

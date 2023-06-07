@@ -208,7 +208,7 @@
     <string name="logged_out_error">Error, try again!</string>
     <string name="sign_in_error">Require sign in before snap share</string>
     <string name="user_level_format">%s • %s</string>
-    <string name="sign_in_hint_user_name">Your name…</string>
+    <string name="sign_in_hint_user_name">Your name</string>
     <string name="sign_in_title_user_name">What should we call you?</string>
     <string name="box_entertainment">Entertainment Box</string>
     <string name="box_film">Fimls Box</string>

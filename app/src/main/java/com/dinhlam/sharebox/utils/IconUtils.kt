@@ -45,6 +45,16 @@ object IconUtils {
         return createIcon(context, GoogleMaterial.Icon.gmd_done, block(IconBuilder(context)))
     }
 
+    fun rightArrowIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_arrow_forward,
+            block(IconBuilder(context))
+        )
+    }
+
     fun leftArrowIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
@@ -67,7 +77,7 @@ object IconUtils {
         return createIcon(context, FontAwesome.Icon.faw_download)
     }
 
-    fun googleIconLight(context: Context): IconicsDrawable {
+    fun googleIcon(context: Context): IconicsDrawable {
         return createIcon(
             context,
             FontAwesome.Icon.faw_google,
