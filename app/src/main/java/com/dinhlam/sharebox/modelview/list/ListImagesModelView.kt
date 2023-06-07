@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -17,7 +17,7 @@ import com.dinhlam.sharebox.databinding.ModelViewListImagesBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
-import com.dinhlam.sharebox.extensions.formatForFeed
+import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -84,6 +84,9 @@ data class ListImagesModelView(
         private val models = mutableListOf<ImageModelView>()
 
         init {
+            binding.recyclerViewImage.updateLayoutParams {
+                height = buildContext.screenHeight().times(0.5f).toInt()
+            }
             PagerSnapHelper().attachToRecyclerView(binding.recyclerViewImage)
             binding.recyclerViewImage.addItemDecoration(
                 HorizontalCirclePagerItemDecoration(
