@@ -63,7 +63,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
                         val newState = reducer.invoke(currentState)
                         if (newState != currentState) {
                             _state.emit(newState)
-                            notifyConsumer(currentState, newState)
+                            notifyInternalConsumers(currentState, newState)
+                            notifyConsumers(currentState, newState)
                         }
                     }
 
@@ -75,12 +76,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    private suspend fun notifyConsumer(oldState: T, newState: T) {
-        notifyConsumerInternal(oldState, newState)
-        notifyConsumerExternal(oldState, newState)
-    }
-
-    private fun notifyConsumerExternal(oldState: T, newState: T) {
+    private fun notifyConsumers(oldState: T, newState: T) {
         val consumerIterator = consumers.iterator()
         while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
             val consumer = consumerIterator.next()
@@ -98,7 +94,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    private suspend fun notifyConsumerInternal(oldState: T, newState: T) {
+    private suspend fun notifyInternalConsumers(oldState: T, newState: T) {
         val consumerIterator = internalConsumers.iterator()
         while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
             val consumer = consumerIterator.next()
@@ -188,5 +184,6 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         viewModelScope.cancel()
         stateScope.cancel()
         consumers.clear()
+        internalConsumers.clear()
     }
 }

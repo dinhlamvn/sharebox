@@ -21,7 +21,6 @@ class VideoMixerViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
 
-
     init {
         loadVideoMixers()
     }

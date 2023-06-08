@@ -117,7 +117,7 @@ class ShareCommunityService : Service() {
         }
 
         val commentCount = commentRepository.count(shareId)
-        sharePower += commentCount / 5
+        sharePower += (commentCount / 5)
 
         val likeCount = likeRepository.count(shareId)
         sharePower += likeCount

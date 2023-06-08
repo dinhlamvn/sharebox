@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -108,10 +109,20 @@ class VideoMixerService : Service() {
                         val shareId = key
                         val videoMixerDetail = videoMixerRepository.findOne(shareId)
                         val shareUrl = value.url
-                        val videoSource = videoHelper.getVideoSource(shareUrl)
-                        val videoSourceId = videoHelper.getVideoSourceId(videoSource, shareUrl)
-                        val videoUri =
-                            videoHelper.getVideoUri(this@VideoMixerService, videoSource, shareUrl)
+                        val videoSource =
+                            videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
+                        val videoSourceId =
+                            videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
+                                videoSource,
+                                shareUrl
+                            )
+
+                        val videoUri = videoMixerDetail?.uri?.takeIfNotNullOrBlank()
+                            ?: videoHelper.getVideoUri(
+                                this@VideoMixerService,
+                                videoSource,
+                                shareUrl
+                            )
 
                         val result = videoMixerRepository.upsert(
                             videoMixerDetail?.id.orElse(0),
@@ -143,14 +154,14 @@ class VideoMixerService : Service() {
 
         val commentCountByCurrentUser =
             commentRepository.count(shareId, userId = userHelper.getCurrentUserId())
-        trendingScore += commentCountByCurrentUser
+        trendingScore += commentCountByCurrentUser.times(2)
 
         if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
             trendingScore += 10
         }
 
         val commentCount = commentRepository.count(shareId)
-        trendingScore += commentCount / 5
+        trendingScore += (commentCount / 5)
 
         val likeCount = likeRepository.count(shareId)
         trendingScore += likeCount
