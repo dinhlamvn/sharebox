@@ -91,10 +91,6 @@ object IconUtils {
         return createIcon(context, GoogleMaterial.Icon.gmd_close, block(IconBuilder(context)))
     }
 
-    fun downloadIconLight(context: Context): IconicsDrawable {
-        return createIcon(context, FontAwesome.Icon.faw_download)
-    }
-
     fun googleIcon(context: Context): IconicsDrawable {
         return createIcon(
             context,
