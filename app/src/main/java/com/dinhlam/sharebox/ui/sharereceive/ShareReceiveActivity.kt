@@ -143,7 +143,7 @@ class ShareReceiveActivity :
 
     private fun invalidateUserInfo(activeUser: UserDetail?) {
         activeUser?.let { user ->
-            ImageLoader.instance.load(this, user.avatar, viewBinding.imageAvatar) {
+            ImageLoader.INSTANCE.load(this, user.avatar, viewBinding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             viewBinding.textViewName.text = user.name

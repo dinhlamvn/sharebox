@@ -161,7 +161,7 @@ data class YoutubeVideoModelView(
             binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
             binding.textViewName.text = model.shareDetail.user.name
-            ImageLoader.instance.load(
+            ImageLoader.INSTANCE.load(
                 buildContext, model.shareDetail.user.avatar, binding.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
@@ -180,7 +180,7 @@ data class YoutubeVideoModelView(
             binding.webView.loadUrl("auto:blank")
             binding.textNote.text = null
             binding.bottomAction.release()
-            ImageLoader.instance.release(buildContext, binding.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
         }
     }
 }

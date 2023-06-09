@@ -106,8 +106,8 @@ class BookmarkListItemActivity :
     }
 
     private fun updateUi(bookmarkCollection: BookmarkCollectionDetail) {
-        ImageLoader.instance.load(this, bookmarkCollection.thumbnail, viewBinding.imageTopBar)
-        ImageLoader.instance.load(
+        ImageLoader.INSTANCE.load(this, bookmarkCollection.thumbnail, viewBinding.imageTopBar)
+        ImageLoader.INSTANCE.load(
             this, bookmarkCollection.thumbnail, viewBinding.imageThumbnailSmall
         ) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))

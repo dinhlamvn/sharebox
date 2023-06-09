@@ -15,10 +15,10 @@ class UserRepository @Inject constructor(
     private val userToUserDetailMapper: UserToUserDetailMapper
 ) {
 
-    suspend fun insert(email: String, displayName: String, avatarUrl: String): User? =
+    suspend fun insert(userId: String, displayName: String, avatarUrl: String): User? =
         userDao.runCatching {
             val user = User(
-                userId = UserUtils.createUserId(email),
+                userId = userId,
                 name = displayName,
                 avatar = avatarUrl,
                 joinDate = nowUTCTimeInMillis()

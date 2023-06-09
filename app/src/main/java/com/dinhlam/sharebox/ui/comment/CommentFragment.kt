@@ -110,7 +110,7 @@ class CommentFragment :
         viewBinding.imageAvatar.isVisible = true
         viewBinding.textComment.isVisible = true
 
-        ImageLoader.instance.load(
+        ImageLoader.INSTANCE.load(
             requireContext(), nonNullUser.avatar, viewBinding.imageAvatar
         ) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))

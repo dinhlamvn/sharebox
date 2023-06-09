@@ -33,6 +33,14 @@ object IconUtils {
         }
     }
 
+    fun editIconLight(context: Context): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_edit,
+            IconBuilder(context, colorRes = android.R.color.white)
+        )
+    }
+
     fun openIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {

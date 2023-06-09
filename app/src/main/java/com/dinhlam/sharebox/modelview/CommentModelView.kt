@@ -36,7 +36,7 @@ data class CommentModelView(
                 append(" • ")
                 append(model.commentDate.asElapsedTimeDisplay())
             }
-            ImageLoader.instance.load(buildContext, model.avatar, binding.imageAvatar) {
+            ImageLoader.INSTANCE.load(buildContext, model.avatar, binding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             binding.textContent.setReadMoreText(model.content)

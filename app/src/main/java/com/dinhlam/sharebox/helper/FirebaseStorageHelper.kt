@@ -27,6 +27,24 @@ class FirebaseStorageHelper @Inject constructor(
 
     private val shareImagesRef by lazy { storage.getReference("shareImages") }
 
+    private val avatarImagesRef by lazy { storage.getReference("avatarImages") }
+
+    suspend fun uploadUserAvatar(context: Context, userId: String, uri: Uri): String? =
+        withContext(Dispatchers.IO) {
+            val ref = avatarImagesRef.child(getUploadAvatarFilePath(userId))
+            val uploadTask =
+                ref.putFile(uri)
+            uploadTask.continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { error ->
+                        throw error
+                    }
+                }
+
+                ref.downloadUrl
+            }.await()?.toString()
+        }
+
     suspend fun uploadShareImageFile(
         context: Context, shareId: String, uri: Uri
     ): UploadTask.TaskSnapshot = withContext(Dispatchers.IO) {
@@ -105,5 +123,9 @@ class FirebaseStorageHelper @Inject constructor(
     private fun getUploadFilePath(shareId: String, uri: Uri): String {
         val uploadFileName = FileUtils.getFileNameFromUri(uri)
         return "$shareId/$uploadFileName"
+    }
+
+    private fun getUploadAvatarFilePath(userId: String): String {
+        return "avatar_$userId"
     }
 }

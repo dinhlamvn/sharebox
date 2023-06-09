@@ -27,13 +27,13 @@ data class ImageModelView(
                     height = model.height
                 }
 
-                ImageLoader.instance.load(buildContext, model.uri, binding.image) {
+                ImageLoader.INSTANCE.load(buildContext, model.uri, binding.image) {
                     copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
                 }
             }
 
             override fun onUnBind() {
-                ImageLoader.instance.release(buildContext, binding.image)
+                ImageLoader.INSTANCE.release(buildContext, binding.image)
             }
         }
     }

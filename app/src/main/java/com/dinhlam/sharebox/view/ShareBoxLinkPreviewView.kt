@@ -108,7 +108,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 
     private suspend fun handleResult(openGraphResult: OpenGraphResult) =
         withContext(Dispatchers.Main) {
-            ImageLoader.instance.load(
+            ImageLoader.INSTANCE.load(
                 context,
                 openGraphResult.image,
                 binding.imageView
@@ -123,7 +123,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
 
     private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
-        ImageLoader.instance.load(context, R.drawable.image_no_preview, binding.imageView)
+        ImageLoader.INSTANCE.load(context, R.drawable.image_no_preview, binding.imageView)
         binding.textViewUrl.text = url
         binding.shimmerContainer.hideShimmer()
         binding.shimmerContainer.isVisible = false
@@ -184,7 +184,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     }
 
     fun release() {
-        ImageLoader.instance.release(context, binding.imageView)
+        ImageLoader.INSTANCE.release(context, binding.imageView)
         resetUi()
     }
 }

@@ -141,7 +141,7 @@ class BookmarkCollectionFormActivity :
 
         getState(viewModel) { state ->
             state.bookmarkCollectionDetail?.let { collectionDetail ->
-                ImageLoader.instance.load(
+                ImageLoader.INSTANCE.load(
                     this,
                     collectionDetail.thumbnail,
                     viewBinding.imageThumbnail
@@ -167,7 +167,7 @@ class BookmarkCollectionFormActivity :
     private fun showThumbnail(data: Intent?) {
         val uri = data?.data ?: return
         viewModel.setThumbnail(uri)
-        ImageLoader.instance.load(this, uri, viewBinding.imageThumbnail) {
+        ImageLoader.INSTANCE.load(this, uri, viewBinding.imageThumbnail) {
             copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
         }
     }

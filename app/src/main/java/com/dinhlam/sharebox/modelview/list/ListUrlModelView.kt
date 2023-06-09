@@ -64,7 +64,7 @@ data class ListUrlModelView(
     ) {
 
         override fun onBind(model: ListUrlModelView, position: Int) {
-            ImageLoader.instance.load(
+            ImageLoader.INSTANCE.load(
                 buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
@@ -129,7 +129,7 @@ data class ListUrlModelView(
         private fun releaseUI() {
             binding.textViewNote.text = null
             binding.bottomAction.release()
-            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
             binding.layoutUserInfo.textViewName.text = null
             binding.layoutUserInfo.textUserLevel.text = null
         }

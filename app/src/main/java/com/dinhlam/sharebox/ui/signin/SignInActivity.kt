@@ -2,8 +2,10 @@ package com.dinhlam.sharebox.ui.signin
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
@@ -12,12 +14,14 @@ import com.dinhlam.sharebox.databinding.ActivitySignInBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.UserUtils
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -30,16 +34,32 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
+    companion object {
+        private const val KEY_CUSTOM_AVATAR_URI = "custom-avatar-uri"
+    }
+
+    private val avatarResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                showAvatar(result.data)
+            }
+        }
+
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract(), ::handleSignInResult)
 
     private val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
+
+    private var customAvatarUri: Uri? = null
 
     @Inject
     lateinit var userHelper: UserHelper
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var firebaseStorageHelper: FirebaseStorageHelper
 
     private val signInForResult by lazy {
         intent.getBooleanExtra(
@@ -72,6 +92,24 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         viewBinding.buttonSignIn.setOnClickListener {
             requestSignIn()
         }
+
+        viewBinding.imageAvatar.setOnClickListener {
+            avatarResultLauncher.launch(appRouter.pickImageIntent())
+        }
+
+        viewBinding.imageEditAvatar.setImageDrawable(IconUtils.editIconLight(this))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_CUSTOM_AVATAR_URI, customAvatarUri?.toString())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        customAvatarUri = savedInstanceState.getString(KEY_CUSTOM_AVATAR_URI)?.let { str ->
+            Uri.parse(str)
+        }
     }
 
     private fun requestSignIn() {
@@ -100,10 +138,12 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         val photoUrl = user.photoUrl?.toString() ?: return signOut()
         viewBinding.buttonSignIn.isVisible = false
 
-        ImageLoader.instance.load(this, photoUrl, viewBinding.imageAvatar) {
+        ImageLoader.INSTANCE.load(this, photoUrl, viewBinding.imageAvatar) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }
 
+        viewBinding.imageAvatar.isVisible = true
+        viewBinding.imageEditAvatar.isVisible = true
         viewBinding.textLayoutName.isVisible = true
         viewBinding.textTitleUserName.isVisible = true
         viewBinding.textInputName.setText(displayName)
@@ -125,7 +165,16 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun createUser(email: String, name: String, photoUrl: String) {
         viewBinding.viewLoading.show()
         activityScope.launch {
-            userHelper.createUser(email, name, photoUrl, {
+            val userId = UserUtils.createUserId(email)
+            val avatarUrl = customAvatarUri?.let { uri ->
+                firebaseStorageHelper.uploadUserAvatar(
+                    this@SignInActivity,
+                    userId,
+                    uri
+                )
+            } ?: photoUrl
+
+            userHelper.createUser(userId, name, avatarUrl, {
                 if (signInForResult) {
                     viewBinding.viewLoading.hide()
                     setResult(Activity.RESULT_OK)
@@ -141,6 +190,10 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun signOut() {
+        viewBinding.imageAvatar.setImageDrawable(null)
+        viewBinding.imageAvatar.isVisible = false
+        viewBinding.imageEditAvatar.isVisible = false
+        customAvatarUri = null
         viewBinding.textInputName.text = null
         viewBinding.textLayoutName.isVisible = false
         viewBinding.textTitleUserName.isVisible = false
@@ -157,5 +210,13 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             appRouter.home()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )
+    }
+
+    private fun showAvatar(data: Intent?) {
+        val uri = data?.data ?: return
+        customAvatarUri = uri
+        ImageLoader.INSTANCE.load(this, uri, viewBinding.imageAvatar) {
+            copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+        }
     }
 }

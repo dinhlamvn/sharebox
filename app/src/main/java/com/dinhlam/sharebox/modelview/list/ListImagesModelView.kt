@@ -102,7 +102,7 @@ data class ListImagesModelView(
             models.addAll(model.modelViews)
             adapter.requestBuildModelViews()
 
-            ImageLoader.instance.load(
+            ImageLoader.INSTANCE.load(
                 buildContext,
                 model.userDetail.avatar,
                 binding.layoutUserInfo.imageAvatar
@@ -169,7 +169,7 @@ data class ListImagesModelView(
         private fun releaseUI() {
             binding.textViewNote.text = null
             binding.bottomAction.release()
-            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
             binding.layoutUserInfo.textViewName.text = null
             binding.layoutUserInfo.textUserLevel.text = null
         }

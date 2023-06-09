@@ -52,7 +52,7 @@ class UserHelper @Inject constructor(
     }
 
     suspend fun createUser(
-        email: String,
+        userId: String,
         displayName: String,
         avatarUrl: String,
         onSuccess: () -> Unit,
@@ -60,13 +60,13 @@ class UserHelper @Inject constructor(
     ) {
         try {
             val existedUser = withContext(Dispatchers.IO) {
-                userRepository.findOneRaw(UserUtils.createUserId(email))
+                userRepository.findOneRaw(userId)
                     ?.copy(name = displayName, avatar = avatarUrl)
             }
 
             val shareBoxUser = withContext(Dispatchers.IO) {
                 existedUser?.let { user -> userRepository.update(user) } ?: userRepository.insert(
-                    email,
+                    userId,
                     displayName,
                     avatarUrl
                 )
@@ -79,6 +79,14 @@ class UserHelper @Inject constructor(
             } ?: throw CreateUserError
         } catch (e: Exception) {
             onError(e)
+        }
+    }
+
+    suspend fun updateUserAvatar(userId: String, avatarUrl: String) = withContext(Dispatchers.IO) {
+        val shareBoxUser = userRepository.findOneRaw(userId) ?: return@withContext
+        val newUser = shareBoxUser.copy(avatar = avatarUrl)
+        userRepository.update(newUser)?.let { updatedUser ->
+            realtimeDatabaseRepository.push(updatedUser)
         }
     }
 

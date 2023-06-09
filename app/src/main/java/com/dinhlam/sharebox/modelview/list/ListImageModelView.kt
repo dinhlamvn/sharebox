@@ -68,7 +68,7 @@ data class ListImageModelView(
     ) {
 
         override fun onBind(model: ListImageModelView, position: Int) {
-            ImageLoader.instance.load(
+            ImageLoader.INSTANCE.load(
                 buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
@@ -102,7 +102,7 @@ data class ListImageModelView(
             binding.bottomAction.setLikeNumber(model.likeNumber)
             binding.bottomAction.setCommentNumber(model.commentNumber)
 
-            ImageLoader.instance.load(buildContext, model.uri, binding.imageShare) {
+            ImageLoader.INSTANCE.load(buildContext, model.uri, binding.imageShare) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
 
@@ -129,14 +129,14 @@ data class ListImageModelView(
         }
 
         override fun onUnBind() {
-            ImageLoader.instance.release(buildContext, binding.imageShare)
+            ImageLoader.INSTANCE.release(buildContext, binding.imageShare)
             releaseUI()
         }
 
         private fun releaseUI() {
             binding.textViewNote.text = null
             binding.bottomAction.release()
-            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
             binding.layoutUserInfo.textViewName.text = null
             binding.layoutUserInfo.textUserLevel.text = null
         }

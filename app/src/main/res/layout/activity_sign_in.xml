@@ -10,11 +10,22 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="100dp"
+        android:visibility="gone"
         app:layout_constraintDimensionRatio="1,1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.4" />
+        app:layout_constraintWidth_percent="0.5" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_edit_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/image_avatar"
+        app:layout_constraintEnd_toEndOf="@id/image_avatar"
+        app:layout_constraintStart_toStartOf="@id/image_avatar"
+        app:layout_constraintTop_toTopOf="@id/image_avatar" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_layout_name"

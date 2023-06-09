@@ -2,10 +2,8 @@ package com.dinhlam.sharebox.modelview.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -15,7 +13,6 @@ import com.dinhlam.sharebox.databinding.ModelViewListTextBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
-import com.dinhlam.sharebox.extensions.formatForFeed
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -67,7 +64,7 @@ data class ListTextModelView(
     ) {
 
         override fun onBind(model: ListTextModelView, position: Int) {
-            ImageLoader.instance.load(
+            ImageLoader.INSTANCE.load(
                 buildContext, model.userDetail.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
@@ -130,7 +127,7 @@ data class ListTextModelView(
         private fun releaseUI() {
             binding.textViewNote.text = null
             binding.bottomAction.release()
-            ImageLoader.instance.release(buildContext, binding.layoutUserInfo.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
             binding.layoutUserInfo.textViewName.text = null
             binding.layoutUserInfo.textUserLevel.text = null
         }

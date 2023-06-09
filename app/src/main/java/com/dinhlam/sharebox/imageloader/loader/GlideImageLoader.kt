@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.ImageView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -22,7 +21,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadConfig
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.logger.Logger
+import com.google.firebase.storage.StorageReference
 import java.io.File
 
 object GlideImageLoader : ImageLoader() {
@@ -99,7 +98,7 @@ object GlideImageLoader : ImageLoader() {
         val config = block.invoke(ImageLoadConfig())
 
         val errorRequestBuilder =
-            Glide.with(toContext).load(config.errorDrawable).onlyRetrieveFromCache(false).run {
+            GlideApp.with(toContext).load(config.errorDrawable).onlyRetrieveFromCache(false).run {
                 if (config.transformType is TransformType.Circle) {
                     apply(RequestOptions.circleCropTransform())
                 } else {
@@ -107,10 +106,10 @@ object GlideImageLoader : ImageLoader() {
                 }
             }
 
-        val thumbnailRequestBuilder = Glide.with(toContext).load(config.thumbnailDrawable)
+        val thumbnailRequestBuilder = GlideApp.with(toContext).load(config.thumbnailDrawable)
 
         return buildRequest<Drawable>(
-            Glide.with(toContext).load(any).thumbnail(thumbnailRequestBuilder)
+            GlideApp.with(toContext).load(any).thumbnail(thumbnailRequestBuilder)
                 .error(errorRequestBuilder), config
         )
     }
@@ -145,6 +144,15 @@ object GlideImageLoader : ImageLoader() {
         buildRequest(context, file, block)?.into(iv)
     }
 
+    override fun load(
+        context: Context,
+        storageReference: StorageReference,
+        iv: ImageView,
+        block: ImageLoadConfig.() -> ImageLoadConfig
+    ) {
+        buildRequest(context, storageReference, block)?.into(iv)
+    }
+
     override fun get(
         context: Context, model: Any?, block: ImageLoadConfig.() -> ImageLoadConfig
     ): Bitmap? {
@@ -157,7 +165,7 @@ object GlideImageLoader : ImageLoader() {
         val config = block.invoke(ImageLoadConfig())
 
         return buildRequest<Bitmap>(
-            Glide.with(toContext).asBitmap().load(model),
+            GlideApp.with(toContext).asBitmap().load(model),
             config
         ).runCatching {
             submit().get()
@@ -171,6 +179,6 @@ object GlideImageLoader : ImageLoader() {
             return
         }
 
-        Glide.with(toContext).clear(iv)
+        GlideApp.with(toContext).clear(iv)
     }
 }

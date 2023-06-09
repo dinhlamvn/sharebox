@@ -50,7 +50,7 @@ data class BookmarkCollectionModelView(
                 topMargin = model.marginTop
             }
             binding.container.setOnClickListener(model.onClickListener.prop)
-            ImageLoader.instance.load(buildContext, model.thumbnail, binding.imageThumbnail)
+            ImageLoader.INSTANCE.load(buildContext, model.thumbnail, binding.imageThumbnail)
             binding.textName.text = model.name
             binding.textDesc.text = model.desc
             binding.imageLock.isVisible = !model.passcode.isNullOrBlank()

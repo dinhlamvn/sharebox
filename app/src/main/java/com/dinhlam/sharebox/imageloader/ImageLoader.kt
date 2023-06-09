@@ -6,17 +6,22 @@ import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.dinhlam.sharebox.imageloader.config.ImageLoadConfig
+import com.google.firebase.storage.StorageReference
 import java.io.File
 
 abstract class ImageLoader {
 
     companion object {
-        lateinit var instance: ImageLoader
+        lateinit var INSTANCE: ImageLoader
             private set
+
+        private val lock = Any()
 
         @Synchronized
         fun setLoader(loader: ImageLoader) {
-            this.instance = loader
+            synchronized(lock) {
+                this.INSTANCE = loader
+            }
         }
     }
 
@@ -44,6 +49,13 @@ abstract class ImageLoader {
     abstract fun load(
         context: Context,
         file: File?,
+        iv: ImageView,
+        block: ImageLoadConfig.() -> ImageLoadConfig = { ImageLoadConfig() }
+    )
+
+    abstract fun load(
+        context: Context,
+        storageReference: StorageReference,
         iv: ImageView,
         block: ImageLoadConfig.() -> ImageLoadConfig = { ImageLoadConfig() }
     )

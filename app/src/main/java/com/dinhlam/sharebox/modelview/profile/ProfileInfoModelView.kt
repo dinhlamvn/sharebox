@@ -42,7 +42,7 @@ data class ProfileInfoModelView(
 
         override fun onBind(model: ProfileInfoModelView, position: Int) {
             binding.imageSignOut.setOnClickListener(model.actionSignOut.prop)
-            ImageLoader.instance.load(buildContext, model.avatar, binding.imageAvatar) {
+            ImageLoader.INSTANCE.load(buildContext, model.avatar, binding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             binding.textViewName.text = model.name
