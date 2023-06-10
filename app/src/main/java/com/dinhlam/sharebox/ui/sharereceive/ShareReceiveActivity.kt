@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
@@ -67,6 +68,15 @@ class ShareReceiveActivity :
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
+
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                snap()
+            } else {
+                showToast(R.string.error_require_passcode)
+            }
+        }
 
     @Inject
     lateinit var appRouter: AppRouter
@@ -175,18 +185,21 @@ class ShareReceiveActivity :
         }
 
         viewBinding.containerButtonSnap.setOnClickListener {
-            hideKeyboard()
-            val shareNote = viewBinding.textInputNote.getTrimmedText()
-            viewModel.share(shareNote, this@ShareReceiveActivity)
+            requestSnap()
         }
 
         viewBinding.imageShareBookmark.setOnClickListener {
             showBookmarkCollectionPicker()
         }
 
-        viewBinding.textShareBox.setDrawableCompat(start = IconUtils.boxIcon(this))
         viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
-            viewBinding.textShareBox.text = currentBox?.boxName
+            val boxName = currentBox?.boxName ?: getString(R.string.box_all)
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            viewBinding.textShareBox.text = boxName
+            viewBinding.textShareBox.setDrawableCompat(
+                start = IconUtils.boxIcon(this),
+                end = if (isLock) IconUtils.lockIcon(this) { copy(sizeDp = 16) } else null,
+            )
         }
 
         viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
@@ -204,6 +217,24 @@ class ShareReceiveActivity :
         if (!userHelper.isSignedIn()) {
             signInLauncher.launch(appRouter.signIn(true))
         }
+    }
+
+    private fun requestSnap() = getState(viewModel) { state ->
+        val boxPasscode =
+            state.currentBox?.passcode.takeIfNotNullOrBlank() ?: return@getState snap()
+        val boxName = state.currentBox?.boxName ?: ""
+        val intent = appRouter.passcodeIntent(this, boxPasscode)
+        intent.putExtra(
+            AppExtras.EXTRA_PASSCODE_DESCRIPTION,
+            getString(R.string.dialog_bookmark_collection_picker_verify_passcode, boxName)
+        )
+        passcodeConfirmResultLauncher.launch(intent)
+    }
+
+    private fun snap() {
+        hideKeyboard()
+        val shareNote = viewBinding.textInputNote.getTrimmedText()
+        viewModel.share(shareNote, this@ShareReceiveActivity)
     }
 
     private fun handleShareData() {
@@ -304,23 +335,41 @@ class ShareReceiveActivity :
         popupContentView.orientation = LinearLayout.VERTICAL
         popupContentView.layoutParams = layoutParams
 
-
-        boxes.forEach { box ->
-            val binding = MenuItemWithTextBinding.inflate(layoutInflater)
-            binding.textView.text = box.boxName
-            binding.textView.setOnClickListener {
-                viewModel.setShareBox(box)
+        MenuItemWithTextBinding.inflate(layoutInflater).run {
+            textView.text = getString(R.string.box_all)
+            textView.setOnClickListener {
+                viewModel.setBox(null)
                 dismissPopup()
             }
             popupContentView.addView(
-                binding.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+                this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
             )
+        }
+
+        boxes.forEach { box ->
+            MenuItemWithTextBinding.inflate(layoutInflater).run {
+                textView.text = box.boxName
+                textView.setOnClickListener {
+                    viewModel.setBox(box)
+                    dismissPopup()
+                }
+                if (box.passcode?.isNotBlank() == true) {
+                    textView.setDrawableCompat(start = IconUtils.lockIcon(this@ShareReceiveActivity) {
+                        copy(
+                            sizeDp = 16
+                        )
+                    })
+                }
+                popupContentView.addView(
+                    this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+                )
+            }
         }
         popupView.addView(popupContentView)
         popupWindow.contentView = popupView
 
         popupWindow.showAsDropDown(
-            viewBinding.containerShareBox, 0, boxes.size.times(-1).times(60).dp()
+            viewBinding.containerShareBox, 0, boxes.size.plus(1).times(-1).times(60).dp()
         )
     }
 

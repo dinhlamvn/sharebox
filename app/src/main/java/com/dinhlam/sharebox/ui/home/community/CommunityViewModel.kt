@@ -33,10 +33,10 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isRefreshing = true) }
         backgroundTask {
             val shares = state.currentBox?.let { currentBox ->
-                shareRepository.findWhereShareBox(
+                shareRepository.findWhereInBox(
                     currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
                 )
-            } ?: shareRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0)
+            } ?: shareRepository.findCommunityShares(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0)
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
@@ -50,12 +50,12 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isLoadingMore = true) }
         execute {
             val shares = currentBox?.let { currentBox ->
-                shareRepository.findWhereShareBox(
+                shareRepository.findWhereInBox(
                     currentBox.boxId,
                     AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                     currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
                 )
-            } ?: shareRepository.find(
+            } ?: shareRepository.findCommunityShares(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
@@ -134,7 +134,7 @@ class CommunityViewModel @Inject constructor(
             }
         }
 
-    fun setSelectedShareBox(box: Box?) = getState { state ->
+    fun setBox(box: Box?) = getState { state ->
         if (state.currentBox != box) {
             setState { copy(currentBox = box) }
             doOnRefresh()

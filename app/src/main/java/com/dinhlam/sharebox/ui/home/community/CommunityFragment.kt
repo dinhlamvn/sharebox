@@ -175,9 +175,9 @@ class CommunityFragment :
         listPopupWindow.setOnItemClickListener { _, _, position, _ ->
             listPopupWindow.dismiss()
             if (position == 0) {
-                viewModel.setSelectedShareBox(null)
+                viewModel.setBox(null)
             } else {
-                viewModel.setSelectedShareBox(boxes[position - 1])
+                viewModel.setBox(boxes[position - 1])
             }
         }
 

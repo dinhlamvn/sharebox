@@ -112,8 +112,8 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
 
     private fun createNewBox() {
         val name = viewBinding.textEditName.getTrimmedText()
-        val desc = viewBinding.textEditName.getTrimmedText()
-        val passcode = viewBinding.textEditName.getTrimmedText()
+        val desc = viewBinding.textEditDesc.getTrimmedText()
+        val passcode = viewBinding.textEditPasscode.getTrimmedText()
 
         if (name.isEmpty()) {
             viewBinding.textEditName.error = getString(R.string.error_require_name)

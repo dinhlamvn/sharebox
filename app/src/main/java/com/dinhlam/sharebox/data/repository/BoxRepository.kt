@@ -4,7 +4,6 @@ import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.UserHelper
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +32,6 @@ class BoxRepository @Inject constructor(
             lastSeen = lastSeen
         )
 
-        delay(1000)
         return boxDao.runCatching {
             insert(box)
             realtimeDatabaseRepository.push(box)

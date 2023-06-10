@@ -49,20 +49,19 @@ interface ShareDao {
         OFFSET :offset
     """
     )
-    suspend fun findShareCommunity(limit: Int, offset: Int): List<Share>
+    suspend fun findCommunityShares(limit: Int, offset: Int): List<Share>
 
     @Query(
         """
         SELECT s.* 
         FROM share as s
-        INNER JOIN share_community sc ON sc.share_id = s.share_id
         WHERE s.share_box_id = :boxId
-        ORDER BY sc.share_power DESC
+        ORDER BY s.share_date DESC
         LIMIT :limit
         OFFSET :offset
     """
     )
-    suspend fun findShareCommunity(boxId: String, limit: Int, offset: Int): List<Share>
+    suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int): List<Share>
 
     @Query(
         """
