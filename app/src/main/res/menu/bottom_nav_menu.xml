@@ -12,6 +12,9 @@
         android:title="@string/title_video_mixer" />
 
     <item
+        android:id="@+id/navigation_placeholder" />
+
+    <item
         android:id="@+id/navigation_bookmark"
         android:icon="@drawable/ic_collection_bookmark"
         android:title="@string/title_bookmark" />

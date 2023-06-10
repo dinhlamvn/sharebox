@@ -4,11 +4,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -114,6 +112,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             viewBinding.viewPager.setCurrentItem(pos, false)
             return@setOnItemSelectedListener true
         }
+
+        viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
     }
 
     override fun onDestroy() {

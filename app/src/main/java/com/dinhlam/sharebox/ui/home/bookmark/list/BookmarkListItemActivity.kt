@@ -60,6 +60,7 @@ class BookmarkListItemActivity :
                         shareDetail.likeNumber,
                         commentNumber = shareDetail.commentNumber,
                         bookmarked = shareDetail.bookmarked,
+                        liked = shareDetail.liked,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
                         actionLike = ::onLike,
@@ -101,7 +102,6 @@ class BookmarkListItemActivity :
     override val viewModel: BookmarkListItemViewModel by viewModels()
 
     override fun onStateChanged(state: BookmarkListItemState) {
-        state.bookmarkCollection?.let(::updateUi)
         shareAdapter.requestBuildModelViews()
     }
 
@@ -117,6 +117,12 @@ class BookmarkListItemActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.consume(
+            this, BookmarkListItemState::bookmarkCollection, true
+        ) { bookmarkCollection ->
+            bookmarkCollection?.let(::updateUi)
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(viewBinding.appbar) { _, insets ->
             (viewBinding.toolbar.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
@@ -137,9 +143,7 @@ class BookmarkListItemActivity :
         viewBinding.recyclerView.adapter = shareAdapter
 
         viewModel.consume(
-            this,
-            BookmarkListItemState::requestVerifyPasscode,
-            true
+            this, BookmarkListItemState::requestVerifyPasscode, true
         ) { shouldRequest ->
             if (shouldRequest) {
                 requestVerifyPasscode()
@@ -187,14 +191,11 @@ class BookmarkListItemActivity :
     }
 
     private fun onBookmark(shareId: String) {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.dialog_confirm)
+        MaterialAlertDialogBuilder(this).setTitle(R.string.dialog_confirm)
             .setMessage(R.string.dialog_confirm_remove_bookmark)
             .setPositiveButton(R.string.dialog_ok) { _, _ ->
                 viewModel.removeBookmark(shareId)
-            }
-            .setNegativeButton(R.string.dialog_cancel, null)
-            .show()
+            }.setNegativeButton(R.string.dialog_cancel, null).show()
     }
 
     private fun onComment(shareId: String) {
