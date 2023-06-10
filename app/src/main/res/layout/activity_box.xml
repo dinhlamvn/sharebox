@@ -4,6 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.Material3.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetEnd="2dp"
+        app:contentInsetStart="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/title_box_create"
+        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_layout_name"
         android:layout_width="match_parent"
@@ -12,7 +30,7 @@
         android:layout_marginTop="16dp"
         app:errorTextAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:hintTextAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         app:placeholderTextAppearance="@style/TextAppearance.MaterialComponents.Body2">
 
         <com.google.android.material.textfield.TextInputEditText

@@ -222,6 +222,7 @@
     <string name="create">Create a new one</string>
     <string name="error_create_box">An error occurred while create box.</string>
     <string name="error_require_name">Name can\'t be empty</string>
+    <string name="title_box_create">Create new box</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

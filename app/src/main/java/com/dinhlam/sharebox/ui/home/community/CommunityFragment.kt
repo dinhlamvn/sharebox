@@ -136,7 +136,7 @@ class CommunityFragment :
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
 
         viewModel.consume(this, CommunityState::currentBox, true) { currentBox ->
-            viewBinding.textTitle.text = currentBox?.boxName
+            viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_all)
         }
 
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -167,14 +167,18 @@ class CommunityFragment :
         val listPopupWindow = ListPopupWindow(requireContext(), null, R.attr.listPopupWindowStyle)
         listPopupWindow.anchorView = view
         val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
-        val boxNames = boxes.map { box -> box.boxName }
+        val boxNames = listOf(getString(R.string.box_all)).plus(boxes.map { box -> box.boxName })
         val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxNames)
         listPopupWindow.setAdapter(adapter)
         listPopupWindow.setContentWidth(widthPercentage(50))
 
         listPopupWindow.setOnItemClickListener { _, _, position, _ ->
             listPopupWindow.dismiss()
-            viewModel.setSelectedShareBox(boxes[position])
+            if (position == 0) {
+                viewModel.setSelectedShareBox(null)
+            } else {
+                viewModel.setSelectedShareBox(boxes[position - 1])
+            }
         }
 
         listPopupWindow.show()

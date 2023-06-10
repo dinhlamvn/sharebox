@@ -134,9 +134,9 @@ class CommunityViewModel @Inject constructor(
             }
         }
 
-    fun setSelectedShareBox(shareBox: Box) = getState { state ->
-        if (state.currentBox != shareBox) {
-            setState { copy(currentBox = shareBox) }
+    fun setSelectedShareBox(box: Box?) = getState { state ->
+        if (state.currentBox != box) {
+            setState { copy(currentBox = box) }
             doOnRefresh()
         }
     }
