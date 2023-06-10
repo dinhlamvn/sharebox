@@ -10,10 +10,12 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareType
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeBoxObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeUserObj
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
@@ -58,6 +60,9 @@ class RealtimeDatabaseService : Service() {
     lateinit var likeRepository: LikeRepository
 
     @Inject
+    lateinit var boxRepository: BoxRepository
+
+    @Inject
     lateinit var gson: Gson
 
     @Inject
@@ -82,8 +87,21 @@ class RealtimeDatabaseService : Service() {
         realtimeDatabaseRepository.consumeUsers(::onUserAdded)
         realtimeDatabaseRepository.consumeComments(::onCommentAdded)
         realtimeDatabaseRepository.consumeLikes(::onLikeAdded)
+        realtimeDatabaseRepository.consumeBoxes(::onBoxAdded)
 
         return START_STICKY
+    }
+
+    private fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {
+        serviceScope.launch {
+            val box = boxRepository.findOneRaw(boxId) ?: RealtimeBoxObj.from(jsonMap).run {
+                boxRepository.insert(id, name, desc, createdDate, passcode)
+            }
+
+            if (box == null) {
+                Logger.error("Insert box from realtime-db to local failed")
+            }
+        }
     }
 
     private fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) {

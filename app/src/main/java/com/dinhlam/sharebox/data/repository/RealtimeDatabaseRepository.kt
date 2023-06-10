@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.data.repository
 
+import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
+import com.dinhlam.sharebox.data.model.realtimedb.RealtimeBoxObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeShareObj
@@ -33,6 +35,8 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private var likeChildEventListener: SimpleRealtimeChildEventListener? = null
 
+    private var boxChildEventListener: SimpleRealtimeChildEventListener? = null
+
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
     private val userRef: DatabaseReference by lazyOf(database.getReference("users"))
@@ -40,6 +44,8 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val commentRef: DatabaseReference by lazyOf(database.getReference("comments"))
 
     private val likeRef: DatabaseReference by lazyOf(database.getReference("likes"))
+
+    private val boxRef: DatabaseReference by lazyOf(database.getReference("boxes"))
 
     suspend fun push(share: Share) {
         try {
@@ -73,6 +79,14 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
+    suspend fun push(box: Box) {
+        try {
+            boxRef.child(box.boxId).setValue(RealtimeBoxObj.from(box)).await()
+        } catch (e: Exception) {
+            Logger.error(e)
+        }
+    }
+
     fun consumeShares(childAddedHandler: (String, Map<String, Any>) -> Unit) {
         shareChildEventListener =
             SimpleRealtimeChildEventListener(childAddedHandler).also { listener ->
@@ -101,11 +115,19 @@ class RealtimeDatabaseRepository @Inject constructor(
             }
     }
 
+    fun consumeBoxes(childAddedHandler: (String, Map<String, Any>) -> Unit) {
+        boxChildEventListener =
+            SimpleRealtimeChildEventListener(childAddedHandler).also { listener ->
+                boxRef.addChildEventListener(listener)
+            }
+    }
+
     fun cancel() {
         shareChildEventListener?.let { listener -> shareRef.removeEventListener(listener) }
         userChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
-        commentChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
-        likeChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
+        commentChildEventListener?.let { listener -> commentRef.removeEventListener(listener) }
+        likeChildEventListener?.let { listener -> likeRef.removeEventListener(listener) }
+        boxChildEventListener?.let { listener -> boxRef.removeEventListener(listener) }
     }
 
     private class SimpleRealtimeChildEventListener(private val block: (String, Map<String, Any>) -> Unit) :

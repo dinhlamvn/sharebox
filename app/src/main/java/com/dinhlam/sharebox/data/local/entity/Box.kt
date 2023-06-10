@@ -22,7 +22,7 @@ data class Box(
     @ColumnInfo(name = "box_id") val boxId: String,
     @ColumnInfo(name = "box_name") val boxName: String,
     @ColumnInfo(name = "box_desc") val boxDesc: String?,
-    @ColumnInfo(name = "created_by") val createdUserId: String,
+    @ColumnInfo(name = "created_by") val createdBy: String,
     @ColumnInfo(name = "created_date") val createdDate: Long,
     @ColumnInfo(name = "passcode") val passcode: String?,
     @ColumnInfo(name = "last_seen") val lastSeen: Long,
