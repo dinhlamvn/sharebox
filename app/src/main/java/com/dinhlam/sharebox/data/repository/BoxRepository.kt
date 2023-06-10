@@ -44,4 +44,8 @@ class BoxRepository @Inject constructor(
     suspend fun findOneRaw(boxId: String): Box? = boxDao.runCatching {
         find(boxId)
     }.getOrNull()
+
+    suspend fun find(): List<Box> = boxDao.runCatching {
+        find()
+    }.getOrDefault(emptyList())
 }

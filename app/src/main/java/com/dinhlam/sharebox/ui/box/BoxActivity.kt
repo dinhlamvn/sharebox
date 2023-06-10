@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.BoxUtils
+import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,6 +57,10 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewBinding.imageClear.setImageDrawable(IconUtils.clearIcon(this) {
+            copy(sizeDp = 16)
+        })
+
         viewBinding.imageClear.setOnClickListener {
             viewBinding.textEditPasscode.text?.clear()
         }
@@ -74,12 +79,12 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
 
         viewBinding.textLayoutPasscode.setEndIconOnClickListener {
             isVisiblePasscode = !isVisiblePasscode
-
+            togglePasscodeVisibility()
         }
 
         viewBinding.textEditName.doAfterTextChanged { editable ->
             if (editable.trimmedString().isNotBlank()) {
-                viewBinding.textLayoutName.error = null
+                viewBinding.textEditName.error = null
             }
         }
 
@@ -95,11 +100,11 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
     @UiThread
     private fun togglePasscodeVisibility() {
         if (isVisiblePasscode) {
-            viewBinding.textLayoutPasscode.setEndIconDrawable(R.drawable.ic_visibility)
+            viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOnIcon(this)
             viewBinding.textEditPasscode.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
         } else {
-            viewBinding.textLayoutPasscode.setEndIconDrawable(R.drawable.ic_visibility_off)
+            viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOffIcon(this)
             viewBinding.textEditPasscode.transformationMethod =
                 PasswordTransformationMethod.getInstance()
         }
@@ -111,7 +116,7 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
         val passcode = viewBinding.textEditName.getTrimmedText()
 
         if (name.isEmpty()) {
-            viewBinding.textLayoutName.error = getString(R.string.error_require_name)
+            viewBinding.textEditName.error = getString(R.string.error_require_name)
             return
         }
 

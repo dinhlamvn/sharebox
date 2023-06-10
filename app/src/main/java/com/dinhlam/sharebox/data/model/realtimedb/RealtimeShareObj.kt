@@ -12,7 +12,7 @@ data class RealtimeShareObj(
     @get:PropertyName("share_user_id") val shareUserId: String,
     @get:PropertyName("share_note") val shareNote: String?,
     @get:PropertyName("share_data") val shareData: String,
-    @get:PropertyName("share_box_id") val shareBoxId: String,
+    @get:PropertyName("share_box_id") val shareBoxId: String?,
     @get:PropertyName("share_date") val shareDate: Long
 ) {
 
@@ -36,7 +36,7 @@ data class RealtimeShareObj(
             val shareUserId = jsonMap.getOrThrow("share_user_id").castNonNull<String>()
             val shareNote = jsonMap["share_note"]?.toString()
             val shareData = jsonMap.getOrThrow("share_data").castNonNull<String>()
-            val shareBoxId = jsonMap["share_box_id"].cast<String>() ?: ""
+            val shareBoxId = jsonMap["share_box_id"].cast<String>()
             val shareDate = jsonMap.getOrThrow("share_date").castNonNull<Long>()
 
             return RealtimeShareObj(

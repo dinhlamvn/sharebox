@@ -166,7 +166,6 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/action_clear_passcode"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_clear"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/text_layout_passcode"
                     app:layout_constraintEnd_toEndOf="parent"

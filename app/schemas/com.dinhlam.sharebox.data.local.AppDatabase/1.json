@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "abea14a8b5dfd6203152568d5c13c45f",
+    "identityHash": "d3b065c221e854c9c174c4f436727d65",
     "entities": [
       {
         "tableName": "Share",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_data` TEXT NOT NULL, `is_video_share` INTEGER NOT NULL, `share_note` TEXT, `share_box_id` TEXT NOT NULL, `share_date` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_data` TEXT NOT NULL, `is_video_share` INTEGER NOT NULL, `share_note` TEXT, `share_box_id` TEXT, `share_date` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`share_user_id`) REFERENCES `User`(`user_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -48,7 +48,7 @@
             "fieldPath": "shareBoxId",
             "columnName": "share_box_id",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "shareDate",
@@ -916,7 +916,7 @@
             "notNull": false
           },
           {
-            "fieldPath": "createdUserId",
+            "fieldPath": "createdBy",
             "columnName": "created_by",
             "affinity": "TEXT",
             "notNull": true
@@ -1005,7 +1005,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'abea14a8b5dfd6203152568d5c13c45f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd3b065c221e854c9c174c4f436727d65')"
     ]
   }
 }

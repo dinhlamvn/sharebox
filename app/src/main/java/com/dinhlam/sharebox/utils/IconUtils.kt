@@ -33,6 +33,28 @@ object IconUtils {
         }
     }
 
+    fun clearIcon(context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_clear,
+            block(IconBuilder(context))
+        )
+    }
+
+    fun visibilityOnIcon(context: Context): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_visibility
+        )
+    }
+
+    fun visibilityOffIcon(context: Context): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_visibility_off
+        )
+    }
+
     fun editIconLight(context: Context): IconicsDrawable {
         return createIcon(
             context,

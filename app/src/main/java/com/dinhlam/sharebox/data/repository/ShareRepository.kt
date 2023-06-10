@@ -32,7 +32,7 @@ class ShareRepository @Inject constructor(
         shareId: String = ShareUtils.createShareId(),
         shareData: ShareData,
         shareNote: String?,
-        shareBoxId: String,
+        shareBoxId: String?,
         shareUserId: String,
         shareDate: Long = nowUTCTimeInMillis()
     ): Share? = shareDao.runCatching {

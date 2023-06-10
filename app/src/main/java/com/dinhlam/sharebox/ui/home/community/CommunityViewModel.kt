@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
@@ -20,10 +21,12 @@ class CommunityViewModel @Inject constructor(
     private val likeRepository: LikeRepository,
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
+    private val boxRepository: BoxRepository,
 ) : BaseViewModel<CommunityState>(CommunityState()) {
 
     init {
         loadShares()
+        loadBoxes()
     }
 
     private fun loadShares() = getState { state ->
@@ -36,6 +39,11 @@ class CommunityViewModel @Inject constructor(
             } ?: shareRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0)
             setState { copy(shares = shares, isRefreshing = false) }
         }
+    }
+
+    private fun loadBoxes() = backgroundTask {
+        val boxes = boxRepository.find()
+        setState { copy(boxes = boxes) }
     }
 
     fun loadMores() {
@@ -63,6 +71,7 @@ class CommunityViewModel @Inject constructor(
     fun doOnRefresh() {
         setState { copy(currentPage = 1, isLoadingMore = false, canLoadMore = true) }
         loadShares()
+        loadBoxes()
     }
 
     fun like(shareId: String) = backgroundTask {

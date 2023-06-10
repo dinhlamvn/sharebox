@@ -13,4 +13,7 @@ interface BoxDao {
 
     @Query("SELECT * FROM `box` WHERE box_id = :boxId")
     suspend fun find(boxId: String): Box?
+
+    @Query("SELECT * FROM `box`")
+    suspend fun find(): List<Box>
 }

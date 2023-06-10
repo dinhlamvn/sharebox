@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionFormBinding
@@ -59,11 +58,11 @@ class BookmarkCollectionFormActivity :
             viewBinding.textLayoutPasscode.endIconDrawable = null
         } else {
             if (state.isPasscodeVisible) {
-                viewBinding.textLayoutPasscode.setEndIconDrawable(R.drawable.ic_visibility)
+                viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOnIcon(this)
                 viewBinding.textEditPasscode.transformationMethod =
                     HideReturnsTransformationMethod.getInstance()
             } else {
-                viewBinding.textLayoutPasscode.setEndIconDrawable(R.drawable.ic_visibility_off)
+                viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOffIcon(this)
                 viewBinding.textEditPasscode.transformationMethod =
                     PasswordTransformationMethod.getInstance()
             }
@@ -76,6 +75,10 @@ class BookmarkCollectionFormActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewBinding.imageClear.setImageDrawable(IconUtils.clearIcon(this) {
+            copy(sizeDp = 16)
+        })
 
         viewBinding.toolbar.navigationIcon = IconUtils.leftArrowIcon(this) {
             copy(sizeDp = 16)
