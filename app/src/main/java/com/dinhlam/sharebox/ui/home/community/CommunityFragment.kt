@@ -1,10 +1,12 @@
 package com.dinhlam.sharebox.ui.home.community
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
@@ -19,7 +22,9 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotEmpty
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.extensions.widthPercentage
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.CommentModelView
@@ -28,6 +33,7 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -41,6 +47,18 @@ class CommunityFragment :
     ): FragmentCommunityBinding {
         return FragmentCommunityBinding.inflate(inflater, container, false)
     }
+
+    private var blockVerifyPasscodeBlock: Function0<Unit>? = null
+
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                blockVerifyPasscodeBlock?.invoke()
+            } else {
+                showToast(R.string.error_require_passcode)
+            }
+            blockVerifyPasscodeBlock = null
+        }
 
     private val layoutManager by lazy {
         LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
@@ -122,6 +140,9 @@ class CommunityFragment :
     @Inject
     lateinit var appSharePref: AppSharePref
 
+    @Inject
+    lateinit var appRouter: AppRouter
+
     override val viewModel: CommunityViewModel by viewModels()
 
     override fun onStateChanged(state: CommunityState) {
@@ -177,7 +198,21 @@ class CommunityFragment :
             if (position == 0) {
                 viewModel.setBox(null)
             } else {
-                viewModel.setBox(boxes[position - 1])
+                val box = boxes.getOrNull(position - 1) ?: return@setOnItemClickListener
+                val boxPasscode = box.passcode.takeIfNotNullOrBlank()
+                    ?: return@setOnItemClickListener viewModel.setBox(box)
+                val intent = appRouter.passcodeIntent(requireContext(), boxPasscode)
+                intent.putExtra(
+                    AppExtras.EXTRA_PASSCODE_DESCRIPTION,
+                    getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode,
+                        box.boxName
+                    )
+                )
+                blockVerifyPasscodeBlock = {
+                    viewModel.setBox(box)
+                }
+                passcodeConfirmResultLauncher.launch(intent)
             }
         }
 
