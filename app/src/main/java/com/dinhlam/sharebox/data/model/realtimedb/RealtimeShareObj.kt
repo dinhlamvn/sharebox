@@ -25,7 +25,7 @@ data class RealtimeShareObj(
                 share.shareUserId,
                 share.shareNote,
                 shareDataStr,
-                share.shareBox.id,
+                share.shareBoxId,
                 share.shareDate,
             )
         }

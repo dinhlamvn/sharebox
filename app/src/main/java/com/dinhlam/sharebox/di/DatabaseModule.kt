@@ -6,12 +6,13 @@ import com.dinhlam.sharebox.data.local.AppDatabase
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
 import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
 import com.dinhlam.sharebox.data.local.dao.BookmarkDao
+import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
+import com.dinhlam.sharebox.data.local.dao.LikeDao
 import com.dinhlam.sharebox.data.local.dao.ShareCommunityDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VideoMixerDao
-import com.dinhlam.sharebox.data.local.dao.LikeDao
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -88,5 +89,12 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): VideoMixerDao {
         return appDatabase.videoMixerDao()
+    }
+
+    @Provides
+    fun provideBoxDao(
+        appDatabase: AppDatabase
+    ): BoxDao {
+        return appDatabase.boxDao()
     }
 }

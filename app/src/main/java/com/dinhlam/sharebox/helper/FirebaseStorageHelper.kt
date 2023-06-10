@@ -29,7 +29,7 @@ class FirebaseStorageHelper @Inject constructor(
 
     private val avatarImagesRef by lazy { storage.getReference("avatarImages") }
 
-    suspend fun uploadUserAvatar(context: Context, userId: String, uri: Uri): String? =
+    suspend fun uploadUserAvatar(userId: String, uri: Uri): String? =
         withContext(Dispatchers.IO) {
             val ref = avatarImagesRef.child(getUploadAvatarFilePath(userId))
             val uploadTask =

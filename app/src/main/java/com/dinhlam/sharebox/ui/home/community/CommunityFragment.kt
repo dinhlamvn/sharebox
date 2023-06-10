@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.takeIfNotEmpty
 import com.dinhlam.sharebox.extensions.widthPercentage
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.CommentModelView
@@ -27,7 +28,6 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -135,8 +135,8 @@ class CommunityFragment :
 
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
 
-        viewModel.consume(this, CommunityState::currentBox, true) { activeBox ->
-            viewBinding.textTitle.text = getString(activeBox.name)
+        viewModel.consume(this, CommunityState::currentBox, true) { currentBox ->
+            viewBinding.textTitle.text = currentBox?.boxName
         }
 
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -163,18 +163,18 @@ class CommunityFragment :
         }
     }
 
-    private fun showListBoxMenu(view: View) {
+    private fun showListBoxMenu(view: View) = getState(viewModel) { state ->
         val listPopupWindow = ListPopupWindow(requireContext(), null, R.attr.listPopupWindowStyle)
         listPopupWindow.anchorView = view
-        val boxes = BoxUtils.getBoxes()
-        val boxNames = boxes.map { box -> getString(box.name) }
+        val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
+        val boxNames = boxes.map { box -> box.boxName }
         val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxNames)
         listPopupWindow.setAdapter(adapter)
         listPopupWindow.setContentWidth(widthPercentage(50))
 
         listPopupWindow.setOnItemClickListener { _, _, position, _ ->
             listPopupWindow.dismiss()
-            viewModel.selectShareBox(boxes[position])
+            viewModel.setSelectedShareBox(boxes[position])
         }
 
         listPopupWindow.show()

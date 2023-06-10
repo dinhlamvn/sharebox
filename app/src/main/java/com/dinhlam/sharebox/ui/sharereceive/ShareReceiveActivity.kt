@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
-import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
@@ -38,6 +37,7 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.takeIfNotEmpty
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -52,7 +52,6 @@ import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDec
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
-import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -186,8 +185,8 @@ class ShareReceiveActivity :
         }
 
         viewBinding.textShareBox.setDrawableCompat(start = IconUtils.boxIcon(this))
-        viewModel.consume(this, ShareReceiveState::shareBox) { shareBox ->
-            viewBinding.textShareBox.text = getString(shareBox.name)
+        viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
+            viewBinding.textShareBox.text = currentBox?.boxName
         }
 
         viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
@@ -278,7 +277,8 @@ class ShareReceiveActivity :
         )
     }
 
-    private fun showPopupListShareBox() {
+    private fun showPopupListShareBox() = getState(viewModel) { state ->
+        val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
         val width = ViewGroup.LayoutParams.WRAP_CONTENT
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this, null, R.attr.listPopupWindowStyle)
@@ -303,11 +303,11 @@ class ShareReceiveActivity :
         )
         popupContentView.orientation = LinearLayout.VERTICAL
         popupContentView.layoutParams = layoutParams
-        val boxes = BoxUtils.getBoxes().plus(Box.PrivateBox)
+
 
         boxes.forEach { box ->
             val binding = MenuItemWithTextBinding.inflate(layoutInflater)
-            binding.textView.text = getString(box.name)
+            binding.textView.text = box.boxName
             binding.textView.setOnClickListener {
                 viewModel.setShareBox(box)
                 dismissPopup()

@@ -8,7 +8,6 @@ import androidx.core.app.ServiceCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.User
-import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareType
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
@@ -24,7 +23,6 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.FileUtils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -80,15 +78,15 @@ class RealtimeDatabaseService : Service() {
                 .setSmallIcon(R.drawable.ic_launcher_foreground).build()
         )
 
-        realtimeDatabaseRepository.consumeShares(::handleShareAdded)
-        realtimeDatabaseRepository.consumeUsers(::handleUserAdded)
-        realtimeDatabaseRepository.consumeComments(::handleCommentAdded)
-        realtimeDatabaseRepository.consumeLikes(::handleLikeAdded)
+        realtimeDatabaseRepository.consumeShares(::onShareAdded)
+        realtimeDatabaseRepository.consumeUsers(::onUserAdded)
+        realtimeDatabaseRepository.consumeComments(::onCommentAdded)
+        realtimeDatabaseRepository.consumeLikes(::onLikeAdded)
 
         return START_STICKY
     }
 
-    private fun handleShareAdded(shareId: String, jsonMap: Map<String, Any>) {
+    private fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
             shareRepository.findOneRaw(shareId) ?: run {
                 val realtimeShareObj = RealtimeShareObj.from(jsonMap)
@@ -120,7 +118,7 @@ class RealtimeDatabaseService : Service() {
                     shareId,
                     shareData,
                     realtimeShareObj.shareNote,
-                    BoxUtils.findBoxOrDefault(realtimeShareObj.shareBoxId, Box.All),
+                    realtimeShareObj.shareBoxId,
                     realtimeShareObj.shareUserId,
                     realtimeShareObj.shareDate
                 )
@@ -128,7 +126,7 @@ class RealtimeDatabaseService : Service() {
         }
     }
 
-    private fun handleUserAdded(userId: String, jsonMap: Map<String, Any>) {
+    private fun onUserAdded(userId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
             val realtimeUserObj = RealtimeUserObj.from(jsonMap)
             val user = userRepository.findOneRaw(userId) ?: User(
@@ -151,7 +149,7 @@ class RealtimeDatabaseService : Service() {
         }
     }
 
-    private fun handleCommentAdded(commentId: String, jsonMap: Map<String, Any>) {
+    private fun onCommentAdded(commentId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
             val realtimeCommentObj = RealtimeCommentObj.from(jsonMap)
             commentRepository.findOneRaw(commentId) ?: run {
@@ -170,7 +168,7 @@ class RealtimeDatabaseService : Service() {
         }
     }
 
-    private fun handleLikeAdded(likeId: String, jsonMap: Map<String, Any>) {
+    private fun onLikeAdded(likeId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
             val realtimeLikeObj = RealtimeLikeObj.from(jsonMap)
             likeRepository.findOneRaw(likeId) ?: run {

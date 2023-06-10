@@ -1,9 +1,9 @@
 package com.dinhlam.sharebox.data.repository
 
 import com.dinhlam.sharebox.data.local.dao.ShareDao
+import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
-import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.extensions.cast
@@ -32,7 +32,7 @@ class ShareRepository @Inject constructor(
         shareId: String = ShareUtils.createShareId(),
         shareData: ShareData,
         shareNote: String?,
-        shareBox: Box,
+        shareBoxId: String,
         shareUserId: String,
         shareDate: Long = nowUTCTimeInMillis()
     ): Share? = shareDao.runCatching {
@@ -46,7 +46,7 @@ class ShareRepository @Inject constructor(
             shareUserId = shareUserId,
             shareData = shareData,
             shareNote = shareNote,
-            shareBox = shareBox,
+            shareBoxId = shareBoxId,
             shareDate = shareDate,
             isVideoShare = isVideoShare
         )
@@ -75,7 +75,7 @@ class ShareRepository @Inject constructor(
     }.getOrDefault(emptyList())
 
     suspend fun findForCommunity(limit: Int, offset: Int) = shareDao.runCatching {
-        findNotInBox(Box.PrivateBox, limit, offset)
+        findForCommunity(limit, offset)
     }.getOrDefault(emptyList())
 
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
@@ -92,8 +92,8 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun find(shareBox: Box, limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findShareCommunity(shareBox, limit, offset)
+    suspend fun findWhereShareBox(shareBoxId: String, limit: Int, offset: Int) = shareDao.runCatching {
+        val shares = findShareCommunity(shareBoxId, limit, offset)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 

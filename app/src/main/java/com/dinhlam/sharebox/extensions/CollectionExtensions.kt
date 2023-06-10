@@ -9,3 +9,5 @@ fun <T, R> Map<T, R?>.filterValuesNotNull(): Map<T, R> {
 fun <T, R> Map<T, R>.getOrThrow(key: T): R {
     return get(key) ?: throw NoSuchElementException("No element found with key $key")
 }
+
+fun <T> List<T>.takeIfNotEmpty(): List<T>? = ifEmpty { null }

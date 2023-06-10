@@ -4,8 +4,8 @@ import android.content.Context
 import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Share
-import com.dinhlam.sharebox.data.model.Box
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -53,40 +53,39 @@ class ShareReceiveViewModel @Inject constructor(
         execute(onError = {
             postShowToast(R.string.share_receive_error_share)
         }) {
+            val box = currentBox ?: return@execute this
             val share = when (val shareData = shareData) {
                 is ShareData.ShareUrl -> shareUrl(
                     note,
                     shareData.castNonNull(),
-                    shareBox,
+                    box,
                 )
 
                 is ShareData.ShareText -> shareText(
                     note,
                     shareData.castNonNull(),
-                    shareBox,
+                    box,
                 )
 
                 is ShareData.ShareImage -> shareImage(
                     context,
                     note,
                     shareData.castNonNull(),
-                    shareBox,
+                    box,
                 )
 
                 is ShareData.ShareImages -> shareImages(
                     context,
                     note,
                     shareData.castNonNull(),
-                    shareBox,
+                    box,
                 )
 
                 else -> null
             }
 
             share?.let { insertedShare ->
-                if (shareBox !is Box.PrivateBox) {
-                    realtimeDatabaseRepository.push(insertedShare)
-                }
+                realtimeDatabaseRepository.push(insertedShare)
                 bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
                         0, insertedShare.shareId, pickedBookmarkCollectionId
@@ -106,7 +105,7 @@ class ShareReceiveViewModel @Inject constructor(
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareBox = shareBox,
+            shareBoxId = shareBox.boxId,
             shareUserId = userHelper.getCurrentUserId()
         )
     }
@@ -117,7 +116,7 @@ class ShareReceiveViewModel @Inject constructor(
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareBox = shareBox,
+            shareBoxId = shareBox.boxId,
             shareUserId = userHelper.getCurrentUserId()
         )
     }
@@ -144,7 +143,7 @@ class ShareReceiveViewModel @Inject constructor(
         val share = shareRepository.insert(
             shareData = saveShareImage,
             shareNote = note,
-            shareBox = shareBox,
+            shareBoxId = shareBox.boxId,
             shareUserId = userHelper.getCurrentUserId()
         )
 
@@ -180,7 +179,7 @@ class ShareReceiveViewModel @Inject constructor(
         val share = shareRepository.insert(
             shareData = saveShareImages,
             shareNote = note,
-            shareBox = shareBox,
+            shareBoxId = shareBox.boxId,
             shareUserId = userHelper.getCurrentUserId()
         )
 
@@ -194,7 +193,7 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     fun setShareBox(shareBox: Box) {
-        setState { copy(shareBox = shareBox) }
+        setState { copy(currentBox = shareBox) }
     }
 
     fun setBookmarkCollection(pickedId: String?) {

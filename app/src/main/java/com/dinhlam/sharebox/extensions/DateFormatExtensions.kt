@@ -1,17 +1,9 @@
 package com.dinhlam.sharebox.extensions
 
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
-
-fun Long.format(pattern: String): String =
-    SimpleDateFormat(pattern, Locale.getDefault()).format(this)
-
-fun Long.formatForFeed(): String = format("hh:mm a • MMM dd, YYYY")
 
 fun Long.asProfileAge(): String {
-    val now = Calendar.getInstance()
-    val subtractTime = now.timeInMillis - this
+    val subtractTime = nowUTCTimeInMillis() - this
 
     val timeOfYear = 365 * 24 * 3600 * 1000L
     val timeOfMonth = 30 * 24 * 3600 * 1000L

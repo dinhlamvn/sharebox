@@ -168,7 +168,6 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             val userId = UserUtils.createUserId(email)
             val avatarUrl = customAvatarUri?.let { uri ->
                 firebaseStorageHelper.uploadUserAvatar(
-                    this@SignInActivity,
                     userId,
                     uri
                 )
