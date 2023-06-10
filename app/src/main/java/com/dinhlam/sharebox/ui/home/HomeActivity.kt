@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
+import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.services.ShareCommunityService
 import com.dinhlam.sharebox.services.VideoMixerService
@@ -21,6 +22,7 @@ import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
@@ -77,6 +79,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 
+    @Inject
+    lateinit var appRouter: AppRouter
+
     override fun onCreateViewBinding(): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(layoutInflater)
     }
@@ -114,6 +119,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
 
         viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
+
+        viewBinding.buttonAddBox.setOnClickListener {
+            startActivity(appRouter.boxIntent(this))
+        }
     }
 
     override fun onDestroy() {
@@ -127,7 +136,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             bindService(intent, communityServiceConnection, Context.BIND_AUTO_CREATE)
         }
         Intent(this, VideoMixerService::class.java).also { intent ->
-            bindService(intent, communityServiceConnection, Context.BIND_AUTO_CREATE)
+            bindService(intent, videoMixerServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 

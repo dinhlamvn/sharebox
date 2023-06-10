@@ -142,6 +142,13 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
+            android:name=".ui.box.BoxActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
             android:name=".ui.passcode.PasscodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
