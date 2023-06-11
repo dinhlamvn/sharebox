@@ -27,10 +27,10 @@ data class RealtimeBoxObj(
         fun from(jsonMap: Map<String, Any>): RealtimeBoxObj {
             val id = jsonMap.getOrThrow("id").castNonNull<String>()
             val name = jsonMap.getOrThrow("name").castNonNull<String>()
-            val desc = jsonMap.getOrThrow("desc").cast<String>()
+            val desc = jsonMap["desc"]?.cast<String>()
             val createdBy = jsonMap.getOrThrow("created_by").castNonNull<String>()
             val createdDate = jsonMap.getOrThrow("created_date").castNonNull<Long>()
-            val passcode = jsonMap.getOrThrow("passcode").cast<String>()
+            val passcode = jsonMap["passcode"]?.cast<String>()
 
             return RealtimeBoxObj(
                 id, name, desc, createdBy, createdDate, passcode
