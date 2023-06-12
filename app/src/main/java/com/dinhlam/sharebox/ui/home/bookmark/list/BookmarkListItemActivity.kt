@@ -173,7 +173,7 @@ class BookmarkListItemActivity :
             }
 
             is ShareData.ShareText -> {
-                shareHelper.openTextViewer(this, shareData.text)
+                shareHelper.openTextViewerDialog(this, shareData.text)
             }
 
             else -> {}
@@ -199,6 +199,6 @@ class BookmarkListItemActivity :
     }
 
     private fun onComment(shareId: String) {
-        shareHelper.showComment(supportFragmentManager, shareId)
+        shareHelper.showCommentDialog(supportFragmentManager, shareId)
     }
 }

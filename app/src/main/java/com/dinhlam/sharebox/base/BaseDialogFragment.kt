@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.base
 
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,10 +9,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenWidth
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
@@ -26,20 +27,26 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     protected val viewBinding: VB
         get() = binding!!
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return MaterialAlertDialogBuilder(requireContext()).apply {
+            binding = onCreateViewBinding(layoutInflater, null)
+            setView(viewBinding.root)
+        }.create()
+    }
+
+    override fun getView(): View? {
+        return viewBinding.root
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        binding = onCreateViewBinding(inflater, container)
-        return binding!!.root
+        return viewBinding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-    }
-
-    override fun getTheme(): Int {
-        return R.style.MaterialAlertDialog_Material3
     }
 
     override fun onStart() {

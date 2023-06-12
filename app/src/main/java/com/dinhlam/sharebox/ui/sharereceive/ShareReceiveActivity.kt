@@ -27,6 +27,7 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemWithTextBinding
+import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
@@ -60,7 +61,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareReceiveActivity :
-    BaseViewModelActivity<ShareReceiveState, ShareReceiveViewModel, ActivityShareReceiveBinding>() {
+    BaseViewModelActivity<ShareReceiveState, ShareReceiveViewModel, ActivityShareReceiveBinding>(),
+    BoxSelectionDialogFragment.OnBoxSelectedListener {
 
     companion object {
         private const val HASHTAG_DEFAULT_ID = "hashtag-default"
@@ -373,7 +375,7 @@ class ShareReceiveActivity :
             MenuItemWithTextBinding.inflate(layoutInflater).apply {
                 textView.text = getString(R.string.view_more)
                 textView.setOnClickListener {
-                    showToast("View more")
+                    shareHelper.showBoxSelectionDialog(supportFragmentManager)
                     dismissPopup()
                 }
                 popupContentView.addView(
@@ -393,7 +395,10 @@ class ShareReceiveActivity :
     }
 
     private fun showBookmarkCollectionPicker() = getState(viewModel) { state ->
-        shareHelper.showBookmarkCollectionPicker(this, state.bookmarkCollection?.id) { pickedId ->
+        shareHelper.showBookmarkCollectionPickerDialog(
+            this,
+            state.bookmarkCollection?.id
+        ) { pickedId ->
             viewModel.setBookmarkCollection(pickedId)
         }
     }
@@ -405,6 +410,10 @@ class ShareReceiveActivity :
             showToast(R.string.sign_in_error)
             finishAndRemoveTask()
         }
+    }
+
+    override fun onBoxSelected(boxId: String) {
+        viewModel.setBox(boxId)
     }
 }
 

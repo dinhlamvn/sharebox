@@ -149,4 +149,11 @@ class CommunityViewModel @Inject constructor(
             doOnRefresh()
         }
     }
+
+    fun setBox(boxId: String) {
+        backgroundTask {
+            val boxDetail = boxRepository.findOne(boxId) ?: return@backgroundTask
+            setBox(boxDetail)
+        }
+    }
 }

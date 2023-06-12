@@ -217,4 +217,11 @@ class ShareReceiveViewModel @Inject constructor(
             }
         } ?: setState { copy(bookmarkCollection = null) }
     }
+
+    fun setBox(boxId: String) {
+        backgroundTask {
+            val boxDetail = boxRepository.findOne(boxId) ?: return@backgroundTask
+            setBox(boxDetail)
+        }
+    }
 }

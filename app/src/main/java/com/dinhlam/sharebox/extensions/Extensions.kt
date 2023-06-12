@@ -100,6 +100,7 @@ fun PackageManager.queryIntentActivitiesCompat(
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
     } else {
-        @Suppress("DEPRECATION") queryIntentActivities(intent, flags)
+        @Suppress("DEPRECATION")
+        queryIntentActivities(intent, flags)
     }
 }

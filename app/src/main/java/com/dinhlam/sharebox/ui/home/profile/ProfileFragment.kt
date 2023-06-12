@@ -158,7 +158,7 @@ class ProfileFragment :
             }
 
             is ShareData.ShareText -> {
-                shareHelper.openTextViewer(requireActivity(), shareData.text)
+                shareHelper.openTextViewerDialog(requireActivity(), shareData.text)
             }
 
             else -> {}
@@ -177,14 +177,14 @@ class ProfileFragment :
 
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPicker(requireActivity(), collectionId) { pickedId ->
+            shareHelper.showBookmarkCollectionPickerDialog(requireActivity(), collectionId) { pickedId ->
                 viewModel.bookmark(shareId, pickedId)
             }
         }
     }
 
     private fun onComment(shareId: String) {
-        shareHelper.showComment(childFragmentManager, shareId)
+        shareHelper.showCommentDialog(childFragmentManager, shareId)
     }
 
     private fun requestSignOut() {

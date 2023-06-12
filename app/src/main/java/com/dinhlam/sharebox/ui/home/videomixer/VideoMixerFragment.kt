@@ -202,14 +202,14 @@ class VideoMixerFragment :
 
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPicker(requireActivity(), collectionId) { pickedId ->
+            shareHelper.showBookmarkCollectionPickerDialog(requireActivity(), collectionId) { pickedId ->
                 viewModel.bookmark(shareId, pickedId)
             }
         }
     }
 
     private fun onComment(shareId: String) {
-        shareHelper.showComment(childFragmentManager, shareId)
+        shareHelper.showCommentDialog(childFragmentManager, shareId)
     }
 }
 

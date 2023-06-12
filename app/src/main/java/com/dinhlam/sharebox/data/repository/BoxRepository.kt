@@ -49,22 +49,29 @@ class BoxRepository @Inject constructor(
         boxDao.update(newBox)
     }
 
+    suspend fun findOne(boxId: String): BoxDetail? = boxDao.runCatching {
+        val box = find(boxId) ?: return@runCatching null
+        convertBoxToBoxDetail(box)
+    }.getOrNull()
+
     suspend fun findOneRaw(boxId: String): Box? = boxDao.runCatching {
         find(boxId)
     }.getOrNull()
 
     suspend fun findLatestBox(): List<BoxDetail> = boxDao.runCatching {
-        findLatestBoxes().asFlow().mapNotNull { box ->
-            val userDetail = userRepository.findOne(box.createdBy) ?: return@mapNotNull null
-            BoxDetail(
-                box.boxId,
-                box.boxName,
-                box.boxDesc,
-                userDetail,
-                box.createdDate,
-                box.passcode,
-                box.lastSeen
-            )
-        }.toList()
+        findLatestBoxes().asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
+
+    private suspend fun convertBoxToBoxDetail(box: Box): BoxDetail? {
+        val userDetail = userRepository.findOne(box.createdBy) ?: return null
+        return BoxDetail(
+            box.boxId,
+            box.boxName,
+            box.boxDesc,
+            userDetail,
+            box.createdDate,
+            box.passcode,
+            box.lastSeen
+        )
+    }
 }

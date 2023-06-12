@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
+import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
@@ -41,7 +42,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CommunityFragment :
-    BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>() {
+    BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>(), BoxSelectionDialogFragment.OnBoxSelectedListener {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -233,7 +234,7 @@ class CommunityFragment :
     }
 
     private fun showBoxesDialog() {
-        showToast("View mores")
+        shareHelper.showBoxSelectionDialog(childFragmentManager)
     }
 
     private fun onOpen(shareId: String) = getState(viewModel) { state ->
@@ -247,7 +248,7 @@ class CommunityFragment :
             }
 
             is ShareData.ShareText -> {
-                shareHelper.openTextViewer(requireActivity(), shareData.text)
+                shareHelper.openTextViewerDialog(requireActivity(), shareData.text)
             }
 
             else -> {}
@@ -266,13 +267,20 @@ class CommunityFragment :
 
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPicker(requireActivity(), collectionId) { pickedId ->
+            shareHelper.showBookmarkCollectionPickerDialog(
+                requireActivity(),
+                collectionId
+            ) { pickedId ->
                 viewModel.bookmark(shareId, pickedId)
             }
         }
     }
 
     private fun onComment(shareId: String) {
-        shareHelper.showComment(childFragmentManager, shareId)
+        shareHelper.showCommentDialog(childFragmentManager, shareId)
+    }
+
+    override fun onBoxSelected(boxId: String) {
+        viewModel.setBox(boxId)
     }
 }

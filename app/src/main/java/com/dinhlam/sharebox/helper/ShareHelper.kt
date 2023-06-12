@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
@@ -30,7 +31,6 @@ class ShareHelper @Inject constructor(
     private val appRouter: AppRouter,
 ) {
 
-    @Suppress("DEPRECATION")
     fun shareToOther(share: ShareDetail) {
         val intent = Intent(Intent.ACTION_SEND)
         when (val shareData = share.shareData) {
@@ -47,10 +47,11 @@ class ShareHelper @Inject constructor(
             }
 
             is ShareData.ShareImage -> {
+                val shareImage = shareData.castNonNull<ShareData.ShareImage>()
                 intent.putExtra(
-                    Intent.EXTRA_STREAM, shareData.castNonNull<ShareData.ShareImage>().uri
+                    Intent.EXTRA_STREAM, shareImage.uri
                 )
-                intent.setDataAndType(shareData.uri, "image/*")
+                intent.setDataAndType(shareImage.uri, "image/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
 
@@ -105,7 +106,7 @@ class ShareHelper @Inject constructor(
         }
     }
 
-    fun openTextViewer(activity: FragmentActivity, text: String) {
+    fun openTextViewerDialog(activity: FragmentActivity, text: String) {
         TextViewerDialogFragment().apply {
             arguments = Bundle().apply {
                 putString(Intent.EXTRA_TEXT, text)
@@ -133,7 +134,7 @@ class ShareHelper @Inject constructor(
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
     }
 
-    fun showBookmarkCollectionPicker(
+    fun showBookmarkCollectionPickerDialog(
         activity: FragmentActivity,
         collectionId: String?,
         listener: BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener
@@ -148,11 +149,15 @@ class ShareHelper @Inject constructor(
         )
     }
 
-    fun showComment(fragmentManager: FragmentManager, shareId: String) {
+    fun showCommentDialog(fragmentManager: FragmentManager, shareId: String) {
         CommentFragment().apply {
             arguments = Bundle().apply {
                 putString(AppExtras.EXTRA_SHARE_ID, shareId)
             }
         }.show(fragmentManager, "CommentFragment")
+    }
+
+    fun showBoxSelectionDialog(fragmentManager: FragmentManager) {
+        BoxSelectionDialogFragment().show(fragmentManager, "BoxSelectionDialogFragment")
     }
 }
