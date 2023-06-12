@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
@@ -309,7 +310,8 @@ class ShareReceiveActivity :
     }
 
     private fun showPopupListShareBox() = getState(viewModel) { state ->
-        val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
+        val boxes =
+            state.boxes.takeIfNotEmpty()?.take(AppConsts.NUMBER_VISIBLE_BOX) ?: return@getState
         val width = ViewGroup.LayoutParams.WRAP_CONTENT
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
         val popupWindow = PopupWindow(this, null, R.attr.listPopupWindowStyle)
@@ -335,19 +337,8 @@ class ShareReceiveActivity :
         popupContentView.orientation = LinearLayout.VERTICAL
         popupContentView.layoutParams = layoutParams
 
-        MenuItemWithTextBinding.inflate(layoutInflater).run {
-            textView.text = getString(R.string.box_all)
-            textView.setOnClickListener {
-                viewModel.setBox(null)
-                dismissPopup()
-            }
-            popupContentView.addView(
-                this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-            )
-        }
-
         boxes.forEach { box ->
-            MenuItemWithTextBinding.inflate(layoutInflater).run {
+            MenuItemWithTextBinding.inflate(layoutInflater).apply {
                 textView.text = box.boxName
                 textView.setOnClickListener {
                     viewModel.setBox(box)
@@ -365,11 +356,39 @@ class ShareReceiveActivity :
                 )
             }
         }
+
+        MenuItemWithTextBinding.inflate(layoutInflater).apply {
+            textView.text = getString(R.string.box_all)
+            textView.setOnClickListener {
+                viewModel.setBox(null)
+                dismissPopup()
+            }
+            popupContentView.addView(
+                this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+            )
+        }
+
+        val hasViewMore = state.boxes.size > AppConsts.NUMBER_VISIBLE_BOX
+        if (hasViewMore) {
+            MenuItemWithTextBinding.inflate(layoutInflater).apply {
+                textView.text = getString(R.string.view_more)
+                textView.setOnClickListener {
+                    showToast("View more")
+                    dismissPopup()
+                }
+                popupContentView.addView(
+                    this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+                )
+            }
+        }
+
         popupView.addView(popupContentView)
         popupWindow.contentView = popupView
 
         popupWindow.showAsDropDown(
-            viewBinding.containerShareBox, 0, boxes.size.plus(1).times(-1).times(60).dp()
+            viewBinding.containerShareBox,
+            0,
+            boxes.size.plus(if (hasViewMore) 2 else 1).times(-1).times(60).dp()
         )
     }
 

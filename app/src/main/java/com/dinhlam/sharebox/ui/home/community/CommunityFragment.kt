@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
@@ -188,7 +189,19 @@ class CommunityFragment :
         val listPopupWindow = ListPopupWindow(requireContext(), null, R.attr.listPopupWindowStyle)
         listPopupWindow.anchorView = view
         val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
-        val boxNames = listOf(getString(R.string.box_all)).plus(boxes.map { box -> box.boxName })
+        val hasViewMore = boxes.size > AppConsts.NUMBER_VISIBLE_BOX
+
+        val boxNames =
+            listOf(getString(R.string.box_all)).plus(boxes.take(AppConsts.NUMBER_VISIBLE_BOX)
+                .map { box -> box.boxName })
+                .run {
+                    if (hasViewMore) {
+                        plus(getString(R.string.view_more))
+                    } else {
+                        this
+                    }
+                }
+
         val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxNames)
         listPopupWindow.setAdapter(adapter)
         listPopupWindow.setContentWidth(widthPercentage(50))
@@ -197,16 +210,16 @@ class CommunityFragment :
             listPopupWindow.dismiss()
             if (position == 0) {
                 viewModel.setBox(null)
+            } else if (hasViewMore && position == boxNames.size - 1) {
+                showBoxesDialog()
             } else {
                 val box = boxes.getOrNull(position - 1) ?: return@setOnItemClickListener
                 val boxPasscode = box.passcode.takeIfNotNullOrBlank()
                     ?: return@setOnItemClickListener viewModel.setBox(box)
                 val intent = appRouter.passcodeIntent(requireContext(), boxPasscode)
                 intent.putExtra(
-                    AppExtras.EXTRA_PASSCODE_DESCRIPTION,
-                    getString(
-                        R.string.dialog_bookmark_collection_picker_verify_passcode,
-                        box.boxName
+                    AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode, box.boxName
                     )
                 )
                 blockVerifyPasscodeBlock = {
@@ -217,6 +230,10 @@ class CommunityFragment :
         }
 
         listPopupWindow.show()
+    }
+
+    private fun showBoxesDialog() {
+        showToast("View mores")
     }
 
     private fun onOpen(shareId: String) = getState(viewModel) { state ->
