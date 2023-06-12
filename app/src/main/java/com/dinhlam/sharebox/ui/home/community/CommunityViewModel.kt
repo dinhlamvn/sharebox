@@ -8,6 +8,7 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -140,6 +141,11 @@ class CommunityViewModel @Inject constructor(
     fun setBox(box: BoxDetail?) = getState { state ->
         if (state.currentBox != box) {
             setState { copy(currentBox = box) }
+            box?.let { nonNullBox ->
+                backgroundTask {
+                    boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
+                }
+            }
             doOnRefresh()
         }
     }

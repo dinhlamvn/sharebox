@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.utils.FileUtils
@@ -201,6 +202,11 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun setBox(box: BoxDetail?) {
         setState { copy(currentBox = box) }
+        box?.let { nonNullBox ->
+            backgroundTask {
+                boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
+            }
+        }
     }
 
     fun setBookmarkCollection(pickedId: String?) {

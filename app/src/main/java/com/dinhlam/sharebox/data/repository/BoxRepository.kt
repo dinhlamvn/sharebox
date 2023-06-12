@@ -43,6 +43,12 @@ class BoxRepository @Inject constructor(
         }.getOrNull()
     }
 
+    suspend fun updateLastSeen(boxId: String, lastSeen: Long) {
+        val box = boxDao.find(boxId) ?: return
+        val newBox = box.copy(lastSeen = lastSeen)
+        boxDao.update(newBox)
+    }
+
     suspend fun findOneRaw(boxId: String): Box? = boxDao.runCatching {
         find(boxId)
     }.getOrNull()
