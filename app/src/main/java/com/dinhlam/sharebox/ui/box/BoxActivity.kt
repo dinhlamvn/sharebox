@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.extensions.trimmedString
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.BoxUtils
@@ -37,6 +38,9 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
 
     @Inject
     lateinit var appRouter: AppRouter
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     private val passcodeResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -129,6 +133,7 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
                 BoxUtils.createBoxId(name),
                 name,
                 desc,
+                userHelper.getCurrentUserId(),
                 nowUTCTimeInMillis(),
                 passcode.takeIfNotNullOrBlank()?.md5()
             )

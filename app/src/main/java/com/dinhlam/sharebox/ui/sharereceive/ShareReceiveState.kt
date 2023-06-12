@@ -1,10 +1,10 @@
 package com.dinhlam.sharebox.ui.sharereceive
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Folder
 import com.dinhlam.sharebox.data.local.entity.HashTag
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 
@@ -19,6 +19,6 @@ data class ShareReceiveState(
     val hashTags: List<HashTag> = emptyList(),
     val bookmarkCollection: BookmarkCollectionDetail? = null,
     val showLoading: Boolean = false,
-    val currentBox: Box? = null,
-    val boxes: List<Box> = emptyList()
+    val currentBox: BoxDetail? = null,
+    val boxes: List<BoxDetail> = emptyList()
 ) : BaseViewModel.BaseState

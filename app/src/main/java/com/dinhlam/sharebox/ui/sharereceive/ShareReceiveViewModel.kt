@@ -4,8 +4,8 @@ import android.content.Context
 import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Share
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -50,7 +50,7 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private fun loadBoxes() = backgroundTask {
-        val boxes = boxRepository.find()
+        val boxes = boxRepository.findLatestBox()
         setState { copy(boxes = boxes) }
     }
 
@@ -107,7 +107,7 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareUrl(
-        note: String?, shareData: ShareData.ShareUrl, shareBox: Box?
+        note: String?, shareData: ShareData.ShareUrl, shareBox: BoxDetail?
     ): Share? {
         return shareRepository.insert(
             shareData = shareData,
@@ -118,7 +118,7 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareText(
-        note: String?, shareData: ShareData.ShareText, shareBox: Box?
+        note: String?, shareData: ShareData.ShareText, shareBox: BoxDetail?
     ): Share? {
         return shareRepository.insert(
             shareData = shareData,
@@ -129,7 +129,7 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareImage(
-        context: Context, note: String?, shareData: ShareData.ShareImage, shareBox: Box?
+        context: Context, note: String?, shareData: ShareData.ShareImage, shareBox: BoxDetail?
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
         val imageFileDir = FileUtils.createShareImagesDir(context) ?: return@use null
         val extension = MimeTypeMap.getSingleton()
@@ -162,7 +162,7 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareImages(
-        context: Context, note: String?, shareData: ShareData.ShareImages, shareBox: Box?
+        context: Context, note: String?, shareData: ShareData.ShareImages, shareBox: BoxDetail?
     ): Share? {
         val imageFileDir = FileUtils.createShareImagesDir(context) ?: return null
         val uris = shareData.uris.mapNotNull { uri ->
@@ -199,7 +199,7 @@ class ShareReceiveViewModel @Inject constructor(
         return share
     }
 
-    fun setBox(box: Box?) {
+    fun setBox(box: BoxDetail?) {
         setState { copy(currentBox = box) }
     }
 

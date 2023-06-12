@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.ui.home.community
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.local.entity.Box
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareDetail
 
 data class CommunityState(
@@ -10,6 +10,6 @@ data class CommunityState(
     val isLoadingMore: Boolean = false,
     val currentPage: Int = 1,
     val canLoadMore: Boolean = true,
-    val currentBox: Box? = null,
-    val boxes: List<Box> = emptyList()
+    val currentBox: BoxDetail? = null,
+    val boxes: List<BoxDetail> = emptyList()
 ) : BaseViewModel.BaseState

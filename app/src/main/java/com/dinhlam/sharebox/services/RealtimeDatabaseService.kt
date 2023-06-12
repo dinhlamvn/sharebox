@@ -95,7 +95,7 @@ class RealtimeDatabaseService : Service() {
     private fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {
         serviceScope.launch {
             val box = boxRepository.findOneRaw(boxId) ?: RealtimeBoxObj.from(jsonMap).run {
-                boxRepository.insert(id, name, desc, createdDate, passcode)
+                boxRepository.insert(id, name, desc, createdBy, createdDate, passcode)
             }
 
             if (box == null) {

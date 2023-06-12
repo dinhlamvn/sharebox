@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.ui.home.community
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.local.entity.Box
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
@@ -36,13 +36,16 @@ class CommunityViewModel @Inject constructor(
                 shareRepository.findWhereInBox(
                     currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
                 )
-            } ?: shareRepository.findCommunityShares(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0)
+            } ?: shareRepository.findCommunityShares(
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                offset = 0
+            )
             setState { copy(shares = shares, isRefreshing = false) }
         }
     }
 
     private fun loadBoxes() = backgroundTask {
-        val boxes = boxRepository.find()
+        val boxes = boxRepository.findLatestBox()
         setState { copy(boxes = boxes) }
     }
 
@@ -134,7 +137,7 @@ class CommunityViewModel @Inject constructor(
             }
         }
 
-    fun setBox(box: Box?) = getState { state ->
+    fun setBox(box: BoxDetail?) = getState { state ->
         if (state.currentBox != box) {
             setState { copy(currentBox = box) }
             doOnRefresh()
