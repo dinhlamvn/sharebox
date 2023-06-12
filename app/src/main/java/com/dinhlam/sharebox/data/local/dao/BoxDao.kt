@@ -21,6 +21,6 @@ interface BoxDao {
     @Query("SELECT * FROM `box`")
     suspend fun find(): List<Box>
 
-    @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT 10")
+    @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT 5")
     suspend fun findLatestBoxes(): List<Box>
 }
