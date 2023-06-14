@@ -68,11 +68,6 @@ class ProfileFragment :
             add(
                 SizedBoxModelView("divider", height = 8.dp())
             )
-            add(
-                SizedBoxModelView(
-                    "divider1", height = 1.dp()
-                )
-            )
 
             if (state.isRefreshing) {
                 add(LoadingModelView("loading_shares"))
@@ -177,7 +172,10 @@ class ProfileFragment :
 
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPickerDialog(requireActivity(), collectionId) { pickedId ->
+            shareHelper.showBookmarkCollectionPickerDialog(
+                requireActivity(),
+                collectionId
+            ) { pickedId ->
                 viewModel.bookmark(shareId, pickedId)
             }
         }
