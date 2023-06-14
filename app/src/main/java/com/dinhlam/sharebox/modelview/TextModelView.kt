@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview
 
+import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
@@ -10,6 +11,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewTextBinding
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.setTextAppearanceCompat
 
 data class TextModelView(
@@ -19,6 +21,7 @@ data class TextModelView(
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextAppearance_MaterialComponents_Body2,
     @GravityInt val gravity: Int = Gravity.CENTER,
+    val endIcon: Drawable? = null,
     val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -43,6 +46,8 @@ data class TextModelView(
                 model.actionClick.prop?.let { listener ->
                     binding.textView.setOnClickListener(listener)
                 }
+
+                binding.textView.setDrawableCompat(end = model.endIcon)
             }
 
             override fun onUnBind() {

@@ -225,6 +225,8 @@
     <string name="title_box_create">Create new box</string>
     <string name="error_require_passcode">Please verify this box</string>
     <string name="choose_box">Choose box</string>
+    <string name="total_box">+%d more box...</string>
+    <string name="search_box_result_empty">No found any box.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

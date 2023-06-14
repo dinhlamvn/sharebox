@@ -49,6 +49,18 @@ class BoxRepository @Inject constructor(
         boxDao.update(newBox)
     }
 
+    suspend fun search(query: String): List<BoxDetail> = boxDao.runCatching {
+        search(query).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+    }.getOrDefault(emptyList())
+
+    suspend fun find(limit: Int, offset: Int): List<BoxDetail> = boxDao.runCatching {
+        find(limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+    }.getOrDefault(emptyList())
+
+    suspend fun count(): Int = boxDao.runCatching {
+        count()
+    }.getOrDefault(0)
+
     suspend fun findOne(boxId: String): BoxDetail? = boxDao.runCatching {
         val box = find(boxId) ?: return@runCatching null
         convertBoxToBoxDetail(box)

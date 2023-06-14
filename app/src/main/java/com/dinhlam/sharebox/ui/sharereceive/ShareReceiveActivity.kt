@@ -29,6 +29,7 @@ import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemWithTextBinding
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
@@ -122,22 +123,25 @@ class ShareReceiveActivity :
             when (val shareData = state.shareData) {
                 is ShareData.ShareText -> add(
                     ShareReceiveTextModelView(
-                        "shareText", shareData.text
+                        "shareText", shareData.castNonNull<ShareData.ShareText>().text
                     )
                 )
 
                 is ShareData.ShareUrl -> add(
                     ShareReceiveUrlModelView(
-                        "shareWebLink", shareData.url
+                        "shareWebLink", shareData.castNonNull<ShareData.ShareUrl>().url
                     )
                 )
 
                 is ShareData.ShareImage -> add(
-                    ImageModelView(shareData.uri, screenHeight().times(0.5).toInt())
+                    ImageModelView(
+                        shareData.castNonNull<ShareData.ShareImage>().uri,
+                        screenHeight().times(0.5).toInt()
+                    )
                 )
 
                 is ShareData.ShareImages -> {
-                    addAll(shareData.uris.map { uri ->
+                    addAll(shareData.castNonNull<ShareData.ShareImages>().uris.map { uri ->
                         ImageModelView(uri, height = screenHeight().times(0.5).toInt())
                     })
                 }
@@ -150,10 +154,10 @@ class ShareReceiveActivity :
     override fun onStateChanged(state: ShareReceiveState) {
         shareContentAdapter.requestBuildModelViews()
         hashtagAdapter.requestBuildModelViews()
-        invalidateUserInfo(state.activeUser)
+        updateUserInfo(state.activeUser)
     }
 
-    private fun invalidateUserInfo(activeUser: UserDetail?) {
+    private fun updateUserInfo(activeUser: UserDetail?) {
         activeUser?.let { user ->
             ImageLoader.INSTANCE.load(this, user.avatar, viewBinding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
@@ -396,8 +400,7 @@ class ShareReceiveActivity :
 
     private fun showBookmarkCollectionPicker() = getState(viewModel) { state ->
         shareHelper.showBookmarkCollectionPickerDialog(
-            this,
-            state.bookmarkCollection?.id
+            this, state.bookmarkCollection?.id
         ) { pickedId ->
             viewModel.setBookmarkCollection(pickedId)
         }
