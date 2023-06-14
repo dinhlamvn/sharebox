@@ -80,7 +80,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/divider_point"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintTop_toBottomOf="@id/barrier_bottom_name"
         app:point_icon="@drawable/ic_time" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
