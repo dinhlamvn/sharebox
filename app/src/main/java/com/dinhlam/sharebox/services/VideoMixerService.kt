@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
@@ -57,6 +58,8 @@ class VideoMixerService : Service() {
     @Inject
     lateinit var likeRepository: LikeRepository
 
+    @Inject
+    lateinit var bookmarkRepository: BookmarkRepository
 
     inner class LocalBinder : Binder() {
         fun getService(): VideoMixerService = this@VideoMixerService
@@ -158,6 +161,10 @@ class VideoMixerService : Service() {
 
         if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
             trendingScore += 10
+        }
+
+        if (bookmarkRepository.bookmarked(shareId)) {
+            trendingScore += 15
         }
 
         val commentCount = commentRepository.count(shareId)

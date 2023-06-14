@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
@@ -45,6 +46,9 @@ class ShareCommunityService : Service() {
 
     @Inject
     lateinit var likeRepository: LikeRepository
+
+    @Inject
+    lateinit var bookmarkRepository: BookmarkRepository
 
     @Inject
     lateinit var userHelper: UserHelper
@@ -114,6 +118,10 @@ class ShareCommunityService : Service() {
 
         if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
             sharePower += 10
+        }
+
+        if (bookmarkRepository.bookmarked(shareId)) {
+            sharePower += 15
         }
 
         val commentCount = commentRepository.count(shareId)

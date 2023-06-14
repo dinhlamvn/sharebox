@@ -25,21 +25,29 @@
         app:layout_constraintTop_toBottomOf="@id/layout_user_info"
         tools:text="This is my note" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_share"
-        style="@style/TextAppearance.MaterialComponents.Body2"
-        android:layout_width="0dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_text_share"
+        style="@style/AppMaterialCardView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/text_note_background"
-        android:ellipsize="end"
-        android:maxLines="10"
-        android:padding="8dp"
+        app:cardElevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_note" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_note">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_share"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="10"
+            android:padding="12dp" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- bottom action button -->
 
@@ -51,6 +59,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_share" />
+        app:layout_constraintTop_toBottomOf="@id/card_text_share" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
