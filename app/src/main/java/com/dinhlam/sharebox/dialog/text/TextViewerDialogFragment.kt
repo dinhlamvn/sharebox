@@ -27,6 +27,6 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
     }
 
     override fun getSpacing(): Int {
-        return 32
+        return 16
     }
 }
