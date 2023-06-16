@@ -133,6 +133,6 @@ class ShareCommunityService : Service() {
         val elapsed = Calendar.getInstance().timeInMillis - share.shareDate
         val hours = elapsed.div(3600 * 1000).toInt()
 
-        return sharePower.minus(hours).coerceAtLeast(0)
+        return sharePower.minus(hours)
     }
 }

@@ -116,15 +116,12 @@ class VideoMixerService : Service() {
                             videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
                         val videoSourceId =
                             videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
-                                videoSource,
-                                shareUrl
+                                videoSource, shareUrl
                             )
 
                         val videoUri = videoMixerDetail?.uri?.takeIfNotNullOrBlank()
                             ?: videoHelper.getVideoUri(
-                                this@VideoMixerService,
-                                videoSource,
-                                shareUrl
+                                this@VideoMixerService, videoSource, shareUrl
                             )
 
                         val result = videoMixerRepository.upsert(
@@ -176,6 +173,6 @@ class VideoMixerService : Service() {
         val elapsed = nowUTCTimeInMillis() - share.shareDate
         val hours = elapsed.div(3600 * 1000).toInt()
 
-        return trendingScore.minus(hours).coerceAtLeast(0)
+        return trendingScore.minus(hours)
     }
 }
