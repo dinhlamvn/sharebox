@@ -25,13 +25,16 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.utils.FileUtils
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -118,23 +121,30 @@ class RealtimeDatabaseService : Service() {
                         else -> error("Error while parse json string $json to ShareData")
                     }
 
-                val uris =
-                    shareData.cast<ShareData.ShareImage>()?.uri?.let { uri -> arrayListOf(uri) }
-                        ?: shareData.cast<ShareData.ShareImages>()?.uris ?: emptyList()
-
-                uris.forEach { uri ->
-                    if (!FileUtils.isFileExistedFromUri(this@RealtimeDatabaseService, uri)) {
+                val newShareData = shareData.cast<ShareData.ShareImage>()?.let { shareImage ->
+                    firebaseStorageHelper.runCatching {
+                        getImageDownloadUri(
+                            this@RealtimeDatabaseService,
+                            shareId,
+                            shareImage.uri
+                        )
+                    }.getOrNull()?.let { downloadUri ->
+                        shareImage.copy(uri = downloadUri)
+                    }
+                } ?: shareData.cast<ShareData.ShareImages>()?.let { shareImages ->
+                    val downloadUris = shareImages.uris.asFlow().mapNotNull { uri ->
                         firebaseStorageHelper.runCatching {
-                            downloadImageFile(
+                            getImageDownloadUri(
                                 this@RealtimeDatabaseService, shareId, uri
                             )
-                        }
-                    }
-                }
+                        }.getOrNull()
+                    }.toList()
+                    shareImages.copy(uris = downloadUris)
+                } ?: shareData
 
                 shareRepository.insert(
                     shareId,
-                    shareData,
+                    newShareData,
                     realtimeShareObj.shareNote,
                     realtimeShareObj.shareBoxId,
                     realtimeShareObj.shareUserId,

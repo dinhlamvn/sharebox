@@ -120,6 +120,14 @@ class FirebaseStorageHelper @Inject constructor(
         }
     }
 
+    suspend fun getImageDownloadUri(
+        context: Context, shareId: String, uri: Uri
+    ): Uri {
+        return withContext(Dispatchers.IO) {
+            shareImagesRef.child(getUploadFilePath(shareId, uri)).downloadUrl.await()
+        }
+    }
+
     private fun getUploadFilePath(shareId: String, uri: Uri): String {
         val uploadFileName = FileUtils.getFileNameFromUri(uri)
         return "$shareId/$uploadFileName"
