@@ -63,7 +63,6 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
                         val newState = reducer.invoke(currentState)
                         if (newState != currentState) {
                             _state.emit(newState)
-                            notifyInternalConsumers(currentState, newState)
                             notifyConsumers(currentState, newState)
                         }
                     }
@@ -76,40 +75,36 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    private fun notifyConsumers(oldState: T, newState: T) {
+    private suspend fun notifyConsumers(oldState: T, newState: T) {
         val consumerIterator = consumers.iterator()
         while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
             val consumer = consumerIterator.next()
-            val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
-            beforeField.isAccessible = true
-            val beforeValue = beforeField.get(oldState)
-            val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
-            afterField.isAccessible = true
-            val afterValue = afterField.get(newState)
+            val beforeValue = getFieldStateValue(oldState, consumer.consumeField)
+            val afterValue = getFieldStateValue(newState, consumer.consumeField)
             if (consumer.notifyOnChanged && beforeValue != afterValue) {
                 consumer.liveData.postValue(afterValue)
             } else if (!consumer.notifyOnChanged) {
                 consumer.liveData.postValue(afterValue)
+            }
+        }
+
+        val internalConsumerIterator = internalConsumers.iterator()
+        while (internalConsumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
+            val consumer = internalConsumerIterator.next()
+            val beforeValue = getFieldStateValue(oldState, consumer.consumeField)
+            val afterValue = getFieldStateValue(newState, consumer.consumeField)
+            if (consumer.notifyOnChanged && beforeValue != afterValue) {
+                consumer.changeNotifier.invoke(afterValue)
+            } else if (!consumer.notifyOnChanged) {
+                consumer.changeNotifier.invoke(afterValue)
             }
         }
     }
 
-    private suspend fun notifyInternalConsumers(oldState: T, newState: T) {
-        val consumerIterator = internalConsumers.iterator()
-        while (consumerIterator.hasNext() && stateScope.isActive && viewModelScope.isActive) {
-            val consumer = consumerIterator.next()
-            val beforeField = oldState::class.java.getDeclaredField(consumer.consumeField)
-            beforeField.isAccessible = true
-            val beforeValue = beforeField.get(oldState)
-            val afterField = newState::class.java.getDeclaredField(consumer.consumeField)
-            afterField.isAccessible = true
-            val afterValue = afterField.get(newState)
-            if (consumer.notifyOnChanged && beforeValue != afterValue) {
-                consumer.changeNotifier.invoke(afterValue)
-            } else if (!consumer.notifyOnChanged) {
-                consumer.changeNotifier.invoke(afterValue)
-            }
-        }
+    private fun getFieldStateValue(state: T, fieldName: String): Any? {
+        val field = state::class.java.getDeclaredField(fieldName)
+        field.isAccessible = true
+        return field.get(state)
     }
 
     protected fun setState(block: suspend T.() -> T) {
