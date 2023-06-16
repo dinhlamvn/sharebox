@@ -69,6 +69,16 @@ class ShareReceiveActivity :
         private const val HASHTAG_DEFAULT_ID = "hashtag-default"
     }
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { boxId ->
+                    viewModel.setBox(boxId)
+                    viewModel.loadBoxes()
+                }
+            }
+        }
+
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
@@ -224,6 +234,11 @@ class ShareReceiveActivity :
         if (!userHelper.isSignedIn()) {
             signInLauncher.launch(appRouter.signIn(true))
         }
+
+        viewBinding.imageAddBox.setImageDrawable(IconUtils.addIcon(this))
+        viewBinding.imageAddBox.setOnClickListener {
+            createBoxResultLauncher.launch(appRouter.boxIntent(this))
+        }
     }
 
     private fun requestSnap() = getState(viewModel) { state ->
@@ -351,7 +366,7 @@ class ShareReceiveActivity :
                     dismissPopup()
                 }
                 if (box.passcode?.isNotBlank() == true) {
-                    textView.setDrawableCompat(start = IconUtils.lockIcon(this@ShareReceiveActivity) {
+                    textView.setDrawableCompat(end = IconUtils.lockIcon(this@ShareReceiveActivity) {
                         copy(
                             sizeDp = 16
                         )

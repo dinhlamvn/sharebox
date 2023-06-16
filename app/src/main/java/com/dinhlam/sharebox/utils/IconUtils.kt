@@ -33,7 +33,21 @@ object IconUtils {
         }
     }
 
-    fun clearIcon(context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }): IconicsDrawable {
+    fun addIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_add_circle,
+            block(IconBuilder(context))
+        )
+    }
+
+    fun clearIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
         return createIcon(
             context,
             GoogleMaterial.Icon.gmd_clear,

@@ -50,7 +50,7 @@ class ShareReceiveViewModel @Inject constructor(
         }
     }
 
-    private fun loadBoxes() = backgroundTask {
+    fun loadBoxes() = backgroundTask {
         val boxes = boxRepository.findLatestBox()
         setState { copy(boxes = boxes) }
     }

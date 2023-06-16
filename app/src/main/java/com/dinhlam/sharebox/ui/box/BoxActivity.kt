@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.box
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -138,14 +139,17 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
                 passcode.takeIfNotNullOrBlank()?.md5()
             )
 
-            if (box == null) {
+            box?.let { createdBox ->
+                setResult(
+                    Activity.RESULT_OK,
+                    Intent().putExtra(AppExtras.EXTRA_BOX_ID, createdBox.boxId)
+                )
+                finish()
+            } ?: run {
                 withContext(Dispatchers.Main) {
                     showToast(R.string.error_create_box)
                     viewBinding.viewLoading.hide()
                 }
-            } else {
-                setResult(Activity.RESULT_OK)
-                finish()
             }
         }
     }

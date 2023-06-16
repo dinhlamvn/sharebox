@@ -219,13 +219,13 @@
     <string name="view_in_youtube">Youtube</string>
     <string name="view_in_facebook">Facebook</string>
     <string name="content_desc_button_add_box">Add a new box</string>
-    <string name="create">Create a new one</string>
+    <string name="create">Create</string>
     <string name="error_create_box">An error occurred while create box.</string>
     <string name="error_require_name">Name can\'t be empty</string>
-    <string name="title_box_create">Create new box</string>
+    <string name="title_box_create">Create a new box</string>
     <string name="error_require_passcode">Please verify this box</string>
     <string name="choose_box">Choose box</string>
-    <string name="total_box">+%d more box...</string>
+    <string name="total_box">+%d more box…</string>
     <string name="search_box_result_empty">No found any box.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
