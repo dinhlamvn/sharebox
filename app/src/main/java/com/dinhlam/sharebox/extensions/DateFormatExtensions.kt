@@ -1,7 +1,5 @@
 package com.dinhlam.sharebox.extensions
 
-import java.util.Calendar
-
 fun Long.asProfileAge(): String {
     val subtractTime = nowUTCTimeInMillis() - this
 
@@ -22,8 +20,7 @@ fun Long.asProfileAge(): String {
 }
 
 fun Long.asElapsedTimeDisplay(): String {
-    val now = Calendar.getInstance()
-    val subtractTime = now.timeInMillis - this
+    val subtractTime = nowUTCTimeInMillis() - this
 
     val timeOfYear = 365 * 24 * 3600 * 1000L
     val timeOfMonth = 30 * 24 * 3600 * 1000L

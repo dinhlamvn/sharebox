@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.data.repository
 
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
@@ -74,7 +75,7 @@ class ShareRepository @Inject constructor(
     }.getOrDefault(emptyList())
 
     suspend fun findForCommunity(limit: Int, offset: Int) = shareDao.runCatching {
-        findForCommunity(limit, offset)
+        findForCommunity(limit, offset, nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME)
     }.getOrDefault(emptyList())
 
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {

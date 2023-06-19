@@ -186,6 +186,18 @@
             android:name=".services.RealtimeDatabaseService"
             android:exported="false" />
 
+        <service
+            android:name=".services.CleanUpDataService"
+            android:exported="false" />
+
+        <receiver
+            android:name=".receiver.CleanUpDataReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

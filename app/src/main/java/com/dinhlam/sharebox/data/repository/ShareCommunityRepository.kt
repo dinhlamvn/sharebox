@@ -34,4 +34,13 @@ class ShareCommunityRepository @Inject constructor(
     suspend fun findOne(shareId: String): ShareCommunityDetail? = shareCommunityDao.runCatching {
         find(shareId)?.let { shareCommunity -> mapper.map(shareCommunity) }
     }.getOrDefault(null)
+
+    suspend fun findShareToCleanUp(timeToClean: Long): List<ShareCommunity> = shareCommunityDao.runCatching {
+        findShareToCleanUp(timeToClean)
+    }.getOrDefault(emptyList())
+
+    suspend fun delete(shareCommunity: ShareCommunity) = shareCommunityDao.runCatching {
+        delete(shareCommunity)
+        true
+    }.getOrDefault(false)
 }

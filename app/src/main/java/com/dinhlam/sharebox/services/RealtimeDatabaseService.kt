@@ -32,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -83,7 +82,7 @@ class RealtimeDatabaseService : Service() {
             NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
                 .setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
-                .setSmallIcon(R.drawable.ic_launcher_foreground).build()
+                .setSmallIcon(R.drawable.ic_sync).build()
         )
 
         realtimeDatabaseRepository.consumeShares(::onShareAdded)
@@ -111,6 +110,7 @@ class RealtimeDatabaseService : Service() {
         serviceScope.launch {
             shareRepository.findOneRaw(shareId) ?: run {
                 val realtimeShareObj = RealtimeShareObj.from(jsonMap)
+
                 val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
                 val shareData =
                     when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
