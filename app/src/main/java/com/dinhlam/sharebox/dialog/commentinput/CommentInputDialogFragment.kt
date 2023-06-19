@@ -40,11 +40,6 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.buttonSend.setOnClickListener {
@@ -82,6 +77,4 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
         viewBinding.editComment.text?.clear()
         dismiss()
     }
-
-    override fun getSpacing(): Int = 16
 }
