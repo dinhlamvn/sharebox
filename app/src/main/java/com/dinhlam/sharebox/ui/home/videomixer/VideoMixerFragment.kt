@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppConsts
@@ -19,6 +20,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
@@ -42,6 +44,11 @@ class VideoMixerFragment :
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 add(LoadingModelView("loading_video", height = ViewGroup.LayoutParams.MATCH_PARENT))
+                return@getState
+            }
+
+            if (state.videos.isEmpty()) {
+                add(TextModelView("empty_message", getString(R.string.empty_video)))
                 return@getState
             }
 
@@ -202,7 +209,10 @@ class VideoMixerFragment :
 
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPickerDialog(requireActivity(), collectionId) { pickedId ->
+            shareHelper.showBookmarkCollectionPickerDialog(
+                requireActivity(),
+                collectionId
+            ) { pickedId ->
                 viewModel.bookmark(shareId, pickedId)
             }
         }

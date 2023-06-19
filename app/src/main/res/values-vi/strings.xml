@@ -225,6 +225,7 @@
     <string name="search_box_result_empty">No found any box.</string>
     <string name="cleanup_data_service_noti_subtext">Cleaning up data…</string>
     <string name="cleanup_data_service_noti_content">The old data is cleaning to reduce storage space</string>
+    <string name="empty_video">No videos</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

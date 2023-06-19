@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.services
 
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -77,6 +78,25 @@ class CleanUpDataService : Service() {
     }
 
     private suspend fun cleanUpVideoMixerData() {
+        val timeToCleanUp = nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME
 
+        while (true) {
+            val videos = videoMixerRepository.findVideoToCleanUp(timeToCleanUp)
+
+            if (videos.isEmpty()) {
+                return
+            }
+
+            videos.forEach { video ->
+                if (!videoMixerRepository.delete(video)) {
+                    Logger.error("Error clean up share $video")
+                } else {
+                    video.uri?.takeIf { uri -> uri.startsWith("content://") }?.let { videoUri ->
+                        contentResolver.delete(Uri.parse(videoUri), null, null)
+                    }
+                    Logger.debug("Success remove share $video")
+                }
+            }
+        }
     }
 }

@@ -79,7 +79,7 @@ class ShareRepository @Inject constructor(
     }.getOrDefault(emptyList())
 
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
-        findForVideoMixer(limit, offset)
+        findForVideoMixer(limit, offset, nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME)
     }.getOrDefault(emptyList())
 
     suspend fun find(shareIds: List<String>) = shareDao.runCatching {

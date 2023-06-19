@@ -71,7 +71,8 @@ interface ShareDao {
         LEFT JOIN box as b on b.box_id = s.share_box_id
         WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
         AND s.is_video_share = 1 
-        AND s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)
+        AND s.share_date >= :oldestTime 
+        AND (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL))
         ORDER BY s.id ASC
         LIMIT :limit
         OFFSET :offset
@@ -80,5 +81,6 @@ interface ShareDao {
     suspend fun findForVideoMixer(
         limit: Int,
         offset: Int,
+        oldestTime: Long
     ): List<Share>
 }

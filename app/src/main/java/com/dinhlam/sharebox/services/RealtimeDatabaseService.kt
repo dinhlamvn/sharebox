@@ -169,6 +169,7 @@ class RealtimeDatabaseService : Service() {
                 avatar = realtimeUserObj.avatar,
                 level = realtimeUserObj.level,
                 drama = realtimeUserObj.drama,
+                joinDate = realtimeUserObj.joinDate
             )
 
             if (!userRepository.upsert(newUser)) {

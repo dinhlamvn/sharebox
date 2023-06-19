@@ -59,4 +59,14 @@ class VideoMixerRepository @Inject constructor(
             }
         }.getOrDefault(emptyList())
     }
+
+    suspend fun findVideoToCleanUp(timeToClean: Long): List<VideoMixer> =
+        videoMixerDao.runCatching {
+            findVideoToCleanUp(timeToClean)
+        }.getOrDefault(emptyList())
+
+    suspend fun delete(videoMixer: VideoMixer): Boolean = videoMixerDao.runCatching {
+        delete(videoMixer)
+        true
+    }.getOrDefault(false)
 }
