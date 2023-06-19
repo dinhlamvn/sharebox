@@ -20,12 +20,11 @@ data class ProfileInfoModelView(
     val drama: Int,
     val level: Int,
     val joinDate: Long,
-    val actionSignOut: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
+    val actionSetting: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("user_info_$id") {
 
     override fun createViewHolder(
-        inflater: LayoutInflater,
-        container: ViewGroup
+        inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return UserInfoViewHolder(ModelViewProfileInfoBinding.inflate(inflater, container, false))
     }
@@ -37,11 +36,11 @@ data class ProfileInfoModelView(
     ) {
 
         init {
-            binding.imageSignOut.setImageDrawable(IconUtils.signOutIcon(buildContext))
+            binding.imageSetting.setImageDrawable(IconUtils.settingIcon(buildContext))
         }
 
         override fun onBind(model: ProfileInfoModelView, position: Int) {
-            binding.imageSignOut.setOnClickListener(model.actionSignOut.prop)
+            binding.imageSetting.setOnClickListener(model.actionSetting.prop)
             ImageLoader.INSTANCE.load(buildContext, model.avatar, binding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }

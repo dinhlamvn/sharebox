@@ -25,13 +25,13 @@
         android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-        app:layout_constraintEnd_toStartOf="@id/image_sign_out"
+        app:layout_constraintEnd_toStartOf="@id/image_setting"
         app:layout_constraintStart_toEndOf="@id/image_avatar"
         app:layout_constraintTop_toTopOf="@id/image_avatar"
         tools:text="Alice" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_sign_out"
+        android:id="@+id/image_setting"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"

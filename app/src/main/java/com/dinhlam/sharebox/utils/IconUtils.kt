@@ -33,6 +33,15 @@ object IconUtils {
         }
     }
 
+    fun settingIcon(
+        context: Context
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_settings,
+        )
+    }
+
     fun addIcon(
         context: Context,
         block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
