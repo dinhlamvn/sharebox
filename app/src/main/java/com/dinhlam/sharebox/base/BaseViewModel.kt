@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -147,13 +146,10 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     ) {
         val liveData = OneTimeLiveData<T>(null)
         liveData.observe(lifecycleOwner, block)
-        val consumer = Consumer(property.name, liveData.cast()!!, notifyOnChanged)
+        val consumer = Consumer(property.name, liveData.castNonNull(), notifyOnChanged)
         consumers.add(consumer)
         state.value.runCatching {
-            val valueField = this::class.java.getDeclaredField(property.name)
-            valueField.isAccessible = true
-            val value = valueField.get(this)
-            consumer.liveData.postValue(value)
+            consumer.liveData.postValue(getFieldStateValue(this, property.name))
         }
     }
 
@@ -163,11 +159,13 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         val consumerInternal = ConsumerInternal(property.name, block.castNonNull(), notifyOnChanged)
         internalConsumers.add(consumerInternal)
         state.value.runCatching {
-            val valueField = this::class.java.getDeclaredField(property.name)
-            valueField.isAccessible = true
-            val value = valueField.get(this)
             viewModelScope.launch {
-                consumerInternal.changeNotifier.invoke(value)
+                consumerInternal.changeNotifier.invoke(
+                    getFieldStateValue(
+                        this@runCatching,
+                        property.name
+                    )
+                )
             }
         }
     }
