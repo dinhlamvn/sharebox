@@ -95,7 +95,8 @@ fun Context.vibrate(timing: Long) {
 }
 
 fun PackageManager.queryIntentActivitiesCompat(
-    intent: Intent, flags: Int = 0
+    intent: Intent,
+    flags: Int = 0
 ): List<ResolveInfo> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))

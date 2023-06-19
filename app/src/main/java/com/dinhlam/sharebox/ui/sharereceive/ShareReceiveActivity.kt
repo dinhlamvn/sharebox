@@ -27,6 +27,7 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemWithTextBinding
+import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
@@ -63,7 +64,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareReceiveState, ShareReceiveViewModel, ActivityShareReceiveBinding>(),
-    BoxSelectionDialogFragment.OnBoxSelectedListener {
+    BoxSelectionDialogFragment.OnBoxSelectedListener,
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
 
     companion object {
         private const val HASHTAG_DEFAULT_ID = "hashtag-default"
@@ -415,10 +417,8 @@ class ShareReceiveActivity :
 
     private fun showBookmarkCollectionPicker() = getState(viewModel) { state ->
         shareHelper.showBookmarkCollectionPickerDialog(
-            this, state.bookmarkCollection?.id
-        ) { pickedId ->
-            viewModel.setBookmarkCollection(pickedId)
-        }
+            supportFragmentManager, "", state.bookmarkCollection?.id
+        )
     }
 
     private fun handleSignInResult(activityResult: ActivityResult) {
@@ -432,6 +432,10 @@ class ShareReceiveActivity :
 
     override fun onBoxSelected(boxId: String) {
         viewModel.setBox(boxId)
+    }
+
+    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
+        viewModel.setBookmarkCollection(bookmarkCollectionId)
     }
 }
 

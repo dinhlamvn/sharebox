@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
+import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
@@ -28,7 +29,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment :
-    BaseViewModelFragment<ProfileState, ProfileViewModel, FragmentProfileBinding>() {
+    BaseViewModelFragment<ProfileState, ProfileViewModel, FragmentProfileBinding>(),
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -173,11 +175,10 @@ class ProfileFragment :
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                requireActivity(),
+                childFragmentManager,
+                shareId,
                 collectionId
-            ) { pickedId ->
-                viewModel.bookmark(shareId, pickedId)
-            }
+            )
         }
     }
 
@@ -194,5 +195,9 @@ class ProfileFragment :
         }, {
             showToast(R.string.logged_out_error)
         })
+    }
+
+    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
+        viewModel.bookmark(shareId, bookmarkCollectionId)
     }
 }

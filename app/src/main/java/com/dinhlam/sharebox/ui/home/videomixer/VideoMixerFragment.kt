@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
+import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -32,7 +33,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class VideoMixerFragment :
-    BaseViewModelFragment<VideoMixerState, VideoMixerViewModel, FragmentVideoMixerBinding>() {
+    BaseViewModelFragment<VideoMixerState, VideoMixerViewModel, FragmentVideoMixerBinding>(),
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -210,16 +212,19 @@ class VideoMixerFragment :
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                requireActivity(),
+                childFragmentManager,
+                shareId,
                 collectionId
-            ) { pickedId ->
-                viewModel.bookmark(shareId, pickedId)
-            }
+            )
         }
     }
 
     private fun onComment(shareId: String) {
         shareHelper.showCommentDialog(childFragmentManager, shareId)
+    }
+
+    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
+        viewModel.bookmark(shareId, bookmarkCollectionId)
     }
 }
 

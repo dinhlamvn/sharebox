@@ -12,10 +12,10 @@ import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.databinding.DialogBookmarkCollectionPickerBinding
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeWithEllipsizeEnd
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.TextPickerModelView
@@ -29,10 +29,8 @@ class BookmarkCollectionPickerDialogFragment :
     BaseBottomSheetViewModelDialogFragment<BookmarkCollectionPickerState, BookmarkCollectionPickerViewModel, DialogBookmarkCollectionPickerBinding>() {
 
     fun interface OnBookmarkCollectionPickListener {
-        fun onBookmarkCollectionDone(bookmarkCollectionIds: String?)
+        fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?)
     }
-
-    lateinit var listener: OnBookmarkCollectionPickListener
 
     @Inject
     lateinit var appRouter: AppRouter
@@ -40,9 +38,10 @@ class BookmarkCollectionPickerDialogFragment :
     private val resultLauncherVerifyPasscode =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                Logger.debug("Hello ok")
                 getState(viewModel) { state ->
-                    listener.onBookmarkCollectionDone(state.pickedBookmarkCollection?.id)
+                    getListener()?.onBookmarkCollectionDone(
+                        state.shareId, state.pickedBookmarkCollection?.id
+                    )
                     dismiss()
                 }
             }
@@ -145,9 +144,7 @@ class BookmarkCollectionPickerDialogFragment :
     private fun requestVerifyOriginalPasscode(bookmarkCollectionDetail: BookmarkCollectionDetail) {
         resultLauncherVerifyOriginalPasscode.launch(
             appRouter.passcodeIntent(
-                requireContext(),
-                bookmarkCollectionDetail.passcode!!,
-                getString(
+                requireContext(), bookmarkCollectionDetail.passcode!!, getString(
                     R.string.dialog_bookmark_collection_picker_verify_passcode,
                     bookmarkCollectionDetail.name.takeWithEllipsizeEnd(10)
                 )
@@ -158,7 +155,9 @@ class BookmarkCollectionPickerDialogFragment :
     private fun doAfterOriginalPasscodeVerified() = getState(viewModel) { state ->
         val bookmarkCollectionName = state.pickedBookmarkCollection?.name.orEmpty()
         val passcode = state.pickedBookmarkCollection?.passcode ?: return@getState run {
-            listener.onBookmarkCollectionDone(state.pickedBookmarkCollection?.id)
+            getListener()?.onBookmarkCollectionDone(
+                state.shareId, state.pickedBookmarkCollection?.id
+            )
             dismiss()
         }
         resultLauncherVerifyPasscode.launch(
@@ -169,5 +168,9 @@ class BookmarkCollectionPickerDialogFragment :
                 )
             )
         )
+    }
+
+    private fun getListener(): OnBookmarkCollectionPickListener? {
+        return parentFragment.cast() ?: activity.cast()
     }
 }

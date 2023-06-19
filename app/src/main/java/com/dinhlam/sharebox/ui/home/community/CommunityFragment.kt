@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
+import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
@@ -42,7 +43,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CommunityFragment :
-    BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>(), BoxSelectionDialogFragment.OnBoxSelectedListener {
+    BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>(),
+    BoxSelectionDialogFragment.OnBoxSelectedListener,
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -268,11 +271,10 @@ class CommunityFragment :
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                requireActivity(),
+                childFragmentManager,
+                shareId,
                 collectionId
-            ) { pickedId ->
-                viewModel.bookmark(shareId, pickedId)
-            }
+            )
         }
     }
 
@@ -282,5 +284,9 @@ class CommunityFragment :
 
     override fun onBoxSelected(boxId: String) {
         viewModel.setBox(boxId)
+    }
+
+    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
+        viewModel.bookmark(shareId, bookmarkCollectionId)
     }
 }
