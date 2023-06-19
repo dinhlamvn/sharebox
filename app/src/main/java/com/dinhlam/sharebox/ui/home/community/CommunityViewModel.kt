@@ -28,6 +28,14 @@ class CommunityViewModel @Inject constructor(
     init {
         loadShares()
         loadBoxes()
+        getLatestBox()
+    }
+
+    private fun getLatestBox() {
+        execute {
+            val box = boxRepository.findLatestBox().firstOrNull()
+            copy(currentBox = box)
+        }
     }
 
     private fun loadShares() = getState { state ->
