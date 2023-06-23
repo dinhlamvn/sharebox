@@ -4,7 +4,9 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
@@ -15,6 +17,8 @@ import com.dinhlam.sharebox.extensions.filterValuesNotNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.AppSettingHelper
+import com.dinhlam.sharebox.helper.NetworkHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -60,6 +64,12 @@ class VideoMixerService : Service() {
 
     @Inject
     lateinit var bookmarkRepository: BookmarkRepository
+
+    @Inject
+    lateinit var appSettingHelper: AppSettingHelper
+
+    @Inject
+    lateinit var networkHelper: NetworkHelper
 
     inner class LocalBinder : Binder() {
         fun getService(): VideoMixerService = this@VideoMixerService
@@ -114,6 +124,17 @@ class VideoMixerService : Service() {
                         val shareUrl = value.url
                         val videoSource =
                             videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
+
+                        if (videoSource is VideoSource.Tiktok) {
+                            if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
+                                return@forEach
+                            }
+
+                            if (!networkHelper.isNetworkConnected()) {
+                                return@forEach
+                            }
+                        }
+
                         val videoSourceId =
                             videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
                                 videoSource, shareUrl

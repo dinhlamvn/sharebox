@@ -8,8 +8,8 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
+import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -26,7 +26,7 @@ class ShareRepository @Inject constructor(
     private val likeRepository: LikeRepository,
     private val mapper: ShareToShareDetailMapper,
     private val videoHelper: VideoHelper,
-    private val userHelper: UserHelper,
+    private val userSharePref: UserSharePref,
 ) {
     suspend fun insert(
         shareId: String = ShareUtils.createShareId(),
@@ -53,6 +53,10 @@ class ShareRepository @Inject constructor(
         insertAll(share)
         share
     }.getOrNull()
+
+    suspend fun countByUser(userId: String): Int = shareDao.runCatching {
+        countByUser(userId)
+    }.getOrDefault(0)
 
     suspend fun update(share: Share): Boolean = shareDao.runCatching {
         update(share)
@@ -102,7 +106,7 @@ class ShareRepository @Inject constructor(
         val commentNumber = commentRepository.count(share.shareId)
         val likeNumber = likeRepository.count(share.shareId)
         val bookmarked = bookmarkRepository.bookmarked(share.shareId)
-        val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
+        val liked = likeRepository.liked(share.shareId, userSharePref.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
         mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment)
     }.getOrNull()

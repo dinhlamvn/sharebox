@@ -19,4 +19,12 @@ interface LikeDao {
 
     @Query("SELECT * FROM `like` WHERE like_id = :likeId")
     suspend fun find(likeId: String): Like?
+
+    @Query("""
+        SELECT COUNT(*) 
+        FROM `like` as l
+        INNER JOIN share as s ON s.share_id = l.share_id
+        WHERE s.share_user_id = :userId
+    """)
+    suspend fun countByUserShare(userId: String): Int
 }

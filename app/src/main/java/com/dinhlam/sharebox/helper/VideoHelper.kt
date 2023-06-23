@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.helper
 
 import android.content.Context
 import android.net.Uri
-import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.utils.FileUtils
@@ -19,8 +18,6 @@ import javax.inject.Singleton
 class VideoHelper @Inject constructor(
     private val loveTikServices: LoveTikServices,
     private val okHttpClient: OkHttpClient,
-    private val appSettingHelper: AppSettingHelper,
-    private val networkHelper: NetworkHelper,
 ) {
 
     fun getVideoSource(url: String): VideoSource {
@@ -50,14 +47,6 @@ class VideoHelper @Inject constructor(
 
     private suspend fun getTiktokVideoUri(context: Context, url: String): Uri? =
         withContext(Dispatchers.IO) {
-            if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-                return@withContext null
-            }
-
-            if (!networkHelper.isNetworkConnected()) {
-                return@withContext null
-            }
-
             val tiktokUrl = formatUrlForTiktok(url)
             val response = loveTikServices.getVideoDownloadUrl(tiktokUrl)
             val link =

@@ -83,4 +83,7 @@ interface ShareDao {
         offset: Int,
         oldestTime: Long
     ): List<Share>
+
+    @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
+    suspend fun countByUser(userId: String): Int
 }

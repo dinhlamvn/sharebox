@@ -11,21 +11,34 @@ import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.helper.AppSettingHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.services.CleanUpDataService
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltAndroidApp
 class ShareBoxApp : Application() {
 
+    private val mainScope = MainScope()
+
     @Inject
     lateinit var appSettingHelper: AppSettingHelper
 
+    @Inject
+    lateinit var userHelper: UserHelper
+
     override fun onCreate() {
         super.onCreate()
+
+        mainScope.launch {
+            userHelper.syncUserInfo()
+        }
+
         requestApplyTheme()
 
         ContextCompat.startForegroundService(

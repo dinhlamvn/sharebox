@@ -1,13 +1,15 @@
 package com.dinhlam.sharebox.helper
 
 import android.content.Context
+import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
-import com.dinhlam.sharebox.pref.SharePref
+import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.UserUtils
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,25 +17,13 @@ import javax.inject.Singleton
 
 @Singleton
 class UserHelper @Inject constructor(
-    @ApplicationContext context: Context,
+    private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val commentRepository: CommentRepository,
+    private val likeRepository: LikeRepository,
+    private val shareRepository: ShareRepository,
 ) {
-
-    class UserSharePref constructor(context: Context) : SharePref(context, "share-box-user-pref") {
-
-        companion object {
-            private const val KEY_CURRENT_USER_ID = "current-user-id"
-        }
-
-        fun getCurrentUserId() = get(KEY_CURRENT_USER_ID, "")
-
-        fun setCurrentUserId(userId: String) = put(KEY_CURRENT_USER_ID, userId, true)
-
-        fun clearCurrentUserId() = remove(KEY_CURRENT_USER_ID, true)
-    }
-
-    private val userSharePref by lazyOf(UserSharePref(context))
 
     object CreateUserError : Exception()
 
@@ -95,5 +85,35 @@ class UserHelper @Inject constructor(
             userSharePref.clearCurrentUserId()
             onSuccess()
         }.addOnFailureListener(onError)
+    }
+
+    suspend fun syncUserInfo() = withContext(Dispatchers.IO) {
+        if (!isSignedIn()) {
+            return@withContext
+        }
+
+        val currentUserId = getCurrentUserId()
+        val user = userRepository.findOneRaw(currentUserId) ?: return@withContext
+
+        val commentCount = commentRepository.countByUser(currentUserId)
+        val likeCount = likeRepository.countByUserShare(currentUserId)
+        val shareCount = shareRepository.countByUser(currentUserId)
+
+        val drama = commentCount + likeCount * 10 + shareCount * 10
+        val level = getLevelByDrama(drama)
+
+        val newUser = user.copy(drama = drama, level = level)
+        userRepository.update(newUser)?.let { updatedUser ->
+            realtimeDatabaseRepository.push(updatedUser)
+        }
+    }
+
+    private fun getLevelByDrama(drama: Int): Int {
+        return when (drama) {
+            in 0..1000 -> 0
+            in 1001..3000 -> 1
+            in 3001..10000 -> 2
+            else -> 3
+        }
     }
 }
