@@ -32,7 +32,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getLatestBox() = execute {
-        val box = boxRepository.findLatestBox().firstOrNull()
+        val box = boxRepository.findLatestBox()
+            .firstOrNull { boxDetail -> boxDetail.passcode.isNullOrBlank() }
         copy(currentBox = box)
     }
 

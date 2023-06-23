@@ -146,7 +146,6 @@ dependencies {
     def webkit_version = "1.7.0"
     implementation "androidx.webkit:webkit:$webkit_version"
 
-
     // Firebase service
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'

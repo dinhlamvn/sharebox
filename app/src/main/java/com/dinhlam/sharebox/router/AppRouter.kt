@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
+import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -92,5 +93,9 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
 
     fun boxIntent(context: Context): Intent {
         return Intent(context, BoxActivity::class.java)
+    }
+
+    fun settingIntent(): Intent {
+        return Intent(context, SettingActivity::class.java)
     }
 }

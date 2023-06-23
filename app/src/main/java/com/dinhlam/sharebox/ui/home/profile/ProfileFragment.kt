@@ -1,12 +1,10 @@
 package com.dinhlam.sharebox.ui.home.profile
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.data.model.ShareData
@@ -15,7 +13,6 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -63,7 +60,7 @@ class ProfileFragment :
                     nonNullUser.level,
                     nonNullUser.joinDate,
                     BaseListAdapter.NoHashProp(View.OnClickListener {
-                        requestSignOut()
+                        openSettingPage()
                     })
                 )
             )
@@ -186,15 +183,8 @@ class ProfileFragment :
         shareHelper.showCommentDialog(childFragmentManager, shareId)
     }
 
-    private fun requestSignOut() {
-        userHelper.signOut(requireContext(), {
-            startActivity(
-                appRouter.signIn()
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }, {
-            showToast(R.string.logged_out_error)
-        })
+    private fun openSettingPage() {
+        startActivity(appRouter.settingIntent())
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {

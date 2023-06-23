@@ -230,6 +230,18 @@
     <string name="cleanup_data_service_noti_subtext">Cleaning up data…</string>
     <string name="cleanup_data_service_noti_content">The old data is cleaning to reduce storage space</string>
     <string name="empty_video">No videos</string>
+    <string name="title_setting">Settings</string>
+    <string name="title_appearance">Appearance</string>
+    <string name="title_theme">Themes</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_auto">Automatic</string>
+    <string name="title_network_condition_video">Network condition for sync video</string>
+    <string name="network_condition_wifi">Wifi only</string>
+    <string name="network_condition_wifi_and_cellular">Both Wifi and cellular data</string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_out_confirm_message">Are you sure to sign out?</string>
+    <string name="setting_about">%s • Version %s</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

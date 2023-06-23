@@ -1,8 +1,7 @@
 package com.dinhlam.sharebox.pref
 
 import android.content.Context
-import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.data.model.SortType
+import androidx.annotation.IntRange
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,72 +12,27 @@ class AppSharePref @Inject constructor(
 ) : SharePref(context, "share_saver_pref") {
 
     companion object {
-        private const val KEY_APP_FIRST_LAUNCH = "is-app-first-launch"
-        private const val KEY_LAST_FOLDER_SELECTED = "last-folder-selected"
-
-        private const val KEY_SORT_SELECTED_OPTION = "sort-selected-option"
-
-        private const val KEY_SHOW_GUIDELINE = "show-guide-line"
-
-        private const val KEY_PASSWORD_RECOVERY = "recovery-password"
-
-        private const val KEY_CUSTOM_TAB_ENABLED = "custom-tab-enabled"
-
-        private const val KEY_SHOW_RECENTLY_SHARE = "show-recently-share"
-
-        private const val KEY_FAST_SAVE = "fast-save"
+        private const val KEY_CUSTOM_TAB_ENABLED = "setting-custom-tab-enabled"
+        private const val KEY_SETTING_MODE_THEME = "setting-theme"
+        private const val KEY_SETTING_NETWORK_CONDITION = "setting-network-condition"
     }
 
-    fun isAppFirstLaunch(): Boolean = get(KEY_APP_FIRST_LAUNCH, true)
-
-    fun commitAppFirstLaunch() = put(KEY_APP_FIRST_LAUNCH, value = false, sync = true)
-
-    fun getLastSelectedFolder(): String = get(KEY_LAST_FOLDER_SELECTED, "")
-
-    fun setLastSelectedFolder(folderId: String) = put(KEY_LAST_FOLDER_SELECTED, folderId)
-
-    fun setSortType(sortType: SortType) {
-        put(
-            KEY_SORT_SELECTED_OPTION, when (sortType) {
-                SortType.NEWEST -> 1
-                SortType.OLDEST -> 2
-                else -> 0
-            }
-        )
+    fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
+        put(KEY_SETTING_MODE_THEME, theme)
     }
 
-    fun getSortType(): SortType {
-        return when (get(KEY_SORT_SELECTED_OPTION, 0)) {
-            1 -> SortType.NEWEST
-            2 -> SortType.OLDEST
-            else -> SortType.NONE
-        }
+    fun setNetworkCondition(@IntRange(from = 0, to = 1) networkCondition: Int) {
+        put(KEY_SETTING_NETWORK_CONDITION, networkCondition)
     }
 
-    fun isShowGuideLine(): Boolean {
-        return BuildConfig.DEBUG || get(KEY_SHOW_GUIDELINE, true)
+    @IntRange(from = 0, to = 2)
+    fun getTheme(): Int {
+        return get(KEY_SETTING_MODE_THEME, 0)
     }
 
-    fun turnOffShowGuideline() {
-        put(KEY_SHOW_GUIDELINE, false)
+    @IntRange(from = 0, to = 1)
+    fun getNetworkCondition(): Int {
+        return get(KEY_SETTING_NETWORK_CONDITION, 0)
     }
-
-    fun setRecoveryPassword(recoveryPasswordHash: String) =
-        put(KEY_PASSWORD_RECOVERY, recoveryPasswordHash)
-
-    fun getRecoveryPassword(): String = get(KEY_PASSWORD_RECOVERY, "")
-
     fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, true)
-
-    fun toggleCustomTab(isOn: Boolean) = put(KEY_CUSTOM_TAB_ENABLED, isOn)
-
-    fun isShowRecentlyShare() = get(KEY_SHOW_RECENTLY_SHARE, true)
-
-    fun toggleShowRecentlyShare(showRecentlyShare: Boolean) =
-        put(KEY_SHOW_RECENTLY_SHARE, showRecentlyShare)
-
-    fun isFastSave() = get(KEY_FAST_SAVE, false)
-
-    fun toggleFastSave(isFastSave: Boolean) =
-        put(KEY_FAST_SAVE, isFastSave)
 }
