@@ -32,7 +32,7 @@ import javax.inject.Inject
 class VideoMixerService : Service() {
 
     companion object {
-        private const val TIME_DELAY_WHEN_EMPTY = 10_000L
+        private const val TIME_DELAY_WHEN_EMPTY = 60_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
