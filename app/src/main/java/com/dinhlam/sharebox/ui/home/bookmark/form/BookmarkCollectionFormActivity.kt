@@ -104,7 +104,7 @@ class BookmarkCollectionFormActivity :
             passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
         }
 
-        viewModel.consume(this, BookmarkCollectionFormState::success, true) { success ->
+        viewModel.consume(this, BookmarkCollectionFormState::success) { success ->
             if (success) {
                 returnResultOk()
             }
@@ -128,14 +128,14 @@ class BookmarkCollectionFormActivity :
             viewModel.clearErrorDesc(editable.trimmedString())
         }
 
-        viewModel.consume(this, BookmarkCollectionFormState::errorName, true) { errorRes ->
+        viewModel.consume(this, BookmarkCollectionFormState::errorName) { errorRes ->
             errorRes?.let { res ->
                 viewBinding.textEditName.error = getString(res)
                 viewBinding.textEditName.requestFocus()
             } ?: viewBinding.textEditName.apply { error = null }
         }
 
-        viewModel.consume(this, BookmarkCollectionFormState::errorDesc, true) { errorRes ->
+        viewModel.consume(this, BookmarkCollectionFormState::errorDesc) { errorRes ->
             errorRes?.let { res ->
                 viewBinding.textEditDesc.error = getString(res)
                 viewBinding.textEditDesc.requestFocus()

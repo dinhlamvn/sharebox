@@ -135,7 +135,7 @@ class ProfileFragment :
             viewModel.doOnRefresh()
         }
 
-        viewModel.consume(this, ProfileState::isLoadingMore, true) { isLoadMore ->
+        viewModel.consume(this, ProfileState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }

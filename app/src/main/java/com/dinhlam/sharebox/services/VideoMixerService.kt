@@ -145,6 +145,10 @@ class VideoMixerService : Service() {
                                 this@VideoMixerService, videoSource, shareUrl
                             )
 
+                        if (videoSource == VideoSource.Tiktok && videoUri == null) {
+                            return@forEach
+                        }
+
                         val result = videoMixerRepository.upsert(
                             videoMixerDetail?.id.orElse(0),
                             shareId,

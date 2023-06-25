@@ -142,7 +142,7 @@ class VideoMixerFragment :
             viewModel.doOnPullRefresh()
         }
 
-        viewModel.consume(this, VideoMixerState::isLoadingMore, true) { isLoadMore ->
+        viewModel.consume(this, VideoMixerState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }

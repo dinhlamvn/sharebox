@@ -186,7 +186,7 @@ class ShareReceiveActivity :
             finishAndRemoveTask()
         }
 
-        viewModel.consume(this, ShareReceiveState::showLoading, true) { isShow ->
+        viewModel.consume(this, ShareReceiveState::showLoading) { isShow ->
             if (isShow) {
                 viewBinding.viewLoading.show()
             } else {

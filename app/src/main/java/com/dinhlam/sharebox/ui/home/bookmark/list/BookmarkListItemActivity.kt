@@ -119,7 +119,7 @@ class BookmarkListItemActivity :
         super.onCreate(savedInstanceState)
 
         viewModel.consume(
-            this, BookmarkListItemState::bookmarkCollection, true
+            this, BookmarkListItemState::bookmarkCollection
         ) { bookmarkCollection ->
             bookmarkCollection?.let(::updateUi)
         }
@@ -143,7 +143,7 @@ class BookmarkListItemActivity :
         viewBinding.recyclerView.adapter = shareAdapter
 
         viewModel.consume(
-            this, BookmarkListItemState::requestVerifyPasscode, true
+            this, BookmarkListItemState::requestVerifyPasscode
         ) { shouldRequest ->
             if (shouldRequest) {
                 requestVerifyPasscode()

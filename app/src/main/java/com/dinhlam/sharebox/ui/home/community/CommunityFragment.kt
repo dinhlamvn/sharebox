@@ -161,7 +161,7 @@ class CommunityFragment :
 
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
 
-        viewModel.consume(this, CommunityState::currentBox, true) { currentBox ->
+        viewModel.consume(this, CommunityState::currentBox) { currentBox ->
             viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_all)
         }
 
@@ -184,7 +184,7 @@ class CommunityFragment :
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consume(this, CommunityState::isLoadingMore, true) { isLoadMore ->
+        viewModel.consume(this, CommunityState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
     }
