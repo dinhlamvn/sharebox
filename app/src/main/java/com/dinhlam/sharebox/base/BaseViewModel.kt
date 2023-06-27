@@ -127,22 +127,20 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         stateScope.cancel()
     }
 
-    private fun <T> Flow<T>.resolveConsumer(block: suspend (T) -> Unit) {
-        stateScope.launch {
-            yield()
-            collectLatest(block)
-        }
-    }
-
     private fun <T> Flow<T>.resolveConsumer(
-        lifecycleOwner: LifecycleOwner,
+        lifecycleOwner: LifecycleOwner? = null,
         block: suspend (T) -> Unit
     ) {
-        lifecycleOwner.lifecycleScope.launch {
-            yield()
-            collectLatest {
-                lifecycleOwner.whenStarted { block(it) }
+        lifecycleOwner?.let { owner ->
+            owner.lifecycleScope.launch {
+                yield()
+                collectLatest {
+                    owner.whenStarted { block(it) }
+                }
             }
+        } ?: stateScope.launch {
+            yield()
+            collectLatest(block)
         }
     }
 }

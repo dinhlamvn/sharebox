@@ -20,12 +20,7 @@ import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(
-    value = [
-        SingletonComponent::class,
-        ActivityComponent::class,
-        FragmentComponent::class,
-        ViewModelComponent::class
-    ]
+    value = [SingletonComponent::class, ActivityComponent::class, FragmentComponent::class, ViewModelComponent::class]
 )
 object NetworkModule {
 
@@ -35,23 +30,21 @@ object NetworkModule {
         if (!cacheDir.exists()) {
             cacheDir.mkdir()
         }
-        return OkHttpClient.Builder()
-            .connectTimeout(30_000, TimeUnit.SECONDS)
-            .readTimeout(30_000, TimeUnit.SECONDS)
-            .writeTimeout(30_000, TimeUnit.SECONDS)
-            .cache(Cache(cacheDir, 1024 * 1024 * 50))
-            .build()
+        return OkHttpClient.Builder().connectTimeout(30_000, TimeUnit.SECONDS)
+            .readTimeout(30_000, TimeUnit.SECONDS).writeTimeout(30_000, TimeUnit.SECONDS)
+            .cache(Cache(cacheDir, 1024 * 1024 * 50)).build()
 
     }
 
     @Provides
     fun provideLoveTikServices(
-        gson: Gson,
-        httpClient: OkHttpClient
+        gson: Gson, httpClient: OkHttpClient
     ): LoveTikServices {
-        return Retrofit.Builder().baseUrl("https://lovetik.com")
-            .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson)).build()
-            .create(LoveTikServices::class.java)
+        return getRetrofitBuilder(gson, httpClient).build().create(LoveTikServices::class.java)
+    }
+
+    private fun getRetrofitBuilder(gson: Gson, httpClient: OkHttpClient): Retrofit.Builder {
+        return Retrofit.Builder().client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
     }
 }
