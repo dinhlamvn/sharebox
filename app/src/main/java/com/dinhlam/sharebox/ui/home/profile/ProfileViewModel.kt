@@ -27,8 +27,8 @@ class ProfileViewModel @Inject constructor(
         loadShares()
     }
 
-    private fun getCurrentUserProfile() = backgroundTask {
-        val user = userRepository.findOne(userHelper.getCurrentUserId()) ?: return@backgroundTask
+    private fun getCurrentUserProfile() = doInBackground {
+        val user = userRepository.findOne(userHelper.getCurrentUserId()) ?: return@doInBackground
         setState { copy(currentUser = user) }
     }
 
@@ -65,7 +65,7 @@ class ProfileViewModel @Inject constructor(
         loadShares()
     }
 
-    fun like(shareId: String) = backgroundTask {
+    fun like(shareId: String) = doInBackground {
         val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
         if (result) {
             setState {
@@ -82,14 +82,14 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
-        backgroundTask {
+        doInBackground {
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             withContext(Dispatchers.Main) {
                 block(bookmarkDetail?.bookmarkCollectionId)
             }
         }
 
-    fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {
+    fun bookmark(shareId: String, bookmarkCollectionId: String?) = doInBackground {
         bookmarkCollectionId?.let { id ->
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {

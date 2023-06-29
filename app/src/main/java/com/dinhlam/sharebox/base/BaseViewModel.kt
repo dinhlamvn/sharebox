@@ -9,9 +9,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
@@ -44,6 +47,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private val _toastEvent = OneTimeLiveData(0)
     val toastEvent: LiveData<Int> = _toastEvent
+    private var toastJob: Job? = null
 
     init {
         stateScope.launch {
@@ -87,9 +91,10 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    protected fun backgroundTask(
+    protected fun doInBackground(
+        context: CoroutineContext = Dispatchers.IO,
         onError: ((Throwable) -> Unit)? = null, block: suspend CoroutineScope.() -> Unit
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = viewModelScope.launch(context) {
         try {
             block.invoke(this)
         } catch (e: Exception) {
@@ -119,7 +124,17 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             }
     }
 
-    protected fun postShowToast(@StringRes strRes: Int) = _toastEvent.postValue(strRes)
+    protected fun postShowToast(@StringRes strRes: Int) {
+        if (toastJob?.isCompleted == false) {
+            toastJob?.cancel()
+        }
+        toastJob = viewModelScope.launch {
+            delay(500)
+            withContext(Dispatchers.Main) {
+                _toastEvent.setValue(strRes)
+            }
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

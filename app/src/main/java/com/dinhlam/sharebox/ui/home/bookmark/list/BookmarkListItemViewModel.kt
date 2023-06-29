@@ -39,7 +39,7 @@ class BookmarkListItemViewModel @Inject constructor(
     private fun loadShares() = getState { state ->
         setState { copy(isSharesLoading = true) }
         val collectionId = state.bookmarkCollectionId
-        backgroundTask {
+        doInBackground {
             val bookmarks = bookmarkRepository.find(collectionId)
             val ids = bookmarks.map { bookmarkDetail -> bookmarkDetail.shareId }
             val shares = shareRepository.find(ids)
@@ -51,14 +51,14 @@ class BookmarkListItemViewModel @Inject constructor(
         copy(requestVerifyPasscode = false)
     }
 
-    fun removeBookmark(shareId: String) = backgroundTask {
+    fun removeBookmark(shareId: String) = doInBackground {
         val deleted = bookmarkRepository.delete(shareId)
         if (deleted) {
             setState { copy(shares = shares.filterNot { shareDetail -> shareDetail.shareId == shareId }) }
         }
     }
 
-    fun like(shareId: String) = backgroundTask {
+    fun like(shareId: String) = doInBackground {
         val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
         if (result) {
             setState {

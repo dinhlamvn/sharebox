@@ -38,7 +38,7 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
         )
     }
 
-    fun reloadAfterCreateNewBookmarkCollection() = backgroundTask {
+    fun reloadAfterCreateNewBookmarkCollection() = doInBackground {
         val collections = bookmarkCollectionRepository.find()
         setState { copy(bookmarkCollections = collections) }
     }

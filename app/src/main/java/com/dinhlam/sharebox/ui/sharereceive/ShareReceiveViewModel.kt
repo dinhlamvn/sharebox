@@ -43,14 +43,14 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun getCurrentUserProfile() {
         setState { copy(showLoading = true) }
-        backgroundTask {
+        doInBackground {
             val user = userRepository.findOne(userHelper.getCurrentUserId())
-                ?: return@backgroundTask setState { copy(showLoading = false) }
+                ?: return@doInBackground setState { copy(showLoading = false) }
             setState { copy(activeUser = user, showLoading = false) }
         }
     }
 
-    fun loadBoxes() = backgroundTask {
+    fun loadBoxes() = doInBackground {
         val boxes = boxRepository.findLatestBox()
         setState { copy(boxes = boxes) }
     }
@@ -203,7 +203,7 @@ class ShareReceiveViewModel @Inject constructor(
     fun setBox(box: BoxDetail?) {
         setState { copy(currentBox = box) }
         box?.let { nonNullBox ->
-            backgroundTask {
+            doInBackground {
                 boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
             }
         }
@@ -211,7 +211,7 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun setBookmarkCollection(pickedId: String?) {
         pickedId?.let { collectionId ->
-            backgroundTask {
+            doInBackground {
                 val bookmarkCollection = bookmarkCollectionRepository.find(collectionId)
                 setState { copy(bookmarkCollection = bookmarkCollection) }
             }
@@ -219,8 +219,8 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     fun setBox(boxId: String) {
-        backgroundTask {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@backgroundTask
+        doInBackground {
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
             setBox(boxDetail)
         }
     }

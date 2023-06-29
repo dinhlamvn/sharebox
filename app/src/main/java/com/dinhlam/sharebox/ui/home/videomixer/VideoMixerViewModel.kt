@@ -25,7 +25,7 @@ class VideoMixerViewModel @Inject constructor(
         loadVideoMixers()
     }
 
-    private fun loadVideoMixers() = backgroundTask {
+    private fun loadVideoMixers() = doInBackground {
         setState { copy(isRefreshing = true) }
         val videos = videoMixerRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
         setState { copy(videos = videos, isRefreshing = false) }
@@ -52,7 +52,7 @@ class VideoMixerViewModel @Inject constructor(
         loadVideoMixers()
     }
 
-    fun like(shareId: String) = backgroundTask {
+    fun like(shareId: String) = doInBackground {
         if (likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())) {
             setState {
                 val videos = videos.map { videoDetail ->
@@ -72,7 +72,7 @@ class VideoMixerViewModel @Inject constructor(
         }
     }
 
-    fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {
+    fun bookmark(shareId: String, bookmarkCollectionId: String?) = doInBackground {
         bookmarkCollectionId?.let { id ->
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {
@@ -113,7 +113,7 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
-        backgroundTask {
+        doInBackground {
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             withContext(Dispatchers.Main) {
                 block(bookmarkDetail?.bookmarkCollectionId)

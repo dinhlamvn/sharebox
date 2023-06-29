@@ -26,7 +26,7 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
     }
 
     private fun fetchTotalBox() {
-        backgroundTask {
+        doInBackground {
             val totalBox = boxRepository.count()
             setState { copy(totalBox = totalBox) }
         }
@@ -51,7 +51,7 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
 
     fun search(query: String) {
         if (query.isEmpty()) return setState { copy(searchBoxes = emptyList(), isSearching = false) }
-        backgroundTask {
+        doInBackground {
             val searchBoxes = boxRepository.search(query)
             setState { copy(searchBoxes = searchBoxes, isSearching = true) }
         }

@@ -39,7 +39,7 @@ class CommunityViewModel @Inject constructor(
 
     private fun loadShares() = getState { state ->
         setState { copy(isRefreshing = true) }
-        backgroundTask {
+        doInBackground {
             val shares = state.currentBox?.let { currentBox ->
                 shareRepository.findWhereInBox(
                     currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
@@ -52,7 +52,7 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun loadBoxes() = backgroundTask {
+    private fun loadBoxes() = doInBackground {
         val boxes = boxRepository.findLatestBox()
         setState { copy(boxes = boxes) }
     }
@@ -85,7 +85,7 @@ class CommunityViewModel @Inject constructor(
         loadBoxes()
     }
 
-    fun like(shareId: String) = backgroundTask {
+    fun like(shareId: String) = doInBackground {
         val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
         if (result) {
             setState {
@@ -101,7 +101,7 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun bookmark(shareId: String, bookmarkCollectionId: String?) = backgroundTask {
+    fun bookmark(shareId: String, bookmarkCollectionId: String?) = doInBackground {
         bookmarkCollectionId?.let { id ->
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {
@@ -138,7 +138,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
-        backgroundTask {
+        doInBackground {
             val bookmarkDetail = bookmarkRepository.findOne(shareId)
             withContext(Dispatchers.Main) {
                 block(bookmarkDetail?.bookmarkCollectionId)
@@ -149,7 +149,7 @@ class CommunityViewModel @Inject constructor(
         if (state.currentBox != box) {
             setState { copy(currentBox = box) }
             box?.let { nonNullBox ->
-                backgroundTask {
+                doInBackground {
                     boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
                 }
             }
@@ -158,8 +158,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun setBox(boxId: String) {
-        backgroundTask {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@backgroundTask
+        doInBackground {
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
             setBox(boxDetail)
         }
     }

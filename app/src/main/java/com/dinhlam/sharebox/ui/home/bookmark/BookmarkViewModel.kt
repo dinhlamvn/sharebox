@@ -14,7 +14,7 @@ class BookmarkViewModel @Inject constructor(
         loadBookmarkCollections()
     }
 
-    private fun loadBookmarkCollections() = backgroundTask {
+    private fun loadBookmarkCollections() = doInBackground {
         setState { copy(isRefreshing = true) }
         val bookmarkCollections = bookmarkCollectionRepository.find()
         setState { copy(bookmarkCollections = bookmarkCollections, isRefreshing = false) }
@@ -25,7 +25,7 @@ class BookmarkViewModel @Inject constructor(
     }
 
     fun deleteBookmarkCollection(bookmarkCollectionId: String) {
-        backgroundTask {
+        doInBackground {
             val result = bookmarkCollectionRepository.delete(bookmarkCollectionId)
             if (result) {
                 loadBookmarkCollections()
