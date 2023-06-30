@@ -212,7 +212,7 @@ class ShareReceiveActivity :
         }
 
         viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
-            val boxName = currentBox?.boxName ?: getString(R.string.box_all)
+            val boxName = currentBox?.boxName ?: getString(R.string.box_community)
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
             viewBinding.textShareBox.text = boxName
             viewBinding.textShareBox.setDrawableCompat(
@@ -381,7 +381,7 @@ class ShareReceiveActivity :
         }
 
         MenuItemWithTextBinding.inflate(layoutInflater).apply {
-            textView.text = getString(R.string.box_all)
+            textView.text = getString(R.string.box_community)
             textView.setOnClickListener {
                 viewModel.setBox(null)
                 dismissPopup()

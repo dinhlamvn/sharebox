@@ -162,7 +162,7 @@ class CommunityFragment :
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
 
         viewModel.consume(this, CommunityState::currentBox) { currentBox ->
-            viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_all)
+            viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_community)
         }
 
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -196,7 +196,7 @@ class CommunityFragment :
         val hasViewMore = boxes.size > AppConsts.NUMBER_VISIBLE_BOX
 
         val boxNames =
-            listOf(getString(R.string.box_all)).plus(boxes.take(AppConsts.NUMBER_VISIBLE_BOX)
+            listOf(getString(R.string.box_community)).plus(boxes.take(AppConsts.NUMBER_VISIBLE_BOX)
                 .map { box -> box.boxName })
                 .run {
                     if (hasViewMore) {

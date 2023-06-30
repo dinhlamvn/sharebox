@@ -1,8 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="tag_red" type="id" />
-    <item name="tag_green" type="id" />
-    <item name="tag_blue" type="id" />
-    <item name="tag_yellow" type="id" />
-    <item name="tag_gray" type="id" />
-</resources>
+<resources></resources>
