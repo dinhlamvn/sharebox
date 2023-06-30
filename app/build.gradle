@@ -40,7 +40,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("/Users/dinhlam/AndroidStudioProjects/sharebox/store/key")
+            storeFile rootProject.file("store/key")
             storePassword localProperties["KSTOREPWD"]
             keyAlias localProperties["KSTOREALS"]
             keyPassword localProperties["KEYPWD"]
