@@ -10,7 +10,9 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,6 +25,7 @@ class CommunityViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
+    private val appSharePref: AppSharePref
 ) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
 
     init {
@@ -34,8 +37,9 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getLatestBox() = execute {
-        val box = boxRepository.findLatestBox()
-            .firstOrNull { boxDetail -> boxDetail.passcode.isNullOrBlank() }
+        val boxId =
+            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@execute this
+        val box = boxRepository.findOne(boxId) ?: return@execute this
         copy(currentBox = box, isRefreshing = false)
     }
 
@@ -47,8 +51,7 @@ class CommunityViewModel @Inject constructor(
                     currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
                 )
             } ?: shareRepository.findCommunityShares(
-                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                offset = 0
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
             )
             setState { copy(shares = shares, isRefreshing = false) }
         }
@@ -154,6 +157,7 @@ class CommunityViewModel @Inject constructor(
                 doInBackground {
                     boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
                 }
+                appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
             }
         }
     }

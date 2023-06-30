@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,7 @@ class ShareReceiveViewModel @Inject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
+    private val appSharePref: AppSharePref,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
@@ -200,11 +202,14 @@ class ShareReceiveViewModel @Inject constructor(
         return share
     }
 
-    fun setBox(box: BoxDetail?) {
-        setState { copy(currentBox = box) }
-        box?.let { nonNullBox ->
-            doInBackground {
-                boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
+    fun setBox(box: BoxDetail?) = getState { state ->
+        if (state.currentBox != box) {
+            setState { copy(currentBox = box) }
+            box?.let { nonNullBox ->
+                doInBackground {
+                    boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
+                }
+                appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
             }
         }
     }

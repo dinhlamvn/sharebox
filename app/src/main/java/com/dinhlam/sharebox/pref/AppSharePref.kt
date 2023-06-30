@@ -15,6 +15,7 @@ class AppSharePref @Inject constructor(
         private const val KEY_CUSTOM_TAB_ENABLED = "setting-custom-tab-enabled"
         private const val KEY_SETTING_MODE_THEME = "setting-theme"
         private const val KEY_SETTING_NETWORK_CONDITION = "setting-network-condition"
+        private const val KEY_LATEST_ACTIVE_BOX_ID = "lasted-active-box-id"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -34,5 +35,10 @@ class AppSharePref @Inject constructor(
     fun getNetworkCondition(): Int {
         return get(KEY_SETTING_NETWORK_CONDITION, 0)
     }
+
     fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, true)
+
+    fun getLatestActiveBoxId() = get(KEY_LATEST_ACTIVE_BOX_ID, "")
+
+    fun setLatestActiveBoxId(boxId: String) = put(KEY_LATEST_ACTIVE_BOX_ID, boxId)
 }
