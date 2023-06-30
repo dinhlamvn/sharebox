@@ -24,16 +24,3 @@ buildscript {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-task installDevApk() {
-    println("Installing dev APK")
-    def command = "adb install app/build/outputs/apk/dev/debug/app-dev-debug.apk".execute()
-    command.waitFor()
-}
-
-task installDevDebug() {
-    println("Starting build debug APK")
-    dependsOn(":app:clean")
-    dependsOn(":app:assembleDevDebug")
-    dependsOn("installDevApk")
-}
