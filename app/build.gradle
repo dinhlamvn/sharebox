@@ -12,6 +12,9 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
 android {
     compileSdk 33
 
@@ -35,10 +38,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("store/key.keystore")
-            storePassword System.getenv("KSTOREPWD")
-            keyAlias System.getenv("KSTOREALS")
-            keyPassword System.getenv("KEYPWD")
+            storeFile file("/Users/dinhlam/AndroidStudioProjects/sharebox/store/key")
+            storePassword localProperties["KSTOREPWD"]
+            keyAlias localProperties["KSTOREALS"]
+            keyPassword localProperties["KEYPWD"]
         }
     }
 
@@ -51,11 +54,15 @@ android {
 
     buildTypes {
         debug {
+            debuggable true
             minifyEnabled false
+            shrinkResources false
         }
 
         release {
+            debuggable false
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -79,7 +86,7 @@ android {
             ]
             dimension "version"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
-            buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://sharebox-dev-502a2.appspot.com\""
+            buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://share-box-6c293.appspot.com\""
         }
     }
 

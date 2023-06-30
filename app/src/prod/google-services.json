@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "64151986643",
+    "firebase_url": "https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "share-box-6c293",
     "storage_bucket": "share-box-6c293.appspot.com"
   },
@@ -14,15 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "64151986643-1rqpud9qe19a8jhvq9p43qovv3202hkr.apps.googleusercontent.com",
+          "client_id": "64151986643-5spog4g8qnbeulrig41cs60qgr7a3c5m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.dinhlam.sharebox",
-            "certificate_hash": "e0c1c0b97f1914af60463ba0a52be6c00eee885f"
+            "certificate_hash": "b365907aa27b4dbb01ac8613cdeb4e4fb7180cf2"
           }
         },
         {
-          "client_id": "64151986643-u8d34nv9cfttguenboafl50idola3j2h.apps.googleusercontent.com",
+          "client_id": "64151986643-oiv96qhg1c39967c2b7giv579j85dddu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dinhlam.sharebox",
+            "certificate_hash": "169d7f3a02de8af48d5eadf3251824d616c2eb45"
+          }
+        },
+        {
+          "client_id": "64151986643-mr9t88vsdk8l2r53iu025fab95djaui0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "64151986643-u8d34nv9cfttguenboafl50idola3j2h.apps.googleusercontent.com",
+              "client_id": "64151986643-mr9t88vsdk8l2r53iu025fab95djaui0.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
