@@ -142,6 +142,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }
 
+        viewBinding.imageSocial.isVisible = false
         viewBinding.imageAvatar.isVisible = true
         viewBinding.imageEditAvatar.isVisible = true
         viewBinding.textLayoutName.isVisible = true
@@ -189,6 +190,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun signOut() {
+        viewBinding.imageSocial.isVisible = true
         viewBinding.imageAvatar.setImageDrawable(null)
         viewBinding.imageAvatar.isVisible = false
         viewBinding.imageEditAvatar.isVisible = false

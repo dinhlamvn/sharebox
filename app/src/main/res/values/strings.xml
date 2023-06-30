@@ -242,6 +242,7 @@
     <string name="sign_out">Sign out</string>
     <string name="sign_out_confirm_message">Are you sure to sign out?</string>
     <string name="setting_about">%s • Version %s</string>
+    <string name="app_desc">Sharebox helps you keep favourite contents and share with people in your life.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
