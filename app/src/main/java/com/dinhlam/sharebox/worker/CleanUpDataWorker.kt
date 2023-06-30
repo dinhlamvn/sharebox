@@ -30,7 +30,7 @@ class CleanUpDataWorker @AssistedInject constructor(
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.cleanup_data_service_noti_content))
                 .setSubText(appContext.getString(R.string.cleanup_data_service_noti_subtext))
-                .setSmallIcon(R.drawable.ic_launcher_foreground).build()
+                .setSmallIcon(R.mipmap.ic_launcher).build()
         )
     }
 

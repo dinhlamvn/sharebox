@@ -115,7 +115,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun requestSignIn() {
         val signInIntent =
             AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers)
-                .setTheme(R.style.AppTheme).setLogo(R.drawable.ic_launcher_foreground).build()
+                .setTheme(R.style.AppTheme).setLogo(R.mipmap.ic_launcher).build()
 
         signInLauncher.launch(signInIntent)
     }
