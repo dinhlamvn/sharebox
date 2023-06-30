@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.di
 
 import android.content.Context
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.google.gson.Gson
 import dagger.Module
@@ -40,7 +41,9 @@ object NetworkModule {
     fun provideLoveTikServices(
         gson: Gson, httpClient: OkHttpClient
     ): LoveTikServices {
-        return getRetrofitBuilder(gson, httpClient).build().create(LoveTikServices::class.java)
+        return getRetrofitBuilder(gson, httpClient)
+            .baseUrl(AppConsts.LOVETIK_SERVICE_BASE_URL)
+            .build().create(LoveTikServices::class.java)
     }
 
     private fun getRetrofitBuilder(gson: Gson, httpClient: OkHttpClient): Retrofit.Builder {

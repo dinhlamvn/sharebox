@@ -1,6 +1,8 @@
 package com.dinhlam.sharebox.common
 
 object AppConsts {
+    const val LOVETIK_SERVICE_BASE_URL: String = "https://lovetik.com/"
+
     const val DATA_ALIVE_TIME = 3 * 24 * 3600 * 1000
 
     const val NUMBER_VISIBLE_BOX = 5

@@ -2,29 +2,36 @@ package com.dinhlam.sharebox
 
 import android.app.Application
 import android.app.NotificationManager
-import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
-import com.dinhlam.sharebox.services.CleanUpDataService
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltAndroidApp
-class ShareBoxApp : Application() {
+class ShareBoxApp : Application(), Configuration.Provider {
 
-    private val mainScope = MainScope()
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    private val applicationScope =
+        CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineName("app-scope"))
 
     @Inject
     lateinit var appSettingHelper: AppSettingHelper
@@ -35,16 +42,13 @@ class ShareBoxApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        mainScope.launch {
+        applicationScope.launch {
             userHelper.syncUserInfo()
         }
 
         requestApplyTheme()
 
-        ContextCompat.startForegroundService(
-            this,
-            Intent(this, CleanUpDataService::class.java)
-        )
+        WorkerUtils.enqueueCleanUpOldData(this)
         ImageLoader.setLoader(GlideImageLoader)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -71,5 +75,9 @@ class ShareBoxApp : Application() {
             AppSettings.Theme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setWorkerFactory(workerFactory).build()
     }
 }
