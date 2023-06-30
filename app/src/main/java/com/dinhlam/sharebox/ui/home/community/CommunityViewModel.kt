@@ -23,18 +23,20 @@ class CommunityViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
-) : BaseViewModel<CommunityState>(CommunityState()) {
+) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
 
     init {
-        loadShares()
-        loadBoxes()
         getLatestBox()
+        loadBoxes()
+        consume(CommunityState::currentBox) {
+            doOnRefresh()
+        }
     }
 
     private fun getLatestBox() = execute {
         val box = boxRepository.findLatestBox()
             .firstOrNull { boxDetail -> boxDetail.passcode.isNullOrBlank() }
-        copy(currentBox = box)
+        copy(currentBox = box, isRefreshing = false)
     }
 
     private fun loadShares() = getState { state ->
@@ -153,7 +155,6 @@ class CommunityViewModel @Inject constructor(
                     boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
                 }
             }
-            doOnRefresh()
         }
     }
 

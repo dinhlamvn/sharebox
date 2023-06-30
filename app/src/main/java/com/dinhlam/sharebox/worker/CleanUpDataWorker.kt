@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.services
+package com.dinhlam.sharebox.worker
 
 import android.content.Context
 import android.net.Uri
@@ -17,7 +17,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class CleanUpWorker @AssistedInject constructor(
+class CleanUpDataWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted params: WorkerParameters,
     private val communityRepository: ShareCommunityRepository,
