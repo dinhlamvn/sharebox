@@ -89,6 +89,10 @@
     <string name="setting_about">%s • Phiên bản %s</string>
     <string name="app_desc">Sharebox giúp bạn lưu giữ nội dung yêu thích và chia sẻ với mọi người.</string>
     <string name="box_community">Cộng đồng</string>
+    <string name="share_web_link">" chia sẻ một trang web"</string>
+    <string name="share_text">" chia sẻ một nội dung"</string>
+    <string name="share_images">" chia sẻ vài ảnh"</string>
+    <string name="share_image">" chia sẻ một ảnh"</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

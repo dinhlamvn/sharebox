@@ -91,6 +91,10 @@
     <string name="setting_about">%s • Version %s</string>
     <string name="app_desc">Sharebox helps you keep favourite contents and share with people in your life.</string>
     <string name="box_community">Community</string>
+    <string name="share_web_link">" shares a weblink"</string>
+    <string name="share_text">" shares a text"</string>
+    <string name="share_images">" shares some images"</string>
+    <string name="share_image">" shares a image"</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

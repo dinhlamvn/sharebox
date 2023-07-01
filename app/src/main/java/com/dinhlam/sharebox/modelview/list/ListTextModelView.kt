@@ -100,7 +100,7 @@ data class ListTextModelView(
                 bold {
                     append(model.userDetail.name)
                 }
-                append(" shares a text content")
+                append(buildContext.getString(R.string.share_text))
             }
             binding.textShare.text = model.content
             binding.layoutUserInfo.textUserLevel.text =

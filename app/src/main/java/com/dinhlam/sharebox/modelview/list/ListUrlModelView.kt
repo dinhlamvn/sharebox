@@ -100,7 +100,7 @@ data class ListUrlModelView(
                 bold {
                     append(model.userDetail.name)
                 }
-                append(" shares a weblink")
+                append(buildContext.getString(R.string.share_web_link))
             }
             binding.shareLinkPreview.setLink(model.url) {
                 ShareBoxLinkPreviewView.Style(maxLineDesc = 2, maxLineUrl = 1, maxLineTitle = 1)

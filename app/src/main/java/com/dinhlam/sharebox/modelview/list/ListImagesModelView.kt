@@ -142,7 +142,7 @@ data class ListImagesModelView(
                 bold {
                     append(model.userDetail.name)
                 }
-                append(" shares some images")
+                append(buildContext.getString(R.string.share_images))
             }
             binding.layoutUserInfo.textUserLevel.text =
                 buildContext.getString(
