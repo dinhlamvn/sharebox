@@ -75,3 +75,14 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 
 -keep class com.dinhlam.sharebox.data.model.** { *; }
+
+-keep class com.dinhlam.sharebox.modelview.** { *; }
+
+-keepattributes *Annotation*
+-dontwarn sun.misc.**
+
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+-keepattributes Signature
