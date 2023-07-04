@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -47,24 +46,15 @@ class CommunityViewModel @Inject constructor(
     private fun loadShares() = getState { state ->
         setState { copy(isRefreshing = true) }
         doInBackground {
-            var retryTimes = 10
-            while (true) {
-                val shares = state.currentBox?.let { currentBox ->
-                    shareRepository.findWhereInBox(
-                        currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
-                    )
-                } ?: shareRepository.findCommunityShares(
-                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
+            val shares = state.currentBox?.let { currentBox ->
+                shareRepository.findWhereInBox(
+                    currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
                 )
+            } ?: shareRepository.findCommunityShares(
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
+            )
 
-                if (shares.isEmpty() && retryTimes > 0) {
-                    delay(3000)
-                    retryTimes--
-                    continue
-                }
-                setState { copy(shares = shares, isRefreshing = false) }
-                return@doInBackground
-            }
+            setState { copy(shares = shares, isRefreshing = false) }
         }
     }
 
@@ -177,6 +167,12 @@ class CommunityViewModel @Inject constructor(
         doInBackground {
             val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
             setBox(boxDetail)
+        }
+    }
+
+    fun doOnRetryFirstLoad() = getState { state ->
+        if (state.shares.isEmpty()) {
+            doOnRefresh()
         }
     }
 }

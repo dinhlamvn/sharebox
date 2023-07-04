@@ -40,6 +40,7 @@ import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -175,6 +176,14 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        LiveEventUtils.createBoxEvent.observe(viewLifecycleOwner) { boxId ->
+            boxId?.let { takenBoxId -> viewModel.setBox(takenBoxId) }
+        }
+
+        LiveEventUtils.retryFirstLoadEvent.observe(viewLifecycleOwner) {
+            viewModel.doOnRetryFirstLoad()
+        }
+
         viewBinding.textTitle.setOnClickListener(::showListBoxMenu)
 
         viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
@@ -213,16 +222,14 @@ class CommunityFragment :
         val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
         val hasViewMore = boxes.size > AppConsts.NUMBER_VISIBLE_BOX
 
-        val boxNames =
-            listOf(getString(R.string.box_community)).plus(boxes.take(AppConsts.NUMBER_VISIBLE_BOX)
-                .map { box -> box.boxName })
-                .run {
-                    if (hasViewMore) {
-                        plus(getString(R.string.view_more))
-                    } else {
-                        this
-                    }
-                }
+        val boxNames = listOf(getString(R.string.box_community)).plus(
+            boxes.take(AppConsts.NUMBER_VISIBLE_BOX).map { box -> box.boxName }).run {
+            if (hasViewMore) {
+                plus(getString(R.string.view_more))
+            } else {
+                this
+            }
+        }
 
         val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxNames)
         listPopupWindow.setAdapter(adapter)
@@ -289,9 +296,7 @@ class CommunityFragment :
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager,
-                shareId,
-                collectionId
+                childFragmentManager, shareId, collectionId
             )
         }
     }

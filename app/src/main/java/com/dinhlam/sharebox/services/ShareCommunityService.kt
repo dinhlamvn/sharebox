@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,6 +78,7 @@ class ShareCommunityService : Service() {
     private fun syncShareCommunityData() {
         serviceScope.launch {
             var currentOffset = 0
+            var hasPostFirstLoad = false
             while (isActive) {
                 val shares = shareRepository.findForCommunity(
                     LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
@@ -105,6 +107,12 @@ class ShareCommunityService : Service() {
                         ids.add(share.shareId)
                     }
                 }
+
+                if (ids.size > 0 && !hasPostFirstLoad) {
+                    LiveEventUtils.retryFirstLoadEvent.postValue(Unit)
+                    hasPostFirstLoad = true
+                }
+
                 Logger.debug("Share community success sync $ids - offset $currentOffset")
                 currentOffset++
             }

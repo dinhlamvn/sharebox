@@ -1,17 +1,20 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
@@ -21,6 +24,7 @@ import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
+import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,6 +34,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     companion object {
         private const val PAGE_SIZE = 4
     }
+
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val boxId = result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)
+                    ?: return@registerForActivityResult
+                LiveEventUtils.createBoxEvent.postValue(boxId)
+            }
+        }
 
     private val pageAdapter = object : FragmentStateAdapter(this) {
         override fun getItemCount(): Int = PAGE_SIZE
@@ -46,8 +59,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     private val realtimeDatabaseService by lazy {
         Intent(
-            this,
-            RealtimeDatabaseService::class.java
+            this, RealtimeDatabaseService::class.java
         )
     }
 
@@ -121,7 +133,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
 
         viewBinding.buttonAddBox.setOnClickListener {
-            startActivity(appRouter.boxIntent(this))
+            createBoxResultLauncher.launch(appRouter.boxIntent(this))
         }
     }
 
