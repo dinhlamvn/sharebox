@@ -82,6 +82,10 @@ class ShareCommunityService : Service() {
                     LIMIT_ITEM_SYNC, currentOffset * LIMIT_ITEM_SYNC
                 )
 
+                if (shares.isEmpty() && currentOffset == 0) {
+                    continue
+                }
+
                 if (shares.isEmpty()) {
                     Logger.debug("Share community reset sync in offset $currentOffset")
                     currentOffset = 0
