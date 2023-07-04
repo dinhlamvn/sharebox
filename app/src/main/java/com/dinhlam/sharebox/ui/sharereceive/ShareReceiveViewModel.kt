@@ -15,6 +15,7 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -39,8 +40,16 @@ class ShareReceiveViewModel @Inject constructor(
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
+        getLatestBox()
         getCurrentUserProfile()
         loadBoxes()
+    }
+
+    private fun getLatestBox() = execute {
+        val boxId =
+            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@execute this
+        val box = boxRepository.findOne(boxId) ?: return@execute this
+        copy(currentBox = box)
     }
 
     fun getCurrentUserProfile() {
@@ -210,7 +219,7 @@ class ShareReceiveViewModel @Inject constructor(
                     boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
                 }
                 appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
-            }
+            } ?: appSharePref.setLatestActiveBoxId("")
         }
     }
 

@@ -158,7 +158,7 @@ class CommunityViewModel @Inject constructor(
                     boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
                 }
                 appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
-            }
+            } ?: appSharePref.setLatestActiveBoxId("")
         }
     }
 
