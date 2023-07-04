@@ -52,6 +52,9 @@ data class ListImagesModelView(
     val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionViewImages: BaseListAdapter.NoHashProp<(List<Uri>) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
@@ -113,10 +116,8 @@ data class ListImagesModelView(
             binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
             binding.bottomAction.setLikeIcon(model.liked.asLikeIcon(buildContext))
 
-            model.actionOpen.prop?.let { prop ->
-                binding.container.setOnClickListener {
-                    prop.invoke(model.shareId)
-                }
+            binding.container.setOnClickListener {
+                model.actionViewImages.prop?.invoke(model.uris)
             }
 
             binding.bottomAction.setOnShareClickListener {

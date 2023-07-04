@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.extensions
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
@@ -27,6 +28,8 @@ fun ShareData.buildShareModelViews(
     actionLike: Function1<String, Unit>? = null,
     actionComment: Function1<String, Unit>? = null,
     actionBookmark: Function1<String, Unit>? = null,
+    actionViewImage: Function1<Uri, Unit>? = null,
+    actionViewImages: Function1<List<Uri>, Unit>? = null,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -86,6 +89,7 @@ fun ShareData.buildShareModelViews(
                 BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
+                BaseListAdapter.NoHashProp(actionViewImage),
             )
         }
 
@@ -93,7 +97,11 @@ fun ShareData.buildShareModelViews(
             val shareData = this.castNonNull<ShareData.ShareImages>()
 
             val modelViews = shareData.uris.map { uri ->
-                ImageModelView(uri, height = screenHeight.times(0.5f).toInt())
+                ImageModelView(uri,
+                    height = screenHeight.times(0.5f).toInt(),
+                    actionClick = BaseListAdapter.NoHashProp {
+                        actionViewImages?.invoke(shareData.uris)
+                    })
             }
 
             ListImagesModelView(
@@ -112,6 +120,7 @@ fun ShareData.buildShareModelViews(
                 BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
+                BaseListAdapter.NoHashProp(actionViewImages)
             )
         }
     }

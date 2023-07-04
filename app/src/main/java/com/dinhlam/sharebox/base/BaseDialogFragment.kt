@@ -28,7 +28,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
         get() = binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialAlertDialogBuilder(requireContext()).apply {
+        return MaterialAlertDialogBuilder(requireContext(), theme).apply {
             binding = onCreateViewBinding(layoutInflater, null)
             setView(viewBinding.root)
         }.create()

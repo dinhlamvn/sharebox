@@ -33,7 +33,7 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
                 ?: return dismiss()
 
         val adapter = BaseListAdapter.createAdapter {
-            addAll(uris.map { uri -> ImageModelView(uri, screenHeight().times(0.8f).toInt()) })
+            addAll(uris.map { uri -> ImageModelView(uri) })
         }
 
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
@@ -44,7 +44,6 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         viewBinding.recyclerView.adapter = adapter
         adapter.requestBuildModelViews()
         updatePageNumber(1, uris.size)
-
 
         viewBinding.recyclerView.addOnScrollListener(object : OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -57,5 +56,9 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
 
     private fun updatePageNumber(position: Int, size: Int) {
         viewBinding.textNumber.text = getString(R.string.page_number, position, size)
+    }
+
+    override fun getTheme(): Int {
+        return R.style.AppTheme_AlertDialog
     }
 }

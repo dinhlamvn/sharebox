@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.home.community
 
 import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -102,7 +103,9 @@ class CommunityFragment :
                             actionShareToOther = ::onShareToOther,
                             actionLike = ::onLike,
                             actionComment = ::onComment,
-                            actionBookmark = ::onBookmark
+                            actionBookmark = ::onBookmark,
+                            actionViewImage = ::viewImage,
+                            actionViewImages = ::viewImages
                         )
                     )
 
@@ -137,6 +140,14 @@ class CommunityFragment :
                 }
             }
         }
+    }
+
+    private fun viewImages(uris: List<Uri>) {
+        shareHelper.viewShareImages(requireActivity(), uris)
+    }
+
+    private fun viewImage(uri: Uri) {
+        shareHelper.viewShareImage(requireActivity(), uri)
     }
 
     @Inject

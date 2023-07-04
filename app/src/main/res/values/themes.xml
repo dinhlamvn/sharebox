@@ -43,4 +43,16 @@
     <style name="AppMaterialCardView" parent="Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">@color/md_theme_light_onPrimary</item>
     </style>
+
+    <style name="AppTheme.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="dialogCornerRadius">0dp</item>
+        <item name="shapeAppearanceOverlay">@style/DialogNonCorners</item>
+        <item name="contentPadding">0dp</item>
+    </style>
+
+    <style name="DialogNonCorners">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">0dp</item>
+    </style>
+
 </resources>

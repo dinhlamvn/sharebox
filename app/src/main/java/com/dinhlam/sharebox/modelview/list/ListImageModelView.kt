@@ -45,6 +45,9 @@ data class ListImageModelView(
     val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionViewImage: BaseListAdapter.NoHashProp<(Uri) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
@@ -104,6 +107,10 @@ data class ListImageModelView(
 
             ImageLoader.INSTANCE.load(buildContext, model.uri, binding.imageShare) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
+            }
+
+            binding.imageShare.setOnClickListener {
+                model.actionViewImage.prop?.invoke(model.uri)
             }
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {
