@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 data class ImageModelView(
     val uri: Uri,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
-    val actionClick: BaseListAdapter.NoHashProp<(() -> Unit)?>? = null
+    val actionClick: BaseListAdapter.NoHashProp<(() -> Unit)?>? = null,
 ) : BaseListAdapter.BaseModelView("image_model_view_$uri") {
 
     override fun createViewHolder(
@@ -34,7 +34,7 @@ data class ImageModelView(
                 }
 
                 ImageLoader.INSTANCE.load(buildContext, model.uri, binding.image) {
-                    copy(transformType = TransformType.Normal(ImageLoadScaleType.FitCenter))
+                    copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
                 }
             }
 

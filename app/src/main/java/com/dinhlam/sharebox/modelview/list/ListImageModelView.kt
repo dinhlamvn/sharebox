@@ -9,15 +9,18 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListImageBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImageModelView(
@@ -30,6 +33,7 @@ data class ListImageModelView(
     val userDetail: UserDetail,
     val bookmarked: Boolean = false,
     val liked: Boolean = false,
+    val boxDetail: BoxDetail?,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -46,6 +50,9 @@ data class ListImageModelView(
         null
     ),
     val actionViewImage: BaseListAdapter.NoHashProp<(Uri) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
 ) : BaseListAdapter.BaseModelView(shareId) {
@@ -69,6 +76,12 @@ data class ListImageModelView(
     ) : BaseListAdapter.BaseViewHolder<ListImageModelView, ModelViewListImageBinding>(
         binding
     ) {
+
+        init {
+            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+                copy(sizeDp = 16)
+            })
+        }
 
         override fun onBind(model: ListImageModelView, position: Int) {
             ImageLoader.INSTANCE.load(
@@ -125,6 +138,13 @@ data class ListImageModelView(
                     UserUtils.getLevelTitle(model.userDetail.level),
                     model.shareDate.asElapsedTimeDisplay()
                 )
+
+            binding.textBoxName.text =
+                model.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
+
+            binding.textBoxName.setOnClickListener {
+                model.actionBoxClick.prop?.invoke(model.boxDetail)
+            }
 
             model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true

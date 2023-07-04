@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
@@ -23,6 +24,7 @@ fun ShareData.buildShareModelViews(
     commentNumber: Int = 0,
     bookmarked: Boolean = false,
     liked: Boolean = false,
+    boxDetail: BoxDetail?,
     actionOpen: Function1<String, Unit>? = null,
     actionShareToOther: Function1<String, Unit>? = null,
     actionLike: Function1<String, Unit>? = null,
@@ -30,6 +32,7 @@ fun ShareData.buildShareModelViews(
     actionBookmark: Function1<String, Unit>? = null,
     actionViewImage: Function1<Uri, Unit>? = null,
     actionViewImages: Function1<List<Uri>, Unit>? = null,
+    actionBoxClick: Function1<BoxDetail?, Unit>? = null,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -41,14 +44,16 @@ fun ShareData.buildShareModelViews(
                 shareNote,
                 likeNumber,
                 commentNumber,
+                user,
                 bookmarked,
                 liked,
-                user,
+                boxDetail,
                 BaseListAdapter.NoHashProp(actionOpen),
                 BaseListAdapter.NoHashProp(actionShareToOther),
                 BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
+                BaseListAdapter.NoHashProp(actionBoxClick),
             )
         }
 
@@ -64,11 +69,13 @@ fun ShareData.buildShareModelViews(
                 user,
                 bookmarked,
                 liked,
+                boxDetail,
                 BaseListAdapter.NoHashProp(actionOpen),
                 BaseListAdapter.NoHashProp(actionShareToOther),
                 BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
+                BaseListAdapter.NoHashProp(actionBoxClick),
             )
         }
 
@@ -84,12 +91,14 @@ fun ShareData.buildShareModelViews(
                 user,
                 bookmarked,
                 liked,
+                boxDetail,
                 BaseListAdapter.NoHashProp(null),
                 BaseListAdapter.NoHashProp(actionShareToOther),
                 BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
                 BaseListAdapter.NoHashProp(actionViewImage),
+                BaseListAdapter.NoHashProp(actionBoxClick),
             )
         }
 
@@ -115,12 +124,14 @@ fun ShareData.buildShareModelViews(
                 user,
                 bookmarked,
                 liked,
+                boxDetail,
                 BaseListAdapter.NoHashProp(null),
                 BaseListAdapter.NoHashProp(actionShareToOther),
                 BaseListAdapter.NoHashProp(actionLike),
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
-                BaseListAdapter.NoHashProp(actionViewImages)
+                BaseListAdapter.NoHashProp(actionViewImages),
+                BaseListAdapter.NoHashProp(actionBoxClick),
             )
         }
     }

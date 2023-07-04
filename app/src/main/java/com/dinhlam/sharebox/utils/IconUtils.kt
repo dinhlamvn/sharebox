@@ -212,9 +212,12 @@ object IconUtils {
         )
     }
 
-    fun boxIcon(context: Context): Drawable {
+    fun boxIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): Drawable {
         return createIcon(
-            context, FontAwesome.Icon.faw_box
+            context, FontAwesome.Icon.faw_box, block(IconBuilder(context))
         )
     }
 

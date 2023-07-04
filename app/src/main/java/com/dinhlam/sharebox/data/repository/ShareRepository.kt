@@ -27,6 +27,7 @@ class ShareRepository @Inject constructor(
     private val mapper: ShareToShareDetailMapper,
     private val videoHelper: VideoHelper,
     private val userSharePref: UserSharePref,
+    private val boxRepository: BoxRepository,
 ) {
     suspend fun insert(
         shareId: String = ShareUtils.createShareId(),
@@ -108,6 +109,7 @@ class ShareRepository @Inject constructor(
         val bookmarked = bookmarkRepository.bookmarked(share.shareId)
         val liked = likeRepository.liked(share.shareId, userSharePref.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
-        mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment)
+        val boxDetail = share.shareBoxId?.let { id -> boxRepository.findOne(id) }
+        mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment, boxDetail)
     }.getOrNull()
 }

@@ -12,18 +12,21 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListImagesBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
+import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImagesModelView(
@@ -37,6 +40,7 @@ data class ListImagesModelView(
     val userDetail: UserDetail,
     val bookmarked: Boolean = false,
     val liked: Boolean = false,
+    val boxDetail: BoxDetail?,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -53,6 +57,9 @@ data class ListImagesModelView(
         null
     ),
     val actionViewImages: BaseListAdapter.NoHashProp<(List<Uri>) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
 ) : BaseListAdapter.BaseModelView(shareId) {
@@ -87,6 +94,9 @@ data class ListImagesModelView(
         private val models = mutableListOf<ImageModelView>()
 
         init {
+            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+                copy(sizeDp = 16)
+            })
             binding.recyclerViewImage.updateLayoutParams {
                 height = buildContext.screenHeight().times(0.5f).toInt()
             }
@@ -151,6 +161,13 @@ data class ListImagesModelView(
                     UserUtils.getLevelTitle(model.userDetail.level),
                     model.shareDate.asElapsedTimeDisplay()
                 )
+
+            binding.textBoxName.text =
+                model.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
+
+            binding.textBoxName.setOnClickListener {
+                model.actionBoxClick.prop?.invoke(model.boxDetail)
+            }
 
             model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true

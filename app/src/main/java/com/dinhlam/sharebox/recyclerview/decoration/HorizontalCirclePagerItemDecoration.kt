@@ -25,7 +25,6 @@ class HorizontalCirclePagerItemDecoration constructor(
         style = Paint.Style.FILL
     })
 
-
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 

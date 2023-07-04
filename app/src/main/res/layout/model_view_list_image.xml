@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:collapsed_text="@string/collapsed_text"
         app:expanded_text="@string/expanded_text"
@@ -28,12 +29,31 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image_share"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="400dp"
         android:layout_marginTop="16dp"
         app:layout_constraintDimensionRatio="1,1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_view_note" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_box_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="8dp"
+        android:ellipsize="end"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingVertical="12dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image_share" />
 
     <!-- bottom action button -->
 
@@ -45,6 +65,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_share" />
+        app:layout_constraintTop_toBottomOf="@id/text_box_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

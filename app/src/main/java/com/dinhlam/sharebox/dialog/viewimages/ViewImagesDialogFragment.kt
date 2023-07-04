@@ -15,7 +15,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogViewImagesBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
-import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.modelview.ImageModelView
 
 class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
@@ -28,12 +28,15 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val uris =
-            arguments?.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
-                ?: return dismiss()
+        val uris = arguments?.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
+            ?: return dismiss()
 
         val adapter = BaseListAdapter.createAdapter {
-            addAll(uris.map { uri -> ImageModelView(uri) })
+            addAll(uris.map { uri ->
+                ImageModelView(
+                    uri, height = heightPercentage(60)
+                )
+            })
         }
 
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)

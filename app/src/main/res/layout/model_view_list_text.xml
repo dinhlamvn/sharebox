@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:collapsed_text="@string/collapsed_text"
         app:expanded_text="@string/expanded_text"
@@ -49,6 +50,23 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_box_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="8dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingVertical="12dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_text_share" />
+
     <!-- bottom action button -->
 
     <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
@@ -59,6 +77,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_text_share" />
+        app:layout_constraintTop_toBottomOf="@id/text_box_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

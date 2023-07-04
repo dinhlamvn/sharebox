@@ -12,5 +12,6 @@ data class ShareDetail(
     val likeNumber: Int,
     val bookmarked: Boolean,
     val liked: Boolean,
-    val commentDetail: CommentDetail?
+    val commentDetail: CommentDetail?,
+    val boxDetail: BoxDetail?,
 )

@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.data.mapper
 
 import com.dinhlam.sharebox.data.local.entity.Share
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.CommentDetail
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.data.model.UserDetail
@@ -18,6 +19,7 @@ class ShareToShareDetailMapper @Inject constructor() {
         bookmarked: Boolean,
         liked: Boolean,
         commentDetail: CommentDetail?,
+        boxDetail: BoxDetail?,
     ): ShareDetail {
         return ShareDetail(
             share.id,
@@ -31,7 +33,8 @@ class ShareToShareDetailMapper @Inject constructor() {
             likeNumber,
             bookmarked,
             liked,
-            commentDetail
+            commentDetail,
+            boxDetail
         )
     }
 }

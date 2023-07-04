@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
@@ -99,13 +100,15 @@ class CommunityFragment :
                             commentNumber = shareDetail.commentNumber,
                             bookmarked = shareDetail.bookmarked,
                             liked = shareDetail.liked,
+                            boxDetail = shareDetail.boxDetail,
                             actionOpen = ::onOpen,
                             actionShareToOther = ::onShareToOther,
                             actionLike = ::onLike,
                             actionComment = ::onComment,
                             actionBookmark = ::onBookmark,
                             actionViewImage = ::viewImage,
-                            actionViewImages = ::viewImages
+                            actionViewImages = ::viewImages,
+                            actionBoxClick = ::onBoxClick
                         )
                     )
 
@@ -140,6 +143,10 @@ class CommunityFragment :
                 }
             }
         }
+    }
+
+    private fun onBoxClick(boxDetail: BoxDetail?) {
+        viewModel.setBox(boxDetail)
     }
 
     private fun viewImages(uris: List<Uri>) {
