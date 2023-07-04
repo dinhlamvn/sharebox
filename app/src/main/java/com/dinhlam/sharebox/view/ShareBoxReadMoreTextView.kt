@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.view
 
 import android.content.Context
 import android.graphics.Rect
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -57,6 +59,8 @@ class ShareBoxReadMoreTextView @JvmOverloads constructor(
                     ContextCompat.getColor(context, R.color.colorPrimary)
                 )
             }
+        movementMethod = LinkMovementMethod.getInstance()
+        autoLinkMask = Linkify.WEB_URLS
     }
 
     override fun setOnClickListener(l: OnClickListener?) {
