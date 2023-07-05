@@ -53,15 +53,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_desc" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_edit_avatar"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_edit_avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:scaleType="centerInside"
+        android:text="@string/edit_avatar"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/image_avatar"
         app:layout_constraintEnd_toEndOf="@id/image_avatar"
         app:layout_constraintStart_toStartOf="@id/image_avatar"
-        app:layout_constraintTop_toTopOf="@id/image_avatar" />
+        app:layout_constraintTop_toBottomOf="@id/image_avatar" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_layout_name"

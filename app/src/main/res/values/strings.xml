@@ -103,6 +103,8 @@
     <string name="content_desc_button_action">Toggle some actions on home page</string>
     <string name="overlay">Overlay</string>
     <string name="content_desc_button_share_images">Share some images</string>
+    <string name="complete">Complete</string>
+    <string name="edit_avatar">Edit avatar</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

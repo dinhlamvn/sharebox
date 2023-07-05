@@ -80,24 +80,25 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             return goHome()
         }
 
-        viewBinding.textLayoutName.endIconDrawable = IconUtils.rightArrowIcon(this) {
-            copy(sizeDp = 20)
-        }
-
-        viewBinding.buttonSignIn.setDrawableCompat(IconUtils.googleIcon(this))
-
         viewBinding.viewLoading.hide()
         viewBinding.buttonSignIn.isVisible = true
         AuthUI.getInstance().signOut(this)
-        viewBinding.buttonSignIn.setOnClickListener {
-            requestSignIn()
-        }
+        setupButtonForSignIn()
 
-        viewBinding.imageAvatar.setOnClickListener {
+        viewBinding.textEditAvatar.setOnClickListener {
             avatarResultLauncher.launch(appRouter.pickImageIntent())
         }
 
-        viewBinding.imageEditAvatar.setImageDrawable(IconUtils.editIconLight(this))
+        viewBinding.textEditAvatar.setDrawableCompat(end = IconUtils.editIcon(this) {
+            copy(sizeDp = 16)
+        })
+    }
+
+    private fun setupButtonForSignIn() {
+        viewBinding.buttonSignIn.setDrawableCompat(IconUtils.googleIcon(this))
+        viewBinding.buttonSignIn.setOnClickListener {
+            requestSignIn()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -136,7 +137,8 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         val email = user.email ?: return signOut()
         val displayName = user.displayName ?: return signOut()
         val photoUrl = user.photoUrl?.toString() ?: return signOut()
-        viewBinding.buttonSignIn.isVisible = false
+        viewBinding.buttonSignIn.setDrawableCompat(start = null)
+        viewBinding.buttonSignIn.setText(R.string.complete)
 
         ImageLoader.INSTANCE.load(this, photoUrl, viewBinding.imageAvatar) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
@@ -144,12 +146,12 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
         viewBinding.imageSocial.isVisible = false
         viewBinding.imageAvatar.isVisible = true
-        viewBinding.imageEditAvatar.isVisible = true
+        viewBinding.textEditAvatar.isVisible = true
         viewBinding.textLayoutName.isVisible = true
         viewBinding.textTitleUserName.isVisible = true
         viewBinding.textInputName.setText(displayName)
 
-        viewBinding.textLayoutName.setEndIconOnClickListener {
+        viewBinding.buttonSignIn.setOnClickListener {
             val name = viewBinding.textInputName.getTrimmedText()
             createUser(email, name, photoUrl)
         }
@@ -169,8 +171,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             val userId = UserUtils.createUserId(email)
             val avatarUrl = customAvatarUri?.let { uri ->
                 firebaseStorageHelper.uploadUserAvatar(
-                    userId,
-                    uri
+                    userId, uri
                 )
             } ?: photoUrl
 
@@ -190,18 +191,18 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun signOut() {
-        viewBinding.imageSocial.isVisible = true
-        viewBinding.imageAvatar.setImageDrawable(null)
-        viewBinding.imageAvatar.isVisible = false
-        viewBinding.imageEditAvatar.isVisible = false
-        customAvatarUri = null
-        viewBinding.textInputName.text = null
-        viewBinding.textLayoutName.isVisible = false
-        viewBinding.textTitleUserName.isVisible = false
-        viewBinding.buttonSignIn.isVisible = true
-        viewBinding.viewLoading.hide()
         AuthUI.getInstance().signOut(this).addOnSuccessListener {
             showToast(R.string.logged_out)
+            setupButtonForSignIn()
+            viewBinding.imageSocial.isVisible = true
+            viewBinding.imageAvatar.setImageDrawable(null)
+            viewBinding.imageAvatar.isVisible = false
+            viewBinding.textEditAvatar.isVisible = false
+            customAvatarUri = null
+            viewBinding.textInputName.text = null
+            viewBinding.textLayoutName.isVisible = false
+            viewBinding.textTitleUserName.isVisible = false
+            viewBinding.viewLoading.hide()
         }
     }
 
