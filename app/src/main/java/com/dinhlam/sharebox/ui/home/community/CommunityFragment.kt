@@ -234,6 +234,11 @@ class CommunityFragment :
         viewModel.consume(this, CommunityState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
+
+        if (appSharePref.isShowGuideline()) {
+            appSharePref.offShowGuideline()
+            showGuideline()
+        }
     }
 
     private fun showGuideline() {

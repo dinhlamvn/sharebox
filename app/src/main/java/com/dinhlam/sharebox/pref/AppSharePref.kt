@@ -16,6 +16,7 @@ class AppSharePref @Inject constructor(
         private const val KEY_SETTING_MODE_THEME = "setting-theme"
         private const val KEY_SETTING_NETWORK_CONDITION = "setting-network-condition"
         private const val KEY_LATEST_ACTIVE_BOX_ID = "lasted-active-box-id"
+        private const val KEY_SHOW_GUIDELINE = "show-guideline"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -41,4 +42,10 @@ class AppSharePref @Inject constructor(
     fun getLatestActiveBoxId() = get(KEY_LATEST_ACTIVE_BOX_ID, "")
 
     fun setLatestActiveBoxId(boxId: String) = put(KEY_LATEST_ACTIVE_BOX_ID, boxId)
+
+    fun isShowGuideline(): Boolean = get(KEY_SHOW_GUIDELINE, true)
+
+    fun offShowGuideline() {
+        put(KEY_SHOW_GUIDELINE, value = false, sync = true)
+    }
 }
