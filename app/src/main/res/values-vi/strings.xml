@@ -93,6 +93,14 @@
     <string name="share_text">" chia sẻ một nội dung"</string>
     <string name="share_images">" chia sẻ vài ảnh"</string>
     <string name="share_image">" chia sẻ một ảnh"</string>
+    <string name="share_a_link">Share a link</string>
+    <string name="share_a_image">Share a image</string>
+    <string name="share_a_content">Share a text quote</string>
+    <string name="content_desc_button_share_text">Share a text quote</string>
+    <string name="share_some_images">Share some images</string>
+    <string name="content_desc_button_action">Toggle some actions on home page</string>
+    <string name="overlay">Overlay</string>
+    <string name="content_desc_button_share_images">Share some images</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

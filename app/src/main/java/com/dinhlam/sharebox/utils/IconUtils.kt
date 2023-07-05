@@ -15,8 +15,7 @@ import com.mikepenz.iconics.utils.sizeDp
 object IconUtils {
 
     data class IconBuilder(
-        val context: Context,
-        val sizeDp: Int = 24, @ColorRes val colorRes: Int = 0
+        val context: Context, val sizeDp: Int = 24, @ColorRes val colorRes: Int = 0
     ) {
         val color
             get() = if (colorRes != 0) colorRes else getIconColor(context)
@@ -43,38 +42,30 @@ object IconUtils {
     }
 
     fun addIcon(
-        context: Context,
-        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_add_circle,
-            block(IconBuilder(context))
+            context, GoogleMaterial.Icon.gmd_add_circle, block(IconBuilder(context))
         )
     }
 
     fun clearIcon(
-        context: Context,
-        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_clear,
-            block(IconBuilder(context))
+            context, GoogleMaterial.Icon.gmd_clear, block(IconBuilder(context))
         )
     }
 
     fun visibilityOnIcon(context: Context): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_visibility
+            context, GoogleMaterial.Icon.gmd_visibility
         )
     }
 
     fun visibilityOffIcon(context: Context): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_visibility_off
+            context, GoogleMaterial.Icon.gmd_visibility_off
         )
     }
 
@@ -90,9 +81,7 @@ object IconUtils {
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_open_in_new,
-            block(IconBuilder(context))
+            context, GoogleMaterial.Icon.gmd_open_in_new, block(IconBuilder(context))
         )
     }
 
@@ -112,9 +101,7 @@ object IconUtils {
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_arrow_forward,
-            block(IconBuilder(context))
+            context, GoogleMaterial.Icon.gmd_arrow_forward, block(IconBuilder(context))
         )
     }
 
@@ -213,8 +200,7 @@ object IconUtils {
     }
 
     fun boxIcon(
-        context: Context,
-        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): Drawable {
         return createIcon(
             context, FontAwesome.Icon.faw_box, block(IconBuilder(context))
@@ -234,5 +220,29 @@ object IconUtils {
 
     private fun isNightMode(context: Context): Boolean {
         return context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    fun urlIcon(context: Context): Drawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_link
+        )
+    }
+
+    fun imagesIcon(context: Context): Drawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_images
+        )
+    }
+
+    fun quoteLeftIcon(context: Context): Drawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_quote_left
+        )
+    }
+
+    fun quoteRightIcon(context: Context): Drawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_quote_right
+        )
     }
 }

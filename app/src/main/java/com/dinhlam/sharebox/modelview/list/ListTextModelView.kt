@@ -74,6 +74,8 @@ data class ListTextModelView(
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
+            binding.imageQuoteLeft.setImageDrawable(IconUtils.quoteLeftIcon(buildContext))
+            binding.imageQuoteRight.setImageDrawable(IconUtils.quoteRightIcon(buildContext))
         }
 
         override fun onBind(model: ListTextModelView, position: Int) {

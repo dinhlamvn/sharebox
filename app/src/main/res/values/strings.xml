@@ -95,6 +95,14 @@
     <string name="share_text">" shares a text"</string>
     <string name="share_images">" shares some images"</string>
     <string name="share_image">" shares a image"</string>
+    <string name="share_a_link">Share a link</string>
+    <string name="share_a_image">Share a image</string>
+    <string name="share_a_content">Share a text quote</string>
+    <string name="content_desc_button_share_text">Share a text quote</string>
+    <string name="share_some_images">Share some images</string>
+    <string name="content_desc_button_action">Toggle some actions on home page</string>
+    <string name="overlay">Overlay</string>
+    <string name="content_desc_button_share_images">Share some images</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

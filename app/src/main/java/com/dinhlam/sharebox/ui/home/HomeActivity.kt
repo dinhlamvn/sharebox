@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -24,6 +25,7 @@ import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
+import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -132,9 +134,38 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
         viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
 
-        viewBinding.buttonAddBox.setOnClickListener {
-            createBoxResultLauncher.launch(appRouter.boxIntent(this))
+        viewBinding.buttonShareUrl.setImageDrawable(IconUtils.urlIcon(this))
+        viewBinding.buttonShareImages.setImageDrawable(IconUtils.imagesIcon(this))
+        viewBinding.buttonShareText.setImageDrawable(IconUtils.quoteLeftIcon(this))
+
+        toggleFabActionView(false)
+
+        viewBinding.buttonAction.setOnClickListener {
+            toggleFabActionView(!isFabShown())
         }
+
+        viewBinding.viewFabOverlay.setOnClickListener {
+            toggleFabActionView(false)
+        }
+    }
+
+    private fun isFabShown() =
+        viewBinding.buttonShareImages.isShown && viewBinding.buttonShareUrl.isShown && viewBinding.buttonShareText.isShown
+
+    private fun toggleFabActionView(isVisible: Boolean) {
+        if (isVisible) {
+            viewBinding.buttonShareImages.show()
+            viewBinding.buttonShareUrl.show()
+            viewBinding.buttonShareText.show()
+        } else {
+            viewBinding.buttonShareImages.hide()
+            viewBinding.buttonShareUrl.hide()
+            viewBinding.buttonShareText.hide()
+        }
+        viewBinding.viewFabOverlay.isVisible = isVisible
+        viewBinding.textShareUrl.isVisible = isVisible
+        viewBinding.textShareImages.isVisible = isVisible
+        viewBinding.textShareText.isVisible = isVisible
     }
 
     override fun onDestroy() {
