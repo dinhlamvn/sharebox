@@ -14,6 +14,8 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
+import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
+import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
@@ -157,5 +159,15 @@ class ShareHelper @Inject constructor(
 
     fun showBoxSelectionDialog(fragmentManager: FragmentManager) {
         BoxSelectionDialogFragment().show(fragmentManager, "BoxSelectionDialogFragment")
+    }
+
+    fun shareTextQuote(fragmentManager: FragmentManager) {
+        ShareTextQuoteInputDialogFragment().show(
+            fragmentManager, "ShareTextQuoteInputDialogFragment"
+        )
+    }
+
+    fun shareLink(fragmentManager: FragmentManager) {
+        ShareLinkInputDialogFragment().show(fragmentManager, "ShareLinkInputDialogFragment")
     }
 }

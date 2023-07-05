@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,6 +18,10 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
+import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
+import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
+import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
+import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.services.ShareCommunityService
@@ -31,7 +36,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : BaseActivity<ActivityHomeBinding>() {
+class HomeActivity : BaseActivity<ActivityHomeBinding>(),
+    ShareTextQuoteInputDialogFragment.OnShareTextQuoteCallback,
+    ShareLinkInputDialogFragment.OnShareLinkCallback {
 
     companion object {
         private const val PAGE_SIZE = 4
@@ -43,6 +50,33 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 val boxId = result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)
                     ?: return@registerForActivityResult
                 LiveEventUtils.createBoxEvent.postValue(boxId)
+            }
+        }
+
+    private val pickImagesResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val clipData = result.data?.clipData ?: return@registerForActivityResult
+                val pickCount =
+                    clipData.itemCount.takeIfGreaterThanZero() ?: return@registerForActivityResult
+                val intent = if (pickCount == 1) {
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "image/*"
+                        `package` = packageName
+                        putExtra(Intent.EXTRA_STREAM, clipData.getItemAt(0).uri)
+                    }
+                } else {
+                    Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                        type = "image/*"
+                        `package` = packageName
+                        val list = arrayListOf<Uri>()
+                        for (i in 0 until pickCount) {
+                            list.add(clipData.getItemAt(i).uri)
+                        }
+                        putParcelableArrayListExtra(Intent.EXTRA_STREAM, list)
+                    }
+                }
+                startActivity(intent)
             }
         }
 
@@ -96,6 +130,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     @Inject
     lateinit var appRouter: AppRouter
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
     override fun onCreateViewBinding(): ActivityHomeBinding {
         return ActivityHomeBinding.inflate(layoutInflater)
     }
@@ -147,6 +184,21 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         viewBinding.viewFabOverlay.setOnClickListener {
             toggleFabActionView(false)
         }
+
+        viewBinding.buttonShareText.setOnClickListener {
+            toggleFabActionView(false)
+            shareHelper.shareTextQuote(supportFragmentManager)
+        }
+
+        viewBinding.buttonShareUrl.setOnClickListener {
+            toggleFabActionView(false)
+            shareHelper.shareLink(supportFragmentManager)
+        }
+
+        viewBinding.buttonShareImages.setOnClickListener {
+            toggleFabActionView(false)
+            pickImagesResultLauncher.launch(appRouter.pickImageIntent(true))
+        }
     }
 
     private fun isFabShown() =
@@ -191,5 +243,23 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         if (videoMixerServiceConnection.bound) {
             unbindService(videoMixerServiceConnection)
         }
+    }
+
+    override fun onShareLink(link: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/*"
+            `package` = packageName
+            putExtra(Intent.EXTRA_TEXT, link)
+        }
+        startActivity(intent)
+    }
+
+    override fun onShareTextQuote(text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/*"
+            `package` = packageName
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        startActivity(intent)
     }
 }

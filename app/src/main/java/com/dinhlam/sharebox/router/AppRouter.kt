@@ -61,8 +61,12 @@ class AppRouter @Inject constructor(@ApplicationContext private val context: Con
         }
     }
 
-    fun pickImageIntent(): Intent {
-        return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+    fun pickImageIntent(isMultiple: Boolean = false): Intent {
+        return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+            if (isMultiple) {
+                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            }
+        }
     }
 
     fun passcodeIntent(context: Context, desc: String? = null): Intent {
