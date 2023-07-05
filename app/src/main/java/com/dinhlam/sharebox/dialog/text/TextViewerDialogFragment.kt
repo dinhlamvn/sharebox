@@ -25,8 +25,4 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
         viewBinding.textContent.text =
             HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
-
-    override fun getSpacing(): Int {
-        return 16
-    }
 }

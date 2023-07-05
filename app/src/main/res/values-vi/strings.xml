@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="share_activity_title">Snap vào Box</string>
     <string name="text_input_note_hint_desc">Đây là chia sẻ của?</string>
     <string name="view_more">Thêm…</string>
@@ -111,6 +111,14 @@
     <string name="create_box">Create a Box</string>
     <string name="guideline">Guideline</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
+    <string name="title_guideline">Guideline</string>
+    <string name="title_guideline_other_app">From other apps (Example Youtube)</string>
+    <string name="title_guideline_other_app_step_1">Step 1. Click on Share button from other apps</string>
+    <string name="title_guideline_other_app_step_2">Step 2. Choose Sharebox app from the dialog</string>
+    <string name="title_guideline_in_app">From in app</string>
+    <string name="title_guideline_in_app_step_1">Step 1. Toggle the options menu in Home</string>
+    <string name="title_guideline_in_app_step_2">Choose the action to move forward</string>
+    <string name="title_guideline_done">Done! Your content will be snapped and visible to other people (like your friends).</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

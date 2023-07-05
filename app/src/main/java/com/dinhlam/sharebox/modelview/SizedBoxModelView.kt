@@ -12,7 +12,7 @@ data class SizedBoxModelView(
     val id: String,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
-    @ColorRes val backgroundColor: Int = android.R.color.transparent
+    @ColorRes val backgroundColor: Int = 0
 ) : BaseListAdapter.BaseModelView(id) {
 
     override fun createViewHolder(
@@ -29,11 +29,12 @@ data class SizedBoxModelView(
                 width = model.width
                 height = model.height
             }
-            binding.root.setBackgroundColor(
-                ContextCompat.getColor(
-                    buildContext, model.backgroundColor
+
+            model.backgroundColor.takeIf { color -> color != 0 }?.let { takenColor ->
+                binding.root.dividerColor = ContextCompat.getColor(
+                    buildContext, takenColor
                 )
-            )
+            }
         }
 
         override fun onUnBind() {

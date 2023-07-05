@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
+import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
@@ -236,7 +237,7 @@ class CommunityFragment :
     }
 
     private fun showGuideline() {
-
+        GuidelineDialogFragment().show(childFragmentManager, "GuidelineDialogFragment")
     }
 
     private fun showListBoxMenu(view: View) = getState(viewModel) { state ->
