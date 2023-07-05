@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.databinding.DialogShareLinkBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
+import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showKeyboard
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -69,6 +70,10 @@ class ShareLinkInputDialogFragment : BaseDialogFragment<DialogShareLinkBinding>(
 
         if (!link.startsWith("https://") && !link.startsWith("http://")) {
             return showToast(R.string.invalidate_link)
+        }
+
+        if (!link.isWebLink()) {
+            return showToast(R.string.require_input_correct_weblink)
         }
 
         activity?.cast<OnShareLinkCallback>()?.onShareLink(link)

@@ -110,6 +110,7 @@
     <string name="invalidate_link">Link should be start with http:// or https://</string>
     <string name="create_box">Create a Box</string>
     <string name="guideline">Guideline</string>
+    <string name="require_input_correct_weblink">Please input correct weblink</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

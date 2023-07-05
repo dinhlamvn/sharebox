@@ -8,18 +8,17 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edit_text_quote"
-        style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
+        style="@style/Widget.Material3.TextInputEditText.FilledBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
         android:gravity="start|top"
         android:hint="@string/share_text_quote_hint"
-        android:imeOptions="actionSend"
+        android:imeOptions="actionDone"
         android:inputType="textMultiLine"
         android:minLines="10"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textSize="20sp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:textColorHint="#757575"
+        android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
