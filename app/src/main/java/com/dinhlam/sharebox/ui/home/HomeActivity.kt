@@ -16,7 +16,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
-import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
 import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
@@ -31,7 +30,6 @@ import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import com.dinhlam.sharebox.utils.IconUtils
-import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -43,15 +41,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
     companion object {
         private const val PAGE_SIZE = 4
     }
-
-    private val createBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val boxId = result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)
-                    ?: return@registerForActivityResult
-                LiveEventUtils.createBoxEvent.postValue(boxId)
-            }
-        }
 
     private val pickImagesResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

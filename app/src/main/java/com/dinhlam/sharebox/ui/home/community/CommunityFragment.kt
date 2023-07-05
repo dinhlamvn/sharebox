@@ -58,6 +58,15 @@ class CommunityFragment :
 
     private var blockVerifyPasscodeBlock: Function0<Unit>? = null
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val boxId = result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)
+                    ?: return@registerForActivityResult
+                viewModel.setBox(boxId)
+            }
+        }
+
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -176,8 +185,18 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        LiveEventUtils.createBoxEvent.observe(viewLifecycleOwner) { boxId ->
-            boxId?.let { takenBoxId -> viewModel.setBox(takenBoxId) }
+        viewBinding.toolbar.inflateMenu(R.menu.community_menu)
+        viewBinding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_create_box -> createBoxResultLauncher.launch(
+                    appRouter.boxIntent(
+                        requireContext()
+                    )
+                )
+
+                R.id.menu_guideline -> showGuideline()
+            }
+            true
         }
 
         LiveEventUtils.retryFirstLoadEvent.observe(viewLifecycleOwner) {
@@ -214,6 +233,10 @@ class CommunityFragment :
         viewModel.consume(this, CommunityState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
+    }
+
+    private fun showGuideline() {
+
     }
 
     private fun showListBoxMenu(view: View) = getState(viewModel) { state ->
