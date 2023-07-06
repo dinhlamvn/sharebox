@@ -70,13 +70,10 @@ object IconUtils {
     }
 
     fun editIcon(
-        context: Context,
-        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_edit,
-            block(IconBuilder(context))
+            context, GoogleMaterial.Icon.gmd_edit, block(IconBuilder(context))
         )
     }
 
@@ -246,6 +243,14 @@ object IconUtils {
     fun quoteRightIcon(context: Context): Drawable {
         return createIcon(
             context, FontAwesome.Icon.faw_quote_right
+        )
+    }
+
+    fun saveIcon(context: Context): Drawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_save_alt,
+            IconBuilder(context, colorRes = android.R.color.white)
         )
     }
 }

@@ -122,6 +122,8 @@
     <string name="title_guideline_in_app_step_2">Step 2. Choose the action to move forward</string>
     <string name="title_guideline_done">Done! Your content will be snapped and visible to other people (like your friends).</string>
     <string name="go_to_community">Go to Community</string>
+    <string name="error_save_video_to_gallery">An error occurred when save video to Gallery</string>
+    <string name="success_save_video_to_gallery">Save video to Gallery successfully</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

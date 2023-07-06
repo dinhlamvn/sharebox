@@ -48,7 +48,7 @@
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:textColor="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_view_in_source"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Box" />
@@ -71,7 +71,7 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textColor="@android:color/white"
             app:collapsed_line="1"
-            app:layout_constraintTop_toBottomOf="@id/image_avatar"
+            app:layout_constraintTop_toBottomOf="@id/image_save_to_gallery"
             app:layout_goneMarginTop="8dp"
             tools:text="hello world" />
 
@@ -80,14 +80,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-            app:layout_constraintEnd_toStartOf="@id/text_view_in_source"
+            app:layout_constraintEnd_toStartOf="@id/image_save_to_gallery"
             app:layout_constraintStart_toEndOf="@id/image_avatar"
             app:layout_constraintTop_toTopOf="@id/image_avatar"
             tools:text="Alice" />
@@ -106,8 +106,19 @@
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_name"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/text_box_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_box_name" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_save_to_gallery"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/image_avatar" />
 
         <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
             android:id="@+id/bottom_action"

@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.ui.home.videomixer
 
+import android.content.Context
+import android.net.Uri
 import androidx.annotation.UiThread
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.BoxDetail
@@ -13,6 +16,7 @@ import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
+import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -165,6 +169,17 @@ class VideoMixerViewModel @Inject constructor(
         doInBackground {
             val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
             setBox(boxDetail)
+        }
+    }
+
+    fun saveVideoToGallery(context: Context, videoUri: String) {
+        doInBackground {
+            try {
+                FileUtils.copyVideoToExternalStorage(context, Uri.parse(videoUri))
+                postShowToast(R.string.success_save_video_to_gallery)
+            } catch (e: Exception) {
+                postShowToast(R.string.error_save_video_to_gallery)
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
+import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -88,7 +89,8 @@ class VideoMixerFragment :
                             actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
                             actionLike = BaseListAdapter.NoHashProp(::onLike),
                             actionComment = BaseListAdapter.NoHashProp(::onComment),
-                            actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
+                            actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
+                            actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
                         )
                     }
 
@@ -117,6 +119,10 @@ class VideoMixerFragment :
                 )
             }
         }
+    }
+
+    private fun onSaveToGallery(videoUri: String) {
+        viewModel.saveVideoToGallery(requireContext(), videoUri)
     }
 
     override fun onCreateViewBinding(

@@ -40,6 +40,9 @@ data class TiktokVideoModelView(
     val actionBookmark: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionSaveToGallery: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(id) {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
@@ -58,6 +61,7 @@ data class TiktokVideoModelView(
         private var mediaPlayer: MediaPlayer? = null
 
         init {
+            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)
             })
@@ -118,6 +122,10 @@ data class TiktokVideoModelView(
 
             binding.bottomAction.setOnBookmarkClickListener {
                 model.actionBookmark.prop?.invoke(model.shareDetail.shareId)
+            }
+
+            binding.imageSaveToGallery.setOnClickListener {
+                model.actionSaveToGallery.prop?.invoke(model.videoUri)
             }
 
             binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)
