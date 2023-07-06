@@ -16,14 +16,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
-import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
 import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.services.ShareCommunityService
@@ -34,8 +32,6 @@ import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -175,11 +171,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         toggleFabActionView(false)
 
         viewBinding.buttonAction.setOnClickListener {
-            //toggleFabActionView(!isFabShown())
-            activityScope.launch(Dispatchers.IO) {
-                val videoUri = videoHelper.getVideoUri(this@HomeActivity, VideoSource.Tiktok, "https://www.tiktok.com/@funny.tiktok.cl/video/7241444683417767194")
-                Logger.debug(videoUri?.toString() ?: "error")
-            }
+            toggleFabActionView(!isFabShown())
         }
 
         viewBinding.viewFabOverlay.setOnClickListener {
@@ -232,7 +224,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
             bindService(intent, communityServiceConnection, Context.BIND_AUTO_CREATE)
         }
         Intent(this, VideoMixerService::class.java).also { intent ->
-            //bindService(intent, videoMixerServiceConnection, Context.BIND_AUTO_CREATE)
+            bindService(intent, videoMixerServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
