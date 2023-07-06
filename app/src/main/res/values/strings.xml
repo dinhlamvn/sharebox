@@ -121,6 +121,7 @@
     <string name="title_guideline_in_app_step_1">Step 1. Toggle the options menu in Home</string>
     <string name="title_guideline_in_app_step_2">Step 2. Choose the action to move forward</string>
     <string name="title_guideline_done">Done! Your content will be snapped and visible to other people (like your friends).</string>
+    <string name="go_to_community">Go to Community</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

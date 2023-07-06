@@ -37,8 +37,9 @@ class VideoMixerViewModel @Inject constructor(
 
     private fun getLatestBox() = execute {
         val boxId =
-            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@execute this
-        val box = boxRepository.findOne(boxId) ?: return@execute this
+            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
+                ?: return@execute loadVideoMixers().let { this }
+        val box = boxRepository.findOne(boxId) ?: return@execute loadVideoMixers().let { this }
         copy(currentBox = box, isRefreshing = false)
     }
 
@@ -162,7 +163,7 @@ class VideoMixerViewModel @Inject constructor(
 
     fun setBox(boxId: String) {
         doInBackground {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
             setBox(boxDetail)
         }
     }

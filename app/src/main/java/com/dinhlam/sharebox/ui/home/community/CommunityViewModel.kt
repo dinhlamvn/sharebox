@@ -30,23 +30,23 @@ class CommunityViewModel @Inject constructor(
 
     init {
         getLatestBox()
-        loadBoxes()
         consume(CommunityState::currentBox) {
-            doOnRefresh()
+            loadShares()
         }
     }
 
     private fun getLatestBox() = execute {
         val boxId =
-            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@execute this
-        val box = boxRepository.findOne(boxId) ?: return@execute this
+            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
+                ?: return@execute loadShares().let { this }
+        val box = boxRepository.findOne(boxId) ?: return@execute loadShares().let { this }
         copy(currentBox = box, isRefreshing = false)
     }
 
-    private fun loadShares() = getState { state ->
+    private fun loadShares() {
         setState { copy(isRefreshing = true) }
-        doInBackground {
-            val shares = state.currentBox?.let { currentBox ->
+        execute {
+            val shares = currentBox?.let { currentBox ->
                 shareRepository.findWhereInBox(
                     currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
                 )
@@ -54,13 +54,8 @@ class CommunityViewModel @Inject constructor(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
             )
 
-            setState { copy(shares = shares, isRefreshing = false) }
+            copy(shares = shares, isRefreshing = false)
         }
-    }
-
-    private fun loadBoxes() = doInBackground {
-        val boxes = boxRepository.findLatestBox()
-        setState { copy(boxes = boxes) }
     }
 
     fun loadMores() {
@@ -86,9 +81,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun doOnRefresh() {
-        setState { copy(currentPage = 1, isLoadingMore = false, canLoadMore = true) }
-        loadShares()
-        loadBoxes()
+        setState { CommunityState() }
+        getLatestBox()
     }
 
     fun like(shareId: String) = doInBackground {
@@ -165,7 +159,7 @@ class CommunityViewModel @Inject constructor(
 
     fun setBox(boxId: String) {
         doInBackground {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
             setBox(boxDetail)
         }
     }

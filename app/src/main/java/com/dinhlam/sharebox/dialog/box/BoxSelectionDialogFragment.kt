@@ -143,6 +143,10 @@ class BoxSelectionDialogFragment :
         viewBinding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
             viewModel.search(editable.trimmedString())
         }
+
+        viewBinding.buttonGoToCommunity.setOnClickListener {
+            returnSelectedBox("")
+        }
     }
 
     override fun getSpacing(): Int {

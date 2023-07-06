@@ -234,7 +234,7 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun setBox(boxId: String) {
         doInBackground {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
             setBox(boxDetail)
         }
     }
