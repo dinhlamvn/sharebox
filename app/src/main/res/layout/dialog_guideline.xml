@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/AppMaterialCardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp"
     app:contentPadding="8dp">
@@ -15,7 +15,7 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         android:overScrollMode="never"
-        android:scrollbars="none"
+        android:paddingHorizontal="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </com.google.android.material.card.MaterialCardView>

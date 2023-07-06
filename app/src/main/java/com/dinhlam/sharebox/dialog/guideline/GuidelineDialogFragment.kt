@@ -37,6 +37,89 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
         add(
             TextModelView(
+                "title_other_app_tiktok",
+                getString(R.string.title_guideline_other_app_tiktok),
+                height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                gravity = Gravity.START,
+                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2
+            )
+        )
+
+        add(
+            TextModelView(
+                "title_other_app_tiktok_step_1",
+                getString(R.string.title_other_app_tiktok_step_1),
+                height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                gravity = Gravity.START,
+                textAppearance = R.style.TextAppearance_MaterialComponents_Body1
+            )
+        )
+
+        add(
+            SizedBoxModelView(
+                "spacing_tiktok_1", height = 12.dp(), backgroundColor = android.R.color.transparent
+            )
+        )
+
+        add(ResourceImageModelView(R.drawable.tiktok_1, height = 100.dp()))
+
+        add(
+            SizedBoxModelView(
+                "spacing_tiktok_2", height = 12.dp(), backgroundColor = android.R.color.transparent
+            )
+        )
+
+        add(
+            TextModelView(
+                "title_other_app_tiktok_step_2",
+                getString(R.string.title_other_app_tiktok_step_2),
+                height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                gravity = Gravity.START,
+                textAppearance = R.style.TextAppearance_MaterialComponents_Body1
+            )
+        )
+
+        add(
+            SizedBoxModelView(
+                "spacing_tiktok_3", height = 12.dp(), backgroundColor = android.R.color.transparent
+            )
+        )
+
+        add(ResourceImageModelView(R.drawable.tiktok_2, height = 100.dp()))
+
+
+        add(
+            SizedBoxModelView(
+                "spacing_tiktok_4", height = 12.dp(), backgroundColor = android.R.color.transparent
+            )
+        )
+
+        add(
+            TextModelView(
+                "title_other_app_tiktok_step_3",
+                getString(R.string.title_other_app_tiktok_step_3),
+                height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                gravity = Gravity.START,
+                textAppearance = R.style.TextAppearance_MaterialComponents_Body1
+            )
+        )
+
+        add(
+            SizedBoxModelView(
+                "spacing_tiktok_5", height = 12.dp(), backgroundColor = android.R.color.transparent
+            )
+        )
+
+        add(ResourceImageModelView(R.drawable.tiktok_3, height = heightPercentage(60)))
+
+
+        add(
+            SizedBoxModelView(
+                "spacing_tiktok_6", height = 12.dp(), backgroundColor = android.R.color.transparent
+            )
+        )
+        add(
+            TextModelView(
                 "title_other_apps",
                 getString(R.string.title_guideline_other_app),
                 height = ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -57,21 +140,21 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
         add(
             SizedBoxModelView(
-                "spacing_1", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_1", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(ResourceImageModelView(R.drawable.guidline_1, height = 100.dp()))
 
         add(
             SizedBoxModelView(
-                "spacing_2", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_2", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(ResourceImageModelView(R.drawable.guidline_2, height = 100.dp()))
 
         add(
             SizedBoxModelView(
-                "spacing_3", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_3", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(
@@ -85,7 +168,7 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
         )
         add(
             SizedBoxModelView(
-                "spacing_4", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_4", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(ResourceImageModelView(R.drawable.guidline_3, height = 100.dp()))
@@ -117,7 +200,7 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
         add(
             SizedBoxModelView(
-                "spacing_6", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_6", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(
@@ -128,7 +211,7 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
         add(
             SizedBoxModelView(
-                "spacing_7", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_7", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(
@@ -142,7 +225,7 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
         )
         add(
             SizedBoxModelView(
-                "spacing_8", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_8", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(
@@ -153,7 +236,7 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
         add(
             SizedBoxModelView(
-                "spacing_9", height = 8.dp(), backgroundColor = android.R.color.transparent
+                "spacing_9", height = 12.dp(), backgroundColor = android.R.color.transparent
             )
         )
         add(
@@ -175,10 +258,6 @@ class GuidelineDialogFragment : BaseDialogFragment<DialogGuidelineBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.recyclerView.updateLayoutParams {
-            height = heightPercentage(80)
-        }
-
         viewBinding.recyclerView.adapter = guidelineAdapter
         guidelineAdapter.requestBuildModelViews()
     }
