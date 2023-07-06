@@ -5,7 +5,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
 import androidx.annotation.GravityInt
+import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -17,6 +19,7 @@ import com.dinhlam.sharebox.extensions.setTextAppearanceCompat
 data class TextModelView(
     val id: String,
     val text: String,
+    @ColorRes val textColor: Int = 0,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextAppearance_MaterialComponents_Body2,
@@ -48,6 +51,10 @@ data class TextModelView(
                 }
 
                 binding.textView.setDrawableCompat(end = model.endIcon)
+
+                model.textColor.takeIf { it != 0 }?.let { textColor ->
+                    binding.textView.setTextColor(ContextCompat.getColor(buildContext, textColor))
+                }
             }
 
             override fun onUnBind() {

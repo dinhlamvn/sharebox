@@ -21,8 +21,30 @@ interface VideoMixerDao {
     @Query("SELECT * from video_mixer ORDER BY id DESC")
     suspend fun find(): List<VideoMixer>
 
-    @Query("SELECT * from video_mixer ORDER BY trending_score DESC LIMIT :limit OFFSET :offset")
+    @Query(
+        """
+        SELECT vm.* 
+        FROM video_mixer as vm 
+        INNER JOIN share as s ON s.share_id = vm.share_id
+        WHERE s.share_box_id IS NULL 
+        ORDER BY trending_score DESC 
+        LIMIT :limit 
+        OFFSET :offset
+    """
+    )
     suspend fun find(limit: Int, offset: Int): List<VideoMixer>
+
+    @Query(
+        """
+        SELECT vm.* 
+        FROM video_mixer as vm 
+        INNER JOIN share as s ON s.share_id = vm.share_id
+        WHERE s.share_box_id = :boxId 
+        ORDER BY trending_score DESC 
+        LIMIT :limit 
+        OFFSET :offset"""
+    )
+    suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int): List<VideoMixer>
 
     @Query(
         """

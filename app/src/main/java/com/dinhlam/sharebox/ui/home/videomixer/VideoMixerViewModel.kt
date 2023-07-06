@@ -3,11 +3,16 @@ package com.dinhlam.sharebox.ui.home.videomixer
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,24 +24,48 @@ class VideoMixerViewModel @Inject constructor(
     private val likeRepository: LikeRepository,
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
+    private val boxRepository: BoxRepository,
+    private val appSharePref: AppSharePref,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
 
     init {
-        loadVideoMixers()
+        getLatestBox()
+        consume(VideoMixerState::currentBox) {
+            loadVideoMixers()
+        }
     }
 
-    private fun loadVideoMixers() = doInBackground {
+    private fun getLatestBox() = execute {
+        val boxId =
+            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@execute this
+        val box = boxRepository.findOne(boxId) ?: return@execute this
+        copy(currentBox = box, isRefreshing = false)
+    }
+
+    private fun loadVideoMixers() {
         setState { copy(isRefreshing = true) }
-        val videos = videoMixerRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
-        setState { copy(videos = videos, isRefreshing = false) }
+        execute {
+            val videos = currentBox?.let { box ->
+                videoMixerRepository.findWhereInBox(
+                    box.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
+                )
+            } ?: videoMixerRepository.find(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+            copy(videos = videos, isRefreshing = false)
+        }
     }
 
     fun loadMores() {
         setState { copy(isLoadingMore = true) }
         execute {
-            val videos = videoMixerRepository.find(
+            val videos = currentBox?.let { box ->
+                videoMixerRepository.findWhereInBox(
+                    box.boxId,
+                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                    currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                )
+            } ?: videoMixerRepository.find(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                offset = currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
             copy(
                 videos = this.videos.plus(videos),
@@ -49,7 +78,7 @@ class VideoMixerViewModel @Inject constructor(
 
     fun doOnPullRefresh() {
         setState { VideoMixerState() }
-        loadVideoMixers()
+        getLatestBox()
     }
 
     fun like(shareId: String) = doInBackground {
@@ -59,8 +88,7 @@ class VideoMixerViewModel @Inject constructor(
                     if (videoDetail.shareId == shareId) {
                         videoDetail.copy(
                             shareDetail = videoDetail.shareDetail.copy(
-                                likeNumber = videoDetail.shareDetail.likeNumber + 1,
-                                liked = true
+                                likeNumber = videoDetail.shareDetail.likeNumber + 1, liked = true
                             )
                         )
                     } else {
@@ -119,4 +147,23 @@ class VideoMixerViewModel @Inject constructor(
                 block(bookmarkDetail?.bookmarkCollectionId)
             }
         }
+
+    private fun setBox(box: BoxDetail?) = getState { state ->
+        if (state.currentBox != box) {
+            setState { copy(currentBox = box) }
+            box?.let { nonNullBox ->
+                doInBackground {
+                    boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
+                }
+                appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
+            } ?: appSharePref.setLatestActiveBoxId("")
+        }
+    }
+
+    fun setBox(boxId: String) {
+        doInBackground {
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground
+            setBox(boxDetail)
+        }
+    }
 }

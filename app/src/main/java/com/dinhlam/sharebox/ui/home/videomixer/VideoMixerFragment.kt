@@ -15,8 +15,10 @@ import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -27,6 +29,7 @@ import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
+import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,7 +37,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class VideoMixerFragment :
     BaseViewModelFragment<VideoMixerState, VideoMixerViewModel, FragmentVideoMixerBinding>(),
-    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
+    BoxSelectionDialogFragment.OnBoxSelectedListener {
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -50,7 +54,12 @@ class VideoMixerFragment :
             }
 
             if (state.videos.isEmpty()) {
-                add(TextModelView("empty_message", getString(R.string.empty_video)))
+                add(
+                    TextModelView(
+                        "empty_message",
+                        getString(R.string.empty_video)
+                    )
+                )
                 return@getState
             }
 
@@ -133,6 +142,10 @@ class VideoMixerFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewBinding.textTitle.setDrawableCompat(start = IconUtils.boxIcon(requireContext()) {
+            copy(sizeDp = 14)
+        })
+
         viewBinding.viewPager.layoutManager = layoutManager
         PagerSnapHelper().attachToRecyclerView(viewBinding.viewPager)
         viewBinding.viewPager.adapter = videoAdapter
@@ -144,6 +157,14 @@ class VideoMixerFragment :
 
         viewModel.consume(this, VideoMixerState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
+        }
+
+        viewModel.consume(viewLifecycleOwner, VideoMixerState::currentBox) { box ->
+            viewBinding.textTitle.text = box?.boxName ?: getString(R.string.box_community)
+        }
+
+        viewBinding.textTitle.setOnClickListener {
+            shareHelper.showBoxSelectionDialog(childFragmentManager)
         }
     }
 
@@ -225,6 +246,10 @@ class VideoMixerFragment :
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
         viewModel.bookmark(shareId, bookmarkCollectionId)
+    }
+
+    override fun onBoxSelected(boxId: String) {
+        viewModel.setBox(boxId)
     }
 }
 

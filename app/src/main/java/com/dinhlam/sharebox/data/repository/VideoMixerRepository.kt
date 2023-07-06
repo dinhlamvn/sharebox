@@ -60,6 +60,16 @@ class VideoMixerRepository @Inject constructor(
         }.getOrDefault(emptyList())
     }
 
+    suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int): List<VideoMixerDetail> {
+        return videoMixerDao.runCatching {
+            findWhereInBox(boxId, limit, offset).mapNotNull { videoMixer ->
+                val shareDetail =
+                    shareRepository.findOne(videoMixer.shareId) ?: return@mapNotNull null
+                mapper.map(videoMixer, shareDetail)
+            }
+        }.getOrDefault(emptyList())
+    }
+
     suspend fun findVideoToCleanUp(timeToClean: Long): List<VideoMixer> =
         videoMixerDao.runCatching {
             findVideoToCleanUp(timeToClean)

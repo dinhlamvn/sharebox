@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.home.videomixer
 
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.VideoMixerDetail
 
 data class VideoMixerState(
@@ -9,4 +10,6 @@ data class VideoMixerState(
     val isLoadingMore: Boolean = false,
     val currentPage: Int = 1,
     val canLoadMore: Boolean = true,
+    val currentBox: BoxDetail? = null,
+    val boxes: List<BoxDetail> = emptyList()
 ) : BaseViewModel.BaseState

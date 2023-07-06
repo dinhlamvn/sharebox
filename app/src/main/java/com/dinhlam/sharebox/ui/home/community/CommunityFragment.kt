@@ -6,16 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.ListPopupWindow
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
@@ -29,9 +26,6 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.takeIfNotEmpty
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.extensions.widthPercentage
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -204,9 +198,13 @@ class CommunityFragment :
             viewModel.doOnRetryFirstLoad()
         }
 
-        viewBinding.textTitle.setOnClickListener(::showListBoxMenu)
+        viewBinding.textTitle.setOnClickListener {
+            shareHelper.showBoxSelectionDialog(childFragmentManager)
+        }
 
-        viewBinding.textTitle.setDrawableCompat(end = IconUtils.boxIcon(requireContext()))
+        viewBinding.textTitle.setDrawableCompat(start = IconUtils.boxIcon(requireContext()) {
+            copy(sizeDp = 14)
+        })
 
         viewModel.consume(this, CommunityState::currentBox) { currentBox ->
             viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_community)
@@ -243,55 +241,6 @@ class CommunityFragment :
 
     private fun showGuideline() {
         GuidelineDialogFragment().show(childFragmentManager, "GuidelineDialogFragment")
-    }
-
-    private fun showListBoxMenu(view: View) = getState(viewModel) { state ->
-        val listPopupWindow = ListPopupWindow(requireContext(), null, R.attr.listPopupWindowStyle)
-        listPopupWindow.anchorView = view
-        val boxes = state.boxes.takeIfNotEmpty() ?: return@getState
-        val hasViewMore = boxes.size > AppConsts.NUMBER_VISIBLE_BOX
-
-        val boxNames = listOf(getString(R.string.box_community)).plus(
-            boxes.take(AppConsts.NUMBER_VISIBLE_BOX).map { box -> box.boxName }).run {
-            if (hasViewMore) {
-                plus(getString(R.string.view_more))
-            } else {
-                this
-            }
-        }
-
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_popup_window_item, boxNames)
-        listPopupWindow.setAdapter(adapter)
-        listPopupWindow.setContentWidth(widthPercentage(50))
-
-        listPopupWindow.setOnItemClickListener { _, _, position, _ ->
-            listPopupWindow.dismiss()
-            if (position == 0) {
-                viewModel.setBox(null)
-            } else if (hasViewMore && position == boxNames.size - 1) {
-                showBoxesDialog()
-            } else {
-                val box = boxes.getOrNull(position - 1) ?: return@setOnItemClickListener
-                val boxPasscode = box.passcode.takeIfNotNullOrBlank()
-                    ?: return@setOnItemClickListener viewModel.setBox(box)
-                val intent = appRouter.passcodeIntent(requireContext(), boxPasscode)
-                intent.putExtra(
-                    AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
-                        R.string.dialog_bookmark_collection_picker_verify_passcode, box.boxName
-                    )
-                )
-                blockVerifyPasscodeBlock = {
-                    viewModel.setBox(box)
-                }
-                passcodeConfirmResultLauncher.launch(intent)
-            }
-        }
-
-        listPopupWindow.show()
-    }
-
-    private fun showBoxesDialog() {
-        shareHelper.showBoxSelectionDialog(childFragmentManager)
     }
 
     private fun onOpen(shareId: String) = getState(viewModel) { state ->
