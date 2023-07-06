@@ -58,6 +58,9 @@ data class TiktokVideoModelView(
         private var mediaPlayer: MediaPlayer? = null
 
         init {
+            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+                copy(sizeDp = 12, colorRes = android.R.color.white)
+            })
             binding.textViewInSource.setDrawableCompat(end = IconUtils.openIcon(buildContext) {
                 copy(sizeDp = 16, colorRes = android.R.color.white)
             })
@@ -128,6 +131,9 @@ data class TiktokVideoModelView(
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
+
+            binding.textBoxName.text =
+                model.shareDetail.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
 
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textNote.isVisible = true

@@ -15,6 +15,7 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
@@ -84,6 +85,9 @@ data class YoutubeVideoModelView(
         }
 
         init {
+            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+                copy(sizeDp = 12, colorRes = android.R.color.white)
+            })
             binding.textViewInSource.setDrawableCompat(end = IconUtils.openIcon(buildContext) {
                 copy(sizeDp = 16, colorRes = android.R.color.white)
             })
@@ -166,6 +170,9 @@ data class YoutubeVideoModelView(
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
+
+            binding.textBoxName.text =
+                model.shareDetail.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
 
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textNote.isVisible = true
