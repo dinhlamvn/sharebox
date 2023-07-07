@@ -96,7 +96,6 @@
     <string name="share_images">" shares some images"</string>
     <string name="share_image">" shares a image"</string>
     <string name="share_a_link">Share a link</string>
-    <string name="share_a_image">Share a image</string>
     <string name="share_a_content">Share a text quote</string>
     <string name="content_desc_button_share_text">Share a text quote</string>
     <string name="share_some_images">Share some images</string>
@@ -130,7 +129,7 @@
     <string name="title_other_app_tiktok_step_3">Step 3. Navigate to Videos Mixer in Sharebox app. Now, you can view and save video to Gallery</string>
     <string name="synchronize_data_message">Synchronizing data…</string>
     <string name="sign_in">Sign In</string>
-    <string name="sign_in_message">Let\'s sign-in to get more features in app: Post a share content, Like, Comment,...</string>
+    <string name="sign_in_message">Let\'s sign-in to get more features in app: Post a share content, Like, Comment,…</string>
     <string name="sign_in_to_comment">Sign-in to comment</string>
     <string name="require_sign_in_to_create_box">Please sign-in to create Box</string>
 

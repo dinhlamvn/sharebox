@@ -121,7 +121,7 @@ class FirebaseStorageHelper @Inject constructor(
     }
 
     suspend fun getImageDownloadUri(
-        context: Context, shareId: String, uri: Uri
+        shareId: String, uri: Uri
     ): Uri {
         return withContext(Dispatchers.IO) {
             shareImagesRef.child(getUploadFilePath(shareId, uri)).downloadUrl.await()

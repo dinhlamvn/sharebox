@@ -124,7 +124,6 @@ class RealtimeDatabaseService : Service() {
                 val newShareData = shareData.cast<ShareData.ShareImage>()?.let { shareImage ->
                     firebaseStorageHelper.runCatching {
                         getImageDownloadUri(
-                            this@RealtimeDatabaseService,
                             shareId,
                             shareImage.uri
                         )
@@ -135,7 +134,7 @@ class RealtimeDatabaseService : Service() {
                     val downloadUris = shareImages.uris.asFlow().mapNotNull { uri ->
                         firebaseStorageHelper.runCatching {
                             getImageDownloadUri(
-                                this@RealtimeDatabaseService, shareId, uri
+                                shareId, uri
                             )
                         }.getOrNull()
                     }.toList()

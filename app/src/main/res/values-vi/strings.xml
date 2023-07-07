@@ -94,7 +94,6 @@
     <string name="share_images">" chia sẻ vài ảnh"</string>
     <string name="share_image">" chia sẻ một ảnh"</string>
     <string name="share_a_link">Chia sẻ một địa chỉ web</string>
-    <string name="share_a_image">Chia sẻ một ảnh</string>
     <string name="share_a_content">Chia sẻ một trích dẫn</string>
     <string name="content_desc_button_share_text">Chia sẻ một trích dẫn</string>
     <string name="share_some_images">Chia sẻ vài hình ảnh</string>
@@ -127,10 +126,10 @@
     <string name="title_other_app_tiktok_step_2">Step 2. Chọn Xem Thêm (***) và chọn ứng dụng Sharebox trong hộp thoại. Sau đó thực hiện Snap lại.</string>
     <string name="title_other_app_tiktok_step_3">Step 3. Vào ứng dụng Sharebox mục Bộ trộn Videos. Giờ đây bạn có thể xem và lưu video về máy.</string>
     <string name="synchronize_data_message">Đang đồng bộ dữ liệu…</string>
-    <string name="sign_in">Sign In</string>
-    <string name="sign_in_message">Let\'s sign-in to get more features in app: Post a share content, Like, Comment,...</string>
-    <string name="sign_in_to_comment">Sign-in to comment</string>
-    <string name="require_sign_in_to_create_box">Please sign-in to create Box</string>
+    <string name="sign_in">Đăng nhập</string>
+    <string name="sign_in_message">Hãy đăng nhập để sử dụng nhiều tính năng của ứng dụng: Tạo một chia sẻ, thích, bình luận,…</string>
+    <string name="sign_in_to_comment">Đăng nhập để bình luận</string>
+    <string name="require_sign_in_to_create_box">Vui lòng đăng nhập để tạo Box</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
