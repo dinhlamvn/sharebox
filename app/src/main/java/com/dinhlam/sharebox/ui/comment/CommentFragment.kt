@@ -1,9 +1,12 @@
 package com.dinhlam.sharebox.ui.comment
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
@@ -20,9 +23,11 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CommentFragment :
@@ -39,14 +44,17 @@ class CommentFragment :
         }
     }
 
+    private val signInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
+    )
+
+    @Inject
+    lateinit var appRouter: AppRouter
+
     override val viewModel: CommentViewModel by viewModels()
 
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            state.currentUser ?: return@getState run {
-                add(LoadingModelView("loading_user"))
-            }
-
             if (state.isRefreshing) {
                 add(LoadingModelView("loading_comment"))
                 return@getState
@@ -95,6 +103,10 @@ class CommentFragment :
         viewBinding.imageClose.setOnClickListener {
             dismissAllowingStateLoss()
         }
+
+        viewBinding.buttonSignIn.setOnClickListener {
+            signInLauncher.launch(appRouter.signIn(true))
+        }
     }
 
     override fun onSubmitComment(comment: String) {
@@ -103,10 +115,12 @@ class CommentFragment :
 
     private fun invalidateUserInfo(userDetail: UserDetail?) {
         val nonNullUser = userDetail ?: return run {
+            viewBinding.buttonSignIn.isVisible = true
             viewBinding.imageAvatar.isVisible = false
             viewBinding.textComment.isVisible = false
         }
 
+        viewBinding.buttonSignIn.isVisible = false
         viewBinding.imageAvatar.isVisible = true
         viewBinding.textComment.isVisible = true
 
@@ -121,5 +135,11 @@ class CommentFragment :
         behavior.peekHeight = 0
         behavior.skipCollapsed = true
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun handleSignInResult(activityResult: ActivityResult) {
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            viewModel.getCurrentUserProfile()
+        }
     }
 }

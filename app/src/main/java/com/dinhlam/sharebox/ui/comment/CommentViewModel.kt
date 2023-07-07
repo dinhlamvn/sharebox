@@ -27,7 +27,7 @@ class CommentViewModel @Inject constructor(
         loadComments()
     }
 
-    private fun getCurrentUserProfile() = doInBackground {
+    fun getCurrentUserProfile() = doInBackground {
         val user = userRepository.findOne(userHelper.getCurrentUserId()) ?: return@doInBackground
         setState { copy(currentUser = user) }
     }

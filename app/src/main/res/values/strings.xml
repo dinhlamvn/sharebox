@@ -131,6 +131,7 @@
     <string name="synchronize_data_message">Synchronizing data…</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_message">Let\'s sign-in to get more features in app: Post a share content, Like, Comment,...</string>
+    <string name="sign_in_to_comment">Sign-in to comment</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
