@@ -30,7 +30,7 @@ import javax.inject.Singleton
 @Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val appRouter: AppRouter,
+    private val appRouter: AppRouter
 ) {
 
     fun shareToOther(share: ShareDetail) {

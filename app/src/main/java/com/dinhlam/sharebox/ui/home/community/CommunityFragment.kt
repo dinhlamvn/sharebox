@@ -26,6 +26,7 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
@@ -48,8 +49,6 @@ class CommunityFragment :
     ): FragmentCommunityBinding {
         return FragmentCommunityBinding.inflate(inflater, container, false)
     }
-
-    private var blockVerifyPasscodeBlock: Function0<Unit>? = null
 
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -159,6 +158,9 @@ class CommunityFragment :
     @Inject
     lateinit var appRouter: AppRouter
 
+    @Inject
+    lateinit var userHelper: UserHelper
+
     override val viewModel: CommunityViewModel by viewModels()
 
     override fun onStateChanged(state: CommunityState) {
@@ -252,6 +254,10 @@ class CommunityFragment :
     }
 
     private fun onLike(shareId: String) {
+        if (!userHelper.isSignedIn()) {
+            startActivity(appRouter.signIn())
+            return
+        }
         viewModel.like(shareId)
     }
 
