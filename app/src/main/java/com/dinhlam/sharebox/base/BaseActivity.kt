@@ -4,13 +4,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.plus
 
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
-    protected val activityScope by lazyOf(MainScope() + CoroutineName("ActivityScope"))
+    protected val activityScope by lazyOf(MainScope() + CoroutineName("ActivityScope") + Job())
 
     abstract fun onCreateViewBinding(): VB
 

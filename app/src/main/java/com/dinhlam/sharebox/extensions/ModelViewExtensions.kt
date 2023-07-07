@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.extensions
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
@@ -30,8 +31,8 @@ fun ShareData.buildShareModelViews(
     actionLike: Function1<String, Unit>? = null,
     actionComment: Function1<String, Unit>? = null,
     actionBookmark: Function1<String, Unit>? = null,
-    actionViewImage: Function1<Uri, Unit>? = null,
-    actionViewImages: Function1<List<Uri>, Unit>? = null,
+    actionViewImage: ((String, Uri) -> Unit)? = null,
+    actionViewImages: Function2<String, List<Uri>, Unit>? = null,
     actionBoxClick: Function1<BoxDetail?, Unit>? = null,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
@@ -106,11 +107,13 @@ fun ShareData.buildShareModelViews(
             val shareData = this.castNonNull<ShareData.ShareImages>()
 
             val modelViews = shareData.uris.map { uri ->
-                ImageModelView(uri,
+                ImageModelView(
+                    uri,
                     height = screenHeight.times(0.5f).toInt(),
-                    actionClick = BaseListAdapter.NoHashProp {
-                        actionViewImages?.invoke(shareData.uris)
+                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        actionViewImages?.invoke(shareId, shareData.uris)
                     })
+                )
             }
 
             ListImagesModelView(

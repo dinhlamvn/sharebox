@@ -116,9 +116,10 @@ class ShareHelper @Inject constructor(
         }.show(activity.supportFragmentManager, "TextViewerDialogFragment")
     }
 
-    fun viewShareImage(activity: FragmentActivity, uri: Uri) {
+    fun viewShareImage(activity: FragmentActivity, shareId: String, uri: Uri) {
         ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
+                putString(AppExtras.EXTRA_SHARE_ID, shareId)
                 putParcelableArrayList(
                     AppExtras.EXTRA_IMAGE_URIS, arrayListOf(uri)
                 )
@@ -126,9 +127,10 @@ class ShareHelper @Inject constructor(
         }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
     }
 
-    fun viewShareImages(activity: FragmentActivity, uris: List<Uri>) {
+    fun viewShareImages(activity: FragmentActivity, shareId: String, uris: List<Uri>) {
         ViewImagesDialogFragment().apply {
             arguments = Bundle().apply {
+                putString(AppExtras.EXTRA_SHARE_ID, shareId)
                 putParcelableArrayList(
                     AppExtras.EXTRA_IMAGE_URIS, arrayListOf(*uris.toTypedArray())
                 )

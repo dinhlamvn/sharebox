@@ -16,9 +16,21 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogViewImagesBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.heightPercentage
+import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.modelview.ImageModelView
+import com.dinhlam.sharebox.utils.IconUtils
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
+
+    @Inject
+    lateinit var localStorageHelper: LocalStorageHelper
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -28,7 +40,11 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val uris = arguments?.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
+
+        val args = arguments ?: return dismiss()
+
+        val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return dismiss()
+        val uris = args.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
             ?: return dismiss()
 
         val adapter = BaseListAdapter.createAdapter {
@@ -55,6 +71,20 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
                 }
             }
         })
+
+        viewBinding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(requireContext()))
+        viewBinding.imageSaveToGallery.setOnClickListener {
+            val currentPos = layoutManager.findFirstVisibleItemPosition()
+            val uri = uris.getOrNull(currentPos) ?: return@setOnClickListener
+            viewBinding.viewLoading.show()
+            fragmentScope.launch(Dispatchers.IO) {
+                localStorageHelper.saveImageToGallery(requireContext(), shareId, uri)
+                withContext(Dispatchers.Main) {
+                    viewBinding.viewLoading.hide()
+                    showToast(R.string.success_save_image_to_gallery)
+                }
+            }
+        }
     }
 
     private fun updatePageNumber(position: Int, size: Int) {

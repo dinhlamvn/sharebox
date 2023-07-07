@@ -14,9 +14,9 @@ import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
-import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,6 +30,7 @@ class VideoMixerViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
+    private val localStorageHelper: LocalStorageHelper,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
 
     init {
@@ -40,9 +41,8 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     private fun getLatestBox() = execute {
-        val boxId =
-            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
-                ?: return@execute loadVideoMixers().let { this }
+        val boxId = appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
+            ?: return@execute loadVideoMixers().let { this }
         val box = boxRepository.findOne(boxId) ?: return@execute loadVideoMixers().let { this }
         copy(currentBox = box, isRefreshing = false)
     }
@@ -175,7 +175,7 @@ class VideoMixerViewModel @Inject constructor(
     fun saveVideoToGallery(context: Context, videoUri: String) {
         doInBackground {
             try {
-                FileUtils.copyVideoToExternalStorage(context, Uri.parse(videoUri))
+                localStorageHelper.saveVideoToGallery(context, Uri.parse(videoUri))
                 postShowToast(R.string.success_save_video_to_gallery)
             } catch (e: Exception) {
                 postShowToast(R.string.error_save_video_to_gallery)

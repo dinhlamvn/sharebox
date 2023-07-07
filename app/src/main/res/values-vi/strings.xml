@@ -130,6 +130,7 @@
     <string name="sign_in_message">Hãy đăng nhập để sử dụng nhiều tính năng của ứng dụng: Tạo một chia sẻ, thích, bình luận,…</string>
     <string name="sign_in_to_comment">Đăng nhập để bình luận</string>
     <string name="require_sign_in_to_create_box">Vui lòng đăng nhập để tạo Box</string>
+    <string name="success_save_image_to_gallery">Đã lưu ảnh vào Bộ Sưu Tập</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

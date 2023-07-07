@@ -56,7 +56,7 @@ data class ListImagesModelView(
     val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionViewImages: BaseListAdapter.NoHashProp<(List<Uri>) -> Unit> = BaseListAdapter.NoHashProp(
+    val actionViewImages: BaseListAdapter.NoHashProp<(String, List<Uri>) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
     val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
@@ -127,7 +127,7 @@ data class ListImagesModelView(
             binding.bottomAction.setLikeIcon(model.liked.asLikeIcon(buildContext))
 
             binding.container.setOnClickListener {
-                model.actionViewImages.prop?.invoke(model.uris)
+                model.actionViewImages.prop?.invoke(model.shareId, model.uris)
             }
 
             binding.bottomAction.setOnShareClickListener {

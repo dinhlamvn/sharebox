@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.modelview
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -14,7 +15,9 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 data class ImageModelView(
     val uri: Uri,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
-    val actionClick: BaseListAdapter.NoHashProp<(() -> Unit)?>? = null,
+    val actionClick: BaseListAdapter.NoHashProp<View.OnClickListener?>? = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView("image_model_view_$uri") {
 
     override fun createViewHolder(
@@ -29,9 +32,7 @@ data class ImageModelView(
                     height = model.height
                 }
 
-                binding.image.setOnClickListener {
-                    actionClick?.prop?.invoke()
-                }
+                binding.image.setOnClickListener(model.actionClick?.prop)
 
                 ImageLoader.INSTANCE.load(buildContext, model.uri, binding.image) {
                     copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))

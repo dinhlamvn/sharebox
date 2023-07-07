@@ -165,12 +165,12 @@ class CommunityFragment :
         viewModel.setBox(boxDetail)
     }
 
-    private fun viewImages(uris: List<Uri>) {
-        shareHelper.viewShareImages(requireActivity(), uris)
+    private fun viewImages(shareId: String, uris: List<Uri>) {
+        shareHelper.viewShareImages(requireActivity(), shareId, uris)
     }
 
-    private fun viewImage(uri: Uri) {
-        shareHelper.viewShareImage(requireActivity(), uri)
+    private fun viewImage(shareId: String, uri: Uri) {
+        shareHelper.viewShareImage(requireActivity(), shareId, uri)
     }
 
     @Inject

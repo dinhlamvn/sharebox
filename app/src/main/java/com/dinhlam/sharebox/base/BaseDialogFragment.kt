@@ -13,6 +13,10 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.plus
 
 abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
@@ -23,6 +27,8 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     abstract fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
     private var binding: VB? = null
+
+    protected val fragmentScope by lazyOf(MainScope() + CoroutineName("FragmentScope") + Job())
 
     protected val viewBinding: VB
         get() = binding!!

@@ -16,7 +16,6 @@ import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -80,11 +79,9 @@ class FirebaseStorageHelper @Inject constructor(
     }
 
     suspend fun downloadImageFile(
-        context: Context, shareId: String, uri: Uri
+        context: Context, shareId: String, uri: Uri, destUri: Uri
     ): FileDownloadTask.TaskSnapshot? {
         return withContext(Dispatchers.IO) {
-            val imageFileDir = FileUtils.createShareImagesDir(context) ?: return@withContext null
-
             val notificationManagerCompat = NotificationManagerCompat.from(context)
 
             val notificationBuilder = NotificationCompat.Builder(
@@ -93,11 +90,8 @@ class FirebaseStorageHelper @Inject constructor(
                 .setSubText("Download image").setProgress(100, 0, false)
                 .setSmallIcon(R.drawable.ic_file_download_white)
 
-            val imageFile = File(imageFileDir, FileUtils.getFileNameFromUri(uri))
-            imageFile.createNewFile()
-
             val downloadId = 123123
-            shareImagesRef.child(getUploadFilePath(shareId, uri)).getFile(imageFile)
+            shareImagesRef.child(getUploadFilePath(shareId, uri)).getFile(destUri)
                 .addOnProgressListener { taskSnapshot ->
                     val progress =
                         ((100 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount).toInt()

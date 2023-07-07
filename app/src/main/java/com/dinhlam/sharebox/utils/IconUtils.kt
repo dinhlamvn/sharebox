@@ -246,11 +246,18 @@ object IconUtils {
         )
     }
 
-    fun saveIcon(context: Context): Drawable {
+    fun saveIconLight(context: Context): Drawable {
         return createIcon(
             context,
             GoogleMaterial.Icon.gmd_save_alt,
             IconBuilder(context, colorRes = android.R.color.white)
+        )
+    }
+
+    fun saveIcon(context: Context): Drawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_save_alt
         )
     }
 }

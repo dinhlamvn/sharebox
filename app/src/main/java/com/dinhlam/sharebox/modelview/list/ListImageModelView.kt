@@ -49,7 +49,7 @@ data class ListImageModelView(
     val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionViewImage: BaseListAdapter.NoHashProp<(Uri) -> Unit> = BaseListAdapter.NoHashProp(
+    val actionViewImage: BaseListAdapter.NoHashProp<(String, Uri) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
     val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
@@ -123,7 +123,7 @@ data class ListImageModelView(
             }
 
             binding.imageShare.setOnClickListener {
-                model.actionViewImage.prop?.invoke(model.uri)
+                model.actionViewImage.prop?.invoke(model.shareId, model.uri)
             }
 
             binding.layoutUserInfo.textViewName.text = buildSpannedString {

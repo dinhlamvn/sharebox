@@ -23,3 +23,11 @@ fun String.takeWithEllipsizeEnd(n: Int): String {
         "${take(n)}..."
     }
 }
+
+fun String.appendIf(append: String, condition: (String) -> Boolean): String {
+    return if (condition.invoke(this)) {
+        "$this$append"
+    } else {
+        this
+    }
+}

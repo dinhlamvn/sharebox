@@ -61,7 +61,7 @@ data class TiktokVideoModelView(
         private var mediaPlayer: MediaPlayer? = null
 
         init {
-            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(buildContext))
+            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIconLight(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)
             })
