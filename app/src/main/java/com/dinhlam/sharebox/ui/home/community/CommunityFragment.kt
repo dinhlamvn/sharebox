@@ -25,7 +25,6 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -59,16 +58,6 @@ class CommunityFragment :
                     ?: return@registerForActivityResult
                 viewModel.setBox(boxId)
             }
-        }
-
-    private val passcodeConfirmResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                blockVerifyPasscodeBlock?.invoke()
-            } else {
-                showToast(R.string.error_require_passcode)
-            }
-            blockVerifyPasscodeBlock = null
         }
 
     private val layoutManager by lazy {

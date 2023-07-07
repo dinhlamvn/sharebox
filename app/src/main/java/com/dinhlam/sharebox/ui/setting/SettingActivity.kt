@@ -80,12 +80,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.dialog_confirm)
             .setMessage(R.string.sign_out_confirm_message)
-            .setPositiveButton(R.string.sign_out) { i, b ->
+            .setPositiveButton(R.string.sign_out) { _, _ ->
                 userHelper.signOut(this, {
-                    startActivity(
-                        appRouter.signIn()
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    )
+                    startActivity(appRouter.home(true))
                 }, {
                     showToast(R.string.logged_out_error)
                 })

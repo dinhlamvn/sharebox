@@ -21,8 +21,12 @@ import javax.inject.Singleton
 @Singleton
 class AppRouter @Inject constructor(@ApplicationContext private val context: Context) {
 
-    fun home(): Intent {
-        return Intent(context, HomeActivity::class.java)
+    fun home(isNewTask: Boolean = false): Intent {
+        return Intent(context, HomeActivity::class.java).apply {
+            if (isNewTask) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+        }
     }
 
     fun signIn(signInForResult: Boolean = false): Intent {

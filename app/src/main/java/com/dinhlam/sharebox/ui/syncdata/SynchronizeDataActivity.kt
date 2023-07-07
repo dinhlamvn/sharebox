@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.syncdata
 
-import android.content.Intent
 import android.os.Bundle
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
@@ -38,11 +37,7 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
             )
 
             appSharePref.offFirstAppOpen()
-
-            startActivity(
-                appRouter.home()
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
+            startActivity(appRouter.home(true))
         }
     }
 }

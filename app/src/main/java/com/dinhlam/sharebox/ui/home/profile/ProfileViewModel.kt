@@ -33,7 +33,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun loadShares() {
-        setState { copy(isRefreshing = true) }
         execute {
             val shares = shareRepository.find(
                 userHelper.getCurrentUserId(), AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0

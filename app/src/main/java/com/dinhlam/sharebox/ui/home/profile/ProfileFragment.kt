@@ -1,10 +1,14 @@
 package com.dinhlam.sharebox.ui.home.profile
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.data.model.ShareData
@@ -12,11 +16,15 @@ import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.Spacing
+import com.dinhlam.sharebox.modelview.ButtonModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
+import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -35,6 +43,10 @@ class ProfileFragment :
         return FragmentProfileBinding.inflate(inflater, container, false)
     }
 
+    private val signInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
+    )
+
     private val layoutManager by lazy {
         LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
             getState(viewModel) { state ->
@@ -47,8 +59,30 @@ class ProfileFragment :
 
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
+            if (state.isRefreshing) {
+                add(LoadingModelView("loading"))
+                return@getState
+            }
+
             val nonNullUser = state.currentUser ?: return@getState run {
-                add(LoadingModelView("loading_user"))
+                add(
+                    TextModelView(
+                        "text_sign_in_message",
+                        getString(R.string.sign_in_message),
+                        height = heightPercentage(70)
+                    )
+                )
+
+                add(
+                    ButtonModelView(
+                        "button_sign_in",
+                        getString(R.string.sign_in),
+                        Spacing.All(16.dp(), 16.dp(), 16.dp(), 16.dp()),
+                        BaseListAdapter.NoHashProp(View.OnClickListener {
+                            signInLauncher.launch(appRouter.signIn(true))
+                        })
+                    )
+                )
             }
 
             add(
@@ -68,9 +102,6 @@ class ProfileFragment :
                 SizedBoxModelView("divider", height = 8.dp())
             )
 
-            if (state.isRefreshing) {
-                add(LoadingModelView("loading_shares"))
-            }
             if (state.shares.isNotEmpty()) {
                 state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
@@ -173,9 +204,7 @@ class ProfileFragment :
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager,
-                shareId,
-                collectionId
+                childFragmentManager, shareId, collectionId
             )
         }
     }
@@ -190,5 +219,11 @@ class ProfileFragment :
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
         viewModel.bookmark(shareId, bookmarkCollectionId)
+    }
+
+    private fun handleSignInResult(activityResult: ActivityResult) {
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            viewModel.doOnRefresh()
+        }
     }
 }
