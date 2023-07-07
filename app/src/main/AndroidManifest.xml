@@ -183,10 +183,6 @@
         </service>
 
         <service
-            android:name=".services.ShareCommunityService"
-            android:exported="false" />
-
-        <service
             android:name=".services.VideoMixerService"
             android:exported="false" />
 

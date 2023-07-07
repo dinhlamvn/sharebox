@@ -2,10 +2,16 @@ package com.dinhlam.sharebox
 
 import android.app.Application
 import android.app.NotificationManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
+import android.os.IBinder
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.dinhlam.sharebox.common.AppConsts
@@ -13,6 +19,8 @@ import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
+import com.dinhlam.sharebox.services.RealtimeDatabaseService
+import com.dinhlam.sharebox.services.VideoMixerService
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -27,12 +35,29 @@ class ShareBoxApp : Application(), Configuration.Provider {
     @Inject
     lateinit var appSettingHelper: AppSettingHelper
 
+    private val realtimeDatabaseService by lazy {
+        Intent(
+            this, RealtimeDatabaseService::class.java
+        )
+    }
+
+    private val videoMixerServiceConnection = object : ServiceConnection {
+
+        var bound = false
+            private set
+
+        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
+            bound = true
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName?) {
+            bound = false
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         requestApplyTheme()
-
-        WorkerUtils.enqueueSyncUserData(this)
-        WorkerUtils.enqueueCleanUpOldData(this)
         ImageLoader.setLoader(GlideImageLoader)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -50,6 +75,14 @@ class ShareBoxApp : Application(), Configuration.Provider {
                     notificationChannel, notificationDownloadChannel
                 )
             )
+        }
+
+        WorkerUtils.enqueueSyncUserData(this)
+        WorkerUtils.enqueueCleanUpOldData(this)
+
+        ContextCompat.startForegroundService(this, realtimeDatabaseService)
+        Intent(this, VideoMixerService::class.java).also { intent ->
+            bindService(intent, videoMixerServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 

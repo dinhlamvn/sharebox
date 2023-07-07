@@ -79,10 +79,6 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findForCommunity(limit: Int, offset: Int) = shareDao.runCatching {
-        findForCommunity(limit, offset, nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME)
-    }.getOrDefault(emptyList())
-
     suspend fun findForVideoMixer(limit: Int, offset: Int) = shareDao.runCatching {
         findForVideoMixer(limit, offset, nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME)
     }.getOrDefault(emptyList())
@@ -93,7 +89,11 @@ class ShareRepository @Inject constructor(
     }.getOrDefault(emptyList())
 
     suspend fun findCommunityShares(limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findCommunityShares(limit, offset)
+        val shares = findForCommunity(
+            limit = limit,
+            offset = offset,
+            oldestTime = nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME
+        )
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 

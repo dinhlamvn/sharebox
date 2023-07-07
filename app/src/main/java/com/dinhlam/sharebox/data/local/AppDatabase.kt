@@ -10,7 +10,6 @@ import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.LikeDao
-import com.dinhlam.sharebox.data.local.dao.ShareCommunityDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VideoMixerDao
@@ -18,18 +17,14 @@ import com.dinhlam.sharebox.data.local.entity.Bookmark
 import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Comment
-import com.dinhlam.sharebox.data.local.entity.Folder
-import com.dinhlam.sharebox.data.local.entity.HashTag
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
-import com.dinhlam.sharebox.data.local.entity.ShareCommunity
-import com.dinhlam.sharebox.data.local.entity.ShareHashTag
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.local.entity.VideoMixer
 
 @Database(
-    entities = [Share::class, Folder::class, HashTag::class, User::class, Like::class, ShareHashTag::class, Comment::class, BookmarkCollection::class, Bookmark::class, ShareCommunity::class, VideoMixer::class, Box::class],
-    version = 1,
+    entities = [Share::class, User::class, Like::class, Comment::class, BookmarkCollection::class, Bookmark::class, VideoMixer::class, Box::class],
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(ShareDataConverter::class, VideoSourceConverter::class)
@@ -40,7 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun commentDao(): CommentDao
     abstract fun bookmarkCollectionDao(): BookmarkCollectionDao
     abstract fun bookmarkDao(): BookmarkDao
-    abstract fun shareCommunityDao(): ShareCommunityDao
     abstract fun videoMixerDao(): VideoMixerDao
     abstract fun boxDao(): BoxDao
 }

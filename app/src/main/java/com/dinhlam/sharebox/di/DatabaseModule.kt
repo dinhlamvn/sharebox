@@ -9,7 +9,6 @@ import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.LikeDao
-import com.dinhlam.sharebox.data.local.dao.ShareCommunityDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.dao.VideoMixerDao
@@ -75,13 +74,6 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): BookmarkDao {
         return appDatabase.bookmarkDao()
-    }
-
-    @Provides
-    fun provideShareCommunityDao(
-        appDatabase: AppDatabase
-    ): ShareCommunityDao {
-        return appDatabase.shareCommunityDao()
     }
 
     @Provides

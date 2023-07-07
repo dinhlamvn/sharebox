@@ -9,9 +9,6 @@ import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 
 @Entity(
     tableName = "box",
-    foreignKeys = [ForeignKey(
-        entity = User::class, parentColumns = ["user_id"], childColumns = ["created_by"]
-    )],
     indices = [Index(value = ["box_id"], unique = true), Index(
         value = ["box_name"],
         unique = true

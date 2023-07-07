@@ -1,15 +1,10 @@
 package com.dinhlam.sharebox.ui.home
 
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -23,9 +18,6 @@ import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.services.RealtimeDatabaseService
-import com.dinhlam.sharebox.services.ShareCommunityService
-import com.dinhlam.sharebox.services.VideoMixerService
 import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
@@ -83,40 +75,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         }
     }
 
-    private val realtimeDatabaseService by lazy {
-        Intent(
-            this, RealtimeDatabaseService::class.java
-        )
-    }
-
-    private val communityServiceConnection = object : ServiceConnection {
-
-        var bound = false
-            private set
-
-        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
-            bound = true
-        }
-
-        override fun onServiceDisconnected(componentName: ComponentName?) {
-            bound = false
-        }
-    }
-
-    private val videoMixerServiceConnection = object : ServiceConnection {
-
-        var bound = false
-            private set
-
-        override fun onServiceConnected(componentName: ComponentName?, binder: IBinder?) {
-            bound = true
-        }
-
-        override fun onServiceDisconnected(componentName: ComponentName?) {
-            bound = false
-        }
-    }
-
     @Inject
     lateinit var appRouter: AppRouter
 
@@ -132,8 +90,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        ContextCompat.startForegroundService(this, realtimeDatabaseService)
 
         viewBinding.viewPager.isUserInputEnabled = false
         viewBinding.viewPager.adapter = pageAdapter
@@ -211,31 +167,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         viewBinding.textShareUrl.isVisible = isVisible
         viewBinding.textShareImages.isVisible = isVisible
         viewBinding.textShareText.isVisible = isVisible
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopService(realtimeDatabaseService)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Intent(this, ShareCommunityService::class.java).also { intent ->
-            bindService(intent, communityServiceConnection, Context.BIND_AUTO_CREATE)
-        }
-        Intent(this, VideoMixerService::class.java).also { intent ->
-            bindService(intent, videoMixerServiceConnection, Context.BIND_AUTO_CREATE)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (communityServiceConnection.bound) {
-            unbindService(communityServiceConnection)
-        }
-        if (videoMixerServiceConnection.bound) {
-            unbindService(videoMixerServiceConnection)
-        }
     }
 
     override fun onShareLink(link: String) {

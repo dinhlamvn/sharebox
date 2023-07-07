@@ -31,7 +31,7 @@ interface ShareDao {
         LEFT JOIN box as b ON b.box_id = s.share_box_id
         WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)) 
         AND s.share_date >= :oldestTime 
-        ORDER BY s.id DESC 
+        ORDER BY s.share_date DESC 
         LIMIT :limit 
         OFFSET :offset"""
     )
@@ -39,18 +39,6 @@ interface ShareDao {
 
     @Query("SELECT * FROM share WHERE share_id IN(:shareIds)")
     suspend fun find(shareIds: List<String>): List<Share>
-
-    @Query(
-        """
-        SELECT s.* 
-        FROM share as s
-        INNER JOIN share_community sc ON sc.share_id = s.share_id
-        ORDER BY sc.share_power DESC
-        LIMIT :limit
-        OFFSET :offset
-    """
-    )
-    suspend fun findCommunityShares(limit: Int, offset: Int): List<Share>
 
     @Query(
         """

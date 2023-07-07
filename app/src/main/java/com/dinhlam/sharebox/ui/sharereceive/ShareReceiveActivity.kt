@@ -49,7 +49,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.modelview.HashTagModelView
 import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -118,18 +117,6 @@ class ShareReceiveActivity :
         handleShareData()
     }
 
-    private val hashtagAdapter = BaseListAdapter.createAdapter {
-        getState(viewModel) { state ->
-            if (state.hashTags.isNotEmpty()) {
-                addAll(state.hashTags.map { ht ->
-                    HashTagModelView(ht.hashTagId, ht.hashTagName)
-                })
-            } else {
-                add(HashTagModelView(HASHTAG_DEFAULT_ID, "+"))
-            }
-        }
-    }
-
     private val shareContentAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             when (val shareData = state.shareData) {
@@ -165,7 +152,6 @@ class ShareReceiveActivity :
 
     override fun onStateChanged(state: ShareReceiveState) {
         shareContentAdapter.requestBuildModelViews()
-        hashtagAdapter.requestBuildModelViews()
         updateUserInfo(state.activeUser)
     }
 

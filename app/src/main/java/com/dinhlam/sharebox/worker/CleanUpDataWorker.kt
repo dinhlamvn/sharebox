@@ -9,7 +9,6 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.repository.ShareCommunityRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.logger.Logger
@@ -20,7 +19,6 @@ import dagger.assisted.AssistedInject
 class CleanUpDataWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted params: WorkerParameters,
-    private val communityRepository: ShareCommunityRepository,
     private val videoMixerRepository: VideoMixerRepository
 ) : CoroutineWorker(appContext, params) {
 
@@ -44,19 +42,10 @@ class CleanUpDataWorker @AssistedInject constructor(
         val timeToCleanUp = nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME
 
         while (true) {
-            val shareCommunities = communityRepository.findShareToCleanUp(timeToCleanUp)
             val videos = videoMixerRepository.findVideoToCleanUp(timeToCleanUp)
 
-            if (shareCommunities.isEmpty() && videos.isEmpty()) {
+            if (videos.isEmpty()) {
                 return
-            }
-
-            shareCommunities.forEach { shareCommunity ->
-                if (!communityRepository.delete(shareCommunity)) {
-                    Logger.error("Error clean up share $shareCommunity")
-                } else {
-                    Logger.debug("Success remove share $shareCommunity")
-                }
             }
 
             videos.forEach { video ->

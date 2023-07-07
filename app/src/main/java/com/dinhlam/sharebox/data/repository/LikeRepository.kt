@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.LikeDao
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.LikeUtils
 import javax.inject.Inject
 import javax.inject.Singleton

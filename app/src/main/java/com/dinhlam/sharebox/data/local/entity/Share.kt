@@ -2,17 +2,12 @@ package com.dinhlam.sharebox.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 
-@Entity(
-    foreignKeys = [ForeignKey(
-        entity = User::class, parentColumns = ["user_id"], childColumns = ["share_user_id"],
-    )], indices = [Index(value = ["share_id"], unique = true), Index(value = ["share_user_id"])]
-)
+@Entity(indices = [Index(value = ["share_id"], unique = true), Index(value = ["share_user_id"])])
 data class Share(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "share_id") val shareId: String,

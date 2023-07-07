@@ -2,22 +2,10 @@ package com.dinhlam.sharebox.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    foreignKeys = [ForeignKey(
-        onDelete = ForeignKey.CASCADE,
-        entity = Share::class,
-        parentColumns = ["share_id"],
-        childColumns = ["share_id"]
-    ), ForeignKey(
-        onDelete = ForeignKey.CASCADE,
-        entity = BookmarkCollection::class,
-        parentColumns = ["id"],
-        childColumns = ["bookmark_collection_id"]
-    )],
     indices = [Index(
         value = ["share_id"],
         unique = true
