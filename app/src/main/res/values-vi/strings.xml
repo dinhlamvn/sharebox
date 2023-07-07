@@ -126,6 +126,7 @@
     <string name="title_other_app_tiktok_step_1">Step 1. Nhấp nút Chia Sẻ trên Tiktok</string>
     <string name="title_other_app_tiktok_step_2">Step 2. Chọn Xem Thêm (***) và chọn ứng dụng Sharebox trong hộp thoại. Sau đó thực hiện Snap lại.</string>
     <string name="title_other_app_tiktok_step_3">Step 3. Vào ứng dụng Sharebox mục Bộ trộn Videos. Giờ đây bạn có thể xem và lưu video về máy.</string>
+    <string name="synchronize_data_message">Đang đồng bộ dữ liệu…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

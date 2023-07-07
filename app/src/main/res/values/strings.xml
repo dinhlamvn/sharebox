@@ -128,6 +128,7 @@
     <string name="title_other_app_tiktok_step_1">Step 1. Click on Share button in Tiktok</string>
     <string name="title_other_app_tiktok_step_2">Step 2. Click More button (***) and choose Sharebox app in the dialog</string>
     <string name="title_other_app_tiktok_step_3">Step 3. Navigate to Videos Mixer in Sharebox app. Now, you can view and save video to Gallery</string>
+    <string name="synchronize_data_message">Synchronizing data…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

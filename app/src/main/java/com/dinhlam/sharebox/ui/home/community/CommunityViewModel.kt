@@ -163,10 +163,4 @@ class CommunityViewModel @Inject constructor(
             setBox(boxDetail)
         }
     }
-
-    fun doOnRetryFirstLoad() = getState { state ->
-        if (state.shares.isEmpty()) {
-            doOnRefresh()
-        }
-    }
 }

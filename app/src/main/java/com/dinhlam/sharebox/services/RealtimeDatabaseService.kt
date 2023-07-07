@@ -82,7 +82,7 @@ class RealtimeDatabaseService : Service() {
             NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
                 .setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
-                .setSmallIcon(R.drawable.ic_sync).build()
+                .setSmallIcon(R.mipmap.ic_launcher).build()
         )
 
         realtimeDatabaseRepository.consumeShares(::onShareAdded)
