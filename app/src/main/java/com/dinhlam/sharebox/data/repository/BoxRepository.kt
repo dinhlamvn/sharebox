@@ -74,6 +74,10 @@ class BoxRepository @Inject constructor(
         findLatestBoxes().asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
 
+    suspend fun findLatestBoxWithoutPasscode(): List<BoxDetail> = boxDao.runCatching {
+        findLatestBoxesWithoutPasscode().asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+    }.getOrDefault(emptyList())
+
     private suspend fun convertBoxToBoxDetail(box: Box): BoxDetail? {
         val userDetail = userRepository.findOne(box.createdBy) ?: return null
         return BoxDetail(

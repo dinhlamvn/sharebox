@@ -27,6 +27,9 @@ interface BoxDao {
     @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT 6")
     suspend fun findLatestBoxes(): List<Box>
 
+    @Query("SELECT * FROM `box` WHERE passcode IS NULL OR passcode = '' ORDER BY last_seen DESC LIMIT 6")
+    suspend fun findLatestBoxesWithoutPasscode(): List<Box>
+
     @Query("SELECT COUNT(*) FROM `box`")
     suspend fun count(): Int
 }

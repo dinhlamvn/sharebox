@@ -37,7 +37,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getListBoxes() = execute {
-        val boxes = boxRepository.findLatestBox()
+        val boxes = boxRepository.findLatestBoxWithoutPasscode()
         copy(boxes = boxes)
     }
 
