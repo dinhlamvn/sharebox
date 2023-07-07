@@ -51,9 +51,8 @@
     <string name="bookmark_collection_delete_confirm_message">Are you sure to delete this collection?</string>
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
-    <string name="snap">Snap</string>
-    <string name="snap_error">Can\'t snap this content</string>
-    <string name="snap_success">Snap successfully</string>
+    <string name="shares_error">Can\'t share this content</string>
+    <string name="shares_success">Shares successfully</string>
     <string name="realtime_database_service_noti_subtext">Listening the world sharing…</string>
     <string name="realtime_database_service_noti_content">We are listening the world sharing and bring it to you.</string>
     <string name="logged_out">Logged out</string>
@@ -133,6 +132,7 @@
     <string name="sign_in_to_comment">Sign-in to comment</string>
     <string name="require_sign_in_to_create_box">Please sign-in to create Box</string>
     <string name="success_save_image_to_gallery">Save this image to Gallary successfully</string>
+    <string name="shares">Shares</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

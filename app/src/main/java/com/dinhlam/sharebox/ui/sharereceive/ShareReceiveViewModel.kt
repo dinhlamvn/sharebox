@@ -112,7 +112,7 @@ class ShareReceiveViewModel @Inject constructor(
                     copy(isSaveSuccess = true, showLoading = false)
                 } ?: copy(isSaveSuccess = true, showLoading = false)
             } ?: run {
-                postShowToast(R.string.snap_error)
+                postShowToast(R.string.shares_error)
                 copy(isSaveSuccess = false, showLoading = false)
             }
         }
