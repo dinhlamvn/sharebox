@@ -82,7 +82,9 @@ class RealtimeDatabaseService : Service() {
             NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
                 .setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher).build()
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setAutoCancel(false)
+                .build()
         )
 
         realtimeDatabaseRepository.consumeShares(::onShareAdded)
@@ -92,6 +94,11 @@ class RealtimeDatabaseService : Service() {
         realtimeDatabaseRepository.consumeBoxes(::onBoxAdded)
 
         return START_STICKY
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        stopSelf()
     }
 
     private fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {

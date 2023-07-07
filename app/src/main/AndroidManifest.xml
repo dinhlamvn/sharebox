@@ -200,7 +200,9 @@
 
         <service
             android:name=".services.RealtimeDatabaseService"
-            android:exported="false" />
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="true" />
 
         <receiver
             android:name=".receiver.CleanUpDataReceiver"
