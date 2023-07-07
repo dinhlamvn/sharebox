@@ -25,8 +25,12 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.Spacing
+import com.dinhlam.sharebox.modelview.BoxModelView
+import com.dinhlam.sharebox.modelview.CarouselModelView
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
@@ -71,6 +75,26 @@ class CommunityFragment :
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 add(LoadingModelView("top_loading"))
+            }
+
+            if (state.boxes.isNotEmpty()) {
+                val lastIndex = state.boxes.size - 1
+                val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
+                    BoxModelView(
+                        "box_${boxDetail.boxId}", boxDetail.boxName, boxDetail.boxDesc, Spacing.All(
+                            if (idx == 0) 16.dp() else 8.dp(),
+                            16.dp(),
+                            if (idx == lastIndex) 16.dp() else 8.dp(),
+                            16.dp()
+                        ),
+                        BaseListAdapter.NoHashProp(View.OnClickListener {
+                            viewModel.setBox(boxDetail)
+                        })
+                    )
+                }
+                add(CarouselModelView("carousel_box", boxModelViews))
+
+                add(SizedBoxModelView("divider_carousel", height = 1.dp()))
             }
 
             if (state.shares.isEmpty() && !state.isRefreshing) {
@@ -173,12 +197,7 @@ class CommunityFragment :
         viewBinding.toolbar.inflateMenu(R.menu.community_menu)
         viewBinding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.menu_create_box -> createBoxResultLauncher.launch(
-                    appRouter.boxIntent(
-                        requireContext()
-                    )
-                )
-
+                R.id.menu_create_box -> createNewBox()
                 R.id.menu_guideline -> showGuideline()
             }
             true
@@ -223,6 +242,16 @@ class CommunityFragment :
             appSharePref.offShowGuideline()
             showGuideline()
         }
+    }
+
+    private fun createNewBox() {
+        if (!userHelper.isSignedIn()) {
+            showToast(R.string.require_sign_in_to_create_box)
+            startActivity(appRouter.signIn())
+            return
+        }
+
+        createBoxResultLauncher.launch(appRouter.boxIntent(requireContext()))
     }
 
     private fun showGuideline() {

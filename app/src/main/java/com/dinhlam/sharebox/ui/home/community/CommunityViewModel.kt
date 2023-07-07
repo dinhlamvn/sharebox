@@ -29,13 +29,19 @@ class CommunityViewModel @Inject constructor(
 ) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
 
     init {
-        getLatestBox()
+        getListBoxes()
+        getCurrentActiveBox()
         consume(CommunityState::currentBox) {
             loadShares()
         }
     }
 
-    private fun getLatestBox() = execute {
+    private fun getListBoxes() = execute {
+        val boxes = boxRepository.findLatestBox()
+        copy(boxes = boxes)
+    }
+
+    private fun getCurrentActiveBox() = execute {
         val boxId =
             appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
                 ?: return@execute loadShares().let { this }
@@ -82,7 +88,8 @@ class CommunityViewModel @Inject constructor(
 
     fun doOnRefresh() {
         setState { CommunityState() }
-        getLatestBox()
+        getListBoxes()
+        getCurrentActiveBox()
     }
 
     fun like(shareId: String) = doInBackground {
