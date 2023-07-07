@@ -133,6 +133,8 @@
     <string name="require_sign_in_to_create_box">Please sign-in to create Box</string>
     <string name="success_save_image_to_gallery">Save this image to Gallary successfully</string>
     <string name="shares">Shares</string>
+    <string name="title_image_download_quality">Image quality save to Gallery</string>
+    <string name="require_min_image_quality">Quality must be from %d</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

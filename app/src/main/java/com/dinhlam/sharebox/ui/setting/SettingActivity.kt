@@ -1,13 +1,17 @@
 package com.dinhlam.sharebox.ui.setting
 
-import android.content.Intent
 import android.os.Bundle
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
+import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -69,16 +73,42 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             finish()
         }
 
+        viewBinding.seekbarImageDownloadQuality.progress =
+            appSettingHelper.getImageDownloadQuality()
+
+        var toast: Toast? = null
+        viewBinding.seekbarImageDownloadQuality.setOnSeekBarChangeListener(object :
+            OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser && progress < AppConsts.MIN_IMAGE_QUALITY) {
+                    toast?.cancel()
+                    toast = showToast(
+                        getString(
+                            R.string.require_min_image_quality, AppConsts.MIN_IMAGE_QUALITY
+                        )
+                    )
+                    seekBar?.progress = AppConsts.MIN_IMAGE_QUALITY
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val progress =
+                    seekBar?.progress?.coerceMinMax(AppConsts.MIN_IMAGE_QUALITY, 100) ?: return
+                appSettingHelper.setImageDownloadQuality(progress)
+            }
+        })
+
         viewBinding.textAbout.text = getString(
-            R.string.setting_about,
-            getString(R.string.app_name),
-            BuildConfig.VERSION_NAME
+            R.string.setting_about, getString(R.string.app_name), BuildConfig.VERSION_NAME
         )
     }
 
     private fun requestSignOut() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.dialog_confirm)
+        MaterialAlertDialogBuilder(this).setTitle(R.string.dialog_confirm)
             .setMessage(R.string.sign_out_confirm_message)
             .setPositiveButton(R.string.sign_out) { _, _ ->
                 userHelper.signOut(this, {
@@ -86,9 +116,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                 }, {
                     showToast(R.string.logged_out_error)
                 })
-            }
-            .setNegativeButton(R.string.dialog_cancel, null)
-            .show()
+            }.setNegativeButton(R.string.dialog_cancel, null).show()
     }
 
     private fun requestChangeNetworkCondition(checkedId: Int) {

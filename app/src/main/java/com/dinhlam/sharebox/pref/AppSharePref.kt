@@ -18,6 +18,7 @@ class AppSharePref @Inject constructor(
         private const val KEY_LATEST_ACTIVE_BOX_ID = "lasted-active-box-id"
         private const val KEY_SHOW_GUIDELINE = "show-guideline"
         private const val KEY_FIRST_APP_OPEN = "first-app-open"
+        private const val KEY_SETTING_IMAGE_DOWNLOAD_QUALITY = "setting-download-image-quality"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -54,5 +55,13 @@ class AppSharePref @Inject constructor(
 
     fun offFirstAppOpen() {
         put(KEY_FIRST_APP_OPEN, value = false, sync = true)
+    }
+
+    fun setImageDownloadQuality(quality: Int) {
+        put(KEY_SETTING_IMAGE_DOWNLOAD_QUALITY, quality)
+    }
+
+    fun getImageDownloadQuality(): Int {
+        return get(KEY_SETTING_IMAGE_DOWNLOAD_QUALITY, 80)
     }
 }

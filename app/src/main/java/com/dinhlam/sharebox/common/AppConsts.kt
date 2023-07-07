@@ -22,4 +22,6 @@ object AppConsts {
     const val TIKTOK_M_PACKAGE_ID = "com.zhiliaoapp.musically"
 
     const val TIKTOK_O_PACKAGE_ID = "com.ss.android.ugc.trill"
+
+    const val MIN_IMAGE_QUALITY = 30
 }

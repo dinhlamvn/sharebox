@@ -40,9 +40,11 @@ fun Activity.showToast(@StringRes text: Int, duration: Int = Toast.LENGTH_SHORT)
     showToast(getString(text, duration))
 }
 
-fun Activity.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
-    text.takeIfNotNullOrBlank()?.let { toastContent ->
-        Toast.makeText(this, toastContent, duration).show()
+fun Activity.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT): Toast? {
+    return text.takeIfNotNullOrBlank()?.let { toastContent ->
+        val toast = Toast.makeText(this, toastContent, duration)
+        toast.show()
+        toast
     }
 }
 

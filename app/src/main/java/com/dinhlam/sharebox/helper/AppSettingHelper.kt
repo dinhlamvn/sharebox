@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.helper
 
+import androidx.annotation.IntRange
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
+import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.pref.AppSharePref
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,5 +41,13 @@ class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePre
             else -> 0
         }
         appSharePref.setNetworkCondition(num)
+    }
+
+    fun setImageDownloadQuality(@IntRange(from = 30, to = 100) quality: Int) {
+        appSharePref.setImageDownloadQuality(quality)
+    }
+
+    fun getImageDownloadQuality(): Int {
+        return appSharePref.getImageDownloadQuality().coerceMinMax(AppConsts.MIN_IMAGE_QUALITY, 100)
     }
 }

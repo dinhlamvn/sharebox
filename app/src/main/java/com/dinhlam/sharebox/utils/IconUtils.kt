@@ -209,7 +209,7 @@ object IconUtils {
 
     fun signOutIcon(context: Context): Drawable {
         return createIcon(
-            context, GoogleMaterial.Icon.gmd_logout
+            context, FontAwesome.Icon.faw_sign_out_alt
         )
     }
 

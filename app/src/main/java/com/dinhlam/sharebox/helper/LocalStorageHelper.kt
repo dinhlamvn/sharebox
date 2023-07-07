@@ -16,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalStorageHelper @Inject constructor(
-    private val firebaseStorageHelper: FirebaseStorageHelper
+    private val appSettingHelper: AppSettingHelper
+
 ) {
 
     suspend fun saveVideoToGallery(context: Context, sourceVideoUri: Uri) =
@@ -76,7 +77,11 @@ class LocalStorageHelper @Inject constructor(
             }
         } ?: return@withContext ImageLoader.INSTANCE.get(context, imageSource)?.let { bitmap ->
             resolver.openOutputStream(destUri)?.use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+                bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    appSettingHelper.getImageDownloadQuality(),
+                    outputStream
+                )
                 bitmap.recycle()
             }
         }
