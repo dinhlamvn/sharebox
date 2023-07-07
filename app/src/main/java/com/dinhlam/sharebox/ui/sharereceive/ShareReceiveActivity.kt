@@ -66,10 +66,6 @@ class ShareReceiveActivity :
     BoxSelectionDialogFragment.OnBoxSelectedListener,
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
 
-    companion object {
-        private const val HASHTAG_DEFAULT_ID = "hashtag-default"
-    }
-
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
