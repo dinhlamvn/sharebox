@@ -133,6 +133,8 @@
     <string name="shares">Chia sẻ</string>
     <string name="title_image_download_quality">Image quality save to Gallery</string>
     <string name="require_min_image_quality">Quality must be from %d</string>
+    <string name="title_setting_sync_background">Đồng bộ dữ liệu dưới nền</string>
+    <string name="remove">Đóng</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

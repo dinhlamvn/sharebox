@@ -50,4 +50,12 @@ class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePre
     fun getImageDownloadQuality(): Int {
         return appSharePref.getImageDownloadQuality().coerceMinMax(AppConsts.MIN_IMAGE_QUALITY, 100)
     }
+
+    fun setSyncDataInBackground(syncInBackground: Boolean) {
+        appSharePref.setSyncInBackground(syncInBackground)
+    }
+
+    fun isSyncDataInBackground(): Boolean {
+        return appSharePref.isSyncInBackground()
+    }
 }

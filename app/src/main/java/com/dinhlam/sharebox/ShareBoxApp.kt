@@ -15,7 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.AppSettings
+import com.dinhlam.sharebox.extensions.isServiceRunning
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
@@ -37,8 +39,9 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     private val realtimeDatabaseService by lazy {
         Intent(
-            this, RealtimeDatabaseService::class.java
-        )
+            this,
+            RealtimeDatabaseService::class.java
+        ).putExtra(AppExtras.EXTRA_SERVICE_STOP_FOR_TASK_REMOVED, true)
     }
 
     private val videoMixerServiceConnection = object : ServiceConnection {
@@ -71,16 +74,14 @@ class ShareBoxApp : Application(), Configuration.Provider {
                 .setDescription("This channel to notify while download file from network").build()
 
             NotificationManagerCompat.from(this).createNotificationChannelsCompat(
-                listOf(
-                    notificationChannel, notificationDownloadChannel
-                )
+                listOf(notificationChannel, notificationDownloadChannel)
             )
         }
 
         WorkerUtils.enqueueSyncUserData(this)
         WorkerUtils.enqueueCleanUpOldData(this)
 
-        ContextCompat.startForegroundService(this, realtimeDatabaseService)
+        startRealtimeDatabaseService()
         Intent(this, VideoMixerService::class.java).also { intent ->
             bindService(intent, videoMixerServiceConnection, Context.BIND_AUTO_CREATE)
         }
@@ -96,5 +97,25 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setWorkerFactory(workerFactory).build()
+    }
+
+    private fun startRealtimeDatabaseService() {
+        if (isServiceRunning(RealtimeDatabaseService::class.java.name)) {
+            return
+        }
+        realtimeDatabaseService.putExtra(
+            AppExtras.EXTRA_SERVICE_STOP_FOR_TASK_REMOVED,
+            !appSettingHelper.isSyncDataInBackground()
+        )
+        ContextCompat.startForegroundService(this, realtimeDatabaseService)
+    }
+
+    fun stopRealtimeDatabaseService() {
+        stopService(realtimeDatabaseService)
+    }
+
+    fun restartRealtimeDatabaseService() {
+        stopService(realtimeDatabaseService)
+        startRealtimeDatabaseService()
     }
 }

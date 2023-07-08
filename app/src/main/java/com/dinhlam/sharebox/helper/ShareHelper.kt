@@ -12,6 +12,10 @@ import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
+import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
@@ -19,6 +23,7 @@ import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragm
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.comment.CommentFragment
@@ -30,7 +35,12 @@ import javax.inject.Singleton
 @Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val appRouter: AppRouter
+    private val appRouter: AppRouter,
+    private val shareRepository: ShareRepository,
+    private val commentRepository: CommentRepository,
+    private val likeRepository: LikeRepository,
+    private val bookmarkRepository: BookmarkRepository,
+    private val userHelper: UserHelper,
 ) {
 
     fun shareToOther(share: ShareDetail) {
@@ -171,5 +181,34 @@ class ShareHelper @Inject constructor(
 
     fun shareLink(fragmentManager: FragmentManager) {
         ShareLinkInputDialogFragment().show(fragmentManager, "ShareLinkInputDialogFragment")
+    }
+
+    suspend fun calcTrendingScore(shareId: String): Int {
+        val share = shareRepository.findOneRaw(shareId) ?: return 0
+
+        var trendingScore = 0
+
+        val commentCountByCurrentUser =
+            commentRepository.count(shareId, userId = userHelper.getCurrentUserId())
+        trendingScore += commentCountByCurrentUser.times(2)
+
+        if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
+            trendingScore += 10
+        }
+
+        if (bookmarkRepository.bookmarked(shareId)) {
+            trendingScore += 15
+        }
+
+        val commentCount = commentRepository.count(shareId)
+        trendingScore += (commentCount / 5)
+
+        val likeCount = likeRepository.count(shareId)
+        trendingScore += likeCount
+
+        val elapsed = nowUTCTimeInMillis() - share.shareDate
+        val hours = elapsed.div(3600 * 1000).toInt()
+
+        return trendingScore.minus(hours)
     }
 }

@@ -1,15 +1,22 @@
 package com.dinhlam.sharebox.services
 
+import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.local.entity.User
+import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareType
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeBoxObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeLikeObj
@@ -21,9 +28,16 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
+import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
+import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
+import com.dinhlam.sharebox.helper.NetworkHelper
+import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -39,6 +53,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class RealtimeDatabaseService : Service() {
+
+    private val stopServiceReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            stopSelf()
+        }
+    }
 
     companion object {
         private const val SERVICE_ID = 69919090
@@ -70,6 +90,23 @@ class RealtimeDatabaseService : Service() {
     @Inject
     lateinit var firebaseStorageHelper: FirebaseStorageHelper
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
+    @Inject
+    lateinit var appSettingHelper: AppSettingHelper
+
+    @Inject
+    lateinit var networkHelper: NetworkHelper
+
+    @Inject
+    lateinit var videoHelper: VideoHelper
+
+    @Inject
+    lateinit var videoMixerRepository: VideoMixerRepository
+
+    private var shouldRemoveOnTaskRemoved = false
+
     override fun onCreate() {
         super.onCreate()
         Logger.debug("$this is created")
@@ -77,14 +114,31 @@ class RealtimeDatabaseService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug("$this is start command")
+        registerReceiver(stopServiceReceiver, IntentFilter("$packageName.STOP_FOREGROUND_SERVICE"))
+
+
+        shouldRemoveOnTaskRemoved =
+            intent?.getBooleanExtra(AppExtras.EXTRA_SERVICE_STOP_FOR_TASK_REMOVED, false) ?: true
+
         startForeground(
             SERVICE_ID,
-            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
-                .setContentText(getString(R.string.realtime_database_service_noti_content))
+            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID).addAction(
+                0, getString(R.string.remove), PendingIntent.getBroadcast(
+                    this,
+                    0,
+                    Intent("$packageName.STOP_FOREGROUND_SERVICE"),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            ).setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setAutoCancel(false)
-                .build()
+                .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(
+                    PendingIntent.getActivity(
+                        this,
+                        0,
+                        packageManager.getLaunchIntentForPackage(packageName),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                ).build()
         )
 
         realtimeDatabaseRepository.consumeShares(::onShareAdded)
@@ -98,7 +152,10 @@ class RealtimeDatabaseService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        stopSelf()
+        Logger.debug("RealtimeService is on task removed $shouldRemoveOnTaskRemoved")
+        if (shouldRemoveOnTaskRemoved) {
+            stopSelf()
+        }
     }
 
     private fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {
@@ -131,8 +188,7 @@ class RealtimeDatabaseService : Service() {
                 val newShareData = shareData.cast<ShareData.ShareImage>()?.let { shareImage ->
                     firebaseStorageHelper.runCatching {
                         getImageDownloadUri(
-                            shareId,
-                            shareImage.uri
+                            shareId, shareImage.uri
                         )
                     }.getOrNull()?.let { downloadUri ->
                         shareImage.copy(uri = downloadUri)
@@ -148,7 +204,7 @@ class RealtimeDatabaseService : Service() {
                     shareImages.copy(uris = downloadUris)
                 } ?: shareData
 
-                shareRepository.insert(
+                val insertedShare = shareRepository.insert(
                     shareId,
                     newShareData,
                     realtimeShareObj.shareNote,
@@ -156,6 +212,47 @@ class RealtimeDatabaseService : Service() {
                     realtimeShareObj.shareUserId,
                     realtimeShareObj.shareDate
                 )
+
+                newShareData.cast<ShareData.ShareUrl>()?.let { shareDataUrl ->
+                    val videoMixerDetail = videoMixerRepository.findOne(shareId)
+                    val shareUrl = shareDataUrl.url
+                    val videoSource =
+                        videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
+
+                    if (videoSource is VideoSource.Tiktok) {
+                        if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
+                            return@let
+                        }
+
+                        if (!networkHelper.isNetworkConnected()) {
+                            return@let
+                        }
+                    }
+
+                    val videoSourceId =
+                        videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
+                            videoSource, shareUrl
+                        )
+
+                    val videoUri = videoMixerDetail?.uri?.takeIfNotNullOrBlank()
+                        ?: videoHelper.getVideoUri(
+                            this@RealtimeDatabaseService, videoSource, shareUrl
+                        )
+
+                    if (videoSource == VideoSource.Tiktok && videoUri == null) {
+                        return@let
+                    }
+
+                    videoMixerRepository.upsert(
+                        videoMixerDetail?.id.orElse(0),
+                        shareId,
+                        shareUrl,
+                        videoSource,
+                        videoSourceId,
+                        videoUri?.toString(),
+                        shareHelper.calcTrendingScore(shareId)
+                    )
+                }
             }
         }
     }

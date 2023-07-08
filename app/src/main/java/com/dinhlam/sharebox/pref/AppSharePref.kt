@@ -19,6 +19,7 @@ class AppSharePref @Inject constructor(
         private const val KEY_SHOW_GUIDELINE = "show-guideline"
         private const val KEY_FIRST_APP_OPEN = "first-app-open"
         private const val KEY_SETTING_IMAGE_DOWNLOAD_QUALITY = "setting-download-image-quality"
+        private const val KEY_SETTING_SYNC_IN_BACKGROUND = "setting-sync-in-background"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -64,4 +65,9 @@ class AppSharePref @Inject constructor(
     fun getImageDownloadQuality(): Int {
         return get(KEY_SETTING_IMAGE_DOWNLOAD_QUALITY, 80)
     }
+
+    fun setSyncInBackground(syncInBackground: Boolean) =
+        put(KEY_SETTING_SYNC_IN_BACKGROUND, syncInBackground, true)
+
+    fun isSyncInBackground() = get(KEY_SETTING_SYNC_IN_BACKGROUND, true)
 }

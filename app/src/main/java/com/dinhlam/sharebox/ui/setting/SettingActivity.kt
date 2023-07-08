@@ -7,10 +7,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.ShareBoxApp
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
@@ -101,6 +103,13 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                 appSettingHelper.setImageDownloadQuality(progress)
             }
         })
+
+        viewBinding.checkboxSyncInBackground.isChecked = appSettingHelper.isSyncDataInBackground()
+
+        viewBinding.checkboxSyncInBackground.setOnCheckedChangeListener { _, isChecked ->
+            appSettingHelper.setSyncDataInBackground(isChecked)
+            application.cast<ShareBoxApp>()?.restartRealtimeDatabaseService()
+        }
 
         viewBinding.textAbout.text = getString(
             R.string.setting_about, getString(R.string.app_name), BuildConfig.VERSION_NAME

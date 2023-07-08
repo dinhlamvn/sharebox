@@ -7,19 +7,15 @@ import android.os.IBinder
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.VideoSource
-import com.dinhlam.sharebox.data.repository.BookmarkRepository
-import com.dinhlam.sharebox.data.repository.CommentRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.NetworkHelper
-import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +32,7 @@ import javax.inject.Inject
 class VideoMixerService : Service() {
 
     companion object {
-        private const val TIME_DELAY_WHEN_EMPTY = 60_000L
+        private const val TIME_DELAY_WHEN_EMPTY = 10_000L
         private const val LIMIT_ITEM_SYNC = 20
     }
 
@@ -54,22 +50,13 @@ class VideoMixerService : Service() {
     lateinit var shareRepository: ShareRepository
 
     @Inject
-    lateinit var commentRepository: CommentRepository
-
-    @Inject
-    lateinit var userHelper: UserHelper
-
-    @Inject
-    lateinit var likeRepository: LikeRepository
-
-    @Inject
-    lateinit var bookmarkRepository: BookmarkRepository
-
-    @Inject
     lateinit var appSettingHelper: AppSettingHelper
 
     @Inject
     lateinit var networkHelper: NetworkHelper
+
+    @Inject
+    lateinit var shareHelper: ShareHelper
 
     inner class LocalBinder : Binder() {
         fun getService(): VideoMixerService = this@VideoMixerService
@@ -156,7 +143,7 @@ class VideoMixerService : Service() {
                             videoSource,
                             videoSourceId,
                             videoUri?.toString(),
-                            calcTrendingScore(shareId)
+                            shareHelper.calcTrendingScore(shareId)
                         )
 
                         if (result) {
@@ -170,34 +157,5 @@ class VideoMixerService : Service() {
                 currentOffset++
             }
         }
-    }
-
-    private suspend fun calcTrendingScore(shareId: String): Int {
-        val share = shareRepository.findOneRaw(shareId) ?: return 0
-
-        var trendingScore = 0
-
-        val commentCountByCurrentUser =
-            commentRepository.count(shareId, userId = userHelper.getCurrentUserId())
-        trendingScore += commentCountByCurrentUser.times(2)
-
-        if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
-            trendingScore += 10
-        }
-
-        if (bookmarkRepository.bookmarked(shareId)) {
-            trendingScore += 15
-        }
-
-        val commentCount = commentRepository.count(shareId)
-        trendingScore += (commentCount / 5)
-
-        val likeCount = likeRepository.count(shareId)
-        trendingScore += likeCount
-
-        val elapsed = nowUTCTimeInMillis() - share.shareDate
-        val hours = elapsed.div(3600 * 1000).toInt()
-
-        return trendingScore.minus(hours)
     }
 }

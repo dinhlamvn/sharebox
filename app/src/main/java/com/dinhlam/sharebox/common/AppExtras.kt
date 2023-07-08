@@ -10,4 +10,5 @@ object AppExtras {
     const val EXTRA_CHOICE_ITEMS = "extra-choice-items"
     const val EXTRA_SIGN_IN_FOR_RESULT = "extra-sign-in-for-result"
     const val EXTRA_BOX_ID = "extra-box-id"
+    const val EXTRA_SERVICE_STOP_FOR_TASK_REMOVED = "extra-service-stop-for-task-removed"
 }

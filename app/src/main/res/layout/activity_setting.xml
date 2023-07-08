@@ -134,6 +134,16 @@
         android:progress="80"
         app:layout_constraintTop_toBottomOf="@id/text_image_download_quality" />
 
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/checkbox_sync_in_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/title_setting_sync_background"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/seekbar_image_download_quality" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_about"
         android:layout_width="match_parent"
