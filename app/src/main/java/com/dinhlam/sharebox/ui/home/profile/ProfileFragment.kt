@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
@@ -18,10 +19,12 @@ import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.modelview.ButtonModelView
+import com.dinhlam.sharebox.modelview.DrawableImageModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -29,6 +32,7 @@ import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -81,6 +85,21 @@ class ProfileFragment :
                         BaseListAdapter.NoHashProp(View.OnClickListener {
                             signInLauncher.launch(appRouter.signIn(true))
                         })
+                    )
+                )
+
+                val margin = screenWidth().minus(48.dp()).div(2)
+
+                add(
+                    DrawableImageModelView(
+                        IconUtils.settingIcon(requireContext()),
+                        width = 48.dp(),
+                        height = 48.dp(),
+                        scaleType = ImageView.ScaleType.CENTER_INSIDE,
+                        actionClick = BaseListAdapter.NoHashProp {
+                            openSettingPage()
+                        },
+                        margin = Spacing.Horizontal(margin, margin)
                     )
                 )
             }

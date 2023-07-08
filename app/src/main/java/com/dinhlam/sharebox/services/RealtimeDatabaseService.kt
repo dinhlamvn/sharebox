@@ -2,10 +2,7 @@ package com.dinhlam.sharebox.services
 
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -53,12 +50,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class RealtimeDatabaseService : Service() {
-
-    private val stopServiceReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            stopSelf()
-        }
-    }
 
     companion object {
         private const val SERVICE_ID = 69919090
@@ -114,22 +105,14 @@ class RealtimeDatabaseService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug("$this is start command")
-        registerReceiver(stopServiceReceiver, IntentFilter("$packageName.STOP_FOREGROUND_SERVICE"))
-
 
         shouldRemoveOnTaskRemoved =
             intent?.getBooleanExtra(AppExtras.EXTRA_SERVICE_STOP_FOR_TASK_REMOVED, false) ?: true
 
         startForeground(
             SERVICE_ID,
-            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID).addAction(
-                0, getString(R.string.remove), PendingIntent.getBroadcast(
-                    this,
-                    0,
-                    Intent("$packageName.STOP_FOREGROUND_SERVICE"),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-            ).setContentText(getString(R.string.realtime_database_service_noti_content))
+            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
+                .setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
                 .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(
                     PendingIntent.getActivity(
