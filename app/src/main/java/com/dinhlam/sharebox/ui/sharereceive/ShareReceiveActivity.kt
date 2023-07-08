@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -36,6 +37,7 @@ import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
+import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -57,7 +59,12 @@ import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
 import com.dinhlam.sharebox.utils.IconUtils
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -80,10 +87,22 @@ class ShareReceiveActivity :
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
 
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                onBackPressedDispatcher.onBackPressed()
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+        }
+    }
+
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                snap()
+                share()
             } else {
                 showToast(R.string.error_require_passcode)
             }
@@ -168,6 +187,11 @@ class ShareReceiveActivity :
             finishAndRemoveTask()
         }
 
+        val bottomSheetBehavior = BottomSheetBehavior.from(viewBinding.container)
+        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
+        bottomSheetBehavior.halfExpandedRatio = 0.8f
+        bottomSheetBehavior.peekHeight = heightPercentage(80)
+
         viewModel.consume(this, ShareReceiveState::showLoading) { isShow ->
             if (isShow) {
                 viewBinding.viewLoading.show()
@@ -186,7 +210,7 @@ class ShareReceiveActivity :
         }
 
         viewBinding.containerButtonShare.setOnClickListener {
-            requestSnap()
+            requestShare()
         }
 
         viewBinding.imageShareBookmark.setOnClickListener {
@@ -223,11 +247,32 @@ class ShareReceiveActivity :
         viewBinding.imageAddBox.setOnClickListener {
             createBoxResultLauncher.launch(appRouter.boxIntent(this))
         }
+
+        viewBinding.imageClose.setImageDrawable(IconUtils.closeIcon(this) {
+            copy(sizeDp = 16)
+        })
+        viewBinding.imageClose.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        viewBinding.textInputNote.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                activityScope.launch {
+                    delay(700)
+                    withContext(Dispatchers.Main) {
+                        viewBinding.scrollView.fullScroll(View.FOCUS_DOWN)
+                    }
+                }
+            }
+        }
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
     }
 
-    private fun requestSnap() = getState(viewModel) { state ->
+    private fun requestShare() = getState(viewModel) { state ->
         val boxPasscode =
-            state.currentBox?.passcode.takeIfNotNullOrBlank() ?: return@getState snap()
+            state.currentBox?.passcode.takeIfNotNullOrBlank() ?: return@getState share()
         val boxName = state.currentBox?.boxName ?: ""
         val intent = appRouter.passcodeIntent(this, boxPasscode)
         intent.putExtra(
@@ -237,7 +282,7 @@ class ShareReceiveActivity :
         passcodeConfirmResultLauncher.launch(intent)
     }
 
-    private fun snap() {
+    private fun share() {
         hideKeyboard()
         val shareNote = viewBinding.textInputNote.getTrimmedText()
         viewModel.share(shareNote, this@ShareReceiveActivity)
