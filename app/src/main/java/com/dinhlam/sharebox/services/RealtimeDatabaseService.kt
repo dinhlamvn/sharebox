@@ -32,7 +32,7 @@ class RealtimeDatabaseService : Service() {
         Logger.debug("$this is start command")
         startForeground(
             SERVICE_ID,
-            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
+            NotificationCompat.Builder(this, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
                 .setContentText(getString(R.string.realtime_database_service_noti_content))
                 .setSubText(getString(R.string.realtime_database_service_noti_subtext))
                 .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(

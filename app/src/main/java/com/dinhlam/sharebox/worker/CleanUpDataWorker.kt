@@ -25,11 +25,10 @@ class CleanUpDataWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             1231,
-            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
+            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.cleanup_data_service_noti_content))
                 .setSubText(appContext.getString(R.string.cleanup_data_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .build()
+                .setSmallIcon(R.mipmap.ic_launcher).build()
         )
     }
 

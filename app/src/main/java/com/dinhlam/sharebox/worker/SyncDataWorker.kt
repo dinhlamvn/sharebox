@@ -31,7 +31,7 @@ class SyncDataWorker @AssistedInject constructor(
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             SERVICE_ID,
-            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
+            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.realtime_database_service_noti_content))
                 .setSubText(appContext.getString(R.string.realtime_database_service_noti_subtext))
                 .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(

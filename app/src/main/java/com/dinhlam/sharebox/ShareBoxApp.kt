@@ -51,8 +51,15 @@ class ShareBoxApp : Application(), Configuration.Provider {
             ).setName("Download channel")
                 .setDescription("This channel to notify while download file from network").build()
 
+            val notificationSyncDataChannel = NotificationChannelCompat.Builder(
+                AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID, NotificationManager.IMPORTANCE_LOW
+            ).setName("Sync data channel").setDescription("This channel to notify while sync data")
+                .build()
+
             NotificationManagerCompat.from(this).createNotificationChannelsCompat(
-                listOf(notificationChannel, notificationDownloadChannel)
+                listOf(
+                    notificationChannel, notificationDownloadChannel, notificationSyncDataChannel
+                )
             )
         }
 
@@ -78,8 +85,7 @@ class ShareBoxApp : Application(), Configuration.Provider {
             return
         }
         ContextCompat.startForegroundService(
-            this,
-            Intent(this, RealtimeDatabaseService::class.java)
+            this, Intent(this, RealtimeDatabaseService::class.java)
         )
     }
 }

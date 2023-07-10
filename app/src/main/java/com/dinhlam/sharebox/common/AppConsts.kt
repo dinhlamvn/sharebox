@@ -15,6 +15,8 @@ object AppConsts {
 
     const val NOTIFICATION_DOWNLOAD_CHANNEL_ID = "download_notification_channel"
 
+    const val NOTIFICATION_SYNC_DATA_CHANNEL_ID = "sync_data_notification_channel"
+
     const val YOUTUBE_M_PACKAGE_ID = "com.google.android.youtube"
 
     const val FACEBOOK_M_PACKAGE_ID = "com.facebook.katana"
