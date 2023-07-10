@@ -158,7 +158,7 @@ class RealtimeDatabaseRepository @Inject constructor(
             }
     }
 
-    fun consumeComments(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
+    private fun consumeComments(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
         commentChildEventListener =
             SimpleRealtimeChildEventListener(
                 realtimeDatabaseScope,
