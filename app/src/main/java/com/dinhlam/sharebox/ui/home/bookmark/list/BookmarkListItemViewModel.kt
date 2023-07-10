@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.helper.UserHelper
@@ -20,6 +21,7 @@ class BookmarkListItemViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val likeRepository: LikeRepository,
     private val userHelper: UserHelper,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<BookmarkListItemState>(BookmarkListItemState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID))) {
 
     init {
@@ -59,18 +61,18 @@ class BookmarkListItemViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = doInBackground {
-        val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
-        if (result) {
-            setState {
-                val shareList = shares.map { shareDetail ->
-                    if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1)
-                    } else {
-                        shareDetail
-                    }
+        val result =
+            likeRepository.like(shareId, userHelper.getCurrentUserId()) ?: return@doInBackground
+        realtimeDatabaseRepository.push(result)
+        setState {
+            val shareList = shares.map { shareDetail ->
+                if (shareDetail.shareId == shareId) {
+                    shareDetail.copy(likeNumber = shareDetail.likeNumber + 1)
+                } else {
+                    shareDetail
                 }
-                copy(shares = shareList)
             }
+            copy(shares = shareList)
         }
     }
 }

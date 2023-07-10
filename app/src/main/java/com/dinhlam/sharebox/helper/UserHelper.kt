@@ -1,9 +1,10 @@
 package com.dinhlam.sharebox.helper
 
+import android.app.Application
 import android.content.Context
+import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.pref.UserSharePref
@@ -17,9 +18,9 @@ import javax.inject.Singleton
 
 @Singleton
 class UserHelper @Inject constructor(
+    private val application: Application,
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
-    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val commentRepository: CommentRepository,
     private val likeRepository: LikeRepository,
     private val shareRepository: ShareRepository,
@@ -45,7 +46,7 @@ class UserHelper @Inject constructor(
         userId: String,
         displayName: String,
         avatarUrl: String,
-        onSuccess: () -> Unit,
+        onSuccess: suspend (User) -> Unit,
         onError: (Throwable) -> Unit
     ) {
         try {
@@ -64,8 +65,7 @@ class UserHelper @Inject constructor(
 
             shareBoxUser?.let { createdUser ->
                 userSharePref.setCurrentUserId(createdUser.userId)
-                realtimeDatabaseRepository.push(createdUser)
-                onSuccess()
+                onSuccess(createdUser)
             } ?: throw CreateUserError
         } catch (e: Exception) {
             onError(e)
@@ -75,9 +75,7 @@ class UserHelper @Inject constructor(
     suspend fun updateUserAvatar(userId: String, avatarUrl: String) = withContext(Dispatchers.IO) {
         val shareBoxUser = userRepository.findOneRaw(userId) ?: return@withContext
         val newUser = shareBoxUser.copy(avatar = avatarUrl)
-        userRepository.update(newUser)?.let { updatedUser ->
-            realtimeDatabaseRepository.push(updatedUser)
-        }
+        userRepository.update(newUser)
     }
 
     fun signOut(context: Context, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
@@ -87,13 +85,13 @@ class UserHelper @Inject constructor(
         }.addOnFailureListener(onError)
     }
 
-    suspend fun syncUserInfo() = withContext(Dispatchers.IO) {
+    suspend fun syncUserInfo(): User? = withContext(Dispatchers.IO) {
         if (!isSignedIn()) {
-            return@withContext
+            return@withContext null
         }
 
         val currentUserId = getCurrentUserId()
-        val user = userRepository.findOneRaw(currentUserId) ?: return@withContext
+        val user = userRepository.findOneRaw(currentUserId) ?: return@withContext null
 
         val commentCount = commentRepository.countByUser(currentUserId)
         val likeCount = likeRepository.countByUserShare(currentUserId)
@@ -103,9 +101,7 @@ class UserHelper @Inject constructor(
         val level = getLevelByDrama(drama)
 
         val newUser = user.copy(drama = drama, level = level)
-        userRepository.update(newUser)?.let { updatedUser ->
-            realtimeDatabaseRepository.push(updatedUser)
-        }
+        userRepository.update(newUser)
     }
 
     private fun getLevelByDrama(drama: Int): Int {

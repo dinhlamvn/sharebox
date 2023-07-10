@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
@@ -25,7 +26,8 @@ class CommunityViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
-    private val appSharePref: AppSharePref
+    private val appSharePref: AppSharePref,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
 
     init {
@@ -93,18 +95,18 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = doInBackground {
-        val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
-        if (result) {
-            setState {
-                val shareList = shares.map { shareDetail ->
-                    if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
-                    } else {
-                        shareDetail
-                    }
+        val result =
+            likeRepository.like(shareId, userHelper.getCurrentUserId()) ?: return@doInBackground
+        realtimeDatabaseRepository.push(result)
+        setState {
+            val shareList = shares.map { shareDetail ->
+                if (shareDetail.shareId == shareId) {
+                    shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
+                } else {
+                    shareDetail
                 }
-                copy(shares = shareList)
             }
+            copy(shares = shareList)
         }
     }
 

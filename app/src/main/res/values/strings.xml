@@ -53,8 +53,8 @@
     <string name="expanded_text">Read less</string>
     <string name="shares_error">Can\'t share this content</string>
     <string name="shares_success">Shares successfully</string>
-    <string name="realtime_database_service_noti_subtext">Listening the world sharing…</string>
-    <string name="realtime_database_service_noti_content">We are listening the world sharing and bring it to you.</string>
+    <string name="realtime_database_service_noti_subtext">Sync data…</string>
+    <string name="realtime_database_service_noti_content">The newest data is synchronizing.</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
@@ -136,6 +136,8 @@
     <string name="title_image_download_quality">Image quality save to Gallery</string>
     <string name="require_min_image_quality">Quality must be from %d</string>
     <string name="title_setting_sync_background">Synchronize data in background</string>
+    <string name="message_enqueue_sync_data">App will sync data in background every 1 hour.</string>
+    <string name="message_cancel_enqueue_sync_data">Cancel sync data in background successfully</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

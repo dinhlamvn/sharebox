@@ -78,7 +78,7 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
             val uri = uris.getOrNull(currentPos) ?: return@setOnClickListener
             viewBinding.viewLoading.show()
             fragmentScope.launch(Dispatchers.IO) {
-                localStorageHelper.saveImageToGallery(requireContext(), shareId, uri)
+                localStorageHelper.saveImageToGallery(requireContext(), uri)
                 withContext(Dispatchers.Main) {
                     viewBinding.viewLoading.hide()
                     showToast(R.string.success_save_image_to_gallery)

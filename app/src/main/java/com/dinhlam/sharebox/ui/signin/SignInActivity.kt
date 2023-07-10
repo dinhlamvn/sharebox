@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySignInBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.setDrawableCompat
@@ -60,6 +61,9 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     @Inject
     lateinit var firebaseStorageHelper: FirebaseStorageHelper
+
+    @Inject
+    lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
 
     private val signInForResult by lazy {
         intent.getBooleanExtra(
@@ -175,7 +179,8 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                 )
             } ?: photoUrl
 
-            userHelper.createUser(userId, name, avatarUrl, {
+            userHelper.createUser(userId, name, avatarUrl, { user ->
+                realtimeDatabaseRepository.push(user)
                 if (signInForResult) {
                     viewBinding.viewLoading.hide()
                     setResult(Activity.RESULT_OK)

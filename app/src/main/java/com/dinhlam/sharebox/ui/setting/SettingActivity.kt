@@ -7,18 +7,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.ShareBoxApp
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -108,7 +107,13 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
         viewBinding.checkboxSyncInBackground.setOnCheckedChangeListener { _, isChecked ->
             appSettingHelper.setSyncDataInBackground(isChecked)
-            application.cast<ShareBoxApp>()?.restartRealtimeDatabaseService()
+            if (isChecked) {
+                WorkerUtils.enqueueJobSyncData(applicationContext)
+                showToast(R.string.message_enqueue_sync_data)
+            } else {
+                WorkerUtils.cancelJobSyncData(applicationContext)
+                showToast(R.string.message_cancel_enqueue_sync_data)
+            }
         }
 
         viewBinding.textAbout.text = getString(

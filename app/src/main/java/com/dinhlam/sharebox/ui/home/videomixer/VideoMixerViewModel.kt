@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
@@ -31,6 +32,7 @@ class VideoMixerViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
     private val localStorageHelper: LocalStorageHelper,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
 
     init {
@@ -87,21 +89,22 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = doInBackground {
-        if (likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())) {
-            setState {
-                val videos = videos.map { videoDetail ->
-                    if (videoDetail.shareId == shareId) {
-                        videoDetail.copy(
-                            shareDetail = videoDetail.shareDetail.copy(
-                                likeNumber = videoDetail.shareDetail.likeNumber + 1, liked = true
-                            )
+        val result =
+            likeRepository.like(shareId, userHelper.getCurrentUserId()) ?: return@doInBackground
+        realtimeDatabaseRepository.push(result)
+        setState {
+            val videos = videos.map { videoDetail ->
+                if (videoDetail.shareId == shareId) {
+                    videoDetail.copy(
+                        shareDetail = videoDetail.shareDetail.copy(
+                            likeNumber = videoDetail.shareDetail.likeNumber + 1, liked = true
                         )
-                    } else {
-                        videoDetail
-                    }
+                    )
+                } else {
+                    videoDetail
                 }
-                copy(videos = videos)
             }
+            copy(videos = videos)
         }
     }
 

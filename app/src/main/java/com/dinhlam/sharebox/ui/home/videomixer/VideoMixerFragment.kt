@@ -29,7 +29,6 @@ import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
-import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -57,8 +56,7 @@ class VideoMixerFragment :
             if (state.videos.isEmpty()) {
                 add(
                     TextModelView(
-                        "empty_message",
-                        getString(R.string.empty_video)
+                        "empty_message", getString(R.string.empty_video)
                     )
                 )
                 return@getState
@@ -239,9 +237,7 @@ class VideoMixerFragment :
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager,
-                shareId,
-                collectionId
+                childFragmentManager, shareId, collectionId
             )
         }
     }

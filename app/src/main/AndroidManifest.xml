@@ -196,13 +196,11 @@
         </service>
 
         <service
-            android:name=".services.VideoMixerService"
-            android:exported="false" />
-
-        <service
             android:name=".services.RealtimeDatabaseService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync"
+            android:stopWithTask="true" />
 
         <receiver
             android:name=".receiver.CleanUpDataReceiver"

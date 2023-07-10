@@ -48,7 +48,6 @@ class LocalStorageHelper @Inject constructor(
 
     suspend fun saveImageToGallery(
         context: Context,
-        shareId: String,
         imageSource: Uri,
     ) = withContext(Dispatchers.IO) {
         val resolver = context.contentResolver

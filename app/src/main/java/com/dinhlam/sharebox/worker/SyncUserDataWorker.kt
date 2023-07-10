@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.helper.UserHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -13,10 +14,12 @@ class SyncUserDataWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val userHelper: UserHelper,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        userHelper.syncUserInfo()
+        val userInfo = userHelper.syncUserInfo() ?: return Result.retry()
+        realtimeDatabaseRepository.push(userInfo)
         return Result.success()
     }
 }

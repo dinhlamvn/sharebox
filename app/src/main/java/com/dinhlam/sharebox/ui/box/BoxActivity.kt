@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivityBoxBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.md5
@@ -42,6 +43,9 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
 
     @Inject
     lateinit var userHelper: UserHelper
+
+    @Inject
+    lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
 
     private val passcodeResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -140,6 +144,7 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
             )
 
             box?.let { createdBox ->
+                realtimeDatabaseRepository.push(createdBox)
                 setResult(
                     Activity.RESULT_OK,
                     Intent().putExtra(AppExtras.EXTRA_BOX_ID, createdBox.boxId)

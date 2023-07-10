@@ -51,8 +51,8 @@
     <string name="expanded_text">Thu gọn</string>
     <string name="shares_error">Không thể chia sẻ nội dung này</string>
     <string name="shares_success">Đã chia sẻ</string>
-    <string name="realtime_database_service_noti_subtext">Lắng nghe chia sẻ từ mọi người…</string>
-    <string name="realtime_database_service_noti_content">Chúng tôi đang lắng nghe chia sẻ của mọi người trên thế giới và mang nó đến cho bạn.</string>
+    <string name="realtime_database_service_noti_subtext">Đồng bộ dữ liệu…</string>
+    <string name="realtime_database_service_noti_content">Dữ liệu mới nhất đang được đồng bộ.</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>
@@ -134,6 +134,8 @@
     <string name="title_image_download_quality">Chất lượng ảnh khi lưu vào Bộ Sưu Tập</string>
     <string name="require_min_image_quality">Chất lượng ảnh phải từ %d</string>
     <string name="title_setting_sync_background">Đồng bộ dữ liệu dưới nền</string>
+    <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi giờ 1 lần.</string>
+    <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

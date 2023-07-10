@@ -27,12 +27,12 @@ class VideoHelper @Inject constructor(
     private val sssTikService: SSSTikServices,
 ) {
 
-    fun getVideoSource(url: String): VideoSource {
+    fun getVideoSource(url: String): VideoSource? {
         return when {
             isYoutubeVideo(url) -> VideoSource.Youtube
             isTiktokVideo(url) -> VideoSource.Tiktok
             isFacebookVideo(url) -> VideoSource.Facebook
-            else -> error("No source found for url $url")
+            else -> null
         }
     }
 
@@ -68,7 +68,7 @@ class VideoHelper @Inject constructor(
                     delay(1000)
                     continue
                 }
-                html = sssTikResponse.body()?.use { responseBody -> responseBody.string() } ?: ""
+                html = sssTikResponse.body()?.use { responseBody -> responseBody.use { it.string() } } ?: ""
 
                 if (html.isNotEmpty()) {
                     break
@@ -118,10 +118,10 @@ class VideoHelper @Inject constructor(
         val body = call.execute()
 
         if (body.isRedirect) {
-            return@withContext body.header("Location")!!
+            return@withContext body.use { it.header("Location")!! }
         }
 
-        body.request().url().url().toString()
+        body.use { it.request().url().url().toString() }
     }
 
     private fun getYoutubeVideoSourceId(url: String): String {
@@ -155,10 +155,10 @@ class VideoHelper @Inject constructor(
         val body = call.execute()
 
         if (body.isRedirect) {
-            return@withContext body.header("Location")!!
+            return@withContext body.use { it.header("Location")!! }
         }
 
-        val url = body.request().url().url().toString()
+        val url = body.use { it.request().url().url().toString() }
 
         if (url.contains("login.php?next=")) {
             Uri.parse(url).getQueryParameter("next")!!
@@ -183,9 +183,11 @@ class VideoHelper @Inject constructor(
 
     private suspend fun downloadVideoTiktok(url: String, output: File) {
         val response = loveTikServices.downloadFile(url)
-        response.byteStream().use { stream ->
-            FileOutputStream(output).use { outputStream ->
-                stream.copyTo(outputStream)
+        response.use { res ->
+            res.byteStream().use { stream ->
+                FileOutputStream(output).use { outputStream ->
+                    stream.copyTo(outputStream)
+                }
             }
         }
     }

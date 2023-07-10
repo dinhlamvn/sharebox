@@ -13,7 +13,6 @@ import javax.inject.Singleton
 @Singleton
 class BoxRepository @Inject constructor(
     private val boxDao: BoxDao,
-    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val userRepository: UserRepository,
 ) {
 
@@ -38,7 +37,6 @@ class BoxRepository @Inject constructor(
 
         return boxDao.runCatching {
             insert(box)
-            realtimeDatabaseRepository.push(box)
             box
         }.getOrNull()
     }

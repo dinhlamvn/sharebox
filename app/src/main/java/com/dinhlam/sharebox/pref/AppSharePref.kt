@@ -62,5 +62,5 @@ class AppSharePref @Inject constructor(
     fun setSyncInBackground(syncInBackground: Boolean) =
         put(KEY_SETTING_SYNC_IN_BACKGROUND, syncInBackground, true)
 
-    fun isSyncInBackground() = get(KEY_SETTING_SYNC_IN_BACKGROUND, true)
+    fun isSyncInBackground() = get(KEY_SETTING_SYNC_IN_BACKGROUND, false)
 }

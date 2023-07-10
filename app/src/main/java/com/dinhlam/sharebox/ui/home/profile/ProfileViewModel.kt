@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.orElse
@@ -21,6 +22,7 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<ProfileState>(ProfileState()) {
     init {
         getCurrentUserProfile()
@@ -65,18 +67,18 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun like(shareId: String) = doInBackground {
-        val result = likeRepository.likeAndSyncToCloud(shareId, userHelper.getCurrentUserId())
-        if (result) {
-            setState {
-                val shareList = shares.map { shareDetail ->
-                    if (shareDetail.shareId == shareId) {
-                        shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
-                    } else {
-                        shareDetail
-                    }
+        val result =
+            likeRepository.like(shareId, userHelper.getCurrentUserId()) ?: return@doInBackground
+        realtimeDatabaseRepository.push(result)
+        setState {
+            val shareList = shares.map { shareDetail ->
+                if (shareDetail.shareId == shareId) {
+                    shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
+                } else {
+                    shareDetail
                 }
-                copy(shares = shareList)
             }
+            copy(shares = shareList)
         }
     }
 
