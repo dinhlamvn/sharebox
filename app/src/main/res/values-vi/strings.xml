@@ -51,8 +51,8 @@
     <string name="expanded_text">Thu gọn</string>
     <string name="shares_error">Không thể chia sẻ nội dung này</string>
     <string name="shares_success">Đã chia sẻ</string>
-    <string name="realtime_database_service_noti_subtext">Đồng bộ dữ liệu…</string>
-    <string name="realtime_database_service_noti_content">Dữ liệu mới nhất đang được đồng bộ.</string>
+    <string name="realtime_database_service_noti_subtext">Đồng bộ dữ liệu</string>
+    <string name="realtime_database_service_noti_content">Dữ liệu mới nhất đang được đồng bộ…</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>

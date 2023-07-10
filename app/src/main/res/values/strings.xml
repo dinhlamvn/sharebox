@@ -53,8 +53,8 @@
     <string name="expanded_text">Read less</string>
     <string name="shares_error">Can\'t share this content</string>
     <string name="shares_success">Shares successfully</string>
-    <string name="realtime_database_service_noti_subtext">Sync data…</string>
-    <string name="realtime_database_service_noti_content">The newest data is synchronizing.</string>
+    <string name="realtime_database_service_noti_subtext">Sync data</string>
+    <string name="realtime_database_service_noti_content">The newest data is synchronizing…</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
