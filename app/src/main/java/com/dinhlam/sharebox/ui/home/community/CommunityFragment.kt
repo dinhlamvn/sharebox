@@ -39,6 +39,7 @@ import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -193,6 +194,12 @@ class CommunityFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        LiveEventUtils.eventScrollToTopCommunity.observe(viewLifecycleOwner) { shouldScroll ->
+            if (shouldScroll) {
+                viewBinding.recyclerView.smoothScrollToPosition(0)
+            }
+        }
 
         viewBinding.toolbar.inflateMenu(R.menu.community_menu)
         viewBinding.toolbar.setOnMenuItemClickListener { menuItem ->

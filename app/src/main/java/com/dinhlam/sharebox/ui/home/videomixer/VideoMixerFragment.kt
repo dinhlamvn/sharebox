@@ -30,6 +30,7 @@ import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
 import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -145,6 +146,12 @@ class VideoMixerFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        LiveEventUtils.eventScrollToTopVideoMixer.observe(viewLifecycleOwner) { shouldScroll ->
+            if (shouldScroll) {
+                viewBinding.viewPager.smoothScrollToPosition(0)
+            }
+        }
 
         viewBinding.textTitle.setDrawableCompat(start = IconUtils.boxIcon(requireContext()) {
             copy(sizeDp = 14)

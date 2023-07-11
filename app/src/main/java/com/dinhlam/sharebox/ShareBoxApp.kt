@@ -1,15 +1,18 @@
 package com.dinhlam.sharebox
 
+import android.app.Activity
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.dinhlam.sharebox.callback.SimpleActivityLifecycleCallbacks
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.extensions.isServiceRunning
@@ -33,6 +36,14 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var appSettingHelper: AppSettingHelper
+
+    private val simpleActivityLifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            super.onActivityCreated(activity, savedInstanceState)
+            startRealtimeDatabaseService()
+            this@ShareBoxApp.unregisterActivityLifecycleCallbacks(this)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -65,7 +76,7 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
         WorkerUtils.enqueueSyncUserData(this)
         WorkerUtils.enqueueCleanUpOldData(this)
-        startRealtimeDatabaseService()
+        registerActivityLifecycleCallbacks(simpleActivityLifecycleCallbacks)
     }
 
     private fun requestApplyTheme() {

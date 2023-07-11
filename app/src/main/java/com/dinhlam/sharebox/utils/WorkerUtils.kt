@@ -21,8 +21,7 @@ object WorkerUtils {
     fun enqueueSyncUserData(context: Context) {
         val syncUserDataWorkerRequest =
             OneTimeWorkRequestBuilder<SyncUserDataWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-                    .setRequiresBatteryNotLow(false).build()
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             ).build()
         WorkManager.getInstance(context).enqueue(syncUserDataWorkerRequest)
     }

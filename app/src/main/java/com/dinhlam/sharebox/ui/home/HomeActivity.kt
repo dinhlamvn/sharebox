@@ -23,6 +23,7 @@ import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -116,6 +117,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
             }
             viewBinding.viewPager.setCurrentItem(pos, false)
             return@setOnItemSelectedListener true
+        }
+
+        viewBinding.bottomNavigationView.setOnItemReselectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_video_mixer -> LiveEventUtils.eventScrollToTopVideoMixer.postValue(
+                    true
+                )
+
+                R.id.navigation_community -> LiveEventUtils.eventScrollToTopCommunity.postValue(true)
+                R.id.navigation_profile -> LiveEventUtils.eventScrollToTopProfile.postValue(true)
+            }
         }
 
         viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
