@@ -154,7 +154,7 @@ class VideoMixerFragment :
         }
 
         viewBinding.textTitle.setDrawableCompat(start = IconUtils.boxIcon(requireContext()) {
-            copy(sizeDp = 14)
+            copy(sizeDp = 14, colorRes = android.R.color.white)
         })
 
         viewBinding.viewPager.layoutManager = layoutManager

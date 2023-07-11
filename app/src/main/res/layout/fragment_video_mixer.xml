@@ -27,6 +27,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        app:cardBackgroundColor="#66000000"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +47,8 @@
             android:maxWidth="200dp"
             android:maxLines="1"
             android:padding="6dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@android:color/white" />
 
     </com.google.android.material.card.MaterialCardView>
 
