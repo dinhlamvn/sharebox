@@ -28,7 +28,8 @@ class CleanUpDataWorker @AssistedInject constructor(
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.cleanup_data_service_noti_content))
                 .setSubText(appContext.getString(R.string.cleanup_data_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher).build()
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build()
         )
     }
 
@@ -39,10 +40,10 @@ class CleanUpDataWorker @AssistedInject constructor(
     }
 
     private suspend fun cleanUpOldData() {
-        val timeToCleanUp = nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME
+        val videoCreatedTimeToCleanUp = nowUTCTimeInMillis() - AppConsts.VIDEO_DATA_ALIVE_TIME
 
         while (true) {
-            val videos = videoMixerRepository.findVideoToCleanUp(timeToCleanUp)
+            val videos = videoMixerRepository.findVideoToCleanUp(videoCreatedTimeToCleanUp)
 
             if (videos.isEmpty()) {
                 return
