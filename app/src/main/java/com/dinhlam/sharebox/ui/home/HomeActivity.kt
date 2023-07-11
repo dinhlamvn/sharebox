@@ -121,7 +121,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         viewBinding.bottomNavigationView.setOnItemReselectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.navigation_video_mixer -> LiveEventUtils.eventScrollToTopVideoMixer.postValue(
+                R.id.navigation_video_mixer -> LiveEventUtils.eventRefreshVideosMixer.postValue(
                     true
                 )
 

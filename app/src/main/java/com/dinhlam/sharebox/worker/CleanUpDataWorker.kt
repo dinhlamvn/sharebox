@@ -28,8 +28,7 @@ class CleanUpDataWorker @AssistedInject constructor(
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.cleanup_data_service_noti_content))
                 .setSubText(appContext.getString(R.string.cleanup_data_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .build()
+                .setSmallIcon(R.mipmap.ic_launcher).build()
         )
     }
 
@@ -43,13 +42,14 @@ class CleanUpDataWorker @AssistedInject constructor(
         val videoCreatedTimeToCleanUp = nowUTCTimeInMillis() - AppConsts.VIDEO_DATA_ALIVE_TIME
 
         while (true) {
-            val videos = videoMixerRepository.findVideoToCleanUp(videoCreatedTimeToCleanUp)
+            val oldVideos = videoMixerRepository.findVideoToCleanUp(videoCreatedTimeToCleanUp)
+            val outOffsetVideos = videoMixerRepository.findVideoToCleanUp()
 
-            if (videos.isEmpty()) {
+            if (oldVideos.isEmpty() && outOffsetVideos.isEmpty()) {
                 return
             }
 
-            videos.forEach { video ->
+            oldVideos.plus(outOffsetVideos).forEach { video ->
                 if (!videoMixerRepository.delete(video)) {
                     Logger.error("Error clean up share $video")
                 } else {

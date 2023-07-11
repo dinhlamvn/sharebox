@@ -147,9 +147,9 @@ class VideoMixerFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        LiveEventUtils.eventScrollToTopVideoMixer.observe(viewLifecycleOwner) { shouldScroll ->
-            if (shouldScroll) {
-                viewBinding.viewPager.smoothScrollToPosition(0)
+        LiveEventUtils.eventRefreshVideosMixer.observe(viewLifecycleOwner) { shouldRefresh ->
+            if (shouldRefresh) {
+                viewModel.doOnPullRefresh()
             }
         }
 

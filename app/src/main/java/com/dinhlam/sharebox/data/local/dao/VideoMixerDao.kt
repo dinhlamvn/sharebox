@@ -57,4 +57,14 @@ interface VideoMixerDao {
         """
     )
     suspend fun findVideoToCleanUp(timeToClean: Long): List<VideoMixer>
+
+    @Query(
+        """
+        SELECT vm.* 
+        FROM video_mixer as vm
+        LIMIT 10
+        OFFSET 50
+        """
+    )
+    suspend fun findVideoToCleanUp(): List<VideoMixer>
 }
