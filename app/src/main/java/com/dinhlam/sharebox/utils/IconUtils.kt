@@ -105,6 +105,26 @@ object IconUtils {
         )
     }
 
+    fun expandMoreIconLight(
+        context: Context
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_expand_more,
+            IconBuilder(context, colorRes = android.R.color.white)
+        )
+    }
+
+    fun expandLessIconLight(
+        context: Context
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_expand_less,
+            IconBuilder(context, colorRes = android.R.color.white)
+        )
+    }
+
     fun leftArrowIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
@@ -256,8 +276,7 @@ object IconUtils {
 
     fun saveIcon(context: Context): Drawable {
         return createIcon(
-            context,
-            GoogleMaterial.Icon.gmd_save_alt
+            context, GoogleMaterial.Icon.gmd_save_alt
         )
     }
 }

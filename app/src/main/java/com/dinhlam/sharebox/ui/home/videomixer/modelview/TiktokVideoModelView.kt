@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -61,6 +62,54 @@ data class TiktokVideoModelView(
         private var mediaPlayer: MediaPlayer? = null
 
         init {
+            binding.imageCollapse.setImageDrawable(
+                IconUtils.expandLessIconLight(
+                    buildContext
+                )
+            )
+            binding.root.setTransitionListener(object : MotionLayout.TransitionListener {
+                override fun onTransitionStarted(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int
+                ) {
+
+                }
+
+                override fun onTransitionChange(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+
+                }
+
+                override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                    if (currentId == R.id.start) {
+                        binding.imageCollapse.setImageDrawable(
+                            IconUtils.expandLessIconLight(
+                                buildContext
+                            )
+                        )
+                    } else {
+                        binding.imageCollapse.setImageDrawable(
+                            IconUtils.expandMoreIconLight(
+                                buildContext
+                            )
+                        )
+                    }
+                }
+
+                override fun onTransitionTrigger(
+                    motionLayout: MotionLayout?,
+                    triggerId: Int,
+                    positive: Boolean,
+                    progress: Float
+                ) {
+
+                }
+            })
             binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIconLight(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)

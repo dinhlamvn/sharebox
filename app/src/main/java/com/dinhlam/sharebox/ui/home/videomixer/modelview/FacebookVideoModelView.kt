@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
@@ -70,6 +71,54 @@ data class FacebookVideoModelView(
         }
 
         init {
+            binding.imageCollapse.setImageDrawable(
+                IconUtils.expandLessIconLight(
+                    buildContext
+                )
+            )
+            binding.root.setTransitionListener(object : MotionLayout.TransitionListener {
+                override fun onTransitionStarted(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int
+                ) {
+
+                }
+
+                override fun onTransitionChange(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+
+                }
+
+                override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                    if (currentId == R.id.start) {
+                        binding.imageCollapse.setImageDrawable(
+                            IconUtils.expandLessIconLight(
+                                buildContext
+                            )
+                        )
+                    } else {
+                        binding.imageCollapse.setImageDrawable(
+                            IconUtils.expandMoreIconLight(
+                                buildContext
+                            )
+                        )
+                    }
+                }
+
+                override fun onTransitionTrigger(
+                    motionLayout: MotionLayout?,
+                    triggerId: Int,
+                    positive: Boolean,
+                    progress: Float
+                ) {
+
+                }
+            })
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)
             })

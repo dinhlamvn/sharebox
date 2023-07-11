@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.home.videomixer.modelview
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +11,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
@@ -27,6 +27,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.IconUtils
 
 data class YoutubeVideoModelView(
@@ -78,13 +79,59 @@ data class YoutubeVideoModelView(
 
             @JavascriptInterface
             fun onVideoReady() {
-                handler.post {
-                    viewBinding.contentLoadingProgress.hide()
-                }
+                Logger.debug("Video loaded")
             }
         }
 
         init {
+            binding.imageCollapse.setImageDrawable(
+                IconUtils.expandLessIconLight(
+                    buildContext
+                )
+            )
+            binding.root.setTransitionListener(object : MotionLayout.TransitionListener {
+                override fun onTransitionStarted(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int
+                ) {
+
+                }
+
+                override fun onTransitionChange(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+
+                }
+
+                override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                    if (currentId == R.id.start) {
+                        binding.imageCollapse.setImageDrawable(
+                            IconUtils.expandLessIconLight(
+                                buildContext
+                            )
+                        )
+                    } else {
+                        binding.imageCollapse.setImageDrawable(
+                            IconUtils.expandMoreIconLight(
+                                buildContext
+                            )
+                        )
+                    }
+                }
+
+                override fun onTransitionTrigger(
+                    motionLayout: MotionLayout?,
+                    triggerId: Int,
+                    positive: Boolean,
+                    progress: Float
+                ) {
+
+                }
+            })
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)
             })
@@ -105,16 +152,6 @@ data class YoutubeVideoModelView(
                 javaScriptEnabled = true
             }
             binding.webView.webViewClient = object : WebViewClientCompat() {
-                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
-                    binding.contentLoadingProgress.show()
-                }
-
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-                    binding.contentLoadingProgress.hide()
-                }
-
                 override fun shouldInterceptRequest(
                     view: WebView?, request: WebResourceRequest?
                 ): WebResourceResponse? {

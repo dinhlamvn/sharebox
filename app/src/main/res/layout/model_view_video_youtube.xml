@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_dark_surface">
+    android:background="@color/md_theme_dark_surface"
+    app:layoutDescription="@xml/video_view_motion_scene">
 
     <WebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/container_bottom"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/content_loading_progress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/web_view"
-        app:layout_constraintEnd_toEndOf="@id/web_view"
-        app:layout_constraintStart_toStartOf="@id/web_view"
-        app:layout_constraintTop_toTopOf="@id/web_view" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_collapse"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@id/container_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/view_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/md_theme_dark_surface"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:background="#99000000"
+        android:clickable="true"
+        android:focusable="true">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_box_name"
@@ -47,7 +55,7 @@
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:textColor="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_view_in_source"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Box" />
@@ -105,8 +113,9 @@
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/text_view_name"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/text_box_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_box_name" />
 
         <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
             android:id="@+id/bottom_action"
@@ -117,4 +126,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>
