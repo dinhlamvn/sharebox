@@ -5,6 +5,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
@@ -66,6 +67,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             requestSignOut()
         }
 
+        viewBinding.imageSignOut.isVisible = userHelper.isSignedIn()
         viewBinding.imageSignOut.setImageDrawable(IconUtils.signOutIcon(this))
         viewBinding.toolbar.navigationIcon = IconUtils.leftArrowIcon(this) {
             copy(sizeDp = 16)
@@ -77,9 +79,12 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         viewBinding.seekbarImageDownloadQuality.progress =
             appSettingHelper.getImageDownloadQuality()
 
-        var toast: Toast? = null
+
         viewBinding.seekbarImageDownloadQuality.setOnSeekBarChangeListener(object :
             OnSeekBarChangeListener {
+
+            private var toast: Toast? = null
+
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser && progress < AppConsts.MIN_IMAGE_QUALITY) {
                     toast?.cancel()

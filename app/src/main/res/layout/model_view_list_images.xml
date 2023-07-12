@@ -40,10 +40,9 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_box_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
