@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.worker
 
 import android.app.PendingIntent
 import android.content.Context
-import androidx.annotation.IntRange
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -15,7 +14,6 @@ import com.dinhlam.sharebox.logger.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
@@ -29,19 +27,18 @@ class SyncDataWorker @AssistedInject constructor(
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return createForegroundInfo(0)
+        return createForegroundInfo()
     }
 
     override suspend fun doWork(): Result {
         Logger.debug("$this has been started")
         setForeground(getForegroundInfo())
         return try {
+            var currentTime = 0
             realtimeDatabaseRepository.consume()
-            var progress = 0
-            while (progress < 100) {
-                delay(Random.nextLong(300, 800))
-                progress++
-                setForeground(createForegroundInfo(progress))
+            while (!realtimeDatabaseRepository.isDone() && currentTime < 5 * 60 * 1000) {
+                delay(600)
+                currentTime += 600
             }
             Result.success()
         } catch (e: Exception) {
@@ -51,7 +48,7 @@ class SyncDataWorker @AssistedInject constructor(
         }
     }
 
-    private fun createForegroundInfo(@IntRange(from = 0, to = 100) progress: Int): ForegroundInfo {
+    private fun createForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
             SERVICE_ID,
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
@@ -64,9 +61,7 @@ class SyncDataWorker @AssistedInject constructor(
                         appContext.packageManager.getLaunchIntentForPackage(appContext.packageName),
                         PendingIntent.FLAG_IMMUTABLE
                     )
-                )
-                .setProgress(100, progress, true)
-                .build()
+                ).setProgress(100, 0, true).build()
         )
     }
 }

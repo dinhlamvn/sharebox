@@ -37,12 +37,14 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -138,54 +140,53 @@ class RealtimeDatabaseRepository @Inject constructor(
         consumeBoxes(::onBoxAdded)
     }
 
+    suspend fun isDone(): Boolean {
+        val isShareDone = shareChildEventListener?.isDone() ?: false
+        val isUserDone = userChildEventListener?.isDone() ?: false
+        val isCommentDone = commentChildEventListener?.isDone() ?: false
+        val isLikeDone = likeChildEventListener?.isDone() ?: false
+        val isBoxDone = boxChildEventListener?.isDone() ?: false
+        return isShareDone && isUserDone && isCommentDone && isLikeDone && isBoxDone
+    }
+
     private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        shareChildEventListener =
-            SimpleRealtimeChildEventListener(
-                realtimeDatabaseScope,
-                childAddedHandler
-            ).also { listener ->
-                shareRef.addChildEventListener(listener)
-            }
+        shareChildEventListener = SimpleRealtimeChildEventListener(
+            realtimeDatabaseScope, childAddedHandler, shareRef
+        ).also { listener ->
+            shareRef.addChildEventListener(listener)
+        }
     }
 
     private fun consumeUsers(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        userChildEventListener =
-            SimpleRealtimeChildEventListener(
-                realtimeDatabaseScope,
-                childAddedHandler
-            ).also { listener ->
-                userRef.addChildEventListener(listener)
-            }
+        userChildEventListener = SimpleRealtimeChildEventListener(
+            realtimeDatabaseScope, childAddedHandler, userRef
+        ).also { listener ->
+            userRef.addChildEventListener(listener)
+        }
     }
 
     private fun consumeComments(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        commentChildEventListener =
-            SimpleRealtimeChildEventListener(
-                realtimeDatabaseScope,
-                childAddedHandler
-            ).also { listener ->
-                commentRef.addChildEventListener(listener)
-            }
+        commentChildEventListener = SimpleRealtimeChildEventListener(
+            realtimeDatabaseScope, childAddedHandler, commentRef
+        ).also { listener ->
+            commentRef.addChildEventListener(listener)
+        }
     }
 
     private fun consumeLikes(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        likeChildEventListener =
-            SimpleRealtimeChildEventListener(
-                realtimeDatabaseScope,
-                childAddedHandler
-            ).also { listener ->
-                likeRef.addChildEventListener(listener)
-            }
+        likeChildEventListener = SimpleRealtimeChildEventListener(
+            realtimeDatabaseScope, childAddedHandler, likeRef
+        ).also { listener ->
+            likeRef.addChildEventListener(listener)
+        }
     }
 
     private fun consumeBoxes(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        boxChildEventListener =
-            SimpleRealtimeChildEventListener(
-                realtimeDatabaseScope,
-                childAddedHandler
-            ).also { listener ->
-                boxRef.addChildEventListener(listener)
-            }
+        boxChildEventListener = SimpleRealtimeChildEventListener(
+            realtimeDatabaseScope, childAddedHandler, boxRef
+        ).also { listener ->
+            boxRef.addChildEventListener(listener)
+        }
     }
 
     private suspend fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {
@@ -198,7 +199,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    private suspend fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) {
+    private suspend fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) = runCatching {
         val share = shareRepository.findOneRaw(shareId) ?: run {
             val realtimeShareObj = RealtimeShareObj.from(jsonMap)
 
@@ -246,7 +247,8 @@ class RealtimeDatabaseRepository @Inject constructor(
                 val videoMixerDetail = videoMixerRepository.findOne(shareId)
                 val shareUrl = shareDataUrl.url
                 val videoSource =
-                    videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl) ?: return
+                    videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
+                    ?: return@runCatching
 
                 if (videoSource is VideoSource.Tiktok) {
                     if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
@@ -348,14 +350,28 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private class SimpleRealtimeChildEventListener(
         private val scope: CoroutineScope,
-        private val block: suspend (String, Map<String, Any>) -> Unit
+        private val block: suspend (String, Map<String, Any>) -> Unit,
+        private val databaseReference: DatabaseReference
     ) : ChildEventListener {
+
+        @Volatile
+        private var currentIndex = 0
+
+        private val childrenCount = suspend {
+            databaseReference.get().await().childrenCount.toInt()
+        }
+
+        suspend fun isDone(): Boolean = withContext(Dispatchers.IO) {
+            currentIndex < childrenCount.invoke()
+        }
+
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val dataKey = snapshot.key ?: return
             Logger.debug("Data with key $dataKey added")
             val value = snapshot.value.cast<Map<String, Any>>() ?: return
             scope.launch {
                 block.invoke(dataKey, value)
+                currentIndex++
             }
         }
 
@@ -377,6 +393,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         override fun onCancelled(error: DatabaseError) {
             Logger.error("consume data share error")
             Logger.error(error.message)
+            currentIndex = Int.MAX_VALUE
         }
     }
 }
