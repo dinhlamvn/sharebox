@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
@@ -29,7 +28,7 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
         super.onCreate(savedInstanceState)
 
         activityScope.launch(Dispatchers.Main) {
-            delay(Random.nextLong(1000, 3000))
+            delay(3000)
             startActivity(appRouter.home(true))
         }
     }

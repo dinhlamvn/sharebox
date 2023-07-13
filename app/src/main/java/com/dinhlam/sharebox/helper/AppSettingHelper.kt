@@ -58,4 +58,8 @@ class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePre
     fun isSyncDataInBackground(): Boolean {
         return appSharePref.isSyncInBackground()
     }
+
+    fun isFirstInstall(): Boolean = appSharePref.isFirstInstall()
+
+    fun offFirstInstall() = appSharePref.offFirstInstall()
 }

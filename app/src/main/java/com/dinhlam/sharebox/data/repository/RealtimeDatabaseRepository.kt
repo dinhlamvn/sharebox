@@ -37,14 +37,12 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -365,12 +363,22 @@ class RealtimeDatabaseRepository @Inject constructor(
         @Volatile
         private var currentIndex = 0
 
-        private val childrenCount = suspend {
-            databaseReference.get().await().childrenCount.toInt()
+        @Volatile
+        private var childrenCount: Int = Int.MAX_VALUE
+
+        init {
+            scope.launch {
+                updateChildrenCount()
+            }
         }
 
-        suspend fun isDone(): Boolean = withContext(Dispatchers.IO) {
-            currentIndex < childrenCount.invoke()
+        suspend fun updateChildrenCount() {
+            val dataSnapshot = databaseReference.get().await().childrenCount
+            childrenCount = dataSnapshot.toInt()
+        }
+
+        fun isDone(): Boolean {
+            return currentIndex < childrenCount
         }
 
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

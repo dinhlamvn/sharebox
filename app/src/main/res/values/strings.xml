@@ -138,6 +138,8 @@
     <string name="title_setting_sync_background">Synchronize data in background</string>
     <string name="message_enqueue_sync_data">App will sync data in background every 1 hour.</string>
     <string name="message_cancel_enqueue_sync_data">Cancel sync data in background successfully</string>
+    <string name="notify_data_sync_success_text">Many exciting content has been sync, let\'s explore right now.</string>
+    <string name="notify_data_sync_success_title">Data sync success</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

@@ -32,8 +32,10 @@ object NetworkModule {
         if (!cacheDir.exists()) {
             cacheDir.mkdir()
         }
-        return OkHttpClient.Builder().connectTimeout(30_000, TimeUnit.SECONDS)
-            .readTimeout(30_000, TimeUnit.SECONDS).writeTimeout(30_000, TimeUnit.SECONDS)
+        return OkHttpClient.Builder()
+            .connectTimeout(30_000, TimeUnit.MILLISECONDS)
+            .readTimeout(30_000, TimeUnit.MILLISECONDS)
+            .writeTimeout(30_000, TimeUnit.MILLISECONDS)
             .cache(Cache(cacheDir, 1024 * 1024 * 50)).build()
 
     }

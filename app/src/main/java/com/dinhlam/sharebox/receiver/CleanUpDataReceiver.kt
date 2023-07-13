@@ -9,6 +9,7 @@ class CleanUpDataReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == "android.intent.action.BOOT_COMPLETED") {
             context?.let { ctx ->
+                WorkerUtils.enqueueJobSyncDataOneTime(ctx)
                 WorkerUtils.enqueueCleanUpOldData(ctx)
             }
         }

@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.worker
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import androidx.core.app.NotificationCompat
@@ -17,6 +18,7 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
+import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.NetworkHelper
@@ -54,19 +56,21 @@ class SyncDataWorker @AssistedInject constructor(
         return try {
             var currentTime = 0
             realtimeDatabaseRepository.consume()
-            while (!realtimeDatabaseRepository.isDone() && currentTime < 5 * 60 * 1000) {
+            while (!realtimeDatabaseRepository.isDone() && currentTime < 60 * 1000) {
                 delay(600)
                 currentTime += 600
             }
             realtimeDatabaseRepository.cancel()
             startMixVideoFromShareData()
+            notifyDataSyncSuccess()
             Result.success()
         } catch (e: Exception) {
-            Result.failure()
+            Result.success()
         } finally {
             realtimeDatabaseRepository.cancel()
         }
     }
+
 
     private fun createForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
@@ -74,92 +78,94 @@ class SyncDataWorker @AssistedInject constructor(
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.realtime_database_service_noti_content))
                 .setContentTitle(appContext.getString(R.string.realtime_database_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(
+                .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setProgress(100, 0, true)
+                .build()
+        )
+    }
+
+    private fun notifyDataSyncSuccess() {
+        val notification =
+            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
+                .setContentText(appContext.getString(R.string.notify_data_sync_success_text))
+                .setContentTitle(appContext.getString(R.string.notify_data_sync_success_title))
+                .setAutoCancel(true).setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false)
+                .setContentIntent(
                     PendingIntent.getActivity(
                         appContext,
                         0,
                         appContext.packageManager.getLaunchIntentForPackage(appContext.packageName),
                         PendingIntent.FLAG_IMMUTABLE
                     )
-                ).setProgress(100, 0, true).build()
-        )
+                ).build()
+        val notificationManager =
+            appContext.getSystemServiceCompat<NotificationManager>(Context.NOTIFICATION_SERVICE)
+        notificationManager.notify(123113, notification)
     }
 
     private suspend fun startMixVideoFromShareData() {
-        var currentOffset = 0
-        while (true) {
-            val shares = shareRepository.findForVideoMixer(
-                20, currentOffset * 20
-            )
+        val shares = shareRepository.findForVideoMixer(
+            20, 0
+        )
 
-            if (shares.isEmpty()) {
-                return
-            }
+        if (shares.isEmpty()) {
+            return
+        }
 
-            val ids = mutableListOf<String>()
+        val takenMapData = shares.associate { shareDetail ->
+            shareDetail.shareId to shareDetail.shareData.cast<ShareData.ShareUrl>()
+        }.filterValuesNotNull()
 
-            val takenMapData = shares.associate { shareDetail ->
-                shareDetail.shareId to shareDetail.shareData.cast<ShareData.ShareUrl>()
-            }.filterValuesNotNull()
+        takenMapData.forEach { pair ->
+            pair.runCatching {
+                val shareId = key
+                val videoMixerDetail = videoMixerRepository.findOne(shareId)
 
-            takenMapData.forEach { pair ->
-                pair.runCatching {
-                    val shareId = key
-                    val videoMixerDetail = videoMixerRepository.findOne(shareId)
+                val hasSync = videoMixerDetail?.let { vmd ->
+                    (vmd.source == VideoSource.Tiktok && vmd.uri != null) || vmd.source != VideoSource.Tiktok
+                } ?: false
 
-                    val hasSync = videoMixerDetail?.let { vmd ->
-                        (vmd.source == VideoSource.Tiktok && vmd.uri != null) || vmd.source != VideoSource.Tiktok
-                    } ?: false
+                if (hasSync) {
+                    return@forEach
+                }
 
-                    if (hasSync) {
-                        return@runCatching
-                    }
+                val shareUrl = value.url
+                val videoSource = videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
+                ?: return@forEach
 
-                    val shareUrl = value.url
-                    val videoSource =
-                        videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl) ?: return
-
-                    if (videoSource is VideoSource.Tiktok) {
-                        if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-                            return@forEach
-                        }
-
-                        if (!networkHelper.isNetworkConnected()) {
-                            return@forEach
-                        }
-                    }
-
-                    val videoSourceId = videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
-                        videoSource, shareUrl
-                    )
-
-                    val videoUri = videoHelper.getVideoUri(
-                        appContext, videoSource, shareUrl
-                    )
-
-                    if (videoSource == VideoSource.Tiktok && videoUri == null) {
+                if (videoSource is VideoSource.Tiktok) {
+                    if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
                         return@forEach
                     }
 
-                    val result = videoMixerRepository.upsert(
-                        videoMixerDetail?.id.orElse(0),
-                        shareId,
-                        shareUrl,
-                        videoSource,
-                        videoSourceId,
-                        videoUri?.toString(),
-                        shareHelper.calcTrendingScore(shareId)
-                    )
-
-                    if (result) {
-                        ids.add(shareId)
+                    if (!networkHelper.isNetworkConnected()) {
+                        return@forEach
                     }
-                }.onFailure { error ->
-                    Logger.error("Had error while sync video content for share ${pair.key} - $error")
                 }
+
+                val videoSourceId = videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
+                    videoSource, shareUrl
+                )
+
+                val videoUri = videoHelper.getVideoUri(
+                    appContext, videoSource, shareUrl
+                )
+
+                if (videoSource == VideoSource.Tiktok && videoUri == null) {
+                    return@forEach
+                }
+
+                videoMixerRepository.upsert(
+                    videoMixerDetail?.id.orElse(0),
+                    shareId,
+                    shareUrl,
+                    videoSource,
+                    videoSourceId,
+                    videoUri?.toString(),
+                    shareHelper.calcTrendingScore(shareId)
+                )
+            }.onFailure { error ->
+                Logger.error("Had error while sync video content for share ${pair.key} - $error")
             }
-            Logger.debug("Video mixer success sync $ids - offset $currentOffset")
-            currentOffset++
         }
     }
 }

@@ -77,6 +77,11 @@ class ShareBoxApp : Application(), Configuration.Provider {
         WorkerUtils.enqueueSyncUserData(this)
         WorkerUtils.enqueueCleanUpOldData(this)
         registerActivityLifecycleCallbacks(simpleActivityLifecycleCallbacks)
+
+        if (appSettingHelper.isFirstInstall()) {
+            WorkerUtils.enqueueJobSyncDataOneTime(this)
+            appSettingHelper.offFirstInstall()
+        }
     }
 
     private fun requestApplyTheme() {

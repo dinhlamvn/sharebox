@@ -40,6 +40,19 @@ object WorkerUtils {
         WorkManager.getInstance(context).enqueue(syncUserDataWorkerRequest)
     }
 
+    fun enqueueJobSyncDataOneTime(context: Context) {
+        val syncUserDataWorkerRequest =
+            OneTimeWorkRequestBuilder<SyncDataWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresStorageNotLow(true)
+                        .setRequiresBatteryNotLow(true)
+                        .build()
+                ).build()
+        WorkManager.getInstance(context).enqueue(syncUserDataWorkerRequest)
+    }
+
     fun cancelJobSyncData(context: Context) {
         WorkManager.getInstance(context).cancelAllWorkByTag("sb-worker-sync-data")
     }

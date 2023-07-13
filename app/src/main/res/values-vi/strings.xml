@@ -136,6 +136,8 @@
     <string name="title_setting_sync_background">Đồng bộ dữ liệu dưới nền</string>
     <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi giờ 1 lần.</string>
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
+    <string name="notify_data_sync_success_text">Nhiều nội dung đã được cập nhât, hãy khám phá ngay.</string>
+    <string name="notify_data_sync_success_title">Dữ liệu đã cập nhật.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
