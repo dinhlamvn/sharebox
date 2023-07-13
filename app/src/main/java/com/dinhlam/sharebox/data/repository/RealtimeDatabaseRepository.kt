@@ -245,10 +245,18 @@ class RealtimeDatabaseRepository @Inject constructor(
         share?.takeIf { it.isVideoShare && it.shareDate >= nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME }?.shareData.cast<ShareData.ShareUrl>()
             ?.let { shareDataUrl ->
                 val videoMixerDetail = videoMixerRepository.findOne(shareId)
+
+                val hasSync = videoMixerDetail?.let { vmd ->
+                    (vmd.source == VideoSource.Tiktok && vmd.uri != null) || vmd.source != VideoSource.Tiktok
+                } ?: false
+
+                if (hasSync) {
+                    return@runCatching
+                }
+
                 val shareUrl = shareDataUrl.url
-                val videoSource =
-                    videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
-                    ?: return@runCatching
+                val videoSource = videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
+                ?: return@runCatching
 
                 if (videoSource is VideoSource.Tiktok) {
                     if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
