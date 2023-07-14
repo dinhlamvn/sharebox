@@ -59,7 +59,7 @@ interface ShareDao {
         WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
         AND s.is_video_share = 1 
         AND s.share_date >= :oldestTime 
-        ORDER BY s.id ASC 
+        ORDER BY s.share_date DESC  
         LIMIT :limit 
         OFFSET :offset
     """

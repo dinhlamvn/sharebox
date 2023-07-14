@@ -67,7 +67,7 @@ class SyncVideosWorker @AssistedInject constructor(
     }
 
     private suspend fun syncVideos() {
-        val shares = shareRepository.findForSyncVideos(30, 0)
+        val shares = shareRepository.findForSyncVideos(20, 0)
 
         if (shares.isEmpty()) {
             return

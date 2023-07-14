@@ -31,7 +31,7 @@ interface VideoMixerDao {
         INNER JOIN share as s ON s.share_id = vm.share_id 
         LEFT JOIN box as b ON b.box_id = s.share_box_id 
         WHERE (s.share_box_id IS NULL) OR (s.share_box_id IS NOT NULL AND b.passcode IS NULL)
-        ORDER BY s.share_date DESC 
+        ORDER BY vm.created_at DESC 
         LIMIT :limit 
         OFFSET :offset
     """
