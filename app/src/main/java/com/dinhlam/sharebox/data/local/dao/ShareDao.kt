@@ -64,7 +64,7 @@ interface ShareDao {
         OFFSET :offset
     """
     )
-    suspend fun findForVideoMixer(
+    suspend fun findForSyncVideos(
         limit: Int,
         offset: Int,
         oldestTime: Long

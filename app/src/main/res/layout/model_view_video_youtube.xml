@@ -19,7 +19,7 @@
         android:id="@+id/image_collapse"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?attr/selectableItemBackground"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toTopOf="@id/container_bottom"
         app:layout_constraintEnd_toEndOf="parent"

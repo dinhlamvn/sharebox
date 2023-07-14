@@ -1,16 +1,13 @@
 package com.dinhlam.sharebox.data.repository
 
 import android.content.Context
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
-import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareType
-import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeBoxObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeLikeObj
@@ -18,14 +15,7 @@ import com.dinhlam.sharebox.data.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.data.model.realtimedb.RealtimeUserObj
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.extensions.orElse
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
-import com.dinhlam.sharebox.helper.NetworkHelper
-import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -57,12 +47,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val likeRepository: LikeRepository,
     private val gson: Gson,
     private val firebaseStorageHelper: FirebaseStorageHelper,
-    private val shareHelper: ShareHelper,
-    private val appSettingHelper: AppSettingHelper,
-    private val networkHelper: NetworkHelper,
-    private val videoHelper: VideoHelper,
-    private val videoMixerRepository: VideoMixerRepository,
-    private val boxRepository: BoxRepository,
+    private val boxRepository: BoxRepository
 ) {
 
     private val realtimeDatabaseScope = CoroutineScope(
@@ -130,6 +115,14 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
+    suspend fun sync() {
+        syncDataInRef(shareRef, ::onShareAdded)
+        syncDataInRef(userRef, ::onUserAdded)
+        syncDataInRef(commentRef, ::onCommentAdded)
+        syncDataInRef(likeRef, ::onLikeAdded)
+        syncDataInRef(boxRef, ::onBoxAdded)
+    }
+
     fun consume() {
         consumeShares(::onShareAdded)
         consumeUsers(::onUserAdded)
@@ -138,18 +131,23 @@ class RealtimeDatabaseRepository @Inject constructor(
         consumeBoxes(::onBoxAdded)
     }
 
-    suspend fun isDone(): Boolean {
-        val isShareDone = shareChildEventListener?.isDone() ?: false
-        val isUserDone = userChildEventListener?.isDone() ?: false
-        val isCommentDone = commentChildEventListener?.isDone() ?: false
-        val isLikeDone = likeChildEventListener?.isDone() ?: false
-        val isBoxDone = boxChildEventListener?.isDone() ?: false
-        return isShareDone && isUserDone && isCommentDone && isLikeDone && isBoxDone
+    private suspend fun syncDataInRef(
+        ref: DatabaseReference, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
+    ) {
+        val dataSnapshot = ref.get().await()
+        if (!dataSnapshot.hasChildren()) {
+            return
+        }
+        dataSnapshot.children.forEach { data ->
+            val key = data.key ?: return@forEach
+            val value = data.value?.cast<Map<String, Any>>() ?: return@forEach
+            childAddedHandler.invoke(key, value)
+        }
     }
 
     private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
         shareChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler, shareRef
+            realtimeDatabaseScope, childAddedHandler
         ).also { listener ->
             shareRef.addChildEventListener(listener)
         }
@@ -157,7 +155,7 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private fun consumeUsers(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
         userChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler, userRef
+            realtimeDatabaseScope, childAddedHandler
         ).also { listener ->
             userRef.addChildEventListener(listener)
         }
@@ -165,7 +163,7 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private fun consumeComments(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
         commentChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler, commentRef
+            realtimeDatabaseScope, childAddedHandler
         ).also { listener ->
             commentRef.addChildEventListener(listener)
         }
@@ -173,7 +171,7 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private fun consumeLikes(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
         likeChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler, likeRef
+            realtimeDatabaseScope, childAddedHandler
         ).also { listener ->
             likeRef.addChildEventListener(listener)
         }
@@ -181,7 +179,7 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private fun consumeBoxes(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
         boxChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler, boxRef
+            realtimeDatabaseScope, childAddedHandler
         ).also { listener ->
             boxRef.addChildEventListener(listener)
         }
@@ -198,7 +196,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) = runCatching {
-        val share = shareRepository.findOneRaw(shareId) ?: run {
+        shareRepository.findOneRaw(shareId) ?: run {
             val realtimeShareObj = RealtimeShareObj.from(jsonMap)
 
             val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
@@ -239,56 +237,6 @@ class RealtimeDatabaseRepository @Inject constructor(
                 realtimeShareObj.shareDate
             )
         }
-
-        share?.takeIf { it.isVideoShare && it.shareDate >= nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME }?.shareData.cast<ShareData.ShareUrl>()
-            ?.let { shareDataUrl ->
-                val videoMixerDetail = videoMixerRepository.findOne(shareId)
-
-                val hasSync = videoMixerDetail?.let { vmd ->
-                    (vmd.source == VideoSource.Tiktok && vmd.uri != null) || vmd.source != VideoSource.Tiktok
-                } ?: false
-
-                if (hasSync) {
-                    return@runCatching
-                }
-
-                val shareUrl = shareDataUrl.url
-                val videoSource = videoMixerDetail?.source ?: videoHelper.getVideoSource(shareUrl)
-                ?: return@runCatching
-
-                if (videoSource is VideoSource.Tiktok) {
-                    if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-                        return@let
-                    }
-
-                    if (!networkHelper.isNetworkConnected()) {
-                        return@let
-                    }
-                }
-
-                val videoSourceId = videoMixerDetail?.sourceId ?: videoHelper.getVideoSourceId(
-                    videoSource, shareUrl
-                )
-
-                val videoUri =
-                    videoMixerDetail?.uri?.takeIfNotNullOrBlank() ?: videoHelper.getVideoUri(
-                        appContext, videoSource, shareUrl
-                    )
-
-                if (videoSource == VideoSource.Tiktok && videoUri == null) {
-                    return@let
-                }
-
-                videoMixerRepository.upsert(
-                    videoMixerDetail?.id.orElse(0),
-                    shareId,
-                    shareUrl,
-                    videoSource,
-                    videoSourceId,
-                    videoUri?.toString(),
-                    shareHelper.calcTrendingScore(shareId)
-                )
-            }
     }
 
     private suspend fun onUserAdded(userId: String, jsonMap: Map<String, Any>) {
@@ -356,30 +304,8 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private class SimpleRealtimeChildEventListener(
         private val scope: CoroutineScope,
-        private val block: suspend (String, Map<String, Any>) -> Unit,
-        private val databaseReference: DatabaseReference
+        private val block: suspend (String, Map<String, Any>) -> Unit
     ) : ChildEventListener {
-
-        @Volatile
-        private var currentIndex = 0
-
-        @Volatile
-        private var childrenCount: Int = Int.MAX_VALUE
-
-        init {
-            scope.launch {
-                updateChildrenCount()
-            }
-        }
-
-        suspend fun updateChildrenCount() {
-            val dataSnapshot = databaseReference.get().await().childrenCount
-            childrenCount = dataSnapshot.toInt()
-        }
-
-        fun isDone(): Boolean {
-            return currentIndex < childrenCount
-        }
 
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val dataKey = snapshot.key ?: return
@@ -387,7 +313,6 @@ class RealtimeDatabaseRepository @Inject constructor(
             val value = snapshot.value.cast<Map<String, Any>>() ?: return
             scope.launch {
                 block.invoke(dataKey, value)
-                currentIndex++
             }
         }
 
@@ -409,7 +334,6 @@ class RealtimeDatabaseRepository @Inject constructor(
         override fun onCancelled(error: DatabaseError) {
             Logger.error("consume data share error")
             Logger.error(error.message)
-            currentIndex = Int.MAX_VALUE
         }
     }
 }

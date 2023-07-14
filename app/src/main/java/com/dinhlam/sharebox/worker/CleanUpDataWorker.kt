@@ -42,14 +42,13 @@ class CleanUpDataWorker @AssistedInject constructor(
         val videoCreatedTimeToCleanUp = nowUTCTimeInMillis() - AppConsts.VIDEO_DATA_ALIVE_TIME
 
         while (true) {
-            val oldVideos = videoMixerRepository.findVideoToCleanUp(videoCreatedTimeToCleanUp)
-            val outOffsetVideos = videoMixerRepository.findVideoToCleanUp()
+            val videosToClean = videoMixerRepository.findVideoToCleanUp(videoCreatedTimeToCleanUp)
 
-            if (oldVideos.isEmpty() && outOffsetVideos.isEmpty()) {
+            if (videosToClean.isEmpty()) {
                 return
             }
 
-            oldVideos.plus(outOffsetVideos).forEach { video ->
+            videosToClean.forEach { video ->
                 if (!videoMixerRepository.delete(video)) {
                     Logger.error("Error clean up share $video")
                 } else {

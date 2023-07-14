@@ -75,13 +75,12 @@ class VideoMixerRepository @Inject constructor(
             findVideoToCleanUp(timeToClean)
         }.getOrDefault(emptyList())
 
-    suspend fun findVideoToCleanUp(): List<VideoMixer> =
-        videoMixerDao.runCatching {
-            findVideoToCleanUp()
-        }.getOrDefault(emptyList())
-
     suspend fun delete(videoMixer: VideoMixer): Boolean = videoMixerDao.runCatching {
         delete(videoMixer)
         true
     }.getOrDefault(false)
+
+    suspend fun count(): Int = videoMixerDao.runCatching {
+        count()
+    }.getOrDefault(0)
 }

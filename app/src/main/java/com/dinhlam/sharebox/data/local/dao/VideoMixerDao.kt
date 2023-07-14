@@ -21,6 +21,9 @@ interface VideoMixerDao {
     @Query("SELECT * from video_mixer ORDER BY id DESC")
     suspend fun find(): List<VideoMixer>
 
+    @Query("SELECT COUNT(*) from video_mixer")
+    suspend fun count(): Int
+
     @Query(
         """
         SELECT vm.* 
@@ -57,14 +60,4 @@ interface VideoMixerDao {
         """
     )
     suspend fun findVideoToCleanUp(timeToClean: Long): List<VideoMixer>
-
-    @Query(
-        """
-        SELECT vm.* 
-        FROM video_mixer as vm
-        LIMIT 10
-        OFFSET 50
-        """
-    )
-    suspend fun findVideoToCleanUp(): List<VideoMixer>
 }

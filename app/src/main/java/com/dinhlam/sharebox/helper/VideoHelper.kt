@@ -56,11 +56,11 @@ class VideoHelper @Inject constructor(
         withContext(Dispatchers.IO) {
             val tiktokUrl = getTiktokFullUrl(url)
             val videoId = Uri.parse(tiktokUrl).lastPathSegment ?: return@withContext null
-            var retryTimes = 10
-            var html: String
+            var retryTimes = 3
+            var html: String = ""
             do {
                 val encodeUrl = URLEncoder.encode(tiktokUrl, "utf-8")
-                val sssTikId = "$encodeUrl&locale=en&tt=RGpEV2s2"
+                val sssTikId = "$encodeUrl&locale=en&tt=azhwU005"
                 val requestBody = RequestBody.create(MediaType.parse("text/plain"), "id=$sssTikId")
                 val sssTikResponse = sssTikService.getDownloadLink(requestBody)
                 if (!sssTikResponse.isSuccessful) {
@@ -75,9 +75,8 @@ class VideoHelper @Inject constructor(
                 }
 
                 retryTimes--
-                delay(3000)
-
-            } while (true)
+                delay(1000)
+            } while (retryTimes > 0)
 
             if (html.isEmpty()) {
                 return@withContext null

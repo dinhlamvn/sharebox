@@ -27,6 +27,9 @@ class RealtimeDatabaseService : Service() {
     @Inject
     lateinit var appRouter: AppRouter
 
+    @Inject
+    lateinit var shareRepository: RealtimeDatabaseRepository
+
     override fun onCreate() {
         super.onCreate()
         Logger.debug("$this is created")

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -18,12 +19,14 @@ import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,6 +37,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
     companion object {
         private const val PAGE_SIZE = 4
+    }
+
+    private val realtimeDatabaseServiceIntent by lazy(LazyThreadSafetyMode.NONE) {
+        Intent(this, RealtimeDatabaseService::class.java)
     }
 
     private val pickImagesResultLauncher =
@@ -91,6 +98,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WorkerUtils.enqueueJobSyncVideosSchedule(this)
+        ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
         viewBinding.viewPager.isUserInputEnabled = false
         viewBinding.viewPager.adapter = pageAdapter
@@ -197,5 +207,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
             putExtra(Intent.EXTRA_TEXT, text)
         }
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService(realtimeDatabaseServiceIntent)
+        WorkerUtils.cancelJobSyncVideoSchedule(this)
     }
 }

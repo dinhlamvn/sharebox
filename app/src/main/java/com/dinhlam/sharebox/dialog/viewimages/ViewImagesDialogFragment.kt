@@ -42,8 +42,6 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         val args = arguments ?: return dismiss()
-
-        val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return dismiss()
         val uris = args.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
             ?: return dismiss()
 

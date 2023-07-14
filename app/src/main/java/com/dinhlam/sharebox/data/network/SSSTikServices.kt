@@ -12,7 +12,7 @@ interface SSSTikServices {
     @POST("abc?url=dl")
     @Headers(
         "content-type:application/x-www-form-urlencoded; charset=UTF-8",
-        "User-Agent:PostmanRuntime/7.32.3"
+        "User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
     )
     suspend fun getDownloadLink(@Body requestBody: RequestBody): Response<ResponseBody>
 }

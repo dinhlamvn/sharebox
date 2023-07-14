@@ -1,25 +1,18 @@
 package com.dinhlam.sharebox
 
-import android.app.Activity
 import android.app.Application
 import android.app.NotificationManager
-import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.dinhlam.sharebox.callback.SimpleActivityLifecycleCallbacks
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
-import com.dinhlam.sharebox.extensions.isServiceRunning
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
-import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.mikepenz.iconics.Iconics
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
@@ -36,14 +29,6 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var appSettingHelper: AppSettingHelper
-
-    private val simpleActivityLifecycleCallbacks = object : SimpleActivityLifecycleCallbacks() {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            super.onActivityCreated(activity, savedInstanceState)
-            startRealtimeDatabaseService()
-            this@ShareBoxApp.unregisterActivityLifecycleCallbacks(this)
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -75,12 +60,8 @@ class ShareBoxApp : Application(), Configuration.Provider {
         }
 
         WorkerUtils.enqueueSyncUserData(this)
-        WorkerUtils.enqueueCleanUpOldData(this)
-        registerActivityLifecycleCallbacks(simpleActivityLifecycleCallbacks)
-
-        if (appSettingHelper.isFirstInstall()) {
-            WorkerUtils.enqueueJobSyncDataOneTime(this)
-            appSettingHelper.offFirstInstall()
+        if (!appSettingHelper.isFirstInstall()) {
+            WorkerUtils.enqueueCleanUpOldData(this)
         }
     }
 
@@ -94,14 +75,5 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setWorkerFactory(workerFactory).build()
-    }
-
-    private fun startRealtimeDatabaseService() {
-        if (isServiceRunning(RealtimeDatabaseService::class.java.name)) {
-            return
-        }
-        ContextCompat.startForegroundService(
-            this, Intent(this, RealtimeDatabaseService::class.java)
-        )
     }
 }

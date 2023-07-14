@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import com.dinhlam.sharebox.worker.CleanUpDataWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
+import com.dinhlam.sharebox.worker.SyncVideosWorker
 import java.util.concurrent.TimeUnit
 
 object WorkerUtils {
@@ -27,33 +28,48 @@ object WorkerUtils {
     }
 
     fun enqueueJobSyncData(context: Context) {
-        val syncUserDataWorkerRequest =
-            PeriodicWorkRequestBuilder<SyncDataWorker>(1, TimeUnit.HOURS)
-                .addTag("sb-worker-sync-data")
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .setRequiresStorageNotLow(true)
-                        .setRequiresBatteryNotLow(true)
-                        .build()
-                ).build()
-        WorkManager.getInstance(context).enqueue(syncUserDataWorkerRequest)
+        val syncDataWorkerRequest = PeriodicWorkRequestBuilder<SyncDataWorker>(
+            1,
+            TimeUnit.HOURS
+        ).addTag("sb-worker-sync-data").setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).build()
+        WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
     }
 
     fun enqueueJobSyncDataOneTime(context: Context) {
-        val syncUserDataWorkerRequest =
-            OneTimeWorkRequestBuilder<SyncDataWorker>()
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .setRequiresStorageNotLow(true)
-                        .setRequiresBatteryNotLow(true)
-                        .build()
-                ).build()
-        WorkManager.getInstance(context).enqueue(syncUserDataWorkerRequest)
+        val syncDataWorkerRequest = OneTimeWorkRequestBuilder<SyncDataWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).build()
+        WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
+    }
+
+    fun enqueueJobSyncVideosOneTime(context: Context) {
+        val syncVideosWorkerRequest = OneTimeWorkRequestBuilder<SyncVideosWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).build()
+        WorkManager.getInstance(context).enqueue(syncVideosWorkerRequest)
+    }
+
+    fun enqueueJobSyncVideosSchedule(context: Context) {
+        val syncVideosWorkerRequest = PeriodicWorkRequestBuilder<SyncVideosWorker>(
+            15,
+            TimeUnit.MINUTES
+        ).addTag("worker-sync-video-schedule").setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).build()
+        WorkManager.getInstance(context).enqueue(syncVideosWorkerRequest)
     }
 
     fun cancelJobSyncData(context: Context) {
         WorkManager.getInstance(context).cancelAllWorkByTag("sb-worker-sync-data")
+    }
+
+    fun cancelJobSyncVideoSchedule(context: Context) {
+        WorkManager.getInstance(context).cancelAllWorkByTag("worker-sync-video-schedule")
     }
 }
