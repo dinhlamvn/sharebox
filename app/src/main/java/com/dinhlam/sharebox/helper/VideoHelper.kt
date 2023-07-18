@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.FileUtils
+import com.dinhlam.sharebox.utils.UserAgentUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -62,7 +63,8 @@ class VideoHelper @Inject constructor(
                 val encodeUrl = URLEncoder.encode(tiktokUrl, "utf-8")
                 val sssTikId = "$encodeUrl&locale=en&tt=azhwU005"
                 val requestBody = RequestBody.create(MediaType.parse("text/plain"), "id=$sssTikId")
-                val sssTikResponse = sssTikService.getDownloadLink(requestBody)
+                val sssTikResponse =
+                    sssTikService.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), requestBody)
                 if (!sssTikResponse.isSuccessful) {
                     retryTimes--
                     delay(1000)
