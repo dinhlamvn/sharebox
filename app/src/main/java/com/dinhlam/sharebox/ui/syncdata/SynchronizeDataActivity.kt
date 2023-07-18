@@ -9,7 +9,6 @@ import com.dinhlam.sharebox.router.AppRouter
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -34,13 +33,8 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
         super.onCreate(savedInstanceState)
 
         activityScope.launch(Dispatchers.IO) {
-            if (appSharePref.isFirstInstall()) {
-                realtimeDatabaseRepository.sync()
-                WorkerUtils.enqueueJobSyncVideosOneTime(applicationContext)
-                appSharePref.offFirstInstall()
-            } else {
-                delay(500)
-            }
+            realtimeDatabaseRepository.sync()
+            WorkerUtils.enqueueJobSyncVideosOneTime(applicationContext)
             withContext(Dispatchers.Main) {
                 startActivity(appRouter.home(true))
             }

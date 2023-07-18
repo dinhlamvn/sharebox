@@ -24,11 +24,11 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.videomixer.FacebookVideoModelView
+import com.dinhlam.sharebox.modelview.videomixer.TiktokVideoModelView
+import com.dinhlam.sharebox.modelview.videomixer.YoutubeVideoModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.ui.home.videomixer.modelview.FacebookVideoModelView
-import com.dinhlam.sharebox.ui.home.videomixer.modelview.TiktokVideoModelView
-import com.dinhlam.sharebox.ui.home.videomixer.modelview.YoutubeVideoModelView
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint

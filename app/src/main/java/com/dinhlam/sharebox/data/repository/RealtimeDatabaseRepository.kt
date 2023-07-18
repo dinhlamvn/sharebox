@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.pref.AppSharePref
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -47,7 +48,8 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val likeRepository: LikeRepository,
     private val gson: Gson,
     private val firebaseStorageHelper: FirebaseStorageHelper,
-    private val boxRepository: BoxRepository
+    private val boxRepository: BoxRepository,
+    private val appSharePref: AppSharePref,
 ) {
 
     private val realtimeDatabaseScope = CoroutineScope(
@@ -116,11 +118,21 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun sync() {
-        syncDataInRef(shareRef, ::onShareAdded)
-        syncDataInRef(userRef, ::onUserAdded)
-        syncDataInRef(commentRef, ::onCommentAdded)
-        syncDataInRef(likeRef, ::onLikeAdded)
-        syncDataInRef(boxRef, ::onBoxAdded)
+        syncDataInRef(appSharePref.getLastIndexSyncShare(), shareRef, ::onShareAdded) {
+            appSharePref.setLastIndexSyncShare(it)
+        }
+        syncDataInRef(appSharePref.getLastIndexSyncUser(), userRef, ::onUserAdded) {
+            appSharePref.setLastIndexSyncUser(it)
+        }
+        syncDataInRef(appSharePref.getLastIndexSyncComment(), commentRef, ::onCommentAdded) {
+            appSharePref.setLastIndexSyncComment(it)
+        }
+        syncDataInRef(appSharePref.getLastIndexSyncLike(), likeRef, ::onLikeAdded) {
+            appSharePref.setLastIndexSyncLike(it)
+        }
+        syncDataInRef(appSharePref.getLastIndexSyncBox(), boxRef, ::onBoxAdded) {
+            appSharePref.setLastIndexSyncBox(it)
+        }
     }
 
     fun consume() {
@@ -132,17 +144,27 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun syncDataInRef(
-        ref: DatabaseReference, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
+        indexStart: Int,
+        ref: DatabaseReference,
+        childAddedHandler: suspend (String, Map<String, Any>) -> Unit,
+        onDone: (Int) -> Unit
     ) {
         val dataSnapshot = ref.get().await()
         if (!dataSnapshot.hasChildren()) {
             return
         }
-        dataSnapshot.children.forEach { data ->
-            val key = data.key ?: return@forEach
-            val value = data.value?.cast<Map<String, Any>>() ?: return@forEach
+
+        val childrenCount = dataSnapshot.childrenCount.toInt()
+        val list = dataSnapshot.children.toList()
+
+        for (i in indexStart until childrenCount) {
+            val data = list[i]
+            val key = data.key ?: continue
+            val value = data.value?.cast<Map<String, Any>>() ?: continue
             childAddedHandler.invoke(key, value)
         }
+
+        onDone(childrenCount)
     }
 
     private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {

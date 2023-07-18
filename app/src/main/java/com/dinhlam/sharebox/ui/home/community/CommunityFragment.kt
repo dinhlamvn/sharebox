@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.home.community
 
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
@@ -23,11 +26,14 @@ import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.modelview.BoxModelView
 import com.dinhlam.sharebox.modelview.CarouselModelView
@@ -35,6 +41,9 @@ import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.list.video.ListFacebookVideoModelView
+import com.dinhlam.sharebox.modelview.list.video.ListTiktokVideoModelView
+import com.dinhlam.sharebox.modelview.list.video.ListYoutubeVideoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
@@ -106,28 +115,72 @@ class CommunityFragment :
                 )
             } else if (state.shares.isNotEmpty()) {
                 state.shares.forEach { shareDetail ->
-                    add(
-                        shareDetail.shareData.buildShareModelViews(
-                            screenHeight(),
-                            shareDetail.shareId,
-                            shareDetail.shareDate,
-                            shareDetail.shareNote,
-                            shareDetail.user,
-                            shareDetail.likeNumber,
-                            commentNumber = shareDetail.commentNumber,
-                            bookmarked = shareDetail.bookmarked,
-                            liked = shareDetail.liked,
-                            boxDetail = shareDetail.boxDetail,
-                            actionOpen = ::onOpen,
-                            actionShareToOther = ::onShareToOther,
-                            actionLike = ::onLike,
-                            actionComment = ::onComment,
-                            actionBookmark = ::onBookmark,
-                            actionViewImage = ::viewImage,
-                            actionViewImages = ::viewImages,
-                            actionBoxClick = ::onBoxClick
-                        )
+                    val videoMixer = state.videoMixers[shareDetail.shareId]
+                    val modelView = videoMixer?.let { videoMixerDetail ->
+                        when (videoMixerDetail.source) {
+                            VideoSource.Youtube -> videoMixerDetail.sourceId.takeIfNotNullOrBlank()
+                                ?.let { sourceId ->
+                                    ListYoutubeVideoModelView(
+                                        "video_youtube_$sourceId",
+                                        sourceId,
+                                        videoMixerDetail.shareDetail,
+                                        actionViewInSource = BaseListAdapter.NoHashProp(::viewInYoutube),
+                                        actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                                        actionLike = BaseListAdapter.NoHashProp(::onLike),
+                                        actionComment = BaseListAdapter.NoHashProp(::onComment),
+                                        actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
+                                    )
+                                }
+
+                            VideoSource.Tiktok -> videoMixerDetail.uri?.let { uri ->
+                                ListTiktokVideoModelView(
+                                    "video_tiktok_$uri",
+                                    uri,
+                                    videoMixerDetail.shareDetail,
+                                    actionViewInSource = BaseListAdapter.NoHashProp(::viewInTiktok),
+                                    actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                                    actionLike = BaseListAdapter.NoHashProp(::onLike),
+                                    actionComment = BaseListAdapter.NoHashProp(::onComment),
+                                    actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
+                                    actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
+                                )
+                            }
+
+                            VideoSource.Facebook -> videoMixerDetail.sourceId.takeIfNotNullOrBlank()
+                                ?.let { sourceId ->
+                                    ListFacebookVideoModelView(
+                                        "video_facebook_$sourceId",
+                                        sourceId,
+                                        videoMixerDetail.shareDetail,
+                                        actionViewInSource = BaseListAdapter.NoHashProp(::viewInFacebook),
+                                        actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                                        actionLike = BaseListAdapter.NoHashProp(::onLike),
+                                        actionComment = BaseListAdapter.NoHashProp(::onComment),
+                                        actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
+                                    )
+                                }
+                        }
+                    } ?: shareDetail.shareData.buildShareModelViews(
+                        screenHeight(),
+                        shareDetail.shareId,
+                        shareDetail.shareDate,
+                        shareDetail.shareNote,
+                        shareDetail.user,
+                        shareDetail.likeNumber,
+                        commentNumber = shareDetail.commentNumber,
+                        bookmarked = shareDetail.bookmarked,
+                        liked = shareDetail.liked,
+                        boxDetail = shareDetail.boxDetail,
+                        actionOpen = ::onOpen,
+                        actionShareToOther = ::onShareToOther,
+                        actionLike = ::onLike,
+                        actionComment = ::onComment,
+                        actionBookmark = ::onBookmark,
+                        actionViewImage = ::viewImage,
+                        actionViewImages = ::viewImages,
+                        actionBoxClick = ::onBoxClick
                     )
+                    add(modelView)
 
                     shareDetail.commentDetail?.let { commentDetail ->
                         CommentModelView(
@@ -155,8 +208,10 @@ class CommunityFragment :
                     )
                 }
 
-                if (state.isLoadingMore) {
+                if (state.canLoadMore) {
                     add(LoadingModelView("home_load_more_${state.currentPage}"))
+                } else if (state.isLoadingMore) {
+                    add(LoadingModelView("home_loading_more_${state.currentPage}"))
                 }
             }
         }
@@ -315,5 +370,61 @@ class CommunityFragment :
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
         viewModel.bookmark(shareId, bookmarkCollectionId)
+    }
+
+    private fun viewInFacebook(shareData: ShareData) {
+        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
+        val viewIntent = appRouter.viewIntent(shareUrl.url)
+        viewIntent.setPackage(AppConsts.FACEBOOK_M_PACKAGE_ID)
+
+        if (viewIntent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(viewIntent)
+        } else {
+            startActivity(appRouter.playStoreIntent(AppConsts.FACEBOOK_M_PACKAGE_ID))
+        }
+    }
+
+    private fun viewInYoutube(shareData: ShareData) {
+        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
+        val viewIntent = appRouter.viewIntent(shareUrl.url)
+        viewIntent.runCatching {
+            startActivity(this)
+        }.onFailure { error ->
+            Logger.error(error)
+            startActivity(appRouter.playStoreIntent(AppConsts.YOUTUBE_M_PACKAGE_ID))
+        }
+    }
+
+    private fun viewInTiktok(shareData: ShareData) {
+        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
+        val viewIntent = appRouter.viewIntent(shareUrl.url)
+
+        val resolveInfoList = context?.packageManager?.queryIntentActivitiesCompat(
+            viewIntent, PackageManager.GET_META_DATA
+        ) ?: return
+
+        resolveInfoList.run stop@{
+            forEach { resolveInfo ->
+                if (resolveInfo.activityInfo.packageName.equals(AppConsts.TIKTOK_M_PACKAGE_ID)) {
+                    viewIntent.setPackage(AppConsts.TIKTOK_M_PACKAGE_ID)
+                    return@stop
+                }
+
+                if (resolveInfo.activityInfo.packageName.equals(AppConsts.TIKTOK_O_PACKAGE_ID)) {
+                    viewIntent.setPackage(AppConsts.TIKTOK_O_PACKAGE_ID)
+                    return@stop
+                }
+            }
+        }
+
+        if (viewIntent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(viewIntent)
+        } else {
+            startActivity(appRouter.playStoreIntent(AppConsts.TIKTOK_M_PACKAGE_ID))
+        }
+    }
+
+    private fun onSaveToGallery(videoUri: String) {
+        viewModel.saveVideoToGallery(requireContext(), videoUri)
     }
 }

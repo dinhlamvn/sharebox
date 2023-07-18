@@ -1,15 +1,17 @@
-package com.dinhlam.sharebox.ui.home.videomixer.modelview
+package com.dinhlam.sharebox.modelview.list.video
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
@@ -17,17 +19,20 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
-import com.dinhlam.sharebox.databinding.ModelViewVideoFacebookBinding
-import com.dinhlam.sharebox.extensions.asBookmarkIconLight
-import com.dinhlam.sharebox.extensions.asLikeIconLight
+import com.dinhlam.sharebox.databinding.ModelViewListVideoYoutubeBinding
+import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
+import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.UserUtils
 
-data class FacebookVideoModelView(
+data class ListYoutubeVideoModelView(
     val id: String,
     val videoId: String,
     val shareDetail: ShareDetail,
@@ -50,18 +55,20 @@ data class FacebookVideoModelView(
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
-        return FacebookVideoViewHolder(
-            ModelViewVideoFacebookBinding.inflate(
+        return ListYoutubeVideoViewHolder(
+            ModelViewListVideoYoutubeBinding.inflate(
                 inflater, container, false
             )
         )
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private class FacebookVideoViewHolder(binding: ModelViewVideoFacebookBinding) :
-        BaseListAdapter.BaseViewHolder<FacebookVideoModelView, ModelViewVideoFacebookBinding>(
+    private class ListYoutubeVideoViewHolder(binding: ModelViewListVideoYoutubeBinding) :
+        BaseListAdapter.BaseViewHolder<ListYoutubeVideoModelView, ModelViewListVideoYoutubeBinding>(
             binding
         ) {
+
+        private val mainHandler = Handler(Looper.getMainLooper())
 
         private val webViewAssetLoader by lazy {
             WebViewAssetLoader.Builder()
@@ -70,82 +77,27 @@ data class FacebookVideoModelView(
                 .build()
         }
 
-        init {
-            binding.imageCollapse.setImageDrawable(
-                IconUtils.expandLessIconLight(
-                    buildContext
-                )
-            )
-            binding.root.setTransitionListener(object : MotionLayout.TransitionListener {
-                override fun onTransitionStarted(
-                    motionLayout: MotionLayout?,
-                    startId: Int,
-                    endId: Int
-                ) {
+        class YoutubeJsInterface(
+            private val handler: Handler, private val viewBinding: ModelViewListVideoYoutubeBinding
+        ) {
 
-                }
-
-                override fun onTransitionChange(
-                    motionLayout: MotionLayout?,
-                    startId: Int,
-                    endId: Int,
-                    progress: Float
-                ) {
-
-                }
-
-                override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                    if (currentId == R.id.start) {
-                        binding.imageCollapse.setImageDrawable(
-                            IconUtils.expandLessIconLight(
-                                buildContext
-                            )
-                        )
-                    } else {
-                        binding.imageCollapse.setImageDrawable(
-                            IconUtils.expandMoreIconLight(
-                                buildContext
-                            )
-                        )
-                    }
-                }
-
-                override fun onTransitionTrigger(
-                    motionLayout: MotionLayout?,
-                    triggerId: Int,
-                    positive: Boolean,
-                    progress: Float
-                ) {
-
-                }
-            })
-            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
-                copy(sizeDp = 12, colorRes = android.R.color.white)
-            })
-            binding.textViewInSource.setDrawableCompat(end = IconUtils.openIcon(buildContext) {
-                copy(sizeDp = 16, colorRes = android.R.color.white)
-            })
-            binding.bottomAction.apply {
-                setCommentIcon(IconUtils.commentIconLight(buildContext))
-                setShareIcon(IconUtils.shareIconLight(buildContext))
-                setLikeTextColor(Color.WHITE)
-                setCommentTextColor(Color.WHITE)
+            @JavascriptInterface
+            fun onVideoReady() {
+                Logger.debug("Video loaded")
             }
-            binding.webView.setBackgroundColor(Color.BLACK)
+        }
+
+        init {
+            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+                copy(sizeDp = 12)
+            })
+            binding.webView.addJavascriptInterface(
+                YoutubeJsInterface(mainHandler, binding), "android"
+            )
             binding.webView.settings.apply {
                 javaScriptEnabled = true
             }
             binding.webView.webViewClient = object : WebViewClientCompat() {
-                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
-                    binding.contentLoadingProgress.show()
-                }
-
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-                    binding.contentLoadingProgress.hide()
-                }
-
                 override fun shouldInterceptRequest(
                     view: WebView?, request: WebResourceRequest?
                 ): WebResourceResponse? {
@@ -160,21 +112,17 @@ data class FacebookVideoModelView(
             }
         }
 
-        override fun onBind(model: FacebookVideoModelView, position: Int) {
-            val html = buildContext.assets.open("fb_embed/embed.html").reader().readText()
+        override fun onBind(model: ListYoutubeVideoModelView, position: Int) {
+            val html = buildContext.assets.open("youtube_embed/embed.html").reader().readText()
             val formatHtml = String.format(html, model.videoId)
             val encodeHtml = Base64.encodeToString(formatHtml.toByteArray(), Base64.NO_PADDING)
             binding.webView.loadData(encodeHtml, "text/html", "base64")
 
             binding.bottomAction.setBookmarkIcon(
-                model.shareDetail.bookmarked.asBookmarkIconLight(buildContext)
+                model.shareDetail.bookmarked.asBookmarkIcon(buildContext)
             )
 
-            binding.textViewInSource.setOnClickListener {
-                model.actionViewInSource.prop?.invoke(model.shareDetail.shareData)
-            }
-
-            binding.bottomAction.setLikeIcon(model.shareDetail.liked.asLikeIconLight(buildContext))
+            binding.bottomAction.setLikeIcon(model.shareDetail.liked.asLikeIcon(buildContext))
 
             binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
@@ -195,22 +143,32 @@ data class FacebookVideoModelView(
             binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)
             binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
-            binding.textViewName.text = model.shareDetail.user.name
             ImageLoader.INSTANCE.load(
-                buildContext,
-                model.shareDetail.user.avatar,
-                binding.imageAvatar
+                buildContext, model.shareDetail.user.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
+
+            binding.layoutUserInfo.textViewName.text = buildSpannedString {
+                bold {
+                    append(model.shareDetail.user.name)
+                }
+                append(buildContext.getString(R.string.share_image))
+            }
+            binding.layoutUserInfo.textUserLevel.text =
+                buildContext.getString(
+                    R.string.user_level_format,
+                    UserUtils.getLevelTitle(model.shareDetail.user.level),
+                    model.shareDetail.shareDate.asElapsedTimeDisplay()
+                )
 
             binding.textBoxName.text =
                 model.shareDetail.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
 
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
-                binding.textNote.isVisible = true
-                binding.textNote.setReadMoreText(text)
-            } ?: binding.textNote.apply {
+                binding.textViewNote.isVisible = true
+                binding.textViewNote.setReadMoreText(text)
+            } ?: binding.textViewNote.apply {
                 text = null
                 isVisible = false
             }
@@ -218,9 +176,9 @@ data class FacebookVideoModelView(
 
         override fun onUnBind() {
             binding.webView.loadUrl("auto:blank")
-            binding.textNote.text = null
+            binding.textViewNote.text = null
             binding.bottomAction.release()
-            ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
         }
     }
 }

@@ -1,25 +1,18 @@
-package com.dinhlam.sharebox.ui.home.videomixer.modelview
+package com.dinhlam.sharebox.modelview.videomixer
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.os.Handler
-import android.os.Looper
-import android.util.Base64
+import android.media.MediaPlayer
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.webkit.JavascriptInterface
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
-import android.webkit.WebView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
-import androidx.webkit.WebViewAssetLoader
-import androidx.webkit.WebViewClientCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
-import com.dinhlam.sharebox.databinding.ModelViewVideoYoutubeBinding
+import com.dinhlam.sharebox.databinding.ModelViewVideoTiktokBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIconLight
 import com.dinhlam.sharebox.extensions.asLikeIconLight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
@@ -27,12 +20,11 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.utils.IconUtils
 
-data class YoutubeVideoModelView(
+data class TiktokVideoModelView(
     val id: String,
-    val videoId: String,
+    val videoUri: String,
     val shareDetail: ShareDetail,
     val actionViewInSource: BaseListAdapter.NoHashProp<Function1<ShareData, Unit>> = BaseListAdapter.NoHashProp(
         null
@@ -49,39 +41,25 @@ data class YoutubeVideoModelView(
     val actionBookmark: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionSaveToGallery: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(id) {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
-        return YoutubeVideoViewHolder(
-            ModelViewVideoYoutubeBinding.inflate(
+        return TiktokVideoViewHolder(
+            ModelViewVideoTiktokBinding.inflate(
                 inflater, container, false
             )
         )
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private class YoutubeVideoViewHolder(binding: ModelViewVideoYoutubeBinding) :
-        BaseListAdapter.BaseViewHolder<YoutubeVideoModelView, ModelViewVideoYoutubeBinding>(binding) {
+    private class TiktokVideoViewHolder(binding: ModelViewVideoTiktokBinding) :
+        BaseListAdapter.BaseViewHolder<TiktokVideoModelView, ModelViewVideoTiktokBinding>(binding) {
 
-        private val mainHandler = Handler(Looper.getMainLooper())
-
-        private val webViewAssetLoader by lazy {
-            WebViewAssetLoader.Builder()
-                .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(buildContext))
-                .addPathHandler("/res/", WebViewAssetLoader.ResourcesPathHandler(buildContext))
-                .build()
-        }
-
-        class YoutubeJsInterface(
-            private val handler: Handler, private val viewBinding: ModelViewVideoYoutubeBinding
-        ) {
-
-            @JavascriptInterface
-            fun onVideoReady() {
-                Logger.debug("Video loaded")
-            }
-        }
+        private var mediaPlayer: MediaPlayer? = null
 
         init {
             binding.imageCollapse.setImageDrawable(
@@ -132,6 +110,7 @@ data class YoutubeVideoModelView(
 
                 }
             })
+            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIconLight(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)
             })
@@ -144,33 +123,29 @@ data class YoutubeVideoModelView(
                 setLikeTextColor(Color.WHITE)
                 setCommentTextColor(Color.WHITE)
             }
-            binding.webView.setBackgroundColor(Color.BLACK)
-            binding.webView.addJavascriptInterface(
-                YoutubeJsInterface(mainHandler, binding), "android"
-            )
-            binding.webView.settings.apply {
-                javaScriptEnabled = true
-            }
-            binding.webView.webViewClient = object : WebViewClientCompat() {
-                override fun shouldInterceptRequest(
-                    view: WebView?, request: WebResourceRequest?
-                ): WebResourceResponse? {
-                    return webViewAssetLoader.shouldInterceptRequest(request!!.url)
+            binding.imagePlay.setOnClickListener { view ->
+                if (mediaPlayer?.isPlaying == true) {
+                    mediaPlayer?.pause()
+                    binding.imagePlay.setImageResource(R.drawable.ic_play_white)
+                } else {
+                    mediaPlayer?.start()
+                    binding.imagePlay.setImageResource(R.drawable.ic_pause_white)
                 }
-
-                override fun shouldOverrideUrlLoading(
-                    view: WebView, request: WebResourceRequest
-                ): Boolean {
-                    return true
-                }
+                view.postDelayed({
+                    binding.imagePlay.setImageDrawable(null)
+                }, 2000)
             }
+            binding.videoView.setOnPreparedListener { mediaPlayer ->
+                this.mediaPlayer = mediaPlayer
+                mediaPlayer.isLooping = true
+                binding.videoView.start()
+            }
+            binding.videoView.requestFocus()
         }
 
-        override fun onBind(model: YoutubeVideoModelView, position: Int) {
-            val html = buildContext.assets.open("youtube_embed/embed.html").reader().readText()
-            val formatHtml = String.format(html, model.videoId)
-            val encodeHtml = Base64.encodeToString(formatHtml.toByteArray(), Base64.NO_PADDING)
-            binding.webView.loadData(encodeHtml, "text/html", "base64")
+        override fun onBind(model: TiktokVideoModelView, position: Int) {
+            binding.videoView.stopPlayback()
+            binding.videoView.setVideoURI(Uri.parse(model.videoUri))
 
             binding.bottomAction.setBookmarkIcon(
                 model.shareDetail.bookmarked.asBookmarkIconLight(buildContext)
@@ -198,12 +173,18 @@ data class YoutubeVideoModelView(
                 model.actionBookmark.prop?.invoke(model.shareDetail.shareId)
             }
 
+            binding.imageSaveToGallery.setOnClickListener {
+                model.actionSaveToGallery.prop?.invoke(model.videoUri)
+            }
+
             binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)
             binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
             binding.textViewName.text = model.shareDetail.user.name
             ImageLoader.INSTANCE.load(
-                buildContext, model.shareDetail.user.avatar, binding.imageAvatar
+                buildContext,
+                model.shareDetail.user.avatar,
+                binding.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
@@ -221,7 +202,10 @@ data class YoutubeVideoModelView(
         }
 
         override fun onUnBind() {
-            binding.webView.loadUrl("auto:blank")
+            if (binding.videoView.isPlaying) {
+                binding.videoView.pause()
+                binding.videoView.stopPlayback()
+            }
             binding.textNote.text = null
             binding.bottomAction.release()
             ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)

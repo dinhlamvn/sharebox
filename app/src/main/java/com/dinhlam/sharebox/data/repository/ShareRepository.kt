@@ -110,6 +110,16 @@ class ShareRepository @Inject constructor(
         val liked = likeRepository.liked(share.shareId, userSharePref.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
         val boxDetail = share.shareBoxId?.let { id -> boxRepository.findOne(id) }
-        mapper.map(share, user, commentNumber, likeNumber, bookmarked, liked, topComment, boxDetail)
+        mapper.map(
+            share,
+            user,
+            commentNumber,
+            likeNumber,
+            bookmarked,
+            liked,
+            topComment,
+            boxDetail,
+            share.isVideoShare
+        )
     }.getOrNull()
 }

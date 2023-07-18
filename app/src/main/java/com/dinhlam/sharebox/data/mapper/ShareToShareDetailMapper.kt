@@ -20,6 +20,7 @@ class ShareToShareDetailMapper @Inject constructor() {
         liked: Boolean,
         commentDetail: CommentDetail?,
         boxDetail: BoxDetail?,
+        isVideoShare: Boolean,
     ): ShareDetail {
         return ShareDetail(
             share.id,
@@ -34,7 +35,8 @@ class ShareToShareDetailMapper @Inject constructor() {
             bookmarked,
             liked,
             commentDetail,
-            boxDetail
+            boxDetail,
+            isVideoShare
         )
     }
 }

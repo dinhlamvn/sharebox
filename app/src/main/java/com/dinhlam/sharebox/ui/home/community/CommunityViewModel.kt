@@ -1,17 +1,24 @@
 package com.dinhlam.sharebox.ui.home.community
 
+import android.content.Context
+import android.net.Uri
 import androidx.annotation.UiThread
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.BoxDetail
+import com.dinhlam.sharebox.data.model.ShareDetail
+import com.dinhlam.sharebox.data.model.VideoMixerDetail
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +35,8 @@ class CommunityViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val videoMixerRepository: VideoMixerRepository,
+    private val localStorageHelper: LocalStorageHelper,
 ) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
 
     init {
@@ -36,6 +45,16 @@ class CommunityViewModel @Inject constructor(
         consume(CommunityState::currentBox) {
             loadShares()
         }
+        consume(CommunityState::shares, ::loadVideoMixers)
+    }
+
+    private suspend fun loadVideoMixers(shareDetails: List<ShareDetail>) {
+        val videoMixers = mutableMapOf<String, VideoMixerDetail>()
+        for (i in shareDetails.indices) {
+            val videoMixer = videoMixerRepository.findOne(shareDetails[i].shareId)
+            videoMixer?.let { videoMixers[shareDetails[i].shareId] = it }
+        }
+        setState { copy(videoMixers = videoMixers) }
     }
 
     private fun getListBoxes() = execute {
@@ -44,9 +63,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getCurrentActiveBox() = execute {
-        val boxId =
-            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
-                ?: return@execute loadShares().let { this }
+        val boxId = appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
+            ?: return@execute loadShares().let { this }
         val box = boxRepository.findOne(boxId) ?: return@execute loadShares().let { this }
         copy(currentBox = box, isRefreshing = false)
     }
@@ -170,6 +188,17 @@ class CommunityViewModel @Inject constructor(
         doInBackground {
             val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
             setBox(boxDetail)
+        }
+    }
+
+    fun saveVideoToGallery(context: Context, videoUri: String) {
+        doInBackground {
+            try {
+                localStorageHelper.saveVideoToGallery(context, Uri.parse(videoUri))
+                postShowToast(R.string.success_save_video_to_gallery)
+            } catch (e: Exception) {
+                postShowToast(R.string.error_save_video_to_gallery)
+            }
         }
     }
 }

@@ -20,6 +20,12 @@ class AppSharePref @Inject constructor(
         private const val KEY_SETTING_IMAGE_DOWNLOAD_QUALITY = "setting-download-image-quality"
         private const val KEY_SETTING_SYNC_IN_BACKGROUND = "setting-sync-in-background"
         private const val KEY_FIRST_INSTALL = "key-first-install"
+
+        private const val KEY_LAST_INDEX_SYNC_SHARE = "key-last-index-sync-share"
+        private const val KEY_LAST_INDEX_SYNC_USER = "key-last-index-sync-user"
+        private const val KEY_LAST_INDEX_SYNC_COMMENT = "key-last-index-sync-comment"
+        private const val KEY_LAST_INDEX_SYNC_LIKE = "key-last-index-sync-like"
+        private const val KEY_LAST_INDEX_SYNC_BOX = "key-last-index-sync-box"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -68,4 +74,24 @@ class AppSharePref @Inject constructor(
     fun isFirstInstall() = get(KEY_FIRST_INSTALL, true)
 
     fun offFirstInstall() = put(KEY_FIRST_INSTALL, value = false, sync = true)
+
+    fun getLastIndexSyncShare() = get(KEY_LAST_INDEX_SYNC_SHARE, 0)
+
+    fun getLastIndexSyncUser() = get(KEY_LAST_INDEX_SYNC_USER, 0)
+
+    fun getLastIndexSyncComment() = get(KEY_LAST_INDEX_SYNC_COMMENT, 0)
+
+    fun getLastIndexSyncLike() = get(KEY_LAST_INDEX_SYNC_LIKE, 0)
+
+    fun getLastIndexSyncBox() = get(KEY_LAST_INDEX_SYNC_BOX, 0)
+
+    fun setLastIndexSyncShare(index: Int) = put(KEY_LAST_INDEX_SYNC_SHARE, index, true)
+
+    fun setLastIndexSyncUser(index: Int) = put(KEY_LAST_INDEX_SYNC_USER, index, true)
+
+    fun setLastIndexSyncComment(index: Int) = put(KEY_LAST_INDEX_SYNC_COMMENT, index, true)
+
+    fun setLastIndexSyncLike(index: Int) = put(KEY_LAST_INDEX_SYNC_LIKE, index, true)
+
+    fun setLastIndexSyncBox(index: Int) = put(KEY_LAST_INDEX_SYNC_BOX, index, true)
 }

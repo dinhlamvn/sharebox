@@ -70,13 +70,12 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions "default"
     productFlavors {
         dev {
             manifestPlaceholders = [
                     applicationName: "Sharebox Dev"
             ]
-            dimension "version"
             applicationIdSuffix ".dev"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
             buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://sharebox-dev-502a2.appspot.com\""
@@ -86,7 +85,6 @@ android {
             manifestPlaceholders = [
                     applicationName: "Sharebox"
             ]
-            dimension "version"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
             buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://share-box-6c293.appspot.com\""
         }

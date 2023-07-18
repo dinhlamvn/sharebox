@@ -8,7 +8,7 @@ class LoadMoreLinearLayoutManager(
     context: Context,
     @RecyclerView.Orientation orientation: Int = RecyclerView.VERTICAL,
     private val blockShouldLoadMore: () -> Boolean,
-    private val block: () -> Unit
+    private val onLoadMore: () -> Unit
 ) : LinearLayoutManager(context, orientation, false) {
 
     var hadTriggerLoadMore = false
@@ -27,7 +27,7 @@ class LoadMoreLinearLayoutManager(
             val lastPosition = findLastCompletelyVisibleItemPosition()
             if (!hadTriggerLoadMore && lastPosition == itemCount - 1) {
                 hadTriggerLoadMore = true
-                block()
+                onLoadMore()
             }
         }
     }

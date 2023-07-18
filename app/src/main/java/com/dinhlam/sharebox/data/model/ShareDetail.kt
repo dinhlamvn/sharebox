@@ -14,4 +14,5 @@ data class ShareDetail(
     val liked: Boolean,
     val commentDetail: CommentDetail?,
     val boxDetail: BoxDetail?,
+    val isVideoShare: Boolean,
 )

@@ -5,6 +5,7 @@ import android.net.Uri
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.FileUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,7 +27,6 @@ class VideoHelper @Inject constructor(
     private val okHttpClient: OkHttpClient,
     private val sssTikService: SSSTikServices,
 ) {
-
     fun getVideoSource(url: String): VideoSource? {
         return when {
             isYoutubeVideo(url) -> VideoSource.Youtube
@@ -68,7 +68,9 @@ class VideoHelper @Inject constructor(
                     delay(1000)
                     continue
                 }
-                html = sssTikResponse.body()?.use { responseBody -> responseBody.use { it.string() } } ?: ""
+                html =
+                    sssTikResponse.body()?.use { responseBody -> responseBody.use { it.string() } }
+                        ?: ""
 
                 if (html.isNotEmpty()) {
                     break
@@ -193,10 +195,14 @@ class VideoHelper @Inject constructor(
 
     private fun parseHtmlSSSTik(htmlString: String): String? {
         val jsoup = Jsoup.parse(htmlString)
-        val aTagDownload = jsoup.getElementById("direct_dl_link") ?: return null
-        if (!aTagDownload.hasAttr("href")) {
-            return null
-        }
-        return aTagDownload.attr("href")
+        val aTags = jsoup.getElementsByTag("a")
+        return aTags.firstOrNull { element ->
+            if (!element.hasAttr("href")) {
+                return null
+            }
+            val href = element.attr("href") ?: ""
+            val isMp4Download = element.text().contains("Without watermark")
+            href.contains("tikcdn.io") && isMp4Download
+        }?.attr("href").takeIfNotNullOrBlank()
     }
 }

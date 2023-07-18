@@ -1,18 +1,23 @@
-package com.dinhlam.sharebox.ui.home.videomixer.modelview
+package com.dinhlam.sharebox.modelview.videomixer
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.Color
-import android.media.MediaPlayer
-import android.net.Uri
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.isVisible
+import androidx.webkit.WebViewAssetLoader
+import androidx.webkit.WebViewClientCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
-import com.dinhlam.sharebox.databinding.ModelViewVideoTiktokBinding
+import com.dinhlam.sharebox.databinding.ModelViewVideoFacebookBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIconLight
 import com.dinhlam.sharebox.extensions.asLikeIconLight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
@@ -22,9 +27,9 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.utils.IconUtils
 
-data class TiktokVideoModelView(
+data class FacebookVideoModelView(
     val id: String,
-    val videoUri: String,
+    val videoId: String,
     val shareDetail: ShareDetail,
     val actionViewInSource: BaseListAdapter.NoHashProp<Function1<ShareData, Unit>> = BaseListAdapter.NoHashProp(
         null
@@ -41,25 +46,29 @@ data class TiktokVideoModelView(
     val actionBookmark: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionSaveToGallery: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
 ) : BaseListAdapter.BaseModelView(id) {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
-        return TiktokVideoViewHolder(
-            ModelViewVideoTiktokBinding.inflate(
+        return FacebookVideoViewHolder(
+            ModelViewVideoFacebookBinding.inflate(
                 inflater, container, false
             )
         )
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private class TiktokVideoViewHolder(binding: ModelViewVideoTiktokBinding) :
-        BaseListAdapter.BaseViewHolder<TiktokVideoModelView, ModelViewVideoTiktokBinding>(binding) {
+    private class FacebookVideoViewHolder(binding: ModelViewVideoFacebookBinding) :
+        BaseListAdapter.BaseViewHolder<FacebookVideoModelView, ModelViewVideoFacebookBinding>(
+            binding
+        ) {
 
-        private var mediaPlayer: MediaPlayer? = null
+        private val webViewAssetLoader by lazy {
+            WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(buildContext))
+                .addPathHandler("/res/", WebViewAssetLoader.ResourcesPathHandler(buildContext))
+                .build()
+        }
 
         init {
             binding.imageCollapse.setImageDrawable(
@@ -110,7 +119,6 @@ data class TiktokVideoModelView(
 
                 }
             })
-            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIconLight(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12, colorRes = android.R.color.white)
             })
@@ -123,29 +131,40 @@ data class TiktokVideoModelView(
                 setLikeTextColor(Color.WHITE)
                 setCommentTextColor(Color.WHITE)
             }
-            binding.imagePlay.setOnClickListener { view ->
-                if (mediaPlayer?.isPlaying == true) {
-                    mediaPlayer?.pause()
-                    binding.imagePlay.setImageResource(R.drawable.ic_play_white)
-                } else {
-                    mediaPlayer?.start()
-                    binding.imagePlay.setImageResource(R.drawable.ic_pause_white)
+            binding.webView.setBackgroundColor(Color.BLACK)
+            binding.webView.settings.apply {
+                javaScriptEnabled = true
+            }
+            binding.webView.webViewClient = object : WebViewClientCompat() {
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                    super.onPageStarted(view, url, favicon)
+                    binding.contentLoadingProgress.show()
                 }
-                view.postDelayed({
-                    binding.imagePlay.setImageDrawable(null)
-                }, 2000)
+
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    binding.contentLoadingProgress.hide()
+                }
+
+                override fun shouldInterceptRequest(
+                    view: WebView?, request: WebResourceRequest?
+                ): WebResourceResponse? {
+                    return webViewAssetLoader.shouldInterceptRequest(request!!.url)
+                }
+
+                override fun shouldOverrideUrlLoading(
+                    view: WebView, request: WebResourceRequest
+                ): Boolean {
+                    return true
+                }
             }
-            binding.videoView.setOnPreparedListener { mediaPlayer ->
-                this.mediaPlayer = mediaPlayer
-                mediaPlayer.isLooping = true
-                binding.videoView.start()
-            }
-            binding.videoView.requestFocus()
         }
 
-        override fun onBind(model: TiktokVideoModelView, position: Int) {
-            binding.videoView.stopPlayback()
-            binding.videoView.setVideoURI(Uri.parse(model.videoUri))
+        override fun onBind(model: FacebookVideoModelView, position: Int) {
+            val html = buildContext.assets.open("fb_embed/embed.html").reader().readText()
+            val formatHtml = String.format(html, model.videoId)
+            val encodeHtml = Base64.encodeToString(formatHtml.toByteArray(), Base64.NO_PADDING)
+            binding.webView.loadData(encodeHtml, "text/html", "base64")
 
             binding.bottomAction.setBookmarkIcon(
                 model.shareDetail.bookmarked.asBookmarkIconLight(buildContext)
@@ -173,10 +192,6 @@ data class TiktokVideoModelView(
                 model.actionBookmark.prop?.invoke(model.shareDetail.shareId)
             }
 
-            binding.imageSaveToGallery.setOnClickListener {
-                model.actionSaveToGallery.prop?.invoke(model.videoUri)
-            }
-
             binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)
             binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
@@ -202,10 +217,7 @@ data class TiktokVideoModelView(
         }
 
         override fun onUnBind() {
-            if (binding.videoView.isPlaying) {
-                binding.videoView.pause()
-                binding.videoView.stopPlayback()
-            }
+            binding.webView.loadUrl("auto:blank")
             binding.textNote.text = null
             binding.bottomAction.release()
             ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)

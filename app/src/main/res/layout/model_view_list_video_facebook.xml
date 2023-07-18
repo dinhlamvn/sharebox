@@ -26,17 +26,15 @@
         app:layout_constraintTop_toBottomOf="@id/layout_user_info"
         tools:text="This is my note" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_image"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <WebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
         android:layout_marginTop="8dp"
-        android:nestedScrollingEnabled="false"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_note" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_note"
+        tools:ignore="WebViewLayout" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_box_name"
@@ -52,7 +50,7 @@
         android:paddingVertical="12dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view_image" />
+        app:layout_constraintTop_toBottomOf="@id/web_view" />
 
     <!-- bottom action button -->
 
