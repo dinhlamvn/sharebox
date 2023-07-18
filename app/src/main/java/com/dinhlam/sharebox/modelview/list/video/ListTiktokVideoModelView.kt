@@ -71,7 +71,7 @@ data class ListTiktokVideoModelView(
             })
             binding.videoView.setOnPreparedListener { mediaPlayer ->
                 this.mediaPlayer = mediaPlayer
-                mediaPlayer.isLooping = true
+                mediaPlayer.isLooping = false
                 binding.videoView.start()
             }
             binding.videoView.requestFocus()
