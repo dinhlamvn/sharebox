@@ -142,6 +142,7 @@
     <string name="notify_data_sync_success_title">Data sync success</string>
     <string name="sync_videos_notification_content">The exciting videos are collecting…</string>
     <string name="sync_videos_notification_title">Collect Videos</string>
+    <string name="share_video">" share a video"</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

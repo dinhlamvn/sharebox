@@ -118,7 +118,7 @@ data class ListTiktokVideoModelView(
                 bold {
                     append(model.shareDetail.user.name)
                 }
-                append(buildContext.getString(R.string.share_image))
+                append(buildContext.getString(R.string.share_video))
             }
             binding.layoutUserInfo.textUserLevel.text =
                 buildContext.getString(
