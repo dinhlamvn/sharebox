@@ -28,6 +28,7 @@ data class ListTiktokVideoModelView(
     val id: String,
     val videoUri: String,
     val shareDetail: ShareDetail,
+    val isPlaying: Boolean,
     val actionViewInSource: BaseListAdapter.NoHashProp<Function1<ShareData, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -69,16 +70,29 @@ data class ListTiktokVideoModelView(
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12)
             })
+            binding.imagePlay.setOnClickListener { view ->
+                if (mediaPlayer?.isPlaying == true) {
+                    mediaPlayer?.pause()
+                    binding.imagePlay.setImageResource(R.drawable.ic_play_white)
+                } else {
+                    mediaPlayer?.start()
+                    binding.imagePlay.setImageResource(R.drawable.ic_pause_white)
+                }
+                view.postDelayed({
+                    binding.imagePlay.setImageDrawable(null)
+                }, 2000)
+            }
+
             binding.videoView.setOnPreparedListener { mediaPlayer ->
                 this.mediaPlayer = mediaPlayer
-                mediaPlayer.isLooping = false
-                binding.videoView.start()
+                mediaPlayer.isLooping = true
+                mediaPlayer.start()
             }
+
             binding.videoView.requestFocus()
         }
 
         override fun onBind(model: ListTiktokVideoModelView, position: Int) {
-            binding.videoView.stopPlayback()
             binding.videoView.setVideoURI(Uri.parse(model.videoUri))
 
             binding.bottomAction.setBookmarkIcon(
@@ -107,9 +121,7 @@ data class ListTiktokVideoModelView(
             binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
             ImageLoader.INSTANCE.load(
-                buildContext,
-                model.shareDetail.user.avatar,
-                binding.layoutUserInfo.imageAvatar
+                buildContext, model.shareDetail.user.avatar, binding.layoutUserInfo.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
@@ -120,12 +132,11 @@ data class ListTiktokVideoModelView(
                 }
                 append(buildContext.getString(R.string.share_video))
             }
-            binding.layoutUserInfo.textUserLevel.text =
-                buildContext.getString(
-                    R.string.user_level_format,
-                    UserUtils.getLevelTitle(model.shareDetail.user.level),
-                    model.shareDetail.shareDate.asElapsedTimeDisplay()
-                )
+            binding.layoutUserInfo.textUserLevel.text = buildContext.getString(
+                R.string.user_level_format,
+                UserUtils.getLevelTitle(model.shareDetail.user.level),
+                model.shareDetail.shareDate.asElapsedTimeDisplay()
+            )
 
             binding.textBoxName.text =
                 model.shareDetail.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)

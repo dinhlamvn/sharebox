@@ -137,6 +137,7 @@ class CommunityFragment :
                                     "video_tiktok_$uri",
                                     uri,
                                     videoMixerDetail.shareDetail,
+                                    true,
                                     actionViewInSource = BaseListAdapter.NoHashProp(::viewInTiktok),
                                     actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
                                     actionLike = BaseListAdapter.NoHashProp(::onLike),
