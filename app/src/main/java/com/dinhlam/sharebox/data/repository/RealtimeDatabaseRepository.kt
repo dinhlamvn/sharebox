@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.data.model.realtimedb.RealtimeUserObj
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
+import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.google.firebase.database.ChildEventListener
@@ -50,6 +51,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
+    private val videoHelper: VideoHelper,
 ) {
 
     private val realtimeDatabaseScope = CoroutineScope(
@@ -257,7 +259,12 @@ class RealtimeDatabaseRepository @Inject constructor(
                 realtimeShareObj.shareBoxId,
                 realtimeShareObj.shareUserId,
                 realtimeShareObj.shareDate
-            )
+            )?.let { share ->
+                if (share.isVideoShare) {
+                    val shareUrl = share.shareData.cast<ShareData.ShareUrl>() ?: return@let
+                    videoHelper.syncVideo(shareId, shareUrl.url)
+                }
+            }
         }
     }
 

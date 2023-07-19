@@ -13,11 +13,13 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,6 +39,7 @@ class ShareReceiveViewModel @Inject constructor(
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
+    private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
@@ -104,6 +107,9 @@ class ShareReceiveViewModel @Inject constructor(
             }
 
             share?.let { insertedShare ->
+                if (insertedShare.isVideoShare) {
+                    handleShareVideo(insertedShare)
+                }
                 realtimeDatabaseRepository.push(insertedShare)
                 bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
@@ -118,14 +124,21 @@ class ShareReceiveViewModel @Inject constructor(
         }
     }
 
+    private suspend fun handleShareVideo(share: Share) = withContext(Dispatchers.IO) {
+        val shareUrl = share.shareData.cast<ShareData.ShareUrl>() ?: return@withContext
+        videoHelper.syncVideo(share.shareId, shareUrl.url)
+    }
+
     private suspend fun shareUrl(
         note: String?, shareData: ShareData.ShareUrl, shareBox: BoxDetail?
     ): Share? {
+        val isVideoShare = videoHelper.getVideoSource(shareData.url) != null
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
             shareBoxId = shareBox?.boxId,
-            shareUserId = userHelper.getCurrentUserId()
+            shareUserId = userHelper.getCurrentUserId(),
+            isVideoShare = isVideoShare
         )
     }
 

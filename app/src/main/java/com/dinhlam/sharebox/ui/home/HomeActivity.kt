@@ -99,7 +99,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WorkerUtils.enqueueJobSyncVideosSchedule(this)
         ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
         viewBinding.viewPager.isUserInputEnabled = false

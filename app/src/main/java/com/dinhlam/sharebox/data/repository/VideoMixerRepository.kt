@@ -23,8 +23,7 @@ class VideoMixerRepository @Inject constructor(
         }.getOrNull()
     }
 
-    suspend fun upsert(
-        id: Int,
+    suspend fun insert(
         shareId: String,
         originUrl: String,
         source: VideoSource,
@@ -34,8 +33,15 @@ class VideoMixerRepository @Inject constructor(
     ): Boolean {
         return videoMixerDao.runCatching {
             val videoMixer =
-                VideoMixer(id, shareId, originUrl, source, sourceId, uri, trendingScore)
-            upsert(videoMixer)
+                VideoMixer(
+                    shareId = shareId,
+                    originalUrl = originUrl,
+                    source = source,
+                    sourceId = sourceId,
+                    uri = uri,
+                    trendingScore = trendingScore
+                )
+            insert(videoMixer)
             true
         }.getOrDefault(false)
     }

@@ -2,12 +2,15 @@ package com.dinhlam.sharebox.helper
 
 import android.content.Context
 import android.net.Uri
+import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
+import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.UserAgentUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -24,9 +27,14 @@ import javax.inject.Singleton
 
 @Singleton
 class VideoHelper @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val loveTikServices: LoveTikServices,
     private val okHttpClient: OkHttpClient,
     private val sssTikService: SSSTikServices,
+    private val appSettingHelper: AppSettingHelper,
+    private val videoMixerRepository: VideoMixerRepository,
+    private val networkHelper: NetworkHelper,
+    private val shareHelper: ShareHelper,
 ) {
     fun getVideoSource(url: String): VideoSource? {
         return when {
@@ -37,7 +45,7 @@ class VideoHelper @Inject constructor(
         }
     }
 
-    suspend fun getVideoSourceId(videoSource: VideoSource, url: String): String {
+    private suspend fun getVideoSourceId(videoSource: VideoSource, url: String): String {
         return when (videoSource) {
             is VideoSource.Youtube -> getYoutubeVideoSourceId(url)
             is VideoSource.Tiktok -> getTiktokVideoSourceId(url)
@@ -45,7 +53,7 @@ class VideoHelper @Inject constructor(
         }
     }
 
-    suspend fun getVideoUri(context: Context, videoSource: VideoSource, url: String): Uri? {
+    private suspend fun getVideoUri(context: Context, videoSource: VideoSource, url: String): Uri? {
         return when (videoSource) {
             is VideoSource.Youtube -> null
             is VideoSource.Tiktok -> getTiktokVideoUri(context, url)
@@ -206,5 +214,42 @@ class VideoHelper @Inject constructor(
             val isMp4Download = element.text().contains("Without watermark")
             href.contains("tikcdn.io") && isMp4Download
         }?.attr("href").takeIfNotNullOrBlank()
+    }
+
+    suspend fun syncVideo(shareId: String, shareUrl: String) {
+        val record = videoMixerRepository.findOne(shareId)
+        if (record != null) {
+            return
+        }
+        val videoSource = getVideoSource(shareUrl) ?: return
+
+        if (videoSource is VideoSource.Tiktok) {
+            if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
+                return
+            }
+
+            if (!networkHelper.isNetworkConnected()) {
+                return
+            }
+        }
+
+        val videoSourceId = getVideoSourceId(videoSource, shareUrl)
+
+        val videoUri = getVideoUri(
+            appContext, videoSource, shareUrl
+        )
+
+        if (videoSource == VideoSource.Tiktok && videoUri == null) {
+            return
+        }
+
+        videoMixerRepository.insert(
+            shareId,
+            shareUrl,
+            videoSource,
+            videoSourceId,
+            videoUri?.toString(),
+            shareHelper.calcTrendingScore(shareId)
+        )
     }
 }

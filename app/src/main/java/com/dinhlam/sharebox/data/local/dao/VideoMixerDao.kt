@@ -2,8 +2,8 @@ package com.dinhlam.sharebox.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Upsert
 import com.dinhlam.sharebox.data.local.entity.VideoMixer
 
 @Dao
@@ -12,8 +12,8 @@ interface VideoMixerDao {
     @Query("SELECT * FROM video_mixer WHERE share_id = :shareId")
     suspend fun find(shareId: String): VideoMixer?
 
-    @Upsert
-    suspend fun upsert(videoMixer: VideoMixer)
+    @Insert
+    suspend fun insert(videoMixer: VideoMixer)
 
     @Delete
     suspend fun delete(videoMixer: VideoMixer)

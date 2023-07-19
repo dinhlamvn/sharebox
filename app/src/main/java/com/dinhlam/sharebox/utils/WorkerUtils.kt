@@ -54,17 +54,6 @@ object WorkerUtils {
         WorkManager.getInstance(context).enqueue(syncVideosWorkerRequest)
     }
 
-    fun enqueueJobSyncVideosSchedule(context: Context) {
-        val syncVideosWorkerRequest = PeriodicWorkRequestBuilder<SyncVideosWorker>(
-            15,
-            TimeUnit.MINUTES
-        ).addTag("worker-sync-video-schedule").setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
-            ).build()
-        WorkManager.getInstance(context).enqueue(syncVideosWorkerRequest)
-    }
-
     fun cancelJobSyncData(context: Context) {
         WorkManager.getInstance(context).cancelAllWorkByTag("sb-worker-sync-data")
     }

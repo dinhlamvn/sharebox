@@ -25,7 +25,6 @@ class ShareRepository @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
     private val mapper: ShareToShareDetailMapper,
-    private val videoHelper: VideoHelper,
     private val userSharePref: UserSharePref,
     private val boxRepository: BoxRepository,
 ) {
@@ -35,13 +34,9 @@ class ShareRepository @Inject constructor(
         shareNote: String?,
         shareBoxId: String?,
         shareUserId: String,
-        shareDate: Long = nowUTCTimeInMillis()
+        shareDate: Long = nowUTCTimeInMillis(),
+        isVideoShare: Boolean = false,
     ): Share? = shareDao.runCatching {
-        val isVideoShare = shareData.cast<ShareData.ShareUrl>()?.runCatching {
-            videoHelper.getVideoSource(url)
-            true
-        }?.getOrDefault(false) ?: false
-
         val share = Share(
             shareId = shareId,
             shareUserId = shareUserId,

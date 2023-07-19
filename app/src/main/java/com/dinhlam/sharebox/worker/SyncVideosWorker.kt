@@ -9,16 +9,10 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.filterValuesNotNull
-import com.dinhlam.sharebox.helper.AppSettingHelper
-import com.dinhlam.sharebox.helper.NetworkHelper
-import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import dagger.assisted.Assisted
@@ -29,11 +23,7 @@ class SyncVideosWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val shareRepository: ShareRepository,
-    private val videoMixerRepository: VideoMixerRepository,
-    private val appSettingHelper: AppSettingHelper,
     private val videoHelper: VideoHelper,
-    private val networkHelper: NetworkHelper,
-    private val shareHelper: ShareHelper,
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
@@ -47,7 +37,7 @@ class SyncVideosWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             setForeground(createForegroundInfo(0))
-            syncVideos()
+            //syncVideos()
             Result.success()
         } catch (e: Exception) {
             Result.failure()
@@ -81,39 +71,7 @@ class SyncVideosWorker @AssistedInject constructor(
             pair.runCatching {
                 val shareId = pair.first
                 val shareUrl = pair.second.url
-                val videoSource = videoHelper.getVideoSource(shareUrl) ?: return@forEachIndexed
-
-                if (videoSource is VideoSource.Tiktok) {
-                    if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY
-                        && !networkHelper.isNetworkWifiConnected()
-                    ) {
-                        return@runCatching
-                    }
-
-                    if (!networkHelper.isNetworkConnected()) {
-                        return@runCatching
-                    }
-                }
-
-                val videoSourceId = videoHelper.getVideoSourceId(videoSource, shareUrl)
-
-                val videoUri = videoHelper.getVideoUri(
-                    appContext, videoSource, shareUrl
-                )
-
-                if (videoSource == VideoSource.Tiktok && videoUri == null) {
-                    return@runCatching
-                }
-
-                videoMixerRepository.upsert(
-                    0,
-                    shareId,
-                    shareUrl,
-                    videoSource,
-                    videoSourceId,
-                    videoUri?.toString(),
-                    shareHelper.calcTrendingScore(shareId)
-                )
+                videoHelper.syncVideo(shareId, shareUrl)
             }.onFailure { error ->
                 Logger.error("Had error while sync video content for share ${pair.first} - $error")
             }
