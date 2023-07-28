@@ -205,7 +205,11 @@ class ShareReceiveActivity :
         viewModel.consume(this, ShareReceiveState::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
                 Toast.makeText(this, R.string.shares_success, Toast.LENGTH_SHORT).show()
-                finishAndRemoveTask()
+                if (isTaskRoot) {
+                    finishAndRemoveTask()
+                } else {
+                    finish()
+                }
             }
         }
 
@@ -453,7 +457,11 @@ class ShareReceiveActivity :
             viewModel.getCurrentUserProfile()
         } else {
             showToast(R.string.sign_in_error)
-            finishAndRemoveTask()
+            if (isTaskRoot) {
+                finishAndRemoveTask()
+            } else {
+                finish()
+            }
         }
     }
 
