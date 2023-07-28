@@ -66,9 +66,12 @@ class VideoHelper @Inject constructor(
     ): Boolean {
         val notification =
             NotificationCompat.Builder(context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                .setContentText(context.getString(R.string.download_video)).setAutoCancel(false)
-                .setSubText(context.getString(R.string.download_video_subtext))
-                .setSmallIcon(R.drawable.ic_download).setProgress(0, 0, true).build()
+                .setContentText(context.getString(R.string.download_video_subtext))
+                .setAutoCancel(false)
+                .setSubText(context.getString(R.string.download_video))
+                .setSmallIcon(R.drawable.ic_download)
+                .setProgress(0, 0, true)
+                .build()
 
         val notificationManager =
             context.getSystemServiceCompat<NotificationManager>(Context.NOTIFICATION_SERVICE)
