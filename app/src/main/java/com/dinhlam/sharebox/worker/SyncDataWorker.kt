@@ -13,7 +13,6 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -37,13 +36,12 @@ class SyncDataWorker @AssistedInject constructor(
         setForeground(getForegroundInfo())
         return try {
             realtimeDatabaseRepository.sync()
-            WorkerUtils.enqueueJobSyncVideosOneTime(appContext)
             notifyDataSyncSuccess()
             Result.success()
         } catch (e: Exception) {
             Result.success()
         } finally {
-            realtimeDatabaseRepository.cancel()
+            realtimeDatabaseRepository.onDestroy()
         }
     }
 

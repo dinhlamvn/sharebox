@@ -26,7 +26,6 @@ import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -211,6 +210,5 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
     override fun onDestroy() {
         super.onDestroy()
         stopService(realtimeDatabaseServiceIntent)
-        WorkerUtils.cancelJobSyncVideoSchedule(this)
     }
 }

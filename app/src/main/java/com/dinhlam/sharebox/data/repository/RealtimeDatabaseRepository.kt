@@ -120,21 +120,36 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun sync() {
-        syncDataInRef(appSharePref.getLastIndexSyncShare(), shareRef, ::onShareAdded) {
-            appSharePref.setLastIndexSyncShare(it)
-        }
-        syncDataInRef(appSharePref.getLastIndexSyncUser(), userRef, ::onUserAdded) {
-            appSharePref.setLastIndexSyncUser(it)
-        }
-        syncDataInRef(appSharePref.getLastIndexSyncComment(), commentRef, ::onCommentAdded) {
-            appSharePref.setLastIndexSyncComment(it)
-        }
-        syncDataInRef(appSharePref.getLastIndexSyncLike(), likeRef, ::onLikeAdded) {
-            appSharePref.setLastIndexSyncLike(it)
-        }
-        syncDataInRef(appSharePref.getLastIndexSyncBox(), boxRef, ::onBoxAdded) {
-            appSharePref.setLastIndexSyncBox(it)
-        }
+        syncDataInRef(
+            appSharePref.getLastIndexSyncShare(),
+            shareRef,
+            ::onShareAdded,
+            appSharePref::setLastIndexSyncShare
+        )
+        syncDataInRef(
+            appSharePref.getLastIndexSyncUser(),
+            userRef,
+            ::onUserAdded,
+            appSharePref::setLastIndexSyncUser
+        )
+        syncDataInRef(
+            appSharePref.getLastIndexSyncComment(),
+            commentRef,
+            ::onCommentAdded,
+            appSharePref::setLastIndexSyncComment
+        )
+        syncDataInRef(
+            appSharePref.getLastIndexSyncLike(),
+            likeRef,
+            ::onLikeAdded,
+            appSharePref::setLastIndexSyncLike
+        )
+        syncDataInRef(
+            appSharePref.getLastIndexSyncBox(),
+            boxRef,
+            ::onBoxAdded,
+            appSharePref::setLastIndexSyncBox
+        )
     }
 
     fun consume() {
@@ -323,7 +338,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    fun cancel() {
+    fun onDestroy() {
         shareChildEventListener?.let { listener -> shareRef.removeEventListener(listener) }
         userChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
         commentChildEventListener?.let { listener -> commentRef.removeEventListener(listener) }

@@ -32,7 +32,11 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
         super.onCreate(savedInstanceState)
 
         activityScope.launch(Dispatchers.IO) {
-            realtimeDatabaseRepository.sync()
+            if (appSharePref.isFirstInstall()) {
+                realtimeDatabaseRepository.sync()
+                appSharePref.offFirstInstall()
+            }
+
             withContext(Dispatchers.Main) {
                 startActivity(appRouter.home(true))
             }

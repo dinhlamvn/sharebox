@@ -68,7 +68,7 @@ class RealtimeDatabaseService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Logger.debug("$this has been stopped")
-        realtimeDatabaseRepository.cancel()
+        realtimeDatabaseRepository.onDestroy()
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 }
