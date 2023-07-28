@@ -15,7 +15,6 @@ class VideoMixerToVideoMixerDetailMapper @Inject constructor() {
             videoMixer.originalUrl,
             videoMixer.source,
             videoMixer.sourceId,
-            videoMixer.uri,
             shareDetail
         )
     }

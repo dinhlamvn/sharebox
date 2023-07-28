@@ -10,7 +10,6 @@ class CleanUpDataReceiver : BroadcastReceiver() {
         if (intent?.action == "android.intent.action.BOOT_COMPLETED") {
             context?.let { ctx ->
                 WorkerUtils.enqueueJobSyncDataOneTime(ctx)
-                WorkerUtils.enqueueCleanUpOldData(ctx)
             }
         }
     }

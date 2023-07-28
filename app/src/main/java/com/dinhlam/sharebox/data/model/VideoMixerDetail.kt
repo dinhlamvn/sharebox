@@ -6,6 +6,5 @@ data class VideoMixerDetail(
     val originUrl: String,
     val source: VideoSource,
     val sourceId: String,
-    val uri: String?,
     val shareDetail: ShareDetail,
 )

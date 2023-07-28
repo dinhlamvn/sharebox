@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.helper
 
 import android.content.Context
 import android.net.Uri
-import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
@@ -216,40 +215,20 @@ class VideoHelper @Inject constructor(
         }?.attr("href").takeIfNotNullOrBlank()
     }
 
+    private suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String {
+        return when (videoSource) {
+            VideoSource.Tiktok -> getTiktokFullUrl(url)
+            VideoSource.Facebook -> getFullFacebookUrl(url)
+            VideoSource.Youtube -> url
+        }
+    }
+
     suspend fun syncVideo(shareId: String, shareUrl: String) {
-        val record = videoMixerRepository.findOne(shareId)
-        if (record != null) {
-            return
+        videoMixerRepository.findOne(shareId) ?: run {
+            val videoSource = getVideoSource(shareUrl) ?: return
+            val videoSourceId = getVideoSourceId(videoSource, shareUrl)
+            val videoOriginUrl = getVideoOriginUrl(videoSource, shareUrl)
+            videoMixerRepository.insert(shareId, videoOriginUrl, videoSource, videoSourceId)
         }
-        val videoSource = getVideoSource(shareUrl) ?: return
-
-        if (videoSource is VideoSource.Tiktok) {
-            if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-                return
-            }
-
-            if (!networkHelper.isNetworkConnected()) {
-                return
-            }
-        }
-
-        val videoSourceId = getVideoSourceId(videoSource, shareUrl)
-
-        val videoUri = getVideoUri(
-            appContext, videoSource, shareUrl
-        )
-
-        if (videoSource == VideoSource.Tiktok && videoUri == null) {
-            return
-        }
-
-        videoMixerRepository.insert(
-            shareId,
-            shareUrl,
-            videoSource,
-            videoSourceId,
-            videoUri?.toString(),
-            shareHelper.calcTrendingScore(shareId)
-        )
     }
 }

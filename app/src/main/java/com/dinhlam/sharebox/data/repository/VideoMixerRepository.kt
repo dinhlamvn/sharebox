@@ -28,8 +28,6 @@ class VideoMixerRepository @Inject constructor(
         originUrl: String,
         source: VideoSource,
         sourceId: String,
-        uri: String?,
-        trendingScore: Int = 0
     ): Boolean {
         return videoMixerDao.runCatching {
             val videoMixer =
@@ -38,8 +36,6 @@ class VideoMixerRepository @Inject constructor(
                     originalUrl = originUrl,
                     source = source,
                     sourceId = sourceId,
-                    uri = uri,
-                    trendingScore = trendingScore
                 )
             insert(videoMixer)
             true

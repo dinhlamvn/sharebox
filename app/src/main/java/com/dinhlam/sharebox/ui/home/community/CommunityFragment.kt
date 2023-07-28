@@ -18,7 +18,6 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
@@ -30,7 +29,6 @@ import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -41,9 +39,7 @@ import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.list.video.ListFacebookVideoModelView
-import com.dinhlam.sharebox.modelview.list.video.ListTiktokVideoModelView
-import com.dinhlam.sharebox.modelview.list.video.ListYoutubeVideoModelView
+import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
@@ -96,8 +92,7 @@ class CommunityFragment :
                             16.dp(),
                             if (idx == lastIndex) 16.dp() else 8.dp(),
                             16.dp()
-                        ),
-                        BaseListAdapter.NoHashProp(View.OnClickListener {
+                        ), BaseListAdapter.NoHashProp(View.OnClickListener {
                             viewModel.setBox(boxDetail)
                         })
                     )
@@ -117,50 +112,17 @@ class CommunityFragment :
                 state.shares.forEach { shareDetail ->
                     val videoMixer = state.videoMixers[shareDetail.shareId]
                     val modelView = videoMixer?.let { videoMixerDetail ->
-                        when (videoMixerDetail.source) {
-                            VideoSource.Youtube -> videoMixerDetail.sourceId.takeIfNotNullOrBlank()
-                                ?.let { sourceId ->
-                                    ListYoutubeVideoModelView(
-                                        "video_youtube_$sourceId",
-                                        sourceId,
-                                        videoMixerDetail.shareDetail,
-                                        actionViewInSource = BaseListAdapter.NoHashProp(::viewInYoutube),
-                                        actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                                        actionLike = BaseListAdapter.NoHashProp(::onLike),
-                                        actionComment = BaseListAdapter.NoHashProp(::onComment),
-                                        actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
-                                    )
-                                }
-
-                            VideoSource.Tiktok -> videoMixerDetail.uri?.let { uri ->
-                                ListTiktokVideoModelView(
-                                    "video_tiktok_$uri",
-                                    uri,
-                                    videoMixerDetail.shareDetail,
-                                    true,
-                                    actionViewInSource = BaseListAdapter.NoHashProp(::viewInTiktok),
-                                    actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                                    actionLike = BaseListAdapter.NoHashProp(::onLike),
-                                    actionComment = BaseListAdapter.NoHashProp(::onComment),
-                                    actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
-                                    actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
-                                )
-                            }
-
-                            VideoSource.Facebook -> videoMixerDetail.sourceId.takeIfNotNullOrBlank()
-                                ?.let { sourceId ->
-                                    ListFacebookVideoModelView(
-                                        "video_facebook_$sourceId",
-                                        sourceId,
-                                        videoMixerDetail.shareDetail,
-                                        actionViewInSource = BaseListAdapter.NoHashProp(::viewInFacebook),
-                                        actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                                        actionLike = BaseListAdapter.NoHashProp(::onLike),
-                                        actionComment = BaseListAdapter.NoHashProp(::onComment),
-                                        actionBookmark = BaseListAdapter.NoHashProp(::onBookmark)
-                                    )
-                                }
-                        }
+                        VideoModelView(
+                            "video_${videoMixerDetail.originUrl}_${videoMixerDetail.id}",
+                            videoMixerDetail.originUrl,
+                            videoMixerDetail.shareDetail,
+                            actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
+                            actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
+                            actionLike = BaseListAdapter.NoHashProp(::onLike),
+                            actionComment = BaseListAdapter.NoHashProp(::onComment),
+                            actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
+                            actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
+                        )
                     } ?: shareDetail.shareData.buildShareModelViews(
                         screenHeight(),
                         shareDetail.shareId,
@@ -397,7 +359,7 @@ class CommunityFragment :
         }
     }
 
-    private fun viewInTiktok(shareData: ShareData) {
+    private fun viewInSource(shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
         val viewIntent = appRouter.viewIntent(shareUrl.url)
 

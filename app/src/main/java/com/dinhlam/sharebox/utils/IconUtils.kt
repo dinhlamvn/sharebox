@@ -105,23 +105,21 @@ object IconUtils {
         )
     }
 
-    fun expandMoreIconLight(
+    fun expandMoreIcon(
         context: Context
     ): IconicsDrawable {
         return createIcon(
             context,
-            GoogleMaterial.Icon.gmd_expand_more,
-            IconBuilder(context, colorRes = android.R.color.white)
+            GoogleMaterial.Icon.gmd_expand_more
         )
     }
 
-    fun expandLessIconLight(
+    fun expandLessIcon(
         context: Context
     ): IconicsDrawable {
         return createIcon(
             context,
             GoogleMaterial.Icon.gmd_expand_less,
-            IconBuilder(context, colorRes = android.R.color.white)
         )
     }
 

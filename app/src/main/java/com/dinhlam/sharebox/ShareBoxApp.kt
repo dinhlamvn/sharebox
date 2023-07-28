@@ -60,9 +60,6 @@ class ShareBoxApp : Application(), Configuration.Provider {
         }
 
         WorkerUtils.enqueueSyncUserData(this)
-        if (!appSettingHelper.isFirstInstall()) {
-            WorkerUtils.enqueueCleanUpOldData(this)
-        }
     }
 
     private fun requestApplyTheme() {

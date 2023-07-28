@@ -61,8 +61,6 @@
     <string name="sign_in_hint_user_name">Tên của bạn</string>
     <string name="sign_in_title_user_name">Chúng tôi sẽ gọi bạn là gì?</string>
     <string name="view_in_tiktok">TikTok</string>
-    <string name="view_in_youtube">Youtube</string>
-    <string name="view_in_facebook">Facebook</string>
     <string name="content_desc_button_add_box">Tạo mới Box</string>
     <string name="create">Tạo</string>
     <string name="error_create_box">Lỗi xảy ra khi tạo Box.</string>
@@ -72,8 +70,6 @@
     <string name="choose_box">Chọn Box</string>
     <string name="total_box">+%d box nữa…</string>
     <string name="search_box_result_empty">Không có Box nào cả.</string>
-    <string name="cleanup_data_service_noti_subtext">Làm sạch dữ liệu…</string>
-    <string name="cleanup_data_service_noti_content">Các dữ liệu cũ đang được xóa để tối ưu dung lượng bộ nhớ.</string>
     <string name="empty_video">Không tìm thấy video nào.</string>
     <string name="title_setting">Cài đặt</string>
     <string name="title_theme">Chủ đề</string>
@@ -138,9 +134,6 @@
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
     <string name="notify_data_sync_success_text">Nhiều nội dung đã được cập nhât, hãy khám phá ngay.</string>
     <string name="notify_data_sync_success_title">Dữ liệu đã cập nhật.</string>
-    <string name="sync_videos_notification_content">Đang thu thập các video thú vị…</string>
-    <string name="sync_videos_notification_title">Thu thập video</string>
-    <string name="share_video">" share a video"</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
