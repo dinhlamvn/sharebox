@@ -45,7 +45,7 @@ class ShareTextQuoteInputDialogFragment : BaseDialogFragment<DialogShareTextQuot
         }
 
         viewBinding.editTextQuote.setHorizontallyScrolling(false)
-        viewBinding.editTextQuote.maxLines = 5
+        viewBinding.editTextQuote.maxLines = Int.MAX_VALUE
 
         viewBinding.editTextQuote.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {

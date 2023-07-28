@@ -184,7 +184,12 @@ class ShareReceiveActivity :
 
         registerOnBackPressHandler {
             hideKeyboard()
-            finishAndRemoveTask()
+            if (isTaskRoot) {
+                finishAndRemoveTask()
+            } else {
+                setResult(Activity.RESULT_CANCELED)
+                finish()
+            }
         }
 
         val bottomSheetBehavior = BottomSheetBehavior.from(viewBinding.container)
@@ -208,6 +213,7 @@ class ShareReceiveActivity :
                 if (isTaskRoot) {
                     finishAndRemoveTask()
                 } else {
+                    setResult(Activity.RESULT_OK)
                     finish()
                 }
             }
@@ -460,6 +466,7 @@ class ShareReceiveActivity :
             if (isTaskRoot) {
                 finishAndRemoveTask()
             } else {
+                setResult(Activity.RESULT_CANCELED)
                 finish()
             }
         }

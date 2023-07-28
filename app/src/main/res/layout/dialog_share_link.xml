@@ -10,15 +10,15 @@
         android:id="@+id/edit_link"
         style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:focusable="true"
         android:gravity="start|top"
         android:hint="@string/share_link_hint"
         android:imeOptions="actionDone"
-        android:inputType="textMultiLine"
-        android:minLines="5"
+        android:inputType="text"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/button_done"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton

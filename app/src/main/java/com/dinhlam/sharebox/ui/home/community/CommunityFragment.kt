@@ -254,6 +254,7 @@ class CommunityFragment :
         LiveEventUtils.eventScrollToTopCommunity.observe(viewLifecycleOwner) { shouldScroll ->
             if (shouldScroll) {
                 viewBinding.recyclerView.smoothScrollToPosition(0)
+                viewModel.doOnRefresh()
             }
         }
 

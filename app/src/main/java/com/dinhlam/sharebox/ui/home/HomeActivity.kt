@@ -42,6 +42,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         Intent(this, RealtimeDatabaseService::class.java)
     }
 
+    private val shareResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            LiveEventUtils.eventScrollToTopCommunity.postValue(true)
+        }
+    }
+
     private val pickImagesResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -65,7 +71,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
                         putParcelableArrayListExtra(Intent.EXTRA_STREAM, list)
                     }
                 }
-                startActivity(intent)
+                shareResultLauncher.launch(intent)
             }
         }
 
@@ -195,7 +201,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
             `package` = packageName
             putExtra(Intent.EXTRA_TEXT, link)
         }
-        startActivity(intent)
+        shareResultLauncher.launch(intent)
     }
 
     override fun onShareTextQuote(text: String) {
@@ -204,7 +210,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
             `package` = packageName
             putExtra(Intent.EXTRA_TEXT, text)
         }
-        startActivity(intent)
+        shareResultLauncher.launch(intent)
     }
 
     override fun onDestroy() {

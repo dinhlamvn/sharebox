@@ -46,7 +46,7 @@ class ShareLinkInputDialogFragment : BaseDialogFragment<DialogShareLinkBinding>(
         }
 
         viewBinding.editLink.setHorizontallyScrolling(false)
-        viewBinding.editLink.maxLines = 5
+        viewBinding.editLink.maxLines = Int.MAX_VALUE
 
         viewBinding.editLink.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
