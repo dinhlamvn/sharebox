@@ -12,14 +12,17 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -60,6 +63,8 @@ class VideoMixerFragment :
             state.videos.map { videoMixerDetail ->
                 VideoModelView(
                     "video_${videoMixerDetail.originUrl}_${videoMixerDetail.id}",
+                    videoMixerDetail.id,
+                    videoMixerDetail.videoSource,
                     videoMixerDetail.originUrl,
                     videoMixerDetail.shareDetail,
                     actionViewInSource = BaseListAdapter.NoHashProp(::viewinSource),
@@ -69,7 +74,10 @@ class VideoMixerFragment :
                     actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
                     actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
                 )
-            }.forEach { modelView -> add(modelView) }
+            }.forEach { modelView ->
+                add(modelView)
+                add(SizedBoxModelView("divider_${modelView.id}", height = 8.dp()))
+            }
 
             if (state.isLoadingMore) {
                 add(
@@ -82,8 +90,8 @@ class VideoMixerFragment :
         }
     }
 
-    private fun onSaveToGallery(videoUri: String) {
-        viewModel.saveVideoToGallery(requireContext(), videoUri)
+    private fun onSaveToGallery(id: Int, videoSource: VideoSource, videoUri: String) {
+        viewModel.saveVideoToGallery(requireContext(), id, videoSource, videoUri)
     }
 
     override fun onCreateViewBinding(

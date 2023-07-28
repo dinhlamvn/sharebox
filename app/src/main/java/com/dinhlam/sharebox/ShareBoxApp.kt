@@ -11,9 +11,11 @@ import androidx.work.Configuration
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.AppSettings
 import com.dinhlam.sharebox.helper.AppSettingHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.utils.WorkerUtils
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mikepenz.iconics.Iconics
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
@@ -30,12 +32,18 @@ class ShareBoxApp : Application(), Configuration.Provider {
     @Inject
     lateinit var appSettingHelper: AppSettingHelper
 
+    @Inject
+    lateinit var userHelper: UserHelper
+
     override fun onCreate() {
         super.onCreate()
         Iconics.registerFont(GoogleMaterial)
         Iconics.registerFont(FontAwesome)
         requestApplyTheme()
         ImageLoader.setLoader(GlideImageLoader)
+        if (userHelper.isSignedIn()) {
+            FirebaseCrashlytics.getInstance().setUserId(userHelper.getCurrentUserId())
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannelCompat.Builder(

@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.data.model.ShareData
 import com.dinhlam.sharebox.data.model.ShareDetail
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.ModelViewVideoBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asLikeIcon
@@ -18,9 +19,12 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class VideoModelView(
     val id: String,
+    val entityId: Int,
+    val videoSource: VideoSource,
     val videoUri: String,
     val shareDetail: ShareDetail,
     val actionViewInSource: BaseListAdapter.NoHashProp<Function1<ShareData, Unit>> = BaseListAdapter.NoHashProp(
@@ -38,7 +42,7 @@ data class VideoModelView(
     val actionBookmark: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
-    val actionSaveToGallery: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+    val actionSaveToGallery: BaseListAdapter.NoHashProp<Function3<Int, VideoSource, String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
 ) : BaseListAdapter.BaseModelView(id) {
@@ -106,7 +110,7 @@ data class VideoModelView(
 
                 }
             })
-            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIconLight(buildContext))
+            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12)
             })
@@ -116,6 +120,10 @@ data class VideoModelView(
         }
 
         override fun onBind(model: VideoModelView, position: Int) {
+            binding.videoLinkPreview.setLink(model.videoUri) {
+                ShareBoxLinkPreviewView.Style(maxLineUrl = 1, maxLineDesc = 1, maxLineTitle = 1)
+            }
+
             binding.bottomAction.setBookmarkIcon(
                 model.shareDetail.bookmarked.asBookmarkIcon(
                     buildContext
@@ -145,7 +153,11 @@ data class VideoModelView(
             }
 
             binding.imageSaveToGallery.setOnClickListener {
-                model.actionSaveToGallery.prop?.invoke(model.videoUri)
+                model.actionSaveToGallery.prop?.invoke(
+                    model.entityId,
+                    model.videoSource,
+                    model.videoUri
+                )
             }
 
             binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)

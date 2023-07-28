@@ -13,6 +13,27 @@
         android:clickable="true"
         android:focusable="true">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_box_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="8dp"
+            android:ellipsize="end"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Box" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_avatar"
             android:layout_width="32dp"
@@ -20,7 +41,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/text_box_name" />
 
         <com.dinhlam.sharebox.view.ShareBoxReadMoreTextView
             android:id="@+id/text_note"
@@ -69,59 +90,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/container_info" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_thumbnail"
+    <com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
+        android:id="@+id/video_link_preview"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@color/colorPrimaryDark"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_box_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:drawablePadding="8dp"
-        android:ellipsize="end"
-        android:focusable="true"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintBottom_toBottomOf="@id/text_view_in_source"
-        app:layout_constraintEnd_toStartOf="@id/text_view_in_source"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_view_in_source"
-        tools:text="Box" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_in_source"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_view_source"
+        style="@style/AppMaterialCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="?attr/selectableItemBackground"
-        android:drawablePadding="6dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:text="@string/view_in_tiktok"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textStyle="bold"
+        app:cardElevation="4dp"
+        app:contentPadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/image_thumbnail" />
+        app:layout_constraintTop_toTopOf="@id/video_link_preview">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_save_to_gallery"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="@id/image_thumbnail"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_view_in_source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:drawablePadding="6dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:text="@string/view_in_tiktok"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textStyle="bold" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_download"
+        style="@style/AppMaterialCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:cardElevation="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/video_link_preview">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_save_to_gallery"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside" />
+    </com.google.android.material.card.MaterialCardView>
+
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

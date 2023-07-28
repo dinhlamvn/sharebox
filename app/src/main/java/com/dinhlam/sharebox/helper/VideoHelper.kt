@@ -1,15 +1,19 @@
 package com.dinhlam.sharebox.helper
 
+import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
+import androidx.core.app.NotificationCompat
+import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
+import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.UserAgentUtils
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -26,14 +30,11 @@ import javax.inject.Singleton
 
 @Singleton
 class VideoHelper @Inject constructor(
-    @ApplicationContext private val appContext: Context,
     private val loveTikServices: LoveTikServices,
     private val okHttpClient: OkHttpClient,
     private val sssTikService: SSSTikServices,
-    private val appSettingHelper: AppSettingHelper,
     private val videoMixerRepository: VideoMixerRepository,
-    private val networkHelper: NetworkHelper,
-    private val shareHelper: ShareHelper,
+    private val localStorageHelper: LocalStorageHelper,
 ) {
     fun getVideoSource(url: String): VideoSource? {
         return when {
@@ -58,6 +59,27 @@ class VideoHelper @Inject constructor(
             is VideoSource.Tiktok -> getTiktokVideoUri(context, url)
             is VideoSource.Facebook -> null
         }
+    }
+
+    suspend fun saveVideo(
+        context: Context, id: Int, videoSource: VideoSource, url: String
+    ): Boolean {
+        val notification =
+            NotificationCompat.Builder(context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
+                .setContentText(context.getString(R.string.download_video)).setAutoCancel(false)
+                .setSubText(context.getString(R.string.download_video_subtext))
+                .setSmallIcon(R.drawable.ic_download).setProgress(0, 0, true).build()
+
+        val notificationManager =
+            context.getSystemServiceCompat<NotificationManager>(Context.NOTIFICATION_SERVICE)
+        notificationManager.notify(id, notification)
+
+        val uri = getVideoUri(context, videoSource, url) ?: return notificationManager.cancel(id)
+            .let { false }
+        localStorageHelper.saveVideoToGallery(uri)
+        localStorageHelper.cleanUp(uri)
+        notificationManager.cancel(id)
+        return true
     }
 
     private suspend fun getTiktokVideoUri(context: Context, url: String): Uri? =

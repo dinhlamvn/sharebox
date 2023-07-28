@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.home.community
 
 import android.content.Context
-import android.net.Uri
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -9,6 +8,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareDetail
 import com.dinhlam.sharebox.data.model.VideoMixerDetail
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
@@ -20,6 +20,7 @@ import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,7 @@ class CommunityViewModel @Inject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val videoMixerRepository: VideoMixerRepository,
     private val localStorageHelper: LocalStorageHelper,
+    private val videoHelper: VideoHelper,
 ) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
 
     init {
@@ -191,11 +193,14 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun saveVideoToGallery(context: Context, videoUri: String) {
+    fun saveVideoToGallery(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
         doInBackground {
             try {
-                localStorageHelper.saveVideoToGallery(context, Uri.parse(videoUri))
-                postShowToast(R.string.success_save_video_to_gallery)
+                if (videoHelper.saveVideo(context, id, videoSource, videoUri)) {
+                    postShowToast(R.string.success_save_video_to_gallery)
+                } else {
+                    postShowToast(R.string.can_not_save_video)
+                }
             } catch (e: Exception) {
                 postShowToast(R.string.error_save_video_to_gallery)
             }

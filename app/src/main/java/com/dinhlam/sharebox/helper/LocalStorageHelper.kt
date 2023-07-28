@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import com.dinhlam.sharebox.extensions.appendIf
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.utils.FileUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -16,13 +17,18 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalStorageHelper @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val appSettingHelper: AppSettingHelper
 
 ) {
 
-    suspend fun saveVideoToGallery(context: Context, sourceVideoUri: Uri) =
+    fun cleanUp(sourceUri: Uri) {
+        appContext.contentResolver.delete(sourceUri, null, null)
+    }
+
+    suspend fun saveVideoToGallery(sourceVideoUri: Uri) =
         withContext(Dispatchers.IO) {
-            val resolver = context.contentResolver
+            val resolver = appContext.contentResolver
 
             val videoCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -47,10 +53,9 @@ class LocalStorageHelper @Inject constructor(
         }
 
     suspend fun saveImageToGallery(
-        context: Context,
         imageSource: Uri,
     ) = withContext(Dispatchers.IO) {
-        val resolver = context.contentResolver
+        val resolver = appContext.contentResolver
 
         val imageCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -74,7 +79,7 @@ class LocalStorageHelper @Inject constructor(
                     inputStream.copyTo(outputStream)
                 }
             }
-        } ?: return@withContext ImageLoader.INSTANCE.get(context, imageSource)?.let { bitmap ->
+        } ?: return@withContext ImageLoader.INSTANCE.get(appContext, imageSource)?.let { bitmap ->
             resolver.openOutputStream(destUri)?.use { outputStream ->
                 bitmap.compress(
                     Bitmap.CompressFormat.JPEG,

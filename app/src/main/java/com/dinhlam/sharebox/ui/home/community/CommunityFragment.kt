@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.model.BoxDetail
 import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
@@ -112,6 +113,8 @@ class CommunityFragment :
                     val modelView = videoMixer?.let { videoMixerDetail ->
                         VideoModelView(
                             "video_${videoMixerDetail.originUrl}_${videoMixerDetail.id}",
+                            videoMixerDetail.id,
+                            videoMixerDetail.videoSource,
                             videoMixerDetail.originUrl,
                             videoMixerDetail.shareDetail,
                             actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
@@ -382,7 +385,7 @@ class CommunityFragment :
         }
     }
 
-    private fun onSaveToGallery(videoUri: String) {
-        viewModel.saveVideoToGallery(requireContext(), videoUri)
+    private fun onSaveToGallery(id: Int, videoSource: VideoSource, videoUri: String) {
+        viewModel.saveVideoToGallery(requireContext(), id, videoSource, videoUri)
     }
 }
