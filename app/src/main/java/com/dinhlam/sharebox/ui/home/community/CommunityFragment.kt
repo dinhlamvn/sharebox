@@ -27,7 +27,6 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -43,7 +42,6 @@ import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -232,10 +230,6 @@ class CommunityFragment :
         viewBinding.textTitle.setOnClickListener {
             shareHelper.showBoxSelectionDialog(childFragmentManager)
         }
-
-        viewBinding.textTitle.setDrawableCompat(start = IconUtils.boxIcon(requireContext()) {
-            copy(sizeDp = 14)
-        })
 
         viewModel.consume(this, CommunityState::currentBox) { currentBox ->
             viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_community)

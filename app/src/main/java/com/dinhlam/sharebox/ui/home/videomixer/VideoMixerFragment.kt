@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
@@ -25,7 +24,6 @@ import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.AppRouter
-import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -116,10 +114,6 @@ class VideoMixerFragment :
                 viewModel.doOnPullRefresh()
             }
         }
-
-        viewBinding.textTitle.setDrawableCompat(start = IconUtils.boxIcon(requireContext()) {
-            copy(sizeDp = 14, colorRes = android.R.color.white)
-        })
 
         viewBinding.viewPager.layoutManager = layoutManager
         PagerSnapHelper().attachToRecyclerView(viewBinding.viewPager)
