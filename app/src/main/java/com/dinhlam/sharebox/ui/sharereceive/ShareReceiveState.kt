@@ -1,10 +1,10 @@
 package com.dinhlam.sharebox.ui.sharereceive
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.data.model.BoxDetail
-import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.UserDetail
 
 data class ShareReceiveState(
     val activeUser: UserDetail? = null,

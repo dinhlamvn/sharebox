@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.data.model
+package com.dinhlam.sharebox.model
 
 sealed class VideoSource(val sourceName: String) {
     object Youtube : VideoSource("youtube")

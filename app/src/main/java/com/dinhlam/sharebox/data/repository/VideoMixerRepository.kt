@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.VideoMixerDao
 import com.dinhlam.sharebox.data.local.entity.VideoMixer
 import com.dinhlam.sharebox.data.mapper.VideoMixerToVideoMixerDetailMapper
-import com.dinhlam.sharebox.data.model.VideoMixerDetail
-import com.dinhlam.sharebox.data.model.VideoSource
+import com.dinhlam.sharebox.model.VideoMixerDetail
+import com.dinhlam.sharebox.model.VideoSource
 import javax.inject.Inject
 import javax.inject.Singleton
 

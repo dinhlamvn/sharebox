@@ -5,8 +5,6 @@ import androidx.annotation.UiThread
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.model.BoxDetail
-import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
@@ -17,6 +15,8 @@ import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -178,10 +178,12 @@ class VideoMixerViewModel @Inject constructor(
     fun saveVideoToGallery(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
         doInBackground {
             try {
-                if (videoHelper.saveVideo(context, id, videoSource, videoUri)) {
-                    postShowToast(R.string.success_save_video_to_gallery)
-                } else {
-                    postShowToast(R.string.can_not_save_video)
+                videoHelper.saveVideo(context, id, videoSource, videoUri) { isOk ->
+                    if (isOk) {
+                        postShowToast(R.string.success_save_video_to_gallery)
+                    } else {
+                        postShowToast(R.string.can_not_save_video)
+                    }
                 }
             } catch (e: Exception) {
                 postShowToast(R.string.error_save_video_to_gallery)

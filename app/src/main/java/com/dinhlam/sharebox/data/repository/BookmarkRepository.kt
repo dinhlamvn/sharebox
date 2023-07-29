@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.entity.Bookmark
 import com.dinhlam.sharebox.data.mapper.BookmarkToBookmarkDetailMapper
-import com.dinhlam.sharebox.data.model.BookmarkDetail
+import com.dinhlam.sharebox.model.BookmarkDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 

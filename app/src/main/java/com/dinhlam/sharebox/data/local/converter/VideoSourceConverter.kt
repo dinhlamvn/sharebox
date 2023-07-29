@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.data.local.converter
 
 import androidx.room.TypeConverter
-import com.dinhlam.sharebox.data.model.VideoSource
+import com.dinhlam.sharebox.model.VideoSource
 
 class VideoSourceConverter {
 

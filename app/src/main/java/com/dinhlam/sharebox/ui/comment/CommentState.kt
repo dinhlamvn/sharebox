@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.ui.comment
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.CommentDetail
-import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.model.CommentDetail
+import com.dinhlam.sharebox.model.UserDetail
 
 data class CommentState(
     val shareId: String,

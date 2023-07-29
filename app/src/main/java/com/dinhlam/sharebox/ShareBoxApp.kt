@@ -9,7 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.model.AppSettings
+import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader

@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.di
 
 import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImagesJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareTextJsonSerializerDeserializer

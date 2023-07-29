@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
 import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 import com.dinhlam.sharebox.data.mapper.BookmarkCollectionToBookmarkCollectionDetailMapper
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.logger.Logger

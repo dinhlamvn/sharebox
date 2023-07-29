@@ -6,7 +6,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.ui.box.BoxActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity

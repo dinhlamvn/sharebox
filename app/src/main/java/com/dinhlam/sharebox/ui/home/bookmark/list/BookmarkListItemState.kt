@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.ui.home.bookmark.list
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.data.model.ShareDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.ShareDetail
 
 data class BookmarkListItemState(
     val bookmarkCollectionId: String,

@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.data.local.converter
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
-import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.ShareType
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareType
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 

@@ -1,4 +1,4 @@
-import com.dinhlam.sharebox.data.model.HttpErrorMessage
+import com.dinhlam.sharebox.model.HttpErrorMessage
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero

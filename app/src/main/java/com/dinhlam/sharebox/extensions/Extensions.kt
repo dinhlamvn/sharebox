@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.os.VibrationEffect
 import android.os.VibratorManager
+import androidx.core.content.ContextCompat
 import java.io.Serializable
 
 inline fun <reified R> Any?.cast(): R? {
@@ -95,13 +96,17 @@ fun Context.vibrate(timing: Long) {
 }
 
 fun PackageManager.queryIntentActivitiesCompat(
-    intent: Intent,
-    flags: Int = 0
+    intent: Intent, flags: Int = 0
 ): List<ResolveInfo> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(flags.toLong()))
     } else {
-        @Suppress("DEPRECATION")
-        queryIntentActivities(intent, flags)
+        @Suppress("DEPRECATION") queryIntentActivities(intent, flags)
+    }
+}
+
+inline fun Context.ifPermissionGranted(permission: String, block: () -> Unit) {
+    if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+        block()
     }
 }

@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.dialog.bookmarkcollectionpicker
 import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.extensions.getNonNull

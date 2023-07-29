@@ -2,7 +2,7 @@ package com.dinhlam.sharebox.helper
 
 import androidx.annotation.IntRange
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.model.AppSettings
+import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.pref.AppSharePref
 import javax.inject.Inject

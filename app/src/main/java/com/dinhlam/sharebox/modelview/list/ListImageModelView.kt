@@ -9,8 +9,8 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.data.model.BoxDetail
-import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListImageBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay

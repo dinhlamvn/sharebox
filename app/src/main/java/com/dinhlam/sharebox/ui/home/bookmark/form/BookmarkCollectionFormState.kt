@@ -2,7 +2,7 @@ package com.dinhlam.sharebox.ui.home.bookmark.form
 
 import android.net.Uri
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 
 data class BookmarkCollectionFormState(
     val bookmarkCollectionDetail: BookmarkCollectionDetail? = null,

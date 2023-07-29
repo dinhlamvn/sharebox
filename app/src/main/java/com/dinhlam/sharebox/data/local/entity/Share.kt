@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.dinhlam.sharebox.data.model.ShareData
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 
 @Entity(indices = [Index(value = ["share_id"], unique = true), Index(value = ["share_user_id"])])

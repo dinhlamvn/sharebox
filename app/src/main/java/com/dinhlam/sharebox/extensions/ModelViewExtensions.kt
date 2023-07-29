@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.data.model.BoxDetail
-import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImagesModelView

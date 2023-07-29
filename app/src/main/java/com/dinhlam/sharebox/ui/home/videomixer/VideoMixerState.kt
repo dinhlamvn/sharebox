@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.ui.home.videomixer
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.BoxDetail
-import com.dinhlam.sharebox.data.model.VideoMixerDetail
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.VideoMixerDetail
 
 data class VideoMixerState(
     val isRefreshing: Boolean = true,

@@ -2,7 +2,7 @@ package com.dinhlam.sharebox.data.repository
 
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.entity.Box
-import com.dinhlam.sharebox.data.model.BoxDetail
+import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull

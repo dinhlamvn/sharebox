@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.dialog.box
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.model.BoxDetail
+import com.dinhlam.sharebox.model.BoxDetail
 
 data class BoxSelectionDialogState(
     val isLoading: Boolean = false,

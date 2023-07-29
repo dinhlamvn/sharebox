@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.data.mapper
 
 import com.dinhlam.sharebox.data.local.entity.VideoMixer
-import com.dinhlam.sharebox.data.model.ShareDetail
-import com.dinhlam.sharebox.data.model.VideoMixerDetail
+import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.model.VideoMixerDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 

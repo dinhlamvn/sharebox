@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.data.mapper
 
 import com.dinhlam.sharebox.data.local.entity.Comment
-import com.dinhlam.sharebox.data.model.CommentDetail
-import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.model.CommentDetail
+import com.dinhlam.sharebox.model.UserDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 

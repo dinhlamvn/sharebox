@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.mapper.CommentToCommentDetailMapper
-import com.dinhlam.sharebox.data.model.CommentDetail
+import com.dinhlam.sharebox.model.CommentDetail
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import javax.inject.Inject
 import javax.inject.Singleton

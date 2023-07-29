@@ -1,21 +1,26 @@
 package com.dinhlam.sharebox.helper
 
-import android.app.NotificationManager
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.model.VideoSource
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
-import com.dinhlam.sharebox.extensions.getSystemServiceCompat
+import com.dinhlam.sharebox.extensions.saveFile
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.model.DownloadState
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -23,7 +28,6 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.jsoup.Jsoup
 import java.io.File
-import java.io.FileOutputStream
 import java.net.URLEncoder
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -53,91 +57,127 @@ class VideoHelper @Inject constructor(
         }
     }
 
-    private suspend fun getVideoUri(context: Context, videoSource: VideoSource, url: String): Uri? {
-        return when (videoSource) {
-            is VideoSource.Youtube -> null
-            is VideoSource.Tiktok -> getTiktokVideoUri(context, url)
-            is VideoSource.Facebook -> null
+    private suspend fun getVideoUri(
+        context: Context,
+        id: Int,
+        videoSource: VideoSource,
+        url: String,
+        onComplete: suspend (Uri?) -> Unit
+    ) {
+        when (videoSource) {
+            is VideoSource.Youtube -> onComplete.invoke(null)
+            is VideoSource.Tiktok -> getTiktokVideoUri(context, id, url, onComplete)
+            is VideoSource.Facebook -> onComplete.invoke(null)
         }
     }
 
     suspend fun saveVideo(
-        context: Context, id: Int, videoSource: VideoSource, url: String
-    ): Boolean {
-        val notification =
-            NotificationCompat.Builder(context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                .setContentText(context.getString(R.string.download_video_subtext))
-                .setAutoCancel(false)
-                .setSubText(context.getString(R.string.download_video))
-                .setSmallIcon(R.drawable.ic_download)
-                .setProgress(0, 0, true)
-                .build()
-
-        val notificationManager =
-            context.getSystemServiceCompat<NotificationManager>(Context.NOTIFICATION_SERVICE)
-        notificationManager.notify(id, notification)
-
-        val uri = getVideoUri(context, videoSource, url) ?: return notificationManager.cancel(id)
-            .let { false }
-        localStorageHelper.saveVideoToGallery(uri)
-        localStorageHelper.cleanUp(uri)
-        notificationManager.cancel(id)
-        return true
+        context: Context,
+        id: Int,
+        videoSource: VideoSource,
+        url: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        getVideoUri(context, id, videoSource, url) { uri ->
+            uri?.let { nonNullUri ->
+                localStorageHelper.saveVideoToGallery(nonNullUri)
+                localStorageHelper.cleanUp(nonNullUri)
+                onResult.invoke(true)
+            } ?: onResult.invoke(false)
+        }
     }
 
-    private suspend fun getTiktokVideoUri(context: Context, url: String): Uri? =
-        withContext(Dispatchers.IO) {
-            val tiktokUrl = getTiktokFullUrl(url)
-            val videoId = Uri.parse(tiktokUrl).lastPathSegment ?: return@withContext null
-            var retryTimes = 3
-            var html: String = ""
-            do {
-                val encodeUrl = URLEncoder.encode(tiktokUrl, "utf-8")
-                val sssTikId = "$encodeUrl&locale=en&tt=azhwU005"
-                val requestBody = RequestBody.create(MediaType.parse("text/plain"), "id=$sssTikId")
-                val sssTikResponse =
-                    sssTikService.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), requestBody)
-                if (!sssTikResponse.isSuccessful) {
-                    retryTimes--
-                    delay(1000)
-                    continue
-                }
-                html =
-                    sssTikResponse.body()?.use { responseBody -> responseBody.use { it.string() } }
-                        ?: ""
+    private suspend fun getTiktokVideoUri(
+        context: Context, id: Int, url: String, onComplete: suspend (Uri?) -> Unit
+    ) = withContext(Dispatchers.IO) {
+        val notificationBuilder =
+            NotificationCompat.Builder(context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
+                .setContentText(context.getString(R.string.download_video_subtext))
+                .setAutoCancel(true).setContentTitle(context.getString(R.string.download_video))
+                .setSmallIcon(R.drawable.ic_download).setProgress(0, 0, true)
 
-                if (html.isNotEmpty()) {
-                    break
-                }
+        if (ContextCompat.checkSelfPermission(
+                context, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            NotificationManagerCompat.from(context).notify(id, notificationBuilder.build())
+        }
 
+
+        val tiktokUrl = getTiktokFullUrl(url)
+        val videoId = Uri.parse(tiktokUrl).lastPathSegment
+            ?: return@withContext NotificationManagerCompat.from(context).cancel(id)
+        var retryTimes = 3
+        var html: String = ""
+        do {
+            val encodeUrl = URLEncoder.encode(tiktokUrl, "utf-8")
+            val sssTikId = "$encodeUrl&locale=en&tt=azhwU005"
+            val requestBody = RequestBody.create(MediaType.parse("text/plain"), "id=$sssTikId")
+            val sssTikResponse =
+                sssTikService.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), requestBody)
+            if (!sssTikResponse.isSuccessful) {
                 retryTimes--
                 delay(1000)
-            } while (retryTimes > 0)
+                continue
+            }
+            html = sssTikResponse.body()?.use { responseBody -> responseBody.use { it.string() } }
+                ?: ""
 
-            if (html.isEmpty()) {
-                return@withContext null
+            if (html.isNotEmpty()) {
+                break
             }
 
-            val downloadUrl = parseHtmlSSSTik(html) ?: return@withContext null
+            retryTimes--
+            delay(1000)
+        } while (retryTimes > 0)
 
-            val outputDir = File(context.filesDir, "tiktok_videos")
-            if (!outputDir.exists() && !outputDir.mkdir()) {
-                return@withContext null
-            }
-            val outputFile = File(outputDir, "$videoId.mp4")
-            if (outputFile.exists()) {
-                if (outputFile.length() > 0L) {
-                    return@withContext FileUtils.getUriFromFile(context, outputFile)
-                }
-                outputFile.delete()
-            }
-
-            if (!outputFile.createNewFile()) {
-                return@withContext null
-            }
-            downloadVideoTiktok(downloadUrl, outputFile)
-            FileUtils.getUriFromFile(context, outputFile)
+        if (html.isEmpty()) {
+            return@withContext NotificationManagerCompat.from(context).cancel(id)
         }
+
+        val downloadUrl =
+            parseHtmlSSSTik(html) ?: return@withContext NotificationManagerCompat.from(context)
+                .cancel(id)
+
+        val outputDir = File(context.filesDir, "tiktok_videos")
+        if (!outputDir.exists() && !outputDir.mkdir()) {
+            return@withContext NotificationManagerCompat.from(context).cancel(id)
+        }
+        val outputFile = File(outputDir, "$videoId.mp4")
+        if (outputFile.exists()) {
+            outputFile.delete()
+        }
+
+        if (!outputFile.createNewFile()) {
+            return@withContext NotificationManagerCompat.from(context).cancel(id)
+        }
+
+        downloadVideoTiktok(context, id, downloadUrl, outputFile).collect { downloadState ->
+            when (downloadState) {
+                is DownloadState.Downloading -> {
+                    if (ContextCompat.checkSelfPermission(
+                            context, Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        NotificationManagerCompat.from(context).notify(
+                            id,
+                            notificationBuilder.setProgress(100, downloadState.progress, false)
+                                .build()
+                        )
+                    }
+                }
+
+                is DownloadState.Finished -> {
+                    NotificationManagerCompat.from(context).cancel(id)
+                    onComplete.invoke(FileUtils.getUriFromFile(context, outputFile))
+                }
+
+                is DownloadState.Failed -> {
+                    NotificationManagerCompat.from(context).cancel(id)
+                }
+            }
+        }
+    }
 
     private suspend fun getTiktokFullUrl(url: String): String {
         val fullUrl = getFullTiktokUrl(url)
@@ -216,15 +256,10 @@ class VideoHelper @Inject constructor(
         ) || url.contains("reel"))) || url.contains("fb.gg/v/")
     }
 
-    private suspend fun downloadVideoTiktok(url: String, output: File) {
-        val response = loveTikServices.downloadFile(url)
-        response.use { res ->
-            res.byteStream().use { stream ->
-                FileOutputStream(output).use { outputStream ->
-                    stream.copyTo(outputStream)
-                }
-            }
-        }
+    private suspend fun downloadVideoTiktok(
+        context: Context, id: Int, url: String, output: File
+    ): Flow<DownloadState> {
+        return loveTikServices.downloadFile(url).saveFile(output)
     }
 
     private fun parseHtmlSSSTik(htmlString: String): String? {

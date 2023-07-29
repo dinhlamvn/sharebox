@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.data.model.realtimedb
+package com.dinhlam.sharebox.model.realtimedb
 
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.extensions.castNonNull

@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.data.model.UserDetail
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.databinding.FragmentCommentBinding
 import com.dinhlam.sharebox.dialog.commentinput.CommentInputDialogFragment
 import com.dinhlam.sharebox.extensions.screenHeight

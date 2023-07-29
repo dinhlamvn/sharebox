@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.data.model
+package com.dinhlam.sharebox.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

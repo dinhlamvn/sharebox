@@ -1,7 +1,7 @@
 package com.dinhlam.sharebox.data.mapper
 
 import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
-import com.dinhlam.sharebox.data.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 

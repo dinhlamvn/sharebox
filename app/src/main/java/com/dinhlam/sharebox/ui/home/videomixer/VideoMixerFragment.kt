@@ -11,8 +11,8 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.model.ShareData
-import com.dinhlam.sharebox.data.model.VideoSource
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
