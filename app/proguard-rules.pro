@@ -74,7 +74,7 @@
 # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 
--keep class com.dinhlam.sharebox.data.model.** { *; }
+-keep class com.dinhlam.sharebox.model.** { *; }
 
 -keep class com.dinhlam.sharebox.modelview.** { *; }
 
