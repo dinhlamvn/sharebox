@@ -127,7 +127,7 @@
     <string name="sign_in_message">Let\'s sign-in to get more features in app: Post a share content, Like, Comment,…</string>
     <string name="sign_in_to_comment">Sign-in to comment</string>
     <string name="require_sign_in_to_create_box">Please sign-in to create Box</string>
-    <string name="success_save_image_to_gallery">Save this image to Gallary successfully</string>
+    <string name="success_save_image_to_gallery">Save this image to Gallery successfully</string>
     <string name="shares">Shares</string>
     <string name="title_image_download_quality">Image quality save to Gallery</string>
     <string name="require_min_image_quality">Quality must be from %d</string>
@@ -139,7 +139,8 @@
     <string name="download_video">Download video</string>
     <string name="download_video_subtext">Waiting for download video</string>
     <string name="can_not_save_video">Can\'t save this video</string>
-    <string name="download_video_prepare">Preparing...</string>
+    <string name="download_video_prepare">Preparing…</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

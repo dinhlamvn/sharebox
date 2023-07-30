@@ -154,7 +154,7 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
                 .setSmallIcon(R.drawable.ic_download).setProgress(100, progress, indeterminate)
                 .addAction(
                     0,
-                    "Cancel",
+                    appContext.getString(R.string.cancel),
                     WorkManager.getInstance(appContext).createCancelPendingIntent(workerParams.id)
                 ).build()
         )
