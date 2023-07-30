@@ -17,9 +17,5 @@ interface LoveTikServices {
     suspend fun getVideoDownloadUrl(@Field("query") videoUrl: String): LoveTikSearchResponse?
 
     @GET
-    @Streaming
-    suspend fun downloadFile(@Url url: String): ResponseBody
-
-    @GET
     suspend fun get(@Url url: String): Call<ResponseBody>
 }

@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.ui.home.videomixer
 
 import android.content.Context
 import androidx.annotation.UiThread
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -176,18 +175,6 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun saveVideoToGallery(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
-        doInBackground {
-            try {
-                videoHelper.saveVideo(context, id, videoSource, videoUri) { isOk ->
-                    if (isOk) {
-                        postShowToast(R.string.success_save_video_to_gallery)
-                    } else {
-                        postShowToast(R.string.can_not_save_video)
-                    }
-                }
-            } catch (e: Exception) {
-                postShowToast(R.string.error_save_video_to_gallery)
-            }
-        }
+        videoHelper.downloadVideo(context, id, videoSource, videoUri)
     }
 }

@@ -137,6 +137,7 @@
     <string name="download_video">Download video</string>
     <string name="download_video_subtext">Waiting for download video</string>
     <string name="can_not_save_video">Can\'t save this video</string>
+    <string name="download_video_prepare">Preparing...</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
