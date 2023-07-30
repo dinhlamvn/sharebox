@@ -267,22 +267,15 @@ class RealtimeDatabaseRepository @Inject constructor(
                 shareImages.copy(uris = downloadUris)
             } ?: shareData
 
-            shareRepository.insert(shareId,
+            shareRepository.insert(
+                shareId,
                 newShareData,
                 realtimeShareObj.shareNote,
                 realtimeShareObj.shareBoxId,
                 realtimeShareObj.shareUserId,
                 realtimeShareObj.shareDate,
-                newShareData.cast<ShareData.ShareUrl>()?.url?.let { url ->
-                    videoHelper.getVideoSource(
-                        url
-                    ) != null
-                } ?: false)?.let { share ->
-                if (share.isVideoShare) {
-                    val shareUrl = share.shareData.cast<ShareData.ShareUrl>() ?: return@let
-                    videoHelper.syncVideo(shareId, shareUrl.url)
-                }
-            }
+                realtimeShareObj.isVideoShare
+            )
         }
     }
 

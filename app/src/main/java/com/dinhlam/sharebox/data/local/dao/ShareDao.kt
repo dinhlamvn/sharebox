@@ -53,4 +53,18 @@ interface ShareDao {
 
     @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
     suspend fun countByUser(userId: String): Int
+
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s
+        WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
+        AND s.is_video_share = 1 
+        ORDER BY s.share_date DESC  
+        LIMIT :limit
+    """
+    )
+    suspend fun findForSyncVideos(
+        limit: Int,
+    ): List<Share>
 }

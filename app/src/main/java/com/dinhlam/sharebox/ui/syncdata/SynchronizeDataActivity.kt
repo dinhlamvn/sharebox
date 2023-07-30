@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,12 +32,11 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         activityScope.launch(Dispatchers.IO) {
             try {
                 if (appSharePref.isFirstInstall()) {
                     realtimeDatabaseRepository.sync()
+                    WorkerUtils.enqueueJobSyncVideoPeriodic(applicationContext)
                     appSharePref.offFirstInstall()
                 }
 

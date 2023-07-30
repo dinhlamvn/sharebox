@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.data.repository
 
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
@@ -88,6 +87,10 @@ class ShareRepository @Inject constructor(
     suspend fun findWhereInBox(shareBoxId: String, limit: Int, offset: Int) = shareDao.runCatching {
         val shares = findWhereInBox(shareBoxId, limit, offset)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
+    }.getOrDefault(emptyList())
+
+    suspend fun findForSyncVideos(limit: Int) = shareDao.runCatching {
+        findForSyncVideos(limit)
     }.getOrDefault(emptyList())
 
     private suspend fun buildShareDetail(share: Share): ShareDetail? = share.runCatching {

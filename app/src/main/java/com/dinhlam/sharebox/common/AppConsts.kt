@@ -5,8 +5,6 @@ object AppConsts {
 
     const val SSSTIK_SERVICE_BASE_URL: String = "https://ssstik.io/"
 
-    const val DATA_ALIVE_TIME = 3 * 24 * 3600 * 1000
-
     const val NUMBER_VISIBLE_BOX = 5
 
     const val LOADING_LIMIT_ITEM_PER_PAGE = 10

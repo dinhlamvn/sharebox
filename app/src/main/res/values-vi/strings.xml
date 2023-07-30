@@ -52,7 +52,7 @@
     <string name="shares_error">Không thể chia sẻ nội dung này</string>
     <string name="shares_success">Đã chia sẻ</string>
     <string name="realtime_database_service_noti_subtext">Đồng bộ dữ liệu</string>
-    <string name="realtime_database_service_noti_content">Dữ liệu mới nhất đang được đồng bộ…</string>
+    <string name="realtime_database_service_noti_content">Ứng dụng đang chạy…</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>
@@ -139,6 +139,8 @@
     <string name="can_not_save_video">Không thể tải video này</string>
     <string name="download_video_prepare">Đang chuẩn bị…</string>
     <string name="cancel">Hủy</string>
+    <string name="sync_video_content_title">Syncing videos...</string>
+    <string name="sync_video_content_text">Syncing video shares</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

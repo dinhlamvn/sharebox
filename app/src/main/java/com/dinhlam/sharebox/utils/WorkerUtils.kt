@@ -9,6 +9,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
+import com.dinhlam.sharebox.worker.SyncVideoWorker
 import com.dinhlam.sharebox.worker.TiktokVideoDownloadWorker
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit
 object WorkerUtils {
 
     private const val TAG_WORKER_SYNC_DATA = "sharebox-worker-sync-data"
+    private const val TAG_WORKER_SYNC_VIDEO = "sharebox-worker-sync-video"
 
     fun enqueueSyncUserData(context: Context) {
         val syncUserDataWorkerRequest =
@@ -56,5 +58,15 @@ object WorkerUtils {
                 Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
             ).setId(UUID.randomUUID()).build()
         WorkManager.getInstance(context).enqueue(tiktokDownloadVideoRequest)
+    }
+
+    fun enqueueJobSyncVideoPeriodic(context: Context) {
+        val syncVideoWorkerRequest = PeriodicWorkRequestBuilder<SyncVideoWorker>(
+            1, TimeUnit.HOURS
+        ).addTag(TAG_WORKER_SYNC_VIDEO).setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+        ).build()
+        WorkManager.getInstance(context).enqueue(syncVideoWorkerRequest)
     }
 }
