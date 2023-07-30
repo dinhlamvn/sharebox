@@ -4,9 +4,9 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
 import kotlinx.coroutines.flow.asFlow
@@ -72,10 +72,6 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findForSyncVideos(limit: Int, offset: Int) = shareDao.runCatching {
-        findForSyncVideos(limit, offset, nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME)
-    }.getOrDefault(emptyList())
-
     suspend fun find(shareIds: List<String>) = shareDao.runCatching {
         val shares = find(shareIds)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
@@ -84,8 +80,7 @@ class ShareRepository @Inject constructor(
     suspend fun findCommunityShares(limit: Int, offset: Int) = shareDao.runCatching {
         val shares = findForCommunity(
             limit = limit,
-            offset = offset,
-            oldestTime = nowUTCTimeInMillis() - AppConsts.DATA_ALIVE_TIME
+            offset = offset
         )
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())

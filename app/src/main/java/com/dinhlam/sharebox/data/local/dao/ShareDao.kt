@@ -29,13 +29,12 @@ interface ShareDao {
         SELECT s.* 
         FROM share as s 
         LEFT JOIN box as b ON b.box_id = s.share_box_id
-        WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)) 
-        AND s.share_date >= :oldestTime 
+        WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL))
         ORDER BY s.share_date DESC 
         LIMIT :limit 
         OFFSET :offset"""
     )
-    suspend fun findForCommunity(limit: Int, offset: Int, oldestTime: Long): List<Share>
+    suspend fun findForCommunity(limit: Int, offset: Int): List<Share>
 
     @Query("SELECT * FROM share WHERE share_id IN(:shareIds)")
     suspend fun find(shareIds: List<String>): List<Share>
@@ -51,24 +50,6 @@ interface ShareDao {
     """
     )
     suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int): List<Share>
-
-    @Query(
-        """
-        SELECT s.* 
-        FROM share as s
-        WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
-        AND s.is_video_share = 1 
-        AND s.share_date >= :oldestTime 
-        ORDER BY s.share_date DESC  
-        LIMIT :limit 
-        OFFSET :offset
-    """
-    )
-    suspend fun findForSyncVideos(
-        limit: Int,
-        offset: Int,
-        oldestTime: Long
-    ): List<Share>
 
     @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
     suspend fun countByUser(userId: String): Int
