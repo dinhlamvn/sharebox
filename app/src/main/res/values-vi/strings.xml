@@ -118,8 +118,8 @@
     <string name="success_save_video_to_gallery">Lưu video vào Bộ Sưu Tập thành công</string>
     <string name="title_guideline_other_app_tiktok">Từ Tiktok</string>
     <string name="title_other_app_tiktok_step_1">Step 1. Nhấp nút Chia Sẻ trên Tiktok</string>
-    <string name="title_other_app_tiktok_step_2">Step 2. Chọn Xem Thêm (***) và chọn ứng dụng Sharebox trong hộp thoại. Sau đó thực hiện Snap lại.</string>
-    <string name="title_other_app_tiktok_step_3">Step 3. Vào ứng dụng Sharebox mục Bộ trộn Videos. Giờ đây bạn có thể xem và lưu video về máy.</string>
+    <string name="title_other_app_tiktok_step_2">Step 2. Chọn Xem Thêm (***) và chọn ứng dụng Sharebox trong hộp thoại. Sau đó thực hiện Chia sẻ.</string>
+    <string name="title_other_app_tiktok_step_3">Step 3. Vào ứng dụng Sharebox. Giờ đây bạn có thể xem trước và lưu video về bộ sưu tập.</string>
     <string name="synchronize_data_message">Đang đồng bộ dữ liệu…</string>
     <string name="sign_in">Đăng nhập</string>
     <string name="sign_in_message">Hãy đăng nhập để sử dụng nhiều tính năng của ứng dụng: Tạo một chia sẻ, thích, bình luận,…</string>
