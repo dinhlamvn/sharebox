@@ -31,13 +31,19 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        activityScope.launch(Dispatchers.IO) {
-            if (appSharePref.isFirstInstall()) {
-                realtimeDatabaseRepository.sync()
-                appSharePref.offFirstInstall()
-            }
 
-            withContext(Dispatchers.Main) {
+
+        activityScope.launch(Dispatchers.IO) {
+            try {
+                if (appSharePref.isFirstInstall()) {
+                    realtimeDatabaseRepository.sync()
+                    appSharePref.offFirstInstall()
+                }
+
+                withContext(Dispatchers.Main) {
+                    startActivity(appRouter.home(true))
+                }
+            } catch (e: Exception) {
                 startActivity(appRouter.home(true))
             }
         }

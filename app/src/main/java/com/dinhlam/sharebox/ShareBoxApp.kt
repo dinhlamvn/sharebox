@@ -67,7 +67,9 @@ class ShareBoxApp : Application(), Configuration.Provider {
             )
         }
 
-        WorkerUtils.enqueueSyncUserData(this)
+        if (userHelper.isSignedIn()) {
+            WorkerUtils.enqueueSyncUserData(this)
+        }
     }
 
     private fun requestApplyTheme() {
