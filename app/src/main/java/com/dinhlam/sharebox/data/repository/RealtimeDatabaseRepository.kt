@@ -6,6 +6,11 @@ import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
+import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
+import com.dinhlam.sharebox.helper.FirebaseStorageHelper
+import com.dinhlam.sharebox.helper.VideoHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareType
 import com.dinhlam.sharebox.model.realtimedb.RealtimeBoxObj
@@ -13,11 +18,6 @@ import com.dinhlam.sharebox.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeUserObj
-import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
-import com.dinhlam.sharebox.helper.FirebaseStorageHelper
-import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -267,14 +267,17 @@ class RealtimeDatabaseRepository @Inject constructor(
                 shareImages.copy(uris = downloadUris)
             } ?: shareData
 
-            shareRepository.insert(
-                shareId,
+            shareRepository.insert(shareId,
                 newShareData,
                 realtimeShareObj.shareNote,
                 realtimeShareObj.shareBoxId,
                 realtimeShareObj.shareUserId,
-                realtimeShareObj.shareDate
-            )?.let { share ->
+                realtimeShareObj.shareDate,
+                newShareData.cast<ShareData.ShareUrl>()?.url?.let { url ->
+                    videoHelper.getVideoSource(
+                        url
+                    ) != null
+                } ?: false)?.let { share ->
                 if (share.isVideoShare) {
                     val shareUrl = share.shareData.cast<ShareData.ShareUrl>() ?: return@let
                     videoHelper.syncVideo(shareId, shareUrl.url)
