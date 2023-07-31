@@ -8,13 +8,16 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +35,7 @@ class VideoMixerViewModel @Inject constructor(
     private val appSharePref: AppSharePref,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val videoHelper: VideoHelper,
+    private val shareRepository: ShareRepository,
 ) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
 
     init {
@@ -176,5 +180,21 @@ class VideoMixerViewModel @Inject constructor(
 
     fun saveVideoToGallery(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
         videoHelper.downloadVideo(context, id, videoSource, videoUri)
+    }
+
+    fun syncVideos() {
+        setState { copy(showLoading = true) }
+        execute {
+            val shares =
+                currentBox?.let { box -> shareRepository.findForSyncVideos(100, box.boxId) }
+                    ?: shareRepository.findForSyncVideos(100)
+            shares.forEach { share ->
+                share.shareData.cast<ShareData.ShareUrl>()?.let { shareUrl ->
+                    videoHelper.syncVideo(share.shareId, shareUrl.url)
+                }
+            }
+            doOnPullRefresh()
+            copy(showLoading = false)
+        }
     }
 }

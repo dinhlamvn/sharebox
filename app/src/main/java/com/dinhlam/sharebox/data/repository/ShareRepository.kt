@@ -93,6 +93,10 @@ class ShareRepository @Inject constructor(
         findForSyncVideos(limit)
     }.getOrDefault(emptyList())
 
+    suspend fun findForSyncVideos(limit: Int, boxId: String) = shareDao.runCatching {
+        findForSyncVideos(limit, boxId)
+    }.getOrDefault(emptyList())
+
     private suspend fun buildShareDetail(share: Share): ShareDetail? = share.runCatching {
         val user = userRepository.findOne(share.shareUserId) ?: return null
         val commentNumber = commentRepository.count(share.shareId)

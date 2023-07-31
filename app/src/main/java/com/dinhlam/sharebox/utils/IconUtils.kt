@@ -277,4 +277,8 @@ object IconUtils {
             context, GoogleMaterial.Icon.gmd_save_alt
         )
     }
+
+    fun syncIcon(context: Context): Drawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_sync)
+    }
 }

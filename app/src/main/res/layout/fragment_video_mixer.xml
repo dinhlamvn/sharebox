@@ -18,11 +18,10 @@
             style="@style/AppMaterialCardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginEnd="70dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:cardElevation="6dp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_title"
@@ -38,6 +37,13 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
         </com.google.android.material.card.MaterialCardView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_sync"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|center_vertical"
+            android:scaleType="centerInside" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -62,5 +68,10 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.dinhlam.sharebox.view.ShareBoxLoadingView
+        android:id="@+id/view_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

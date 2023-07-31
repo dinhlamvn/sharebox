@@ -11,4 +11,5 @@ data class VideoMixerState(
     val currentPage: Int = 1,
     val canLoadMore: Boolean = true,
     val currentBox: BoxDetail? = null,
+    val showLoading: Boolean = false,
 ) : BaseViewModel.BaseState

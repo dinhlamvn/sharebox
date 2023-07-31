@@ -67,4 +67,20 @@ interface ShareDao {
     suspend fun findForSyncVideos(
         limit: Int,
     ): List<Share>
+
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s
+        WHERE NOT EXISTS (SELECT 1 FROM video_mixer vm WHERE vm.share_id = s.share_id)
+        AND s.is_video_share = 1 
+        AND s.share_box_id = :boxId
+        ORDER BY s.share_date DESC  
+        LIMIT :limit
+    """
+    )
+    suspend fun findForSyncVideos(
+        limit: Int,
+        boxId: String
+    ): List<Share>
 }
