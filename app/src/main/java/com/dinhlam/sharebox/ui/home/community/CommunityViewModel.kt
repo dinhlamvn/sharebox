@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoMixerDetail
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -60,14 +61,7 @@ class CommunityViewModel @Inject constructor(
     private fun loadShares() {
         setState { copy(isRefreshing = true) }
         execute {
-            val shares = currentBox?.let { currentBox ->
-                shareRepository.findWhereInBox(
-                    currentBox.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
-                )
-            } ?: shareRepository.findCommunityShares(
-                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, offset = 0
-            )
-
+            val shares = loadShares(currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
             val map = mutableMapOf<String, VideoMixerDetail>()
             for (i in shares.indices) {
                 val videoMixer = videoMixerRepository.findOne(shares[i].shareId)
@@ -81,23 +75,36 @@ class CommunityViewModel @Inject constructor(
     fun loadMores() {
         setState { copy(isLoadingMore = true) }
         execute {
-            val shares = currentBox?.let { currentBox ->
-                shareRepository.findWhereInBox(
-                    currentBox.boxId,
-                    AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                    currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
-                )
-            } ?: shareRepository.findCommunityShares(
+            val shares = loadShares(
+                currentBox,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
+
+            val map = mutableMapOf<String, VideoMixerDetail>()
+            for (i in shares.indices) {
+                val videoMixer = videoMixerRepository.findOne(shares[i].shareId)
+                videoMixer?.let { map[shares[i].shareId] = it }
+            }
+
             copy(
                 shares = this.shares.plus(shares),
                 isLoadingMore = false,
                 canLoadMore = shares.isNotEmpty(),
-                currentPage = currentPage + 1
+                currentPage = currentPage + 1,
+                videoMixers = videoMixers.plus(map)
             )
         }
+    }
+
+    suspend fun loadShares(boxDetail: BoxDetail?, limit: Int, offset: Int): List<ShareDetail> {
+        return boxDetail?.let { box ->
+            shareRepository.findWhereInBox(
+                box.boxId,
+                limit,
+                offset
+            )
+        } ?: shareRepository.findCommunityShares(limit, offset)
     }
 
     fun doOnRefresh() {
