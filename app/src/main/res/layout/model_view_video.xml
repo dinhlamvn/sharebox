@@ -1,101 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layoutDescription="@xml/video_view_motion_scene">
+    android:background="?attr/selectableItemBackground">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container_info"
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/layout_user_info"
+        layout="@layout/layout_share_item_user_info" />
+
+    <com.dinhlam.sharebox.view.ShareBoxReadMoreTextView
+        android:id="@+id/text_view_note"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_box_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:drawablePadding="8dp"
-            android:ellipsize="end"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Box" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_avatar"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_box_name" />
-
-        <com.dinhlam.sharebox.view.ShareBoxReadMoreTextView
-            android:id="@+id/text_note"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:collapsed_line="1"
-            app:layout_constraintTop_toBottomOf="@id/image_avatar"
-            app:layout_goneMarginTop="8dp"
-            tools:text="hello world" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_view_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/image_avatar"
-            app:layout_constraintTop_toTopOf="@id/image_avatar"
-            tools:text="Alice" />
-
-        <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
-            android:id="@+id/bottom_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_note" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_collapse"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackground"
-        android:scaleType="centerInside"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:collapsed_text="@string/collapsed_text"
+        app:expanded_text="@string/expanded_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/container_info" />
+        app:layout_constraintTop_toBottomOf="@id/layout_user_info"
+        tools:text="This is my note" />
 
     <com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
-        android:id="@+id/video_link_preview"
+        android:id="@+id/share_link_preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_note" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_box_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="8dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingVertical="12dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/share_link_preview" />
+
+    <!-- bottom action button -->
+
+    <com.dinhlam.sharebox.view.ShareBoxShareItemBottomActionView
+        android:id="@+id/bottom_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_box_name" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view_source"
@@ -104,10 +69,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
         app:cardElevation="4dp"
         app:contentPadding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/video_link_preview">
+        app:layout_constraintTop_toBottomOf="@id/bottom_action">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_in_source"
@@ -130,9 +97,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
         app:cardElevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/video_link_preview">
+        app:layout_constraintTop_toBottomOf="@id/bottom_action">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_save_to_gallery"
@@ -142,5 +111,4 @@
             android:scaleType="centerInside" />
     </com.google.android.material.card.MaterialCardView>
 
-
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

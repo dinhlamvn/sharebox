@@ -3,22 +3,26 @@ package com.dinhlam.sharebox.modelview.videomixer
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.databinding.ModelViewVideoBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
+import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class VideoModelView(
@@ -45,6 +49,9 @@ data class VideoModelView(
     val actionSaveToGallery: BaseListAdapter.NoHashProp<Function3<Int, VideoSource, String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(id) {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
@@ -61,55 +68,6 @@ data class VideoModelView(
         BaseListAdapter.BaseViewHolder<VideoModelView, ModelViewVideoBinding>(binding) {
 
         init {
-            binding.imageCollapse.setImageDrawable(
-                IconUtils.expandMoreIcon(
-                    buildContext
-                )
-            )
-            binding.root.setTransitionListener(object : MotionLayout.TransitionListener {
-                override fun onTransitionStarted(
-                    motionLayout: MotionLayout?,
-                    startId: Int,
-                    endId: Int
-                ) {
-
-                }
-
-                override fun onTransitionChange(
-                    motionLayout: MotionLayout?,
-                    startId: Int,
-                    endId: Int,
-                    progress: Float
-                ) {
-
-                }
-
-                override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                    if (currentId == R.id.start) {
-                        binding.imageCollapse.setImageDrawable(
-                            IconUtils.expandMoreIcon(
-                                buildContext
-                            )
-                        )
-                    } else {
-
-                        binding.imageCollapse.setImageDrawable(
-                            IconUtils.expandLessIcon(
-                                buildContext
-                            )
-                        )
-                    }
-                }
-
-                override fun onTransitionTrigger(
-                    motionLayout: MotionLayout?,
-                    triggerId: Int,
-                    positive: Boolean,
-                    progress: Float
-                ) {
-
-                }
-            })
             binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(buildContext))
             binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
                 copy(sizeDp = 12)
@@ -120,8 +78,24 @@ data class VideoModelView(
         }
 
         override fun onBind(model: VideoModelView, position: Int) {
-            binding.videoLinkPreview.setLink(model.videoUri) {
-                ShareBoxLinkPreviewView.Style(maxLineUrl = 1, maxLineDesc = 1, maxLineTitle = 1)
+            binding.textViewInSource.text = model.videoSource.sourceName
+
+            binding.textViewInSource.setOnClickListener {
+                model.actionViewInSource.prop?.invoke(model.shareDetail.shareData)
+            }
+
+            binding.imageSaveToGallery.setOnClickListener {
+                model.actionSaveToGallery.prop?.invoke(
+                    model.entityId,
+                    model.videoSource,
+                    model.videoUri
+                )
+            }
+
+            ImageLoader.INSTANCE.load(
+                buildContext, model.shareDetail.user.avatar, binding.layoutUserInfo.imageAvatar
+            ) {
+                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
             binding.bottomAction.setBookmarkIcon(
@@ -129,12 +103,11 @@ data class VideoModelView(
                     buildContext
                 )
             )
-
-            binding.textViewInSource.setOnClickListener {
-                model.actionViewInSource.prop?.invoke(model.shareDetail.shareData)
-            }
-
             binding.bottomAction.setLikeIcon(model.shareDetail.liked.asLikeIcon(buildContext))
+
+            binding.container.setOnClickListener {
+                model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
+            }
 
             binding.bottomAction.setOnShareClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
@@ -152,42 +125,47 @@ data class VideoModelView(
                 model.actionBookmark.prop?.invoke(model.shareDetail.shareId)
             }
 
-            binding.imageSaveToGallery.setOnClickListener {
-                model.actionSaveToGallery.prop?.invoke(
-                    model.entityId,
-                    model.videoSource,
-                    model.videoUri
-                )
-            }
-
             binding.bottomAction.setLikeNumber(model.shareDetail.likeNumber)
             binding.bottomAction.setCommentNumber(model.shareDetail.commentNumber)
 
-            binding.textViewName.text = model.shareDetail.user.name
-            ImageLoader.INSTANCE.load(
-                buildContext,
-                model.shareDetail.user.avatar,
-                binding.imageAvatar
-            ) {
-                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+            binding.layoutUserInfo.textViewName.text = buildSpannedString {
+                bold {
+                    append(model.shareDetail.user.name)
+                }
+                append(buildContext.getString(R.string.share_web_link))
             }
+            binding.shareLinkPreview.setLink(model.videoUri) {
+                ShareBoxLinkPreviewView.Style(maxLineDesc = 1, maxLineUrl = 1, maxLineTitle = 1)
+            }
+            binding.layoutUserInfo.textUserLevel.text =
+                buildContext.getString(
+                    R.string.user_level_format,
+                    UserUtils.getLevelTitle(model.shareDetail.user.level),
+                    model.shareDetail.shareDate.asElapsedTimeDisplay()
+                )
 
             binding.textBoxName.text =
                 model.shareDetail.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
 
+            binding.textBoxName.setOnClickListener {
+                model.actionBoxClick.prop?.invoke(model.shareDetail.boxDetail)
+            }
+
             model.shareDetail.shareNote.takeIfNotNullOrBlank()?.let { text ->
-                binding.textNote.isVisible = true
-                binding.textNote.setReadMoreText(text)
-            } ?: binding.textNote.apply {
+                binding.textViewNote.isVisible = true
+                binding.textViewNote.setReadMoreText(text)
+            } ?: binding.textViewNote.apply {
                 text = null
                 isVisible = false
             }
         }
 
         override fun onUnBind() {
-            binding.textNote.text = null
+            binding.textBoxName.text = null
+            binding.textViewNote.text = null
+            binding.textViewInSource.text = null
             binding.bottomAction.release()
-            ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
         }
     }
 }

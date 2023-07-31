@@ -16,9 +16,6 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
@@ -32,7 +29,10 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.Spacing
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.modelview.BoxModelView
 import com.dinhlam.sharebox.modelview.CarouselModelView
 import com.dinhlam.sharebox.modelview.CommentModelView
@@ -122,7 +122,8 @@ class CommunityFragment :
                             actionLike = BaseListAdapter.NoHashProp(::onLike),
                             actionComment = BaseListAdapter.NoHashProp(::onComment),
                             actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
-                            actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
+                            actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery),
+                            actionBoxClick = BaseListAdapter.NoHashProp(::onBoxClick)
                         )
                     } ?: shareDetail.shareData.buildShareModelViews(
                         screenHeight(),

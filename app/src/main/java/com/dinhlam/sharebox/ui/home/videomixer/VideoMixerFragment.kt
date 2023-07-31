@@ -11,8 +11,6 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
@@ -21,6 +19,9 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -72,7 +73,8 @@ class VideoMixerFragment :
                     actionLike = BaseListAdapter.NoHashProp(::onLike),
                     actionComment = BaseListAdapter.NoHashProp(::onComment),
                     actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
-                    actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery)
+                    actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery),
+                    actionBoxClick = BaseListAdapter.NoHashProp(::onBoxClick)
                 )
             }.forEach { modelView ->
                 add(modelView)
@@ -225,6 +227,10 @@ class VideoMixerFragment :
 
     override fun onBoxSelected(boxId: String) {
         viewModel.setBox(boxId)
+    }
+
+    private fun onBoxClick(boxDetail: BoxDetail?) {
+        viewModel.setBox(boxDetail)
     }
 }
 

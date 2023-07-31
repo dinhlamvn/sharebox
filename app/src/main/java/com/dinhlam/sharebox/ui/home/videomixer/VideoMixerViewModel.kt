@@ -155,7 +155,7 @@ class VideoMixerViewModel @Inject constructor(
             }
         }
 
-    private fun setBox(box: BoxDetail?) = getState { state ->
+    fun setBox(box: BoxDetail?) = getState { state ->
         if (state.currentBox != box) {
             setState { copy(currentBox = box) }
             box?.let { nonNullBox ->
