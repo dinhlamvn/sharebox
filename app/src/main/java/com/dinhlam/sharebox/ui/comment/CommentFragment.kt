@@ -23,7 +23,7 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,7 +49,7 @@ class CommentFragment :
     )
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     override val viewModel: CommentViewModel by viewModels()
 
@@ -105,7 +105,7 @@ class CommentFragment :
         }
 
         viewBinding.buttonSignIn.setOnClickListener {
-            signInLauncher.launch(appRouter.signIn(true))
+            signInLauncher.launch(router.signIn(true))
         }
     }
 

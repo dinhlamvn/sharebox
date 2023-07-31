@@ -31,7 +31,7 @@ import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,7 +84,7 @@ class ProfileFragment :
                         getString(R.string.sign_in),
                         Spacing.All(16.dp(), 16.dp(), 16.dp(), 16.dp()),
                         BaseListAdapter.NoHashProp(View.OnClickListener {
-                            signInLauncher.launch(appRouter.signIn(true))
+                            signInLauncher.launch(router.signIn(true))
                         })
                     )
                 )
@@ -168,7 +168,7 @@ class ProfileFragment :
     lateinit var userHelper: UserHelper
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     override val viewModel: ProfileViewModel by viewModels()
 
@@ -240,7 +240,7 @@ class ProfileFragment :
     }
 
     private fun openSettingPage() {
-        startActivity(appRouter.settingIntent())
+        startActivity(router.settingIntent())
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {

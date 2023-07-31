@@ -25,7 +25,7 @@ import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,7 +35,7 @@ import javax.inject.Singleton
 @Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val appRouter: AppRouter,
+    private val router: Router,
     private val shareRepository: ShareRepository,
     private val commentRepository: CommentRepository,
     private val likeRepository: LikeRepository,
@@ -112,9 +112,9 @@ class ShareHelper @Inject constructor(
 
     fun openUrl(context: Context, url: String, isEnableCustomTab: Boolean = true) {
         if (isEnableCustomTab) {
-            appRouter.moveToChromeCustomTab(context, url)
+            router.moveToChromeCustomTab(context, url)
         } else {
-            appRouter.moveToBrowser(url)
+            router.moveToBrowser(url)
         }
     }
 

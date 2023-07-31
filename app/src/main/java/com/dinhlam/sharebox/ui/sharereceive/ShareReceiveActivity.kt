@@ -55,7 +55,7 @@ import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
 import com.dinhlam.sharebox.utils.IconUtils
@@ -109,7 +109,7 @@ class ShareReceiveActivity :
         }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -250,12 +250,12 @@ class ShareReceiveActivity :
         handleShareData()
 
         if (!userHelper.isSignedIn()) {
-            signInLauncher.launch(appRouter.signIn(true))
+            signInLauncher.launch(router.signIn(true))
         }
 
         viewBinding.imageAddBox.setImageDrawable(IconUtils.addIcon(this))
         viewBinding.imageAddBox.setOnClickListener {
-            createBoxResultLauncher.launch(appRouter.boxIntent(this))
+            createBoxResultLauncher.launch(router.boxIntent(this))
         }
 
         viewBinding.imageClose.setImageDrawable(IconUtils.closeIcon(this) {
@@ -284,7 +284,7 @@ class ShareReceiveActivity :
         val boxPasscode =
             state.currentBox?.passcode.takeIfNotNullOrBlank() ?: return@getState share()
         val boxName = state.currentBox?.boxName ?: ""
-        val intent = appRouter.passcodeIntent(this, boxPasscode)
+        val intent = router.passcodeIntent(this, boxPasscode)
         intent.putExtra(
             AppExtras.EXTRA_PASSCODE_DESCRIPTION,
             getString(R.string.dialog_bookmark_collection_picker_verify_passcode, boxName)
@@ -364,7 +364,7 @@ class ShareReceiveActivity :
 
     private fun openHome() {
         startActivity(
-            appRouter.home()
+            router.home()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
     }

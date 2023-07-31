@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragm
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
@@ -89,7 +89,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
     }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -172,7 +172,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         viewBinding.buttonShareImages.setOnClickListener {
             toggleFabActionView(false)
-            pickImagesResultLauncher.launch(appRouter.pickImageIntent(true))
+            pickImagesResultLauncher.launch(router.pickImageIntent(true))
         }
     }
 

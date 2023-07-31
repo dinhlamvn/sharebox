@@ -25,7 +25,7 @@ import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class BookmarkFragment :
                     result.data?.getParcelableExtraCompat<BookmarkCollectionDetail>(AppExtras.EXTRA_BOOKMARK_COLLECTION)
                         ?: return@registerForActivityResult
                 bookmarkCollectionFormResultLauncher.launch(
-                    appRouter.bookmarkCollectionFormIntent(
+                    router.bookmarkCollectionFormIntent(
                         requireContext(), bookmarkCollection
                     )
                 )
@@ -105,7 +105,7 @@ class BookmarkFragment :
     }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var bookmarkHelper: BookmarkHelper
@@ -132,7 +132,7 @@ class BookmarkFragment :
 
         viewBinding.buttonAdd.setOnClickListener {
             bookmarkCollectionFormResultLauncher.launch(
-                appRouter.bookmarkCollectionFormIntent(requireContext())
+                router.bookmarkCollectionFormIntent(requireContext())
             )
         }
     }
@@ -168,7 +168,7 @@ class BookmarkFragment :
         Logger.debug("Hello $position --- $bookmarkCollection")
         when (position) {
             0 -> startActivity(
-                appRouter.bookmarkListItemIntent(
+                router.bookmarkListItemIntent(
                     requireContext(), bookmarkCollection.id
                 )
             )
@@ -176,11 +176,11 @@ class BookmarkFragment :
             1 -> {
                 val passcode = bookmarkCollection.passcode.takeIfNotNullOrBlank()
                     ?: return bookmarkCollectionFormResultLauncher.launch(
-                        appRouter.bookmarkCollectionFormIntent(
+                        router.bookmarkCollectionFormIntent(
                             requireContext(), bookmarkCollection
                         )
                     )
-                requestPasscodeEditResultLauncher.launch(appRouter.passcodeIntent(
+                requestPasscodeEditResultLauncher.launch(router.passcodeIntent(
                     requireContext(), passcode
                 ).apply {
                     putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
@@ -195,7 +195,7 @@ class BookmarkFragment :
                             ?: return@setPositiveButton viewModel.deleteBookmarkCollection(
                                 bookmarkCollection.id
                             )
-                        requestPasscodeDeleteResultLauncher.launch(appRouter.passcodeIntent(
+                        requestPasscodeDeleteResultLauncher.launch(router.passcodeIntent(
                             requireContext(), passcode
                         ).apply {
                             putExtra(

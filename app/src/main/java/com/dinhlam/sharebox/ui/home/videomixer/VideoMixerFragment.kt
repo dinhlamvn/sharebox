@@ -26,7 +26,7 @@ import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,7 +42,7 @@ class VideoMixerFragment :
     lateinit var shareHelper: ShareHelper
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     private val videoAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
@@ -147,30 +147,30 @@ class VideoMixerFragment :
 
     private fun viewInFacebook(shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = appRouter.viewIntent(shareUrl.url)
+        val viewIntent = router.viewIntent(shareUrl.url)
         viewIntent.setPackage(AppConsts.FACEBOOK_M_PACKAGE_ID)
 
         if (viewIntent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(viewIntent)
         } else {
-            startActivity(appRouter.playStoreIntent(AppConsts.FACEBOOK_M_PACKAGE_ID))
+            startActivity(router.playStoreIntent(AppConsts.FACEBOOK_M_PACKAGE_ID))
         }
     }
 
     private fun viewInYoutube(shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = appRouter.viewIntent(shareUrl.url)
+        val viewIntent = router.viewIntent(shareUrl.url)
         viewIntent.runCatching {
             startActivity(this)
         }.onFailure { error ->
             Logger.error(error)
-            startActivity(appRouter.playStoreIntent(AppConsts.YOUTUBE_M_PACKAGE_ID))
+            startActivity(router.playStoreIntent(AppConsts.YOUTUBE_M_PACKAGE_ID))
         }
     }
 
     private fun viewinSource(shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = appRouter.viewIntent(shareUrl.url)
+        val viewIntent = router.viewIntent(shareUrl.url)
 
         val resolveInfoList = context?.packageManager?.queryIntentActivitiesCompat(
             viewIntent, PackageManager.GET_META_DATA
@@ -193,7 +193,7 @@ class VideoMixerFragment :
         if (viewIntent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(viewIntent)
         } else {
-            startActivity(appRouter.playStoreIntent(AppConsts.TIKTOK_M_PACKAGE_ID))
+            startActivity(router.playStoreIntent(AppConsts.TIKTOK_M_PACKAGE_ID))
         }
     }
 

@@ -19,7 +19,7 @@ import com.dinhlam.sharebox.extensions.takeWithEllipsizeEnd
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.TextPickerModelView
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,7 +33,7 @@ class BookmarkCollectionPickerDialogFragment :
     }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     private val resultLauncherVerifyPasscode =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -134,7 +134,7 @@ class BookmarkCollectionPickerDialogFragment :
 
         viewBinding.bottomCreateNew.setOnClickListener {
             resultLauncherCreateBookmarkCollection.launch(
-                appRouter.bookmarkCollectionFormIntent(
+                router.bookmarkCollectionFormIntent(
                     requireContext()
                 )
             )
@@ -143,7 +143,7 @@ class BookmarkCollectionPickerDialogFragment :
 
     private fun requestVerifyOriginalPasscode(bookmarkCollectionDetail: BookmarkCollectionDetail) {
         resultLauncherVerifyOriginalPasscode.launch(
-            appRouter.passcodeIntent(
+            router.passcodeIntent(
                 requireContext(), bookmarkCollectionDetail.passcode!!, getString(
                     R.string.dialog_bookmark_collection_picker_verify_passcode,
                     bookmarkCollectionDetail.name.takeWithEllipsizeEnd(10)
@@ -161,7 +161,7 @@ class BookmarkCollectionPickerDialogFragment :
             dismiss()
         }
         resultLauncherVerifyPasscode.launch(
-            appRouter.passcodeIntent(
+            router.passcodeIntent(
                 requireContext(), passcode, getString(
                     R.string.dialog_bookmark_collection_picker_verify_passcode,
                     bookmarkCollectionName.takeWithEllipsizeEnd(10)

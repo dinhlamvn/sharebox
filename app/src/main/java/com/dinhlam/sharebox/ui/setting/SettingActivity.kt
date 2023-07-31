@@ -16,7 +16,7 @@ import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,7 +37,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     lateinit var userHelper: UserHelper
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +131,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             .setMessage(R.string.sign_out_confirm_message)
             .setPositiveButton(R.string.sign_out) { _, _ ->
                 userHelper.signOut(this, {
-                    startActivity(appRouter.home(true))
+                    startActivity(router.home(true))
                 }, {
                     showToast(R.string.logged_out_error)
                 })

@@ -26,7 +26,7 @@ import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -92,7 +92,7 @@ class BookmarkListItemActivity :
         }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -155,7 +155,7 @@ class BookmarkListItemActivity :
     private fun requestVerifyPasscode() = getState(viewModel) { state ->
         val passcode = state.bookmarkCollection?.passcode.takeIfNotNullOrBlank() ?: return@getState
         val name = state.bookmarkCollection?.name ?: ""
-        val intent = appRouter.passcodeIntent(this, passcode)
+        val intent = router.passcodeIntent(this, passcode)
         intent.putExtra(
             AppExtras.EXTRA_PASSCODE_DESCRIPTION,
             getString(R.string.dialog_bookmark_collection_picker_verify_passcode, name)

@@ -20,7 +20,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import com.dinhlam.sharebox.utils.UserUtils
 import com.firebase.ui.auth.AuthUI
@@ -57,7 +57,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     lateinit var userHelper: UserHelper
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var firebaseStorageHelper: FirebaseStorageHelper
@@ -90,7 +90,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         setupButtonForSignIn()
 
         viewBinding.textEditAvatar.setOnClickListener {
-            avatarResultLauncher.launch(appRouter.pickImageIntent())
+            avatarResultLauncher.launch(router.pickImageIntent())
         }
 
         viewBinding.textEditAvatar.setDrawableCompat(end = IconUtils.editIcon(this) {
@@ -214,7 +214,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun goHome() {
         viewBinding.viewLoading.hide()
         startActivity(
-            appRouter.home()
+            router.home()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }

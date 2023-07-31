@@ -5,7 +5,7 @@ import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
 import com.dinhlam.sharebox.pref.AppSharePref
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     lateinit var appSharePref: AppSharePref
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +41,10 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    startActivity(appRouter.home(true))
+                    startActivity(router.home(true))
                 }
             } catch (e: Exception) {
-                startActivity(appRouter.home(true))
+                startActivity(router.home(true))
             }
         }
     }

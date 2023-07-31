@@ -23,7 +23,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +39,7 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
     lateinit var boxRepository: BoxRepository
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var userHelper: UserHelper
@@ -98,7 +98,7 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
         }
 
         viewBinding.textEditPasscode.setOnClickListener {
-            passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
+            passcodeResultLauncher.launch(router.passcodeIntent(this))
         }
 
         viewBinding.buttonCreate.setOnClickListener {

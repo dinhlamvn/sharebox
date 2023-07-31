@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class RealtimeDatabaseService : Service() {
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     @Inject
     lateinit var shareRepository: RealtimeDatabaseRepository
@@ -46,7 +46,7 @@ class RealtimeDatabaseService : Service() {
                     PendingIntent.getActivity(
                         this,
                         0,
-                        appRouter.home(true),
+                        router.home(true),
                         PendingIntent.FLAG_IMMUTABLE
                     )
                 ).build()

@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -35,7 +35,7 @@ class BoxSelectionDialogFragment :
     }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     private var blockVerifyPasscodeBlock: Function0<Unit>? = null
 
@@ -156,7 +156,7 @@ class BoxSelectionDialogFragment :
     private fun onBoxSelected(boxId: String, boxName: String, passcode: String?) {
         passcode?.let { boxPasscode ->
             blockVerifyPasscodeBlock = { returnSelectedBox(boxId) }
-            val intent = appRouter.passcodeIntent(requireContext(), boxPasscode)
+            val intent = router.passcodeIntent(requireContext(), boxPasscode)
             intent.putExtra(
                 AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
                     R.string.dialog_bookmark_collection_picker_verify_passcode, boxName

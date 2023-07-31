@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.router.AppRouter
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.IconUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class BookmarkCollectionFormActivity :
         }
 
     @Inject
-    lateinit var appRouter: AppRouter
+    lateinit var router: Router
 
     override val viewModel: BookmarkCollectionFormViewModel by viewModels()
 
@@ -101,7 +101,7 @@ class BookmarkCollectionFormActivity :
         }
 
         viewBinding.textEditPasscode.setOnClickListener {
-            passcodeResultLauncher.launch(appRouter.passcodeIntent(this))
+            passcodeResultLauncher.launch(router.passcodeIntent(this))
         }
 
         viewModel.consume(this, BookmarkCollectionFormState::success) { success ->
@@ -164,7 +164,7 @@ class BookmarkCollectionFormActivity :
     }
 
     private fun requestPickThumbnail() {
-        thumbnailResultLauncher.launch(appRouter.pickImageIntent())
+        thumbnailResultLauncher.launch(router.pickImageIntent())
     }
 
     private fun showThumbnail(data: Intent?) {
