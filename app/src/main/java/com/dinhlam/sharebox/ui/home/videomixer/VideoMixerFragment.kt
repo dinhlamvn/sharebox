@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
@@ -129,7 +128,6 @@ class VideoMixerFragment :
         }
 
         viewBinding.viewPager.layoutManager = layoutManager
-        PagerSnapHelper().attachToRecyclerView(viewBinding.viewPager)
         viewBinding.viewPager.adapter = videoAdapter
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
