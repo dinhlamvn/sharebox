@@ -4,8 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setTextAndVisibleIfNonBlankText
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -25,7 +27,10 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyle) {
 
     data class Style(
-        val maxLineTitle: Int = 2, val maxLineDesc: Int = 3, val maxLineUrl: Int = 2
+        val maxLineTitle: Int = 2,
+        val maxLineDesc: Int = 3,
+        val maxLineUrl: Int = 2,
+        val imageHeight: Int = 240.dp()
     )
 
     companion object {
@@ -85,9 +90,31 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         url?.let { nonNullUrl ->
             val style = block.invoke()
             resetUi()
-            binding.textViewTitle.maxLines = style.maxLineTitle
-            binding.textViewDescription.maxLines = style.maxLineDesc
-            binding.textViewUrl.maxLines = style.maxLineUrl
+            binding.imageView.updateLayoutParams {
+                height = style.imageHeight
+            }
+
+            binding.textViewTitle.apply {
+                if (style.maxLineTitle > 0) {
+                    maxLines = style.maxLineTitle
+                } else {
+                    isVisible = false
+                }
+            }
+            binding.textViewDescription.apply {
+                if (style.maxLineDesc > 0) {
+                    maxLines = style.maxLineDesc
+                } else {
+                    isVisible = false
+                }
+            }
+            binding.textViewUrl.apply {
+                if (style.maxLineUrl > 0) {
+                    maxLines = style.maxLineUrl
+                } else {
+                    isVisible = false
+                }
+            }
             binding.shimmerContainer.isVisible = true
             binding.shimmerContainer.showShimmer(true)
             linkPreviewScope.launch {

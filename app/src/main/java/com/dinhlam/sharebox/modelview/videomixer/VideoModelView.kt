@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.databinding.ModelViewVideoBinding
 import com.dinhlam.sharebox.extensions.asBookmarkIcon
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
 import com.dinhlam.sharebox.extensions.asLikeIcon
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -81,7 +82,10 @@ data class VideoModelView(
             binding.textViewInSource.text = model.videoSource.sourceName
 
             binding.textViewInSource.setOnClickListener {
-                model.actionViewInSource.prop?.invoke(model.videoSource, model.shareDetail.shareData)
+                model.actionViewInSource.prop?.invoke(
+                    model.videoSource,
+                    model.shareDetail.shareData
+                )
             }
 
             binding.imageSaveToGallery.setOnClickListener {
@@ -132,10 +136,15 @@ data class VideoModelView(
                 bold {
                     append(model.shareDetail.user.name)
                 }
-                append(buildContext.getString(R.string.share_web_link))
+                append(buildContext.getString(R.string.share_video))
             }
             binding.shareLinkPreview.setLink(model.videoUri) {
-                ShareBoxLinkPreviewView.Style(maxLineDesc = 1, maxLineUrl = 1, maxLineTitle = 1)
+                ShareBoxLinkPreviewView.Style(
+                    maxLineDesc = 0,
+                    maxLineUrl = 0,
+                    maxLineTitle = 1,
+                    imageHeight = 100.dp()
+                )
             }
             binding.layoutUserInfo.textUserLevel.text =
                 buildContext.getString(

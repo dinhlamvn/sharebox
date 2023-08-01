@@ -143,6 +143,7 @@
     <string name="cancel">Cancel</string>
     <string name="sync_video_content_title">Syncing videos...</string>
     <string name="sync_video_content_text">Syncing video shares</string>
+    <string name="share_video">" share a video"</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

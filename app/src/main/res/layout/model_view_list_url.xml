@@ -46,7 +46,7 @@
         android:drawablePadding="8dp"
         android:focusable="true"
         android:gravity="center_vertical"
-        android:paddingVertical="12dp"
+        android:paddingVertical="6dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/share_link_preview" />

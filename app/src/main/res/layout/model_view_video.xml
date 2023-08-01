@@ -46,7 +46,7 @@
         android:drawablePadding="8dp"
         android:focusable="true"
         android:gravity="center_vertical"
-        android:paddingVertical="12dp"
+        android:paddingVertical="6dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/share_link_preview" />
@@ -58,23 +58,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_box_name" />
+        app:layout_constraintTop_toBottomOf="@id/card_download" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view_source"
         style="@style/AppMaterialCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
         app:cardElevation="4dp"
         app:contentPadding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/card_download"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_action">
+        app:layout_constraintTop_toTopOf="@id/card_download">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_in_source"
@@ -96,12 +95,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
         app:cardElevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bottom_action">
+        app:layout_constraintTop_toBottomOf="@id/text_box_name">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_save_to_gallery"
