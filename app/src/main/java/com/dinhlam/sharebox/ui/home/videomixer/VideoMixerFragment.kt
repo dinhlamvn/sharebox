@@ -68,7 +68,7 @@ class VideoMixerFragment :
                     videoMixerDetail.videoSource,
                     videoMixerDetail.originUrl,
                     videoMixerDetail.shareDetail,
-                    actionViewInSource = BaseListAdapter.NoHashProp(::viewinSource),
+                    actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
                     actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
                     actionLike = BaseListAdapter.NoHashProp(::onLike),
                     actionComment = BaseListAdapter.NoHashProp(::onComment),
@@ -160,56 +160,8 @@ class VideoMixerFragment :
         }
     }
 
-    private fun viewInFacebook(shareData: ShareData) {
-        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = router.viewIntent(shareUrl.url)
-        viewIntent.setPackage(AppConsts.FACEBOOK_M_PACKAGE_ID)
-
-        if (viewIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(viewIntent)
-        } else {
-            startActivity(router.playStoreIntent(AppConsts.FACEBOOK_M_PACKAGE_ID))
-        }
-    }
-
-    private fun viewInYoutube(shareData: ShareData) {
-        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = router.viewIntent(shareUrl.url)
-        viewIntent.runCatching {
-            startActivity(this)
-        }.onFailure { error ->
-            Logger.error(error)
-            startActivity(router.playStoreIntent(AppConsts.YOUTUBE_M_PACKAGE_ID))
-        }
-    }
-
-    private fun viewinSource(shareData: ShareData) {
-        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = router.viewIntent(shareUrl.url)
-
-        val resolveInfoList = context?.packageManager?.queryIntentActivitiesCompat(
-            viewIntent, PackageManager.GET_META_DATA
-        ) ?: return
-
-        resolveInfoList.run stop@{
-            forEach { resolveInfo ->
-                if (resolveInfo.activityInfo.packageName.equals(AppConsts.TIKTOK_M_PACKAGE_ID)) {
-                    viewIntent.setPackage(AppConsts.TIKTOK_M_PACKAGE_ID)
-                    return@stop
-                }
-
-                if (resolveInfo.activityInfo.packageName.equals(AppConsts.TIKTOK_O_PACKAGE_ID)) {
-                    viewIntent.setPackage(AppConsts.TIKTOK_O_PACKAGE_ID)
-                    return@stop
-                }
-            }
-        }
-
-        if (viewIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(viewIntent)
-        } else {
-            startActivity(router.playStoreIntent(AppConsts.TIKTOK_M_PACKAGE_ID))
-        }
+    private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
+        shareHelper.viewInSource(requireContext(), videoSource, shareData)
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

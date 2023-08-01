@@ -31,7 +31,7 @@ data class VideoModelView(
     val videoSource: VideoSource,
     val videoUri: String,
     val shareDetail: ShareDetail,
-    val actionViewInSource: BaseListAdapter.NoHashProp<Function1<ShareData, Unit>> = BaseListAdapter.NoHashProp(
+    val actionViewInSource: BaseListAdapter.NoHashProp<Function2<VideoSource, ShareData, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
     val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
@@ -81,7 +81,7 @@ data class VideoModelView(
             binding.textViewInSource.text = model.videoSource.sourceName
 
             binding.textViewInSource.setOnClickListener {
-                model.actionViewInSource.prop?.invoke(model.shareDetail.shareData)
+                model.actionViewInSource.prop?.invoke(model.videoSource, model.shareDetail.shareData)
             }
 
             binding.imageSaveToGallery.setOnClickListener {

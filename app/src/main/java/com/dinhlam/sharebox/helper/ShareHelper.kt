@@ -3,15 +3,15 @@ package com.dinhlam.sharebox.helper
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
@@ -22,9 +22,14 @@ import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
 import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
+import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
@@ -210,5 +215,65 @@ class ShareHelper @Inject constructor(
         val hours = elapsed.div(3600 * 1000).toInt()
 
         return trendingScore.minus(hours)
+    }
+
+    fun viewInSource(context: Context, videoSource: VideoSource, shareData: ShareData) {
+        when (videoSource) {
+            is VideoSource.Tiktok -> viewInTiktok(context, shareData)
+            is VideoSource.Youtube -> viewInYoutube(context, shareData)
+            is VideoSource.Facebook -> viewInFacebook(context, shareData)
+        }
+    }
+
+    private fun viewInTiktok(context: Context, shareData: ShareData) {
+        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
+        val viewIntent = router.viewIntent(shareUrl.url)
+
+        val resolveInfoList = context.packageManager?.queryIntentActivitiesCompat(
+            viewIntent, PackageManager.GET_META_DATA
+        ) ?: return
+
+        resolveInfoList.run stop@{
+            forEach { resolveInfo ->
+                if (resolveInfo.activityInfo.packageName.equals(AppConsts.TIKTOK_M_PACKAGE_ID)) {
+                    viewIntent.setPackage(AppConsts.TIKTOK_M_PACKAGE_ID)
+                    return@stop
+                }
+
+                if (resolveInfo.activityInfo.packageName.equals(AppConsts.TIKTOK_O_PACKAGE_ID)) {
+                    viewIntent.setPackage(AppConsts.TIKTOK_O_PACKAGE_ID)
+                    return@stop
+                }
+            }
+        }
+
+        if (viewIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(viewIntent)
+        } else {
+            context.startActivity(router.playStoreIntent(AppConsts.TIKTOK_M_PACKAGE_ID))
+        }
+    }
+
+    private fun viewInYoutube(context: Context, shareData: ShareData) {
+        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
+        val viewIntent = router.viewIntent(shareUrl.url)
+        viewIntent.runCatching {
+            context.startActivity(this)
+        }.onFailure { error ->
+            Logger.error(error)
+            context.startActivity(router.playStoreIntent(AppConsts.YOUTUBE_M_PACKAGE_ID))
+        }
+    }
+
+    private fun viewInFacebook(context: Context, shareData: ShareData) {
+        val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
+        val viewIntent = router.viewIntent(shareUrl.url)
+        viewIntent.setPackage(AppConsts.FACEBOOK_M_PACKAGE_ID)
+
+        if (viewIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(viewIntent)
+        } else {
+            context.startActivity(router.playStoreIntent(AppConsts.FACEBOOK_M_PACKAGE_ID))
+        }
     }
 }
