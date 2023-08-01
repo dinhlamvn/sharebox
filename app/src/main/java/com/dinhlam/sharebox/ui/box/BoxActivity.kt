@@ -25,7 +25,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.BoxUtils
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,7 +66,7 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.imageClear.setImageDrawable(IconUtils.clearIcon(this) {
+        viewBinding.imageClear.setImageDrawable(Icons.clearIcon(this) {
             copy(sizeDp = 16)
         })
 
@@ -109,11 +109,11 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
     @UiThread
     private fun togglePasscodeVisibility() {
         if (isVisiblePasscode) {
-            viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOnIcon(this)
+            viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
             viewBinding.textEditPasscode.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
         } else {
-            viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOffIcon(this)
+            viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
             viewBinding.textEditPasscode.transformationMethod =
                 PasswordTransformationMethod.getInstance()
         }

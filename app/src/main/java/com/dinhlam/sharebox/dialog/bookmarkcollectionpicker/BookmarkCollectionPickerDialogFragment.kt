@@ -20,7 +20,7 @@ import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.TextPickerModelView
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -89,10 +89,10 @@ class BookmarkCollectionPickerDialogFragment :
                     "picker_${bookmarkCollection.id}",
                     bookmarkCollection.name,
                     height = 50.dp(),
-                    startIcon = if (bookmarkCollection.passcode == null) null else IconUtils.lockIcon(
+                    startIcon = if (bookmarkCollection.passcode == null) null else Icons.lockIcon(
                         requireContext()
                     ) { copy(sizeDp = 20) },
-                    pickedIcon = IconUtils.doneIcon(requireContext()) { copy(sizeDp = 20) },
+                    pickedIcon = Icons.doneIcon(requireContext()) { copy(sizeDp = 20) },
                     isPicked = state.pickedBookmarkCollection?.id == bookmarkCollection.id,
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                         viewModel.onPickBookmarkCollection(bookmarkCollection)
@@ -111,11 +111,11 @@ class BookmarkCollectionPickerDialogFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.bottomCreateNew.setDrawableCompat(IconUtils.plusIcon(requireContext()) {
+        viewBinding.bottomCreateNew.setDrawableCompat(Icons.plusIcon(requireContext()) {
             copy(sizeDp = 20)
         })
 
-        viewBinding.buttonDone.setDrawableCompat(IconUtils.doneIcon(requireContext()) {
+        viewBinding.buttonDone.setDrawableCompat(Icons.doneIcon(requireContext()) {
             copy(sizeDp = 20)
         })
 

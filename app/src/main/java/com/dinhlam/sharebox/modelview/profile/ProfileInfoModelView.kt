@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.extensions.asProfileAge
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ProfileInfoModelView(
@@ -36,7 +36,7 @@ data class ProfileInfoModelView(
     ) {
 
         init {
-            binding.imageSetting.setImageDrawable(IconUtils.settingIcon(buildContext))
+            binding.imageSetting.setImageDrawable(Icons.settingIcon(buildContext))
         }
 
         override fun onBind(model: ProfileInfoModelView, position: Int) {

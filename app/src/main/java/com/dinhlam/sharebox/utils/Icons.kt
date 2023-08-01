@@ -12,7 +12,7 @@ import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 import com.mikepenz.iconics.utils.colorRes
 import com.mikepenz.iconics.utils.sizeDp
 
-object IconUtils {
+object Icons {
 
     data class IconBuilder(
         val context: Context, val sizeDp: Int = 24, @ColorRes val colorRes: Int = 0
@@ -162,33 +162,17 @@ object IconUtils {
     }
 
     fun likeIcon(context: Context): IconicsDrawable {
-        return createIcon(context, FontAwesome.Icon.faw_heart)
-    }
-
-    fun likeIconLight(context: Context): IconicsDrawable {
-        return createIcon(
-            context,
-            FontAwesome.Icon.faw_heart,
-            IconBuilder(context, colorRes = android.R.color.white)
-        )
+        return createIcon(context, GoogleMaterial.Icon.gmd_trending_up)
     }
 
     fun commentIcon(context: Context): IconicsDrawable {
-        return createIcon(context, FontAwesome.Icon.faw_comment)
-    }
-
-    fun commentIconLight(context: Context): IconicsDrawable {
-        return createIcon(
-            context,
-            FontAwesome.Icon.faw_comment,
-            IconBuilder(context, colorRes = android.R.color.white)
-        )
+        return createIcon(context, FontAwesome.Icon.faw_comment_alt)
     }
 
     fun likedIcon(context: Context): IconicsDrawable {
         return createIcon(
             context,
-            FontAwesome.Icon.faw_heart1,
+            GoogleMaterial.Icon.gmd_trending_up,
             IconBuilder(context, colorRes = R.color.design_default_color_error)
         )
     }
@@ -201,27 +185,11 @@ object IconUtils {
         return createIcon(context, FontAwesome.Icon.faw_bookmark1)
     }
 
-    fun bookmarkIconLight(context: Context): Drawable {
-        return createIcon(
-            context,
-            FontAwesome.Icon.faw_bookmark,
-            IconBuilder(context, colorRes = android.R.color.white)
-        )
-    }
-
-    fun bookmarkedIconLight(context: Context): Drawable {
-        return createIcon(
-            context,
-            FontAwesome.Icon.faw_bookmark1,
-            IconBuilder(context, colorRes = android.R.color.white)
-        )
-    }
-
     fun boxIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): Drawable {
         return createIcon(
-            context, FontAwesome.Icon.faw_box, block(IconBuilder(context))
+            context, FontAwesome.Icon.faw_box_open, block(IconBuilder(context))
         )
     }
 

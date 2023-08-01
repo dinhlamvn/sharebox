@@ -20,7 +20,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImageModelView(
@@ -78,7 +78,7 @@ data class ListImageModelView(
     ) {
 
         init {
-            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+            binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
         }

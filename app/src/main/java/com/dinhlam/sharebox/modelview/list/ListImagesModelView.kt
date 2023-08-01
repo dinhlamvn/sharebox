@@ -26,7 +26,7 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImagesModelView(
@@ -94,7 +94,7 @@ data class ListImagesModelView(
         private val models = mutableListOf<ImageModelView>()
 
         init {
-            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+            binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
             binding.recyclerViewImage.updateLayoutParams {

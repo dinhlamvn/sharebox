@@ -19,7 +19,7 @@ import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.modelview.ImageModelView
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,7 +70,7 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
             }
         })
 
-        viewBinding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(requireContext()))
+        viewBinding.imageSaveToGallery.setImageDrawable(Icons.saveIcon(requireContext()))
         viewBinding.imageSaveToGallery.setOnClickListener {
             val currentPos = layoutManager.findFirstVisibleItemPosition()
             val uri = uris.getOrNull(currentPos) ?: return@setOnClickListener

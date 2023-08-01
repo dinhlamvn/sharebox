@@ -19,7 +19,7 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListTextModelView(
@@ -71,11 +71,11 @@ data class ListTextModelView(
     ) {
 
         init {
-            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+            binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
-            binding.imageQuoteLeft.setImageDrawable(IconUtils.quoteLeftIcon(buildContext))
-            binding.imageQuoteRight.setImageDrawable(IconUtils.quoteRightIcon(buildContext))
+            binding.imageQuoteLeft.setImageDrawable(Icons.quoteLeftIcon(buildContext))
+            binding.imageQuoteRight.setImageDrawable(Icons.quoteRightIcon(buildContext))
         }
 
         override fun onBind(model: ListTextModelView, position: Int) {

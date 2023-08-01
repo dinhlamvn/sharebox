@@ -24,7 +24,7 @@ import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -146,9 +146,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
 
-        viewBinding.buttonShareUrl.setImageDrawable(IconUtils.urlIcon(this))
-        viewBinding.buttonShareImages.setImageDrawable(IconUtils.imagesIcon(this))
-        viewBinding.buttonShareText.setImageDrawable(IconUtils.quoteLeftIcon(this))
+        viewBinding.buttonShareUrl.setImageDrawable(Icons.urlIcon(this))
+        viewBinding.buttonShareImages.setImageDrawable(Icons.imagesIcon(this))
+        viewBinding.buttonShareText.setImageDrawable(Icons.quoteLeftIcon(this))
 
         toggleFabActionView(false)
 

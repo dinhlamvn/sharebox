@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareItemBottomActionBinding
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 
 class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
@@ -20,9 +20,9 @@ class ShareBoxShareItemBottomActionView @JvmOverloads constructor(
         }
 
     init {
-        binding.textLike.setDrawableCompat(start = IconUtils.likeIcon(context))
-        binding.textComment.setDrawableCompat(start = IconUtils.commentIcon(context))
-        binding.buttonShare.setImageDrawable(IconUtils.shareIcon(context))
+        binding.textLike.setDrawableCompat(start = Icons.likeIcon(context))
+        binding.textComment.setDrawableCompat(start = Icons.commentIcon(context))
+        binding.buttonShare.setImageDrawable(Icons.shareIcon(context))
     }
 
     fun setLikeIcon(icon: Drawable) {

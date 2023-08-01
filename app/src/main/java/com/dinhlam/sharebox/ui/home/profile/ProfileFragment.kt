@@ -32,7 +32,7 @@ import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -93,7 +93,7 @@ class ProfileFragment :
 
                 add(
                     DrawableImageModelView(
-                        IconUtils.settingIcon(requireContext()),
+                        Icons.settingIcon(requireContext()),
                         width = 48.dp(),
                         height = 48.dp(),
                         scaleType = ImageView.ScaleType.CENTER_INSIDE,

@@ -19,7 +19,7 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -58,11 +58,11 @@ class BookmarkCollectionFormActivity :
             viewBinding.textLayoutPasscode.endIconDrawable = null
         } else {
             if (state.isPasscodeVisible) {
-                viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOnIcon(this)
+                viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
                 viewBinding.textEditPasscode.transformationMethod =
                     HideReturnsTransformationMethod.getInstance()
             } else {
-                viewBinding.textLayoutPasscode.endIconDrawable = IconUtils.visibilityOffIcon(this)
+                viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
                 viewBinding.textEditPasscode.transformationMethod =
                     PasswordTransformationMethod.getInstance()
             }
@@ -76,15 +76,15 @@ class BookmarkCollectionFormActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.imageClear.setImageDrawable(IconUtils.clearIcon(this) {
+        viewBinding.imageClear.setImageDrawable(Icons.clearIcon(this) {
             copy(sizeDp = 16)
         })
 
-        viewBinding.toolbar.navigationIcon = IconUtils.leftArrowIcon(this) {
+        viewBinding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)
         }
 
-        viewBinding.imageDone.setImageDrawable(IconUtils.doneIcon(this) {
+        viewBinding.imageDone.setImageDrawable(Icons.doneIcon(this) {
             copy(sizeDp = 16)
         })
 

@@ -58,7 +58,7 @@ import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDec
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -232,15 +232,15 @@ class ShareReceiveActivity :
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
             viewBinding.textShareBox.text = boxName
             viewBinding.textShareBox.setDrawableCompat(
-                start = IconUtils.boxIcon(this),
-                end = if (isLock) IconUtils.lockIcon(this) { copy(sizeDp = 16) } else null,
+                start = Icons.boxIcon(this),
+                end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
             )
         }
 
         viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
             collectionDetail?.let {
-                viewBinding.imageShareBookmark.setImageDrawable(IconUtils.bookmarkedIcon(this))
-            } ?: viewBinding.imageShareBookmark.setImageDrawable(IconUtils.bookmarkIcon(this))
+                viewBinding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
+            } ?: viewBinding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
         }
 
         viewBinding.textShareBox.setOnClickListener {
@@ -253,12 +253,12 @@ class ShareReceiveActivity :
             signInLauncher.launch(router.signIn(true))
         }
 
-        viewBinding.imageAddBox.setImageDrawable(IconUtils.addIcon(this))
+        viewBinding.imageAddBox.setImageDrawable(Icons.addIcon(this))
         viewBinding.imageAddBox.setOnClickListener {
             createBoxResultLauncher.launch(router.boxIntent(this))
         }
 
-        viewBinding.imageClose.setImageDrawable(IconUtils.closeIcon(this) {
+        viewBinding.imageClose.setImageDrawable(Icons.closeIcon(this) {
             copy(sizeDp = 16)
         })
         viewBinding.imageClose.setOnClickListener {
@@ -405,7 +405,7 @@ class ShareReceiveActivity :
                     dismissPopup()
                 }
                 if (box.passcode?.isNotBlank() == true) {
-                    textView.setDrawableCompat(end = IconUtils.lockIcon(this@ShareReceiveActivity) {
+                    textView.setDrawableCompat(end = Icons.lockIcon(this@ShareReceiveActivity) {
                         copy(
                             sizeDp = 16
                         )

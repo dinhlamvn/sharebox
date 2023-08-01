@@ -13,7 +13,7 @@ import com.dinhlam.sharebox.modelview.list.ListImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImagesModelView
 import com.dinhlam.sharebox.modelview.list.ListTextModelView
 import com.dinhlam.sharebox.modelview.list.ListUrlModelView
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 
 fun ShareData.buildShareModelViews(
     screenHeight: Int,
@@ -141,17 +141,9 @@ fun ShareData.buildShareModelViews(
 }
 
 fun Boolean.asBookmarkIcon(context: Context): Drawable {
-    return if (this) IconUtils.bookmarkedIcon(context) else IconUtils.bookmarkIcon(context)
-}
-
-fun Boolean.asBookmarkIconLight(context: Context): Drawable {
-    return if (this) IconUtils.bookmarkedIconLight(context) else IconUtils.bookmarkIconLight(context)
+    return if (this) Icons.bookmarkedIcon(context) else Icons.bookmarkIcon(context)
 }
 
 fun Boolean.asLikeIcon(context: Context): Drawable {
-    return if (this) IconUtils.likedIcon(context) else IconUtils.likeIcon(context)
-}
-
-fun Boolean.asLikeIconLight(context: Context): Drawable {
-    return if (this) IconUtils.likedIcon(context) else IconUtils.likeIconLight(context)
+    return if (this) Icons.likedIcon(context) else Icons.likeIcon(context)
 }

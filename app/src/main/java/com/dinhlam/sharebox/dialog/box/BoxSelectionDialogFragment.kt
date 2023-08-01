@@ -22,7 +22,7 @@ import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -82,7 +82,7 @@ class BoxSelectionDialogFragment :
                                     onBoxSelected(box.boxId, box.boxName, box.passcode)
                                 },
                             ),
-                            endIcon = if (box.passcode?.isNotBlank() == true) IconUtils.lockIcon(
+                            endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(
                                 requireContext()
                             ) { copy(sizeDp = 16) } else null))
                     }
@@ -101,7 +101,7 @@ class BoxSelectionDialogFragment :
                             onBoxSelected(box.boxId, box.boxName, box.passcode)
                         },
                     ),
-                    endIcon = if (box.passcode?.isNotBlank() == true) IconUtils.lockIcon(
+                    endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(
                         requireContext()
                     ) { copy(sizeDp = 16) } else null))
             }

@@ -7,7 +7,7 @@ import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBoxBinding
 import com.dinhlam.sharebox.model.Spacing
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 
 data class BoxModelView(
     val id: String,
@@ -26,7 +26,7 @@ data class BoxModelView(
         ) {
 
             init {
-                binding.imageIcon.setImageDrawable(IconUtils.boxIcon(buildContext))
+                binding.imageIcon.setImageDrawable(Icons.boxIcon(buildContext))
             }
 
             override fun onBind(model: BoxModelView, position: Int) {

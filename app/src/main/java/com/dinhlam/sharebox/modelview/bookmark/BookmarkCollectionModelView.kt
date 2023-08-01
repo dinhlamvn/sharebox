@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBookmarkCollectionBinding
 import com.dinhlam.sharebox.extensions.asDisplayCountValue
 import com.dinhlam.sharebox.imageloader.ImageLoader
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 
 data class BookmarkCollectionModelView(
     val id: String,
@@ -41,7 +41,7 @@ data class BookmarkCollectionModelView(
         ) {
 
         init {
-            binding.imageLock.setImageDrawable(IconUtils.lockIcon(buildContext) { copy(sizeDp = 20) })
+            binding.imageLock.setImageDrawable(Icons.lockIcon(buildContext) { copy(sizeDp = 20) })
         }
 
         override fun onBind(model: BookmarkCollectionModelView, position: Int) {

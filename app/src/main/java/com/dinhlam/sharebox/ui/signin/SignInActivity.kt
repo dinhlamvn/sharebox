@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -93,13 +93,13 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             avatarResultLauncher.launch(router.pickImageIntent())
         }
 
-        viewBinding.textEditAvatar.setDrawableCompat(end = IconUtils.editIcon(this) {
+        viewBinding.textEditAvatar.setDrawableCompat(end = Icons.editIcon(this) {
             copy(sizeDp = 16)
         })
     }
 
     private fun setupButtonForSignIn() {
-        viewBinding.buttonSignIn.setDrawableCompat(IconUtils.googleIcon(this))
+        viewBinding.buttonSignIn.setDrawableCompat(Icons.googleIcon(this))
         viewBinding.buttonSignIn.setOnClickListener {
             requestSignIn()
         }

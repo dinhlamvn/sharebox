@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewShareReceiveTextBinding
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 
 data class ShareReceiveTextModelView(val id: String, val text: String?) :
     BaseListAdapter.BaseModelView("share_text_$id") {
@@ -18,8 +18,8 @@ data class ShareReceiveTextModelView(val id: String, val text: String?) :
             ) {
 
             init {
-                binding.imageQuoteLeft.setImageDrawable(IconUtils.quoteLeftIcon(buildContext))
-                binding.imageQuoteRight.setImageDrawable(IconUtils.quoteRightIcon(buildContext))
+                binding.imageQuoteLeft.setImageDrawable(Icons.quoteLeftIcon(buildContext))
+                binding.imageQuoteRight.setImageDrawable(Icons.quoteRightIcon(buildContext))
             }
 
             override fun onBind(model: ShareReceiveTextModelView, position: Int) {

@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
@@ -68,11 +68,11 @@ data class VideoModelView(
         BaseListAdapter.BaseViewHolder<VideoModelView, ModelViewVideoBinding>(binding) {
 
         init {
-            binding.imageSaveToGallery.setImageDrawable(IconUtils.saveIcon(buildContext))
-            binding.textBoxName.setDrawableCompat(start = IconUtils.boxIcon(buildContext) {
+            binding.imageSaveToGallery.setImageDrawable(Icons.saveIcon(buildContext))
+            binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 12)
             })
-            binding.textViewInSource.setDrawableCompat(end = IconUtils.openIcon(buildContext) {
+            binding.textViewInSource.setDrawableCompat(end = Icons.openIcon(buildContext) {
                 copy(sizeDp = 16)
             })
         }

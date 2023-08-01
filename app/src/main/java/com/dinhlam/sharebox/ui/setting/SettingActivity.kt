@@ -17,7 +17,7 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,8 +68,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         }
 
         viewBinding.imageSignOut.isVisible = userHelper.isSignedIn()
-        viewBinding.imageSignOut.setImageDrawable(IconUtils.signOutIcon(this))
-        viewBinding.toolbar.navigationIcon = IconUtils.leftArrowIcon(this) {
+        viewBinding.imageSignOut.setImageDrawable(Icons.signOutIcon(this))
+        viewBinding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)
         }
         viewBinding.toolbar.setNavigationOnClickListener {

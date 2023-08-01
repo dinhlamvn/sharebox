@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home.videomixer
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +8,11 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.VideoSource
@@ -27,7 +22,7 @@ import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.IconUtils
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -119,7 +114,7 @@ class VideoMixerFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.imageSync.setImageDrawable(IconUtils.syncIcon(requireContext()))
+        viewBinding.imageSync.setImageDrawable(Icons.syncIcon(requireContext()))
 
         LiveEventUtils.eventRefreshVideosMixer.observe(viewLifecycleOwner) { shouldRefresh ->
             if (shouldRefresh) {
