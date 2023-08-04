@@ -12,6 +12,10 @@
         name="tiktok_videos"
         path="tiktok_videos/" />
 
+    <files-path
+        name="youtube_mp3"
+        path="youtube_mp3/" />
+
     <cache-path
         name="okhttp_caches"
         path="okhttp_caches/" />

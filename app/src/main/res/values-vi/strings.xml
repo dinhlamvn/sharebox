@@ -134,14 +134,16 @@
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
     <string name="notify_data_sync_success_text">Nhiều nội dung đã được cập nhât, hãy khám phá ngay.</string>
     <string name="notify_data_sync_success_title">Dữ liệu đã cập nhật.</string>
-    <string name="download_video">Tải video</string>
-    <string name="download_video_subtext">Chờ video tải xuống</string>
+    <string name="downloading">Đang tải</string>
+    <string name="downloading_subtext">Chờ tải xuống</string>
     <string name="can_not_save_video">Không thể tải video này</string>
-    <string name="download_video_prepare">Đang chuẩn bị…</string>
+    <string name="download_preparing">Đang chuẩn bị…</string>
     <string name="cancel">Hủy</string>
     <string name="sync_video_content_title">Đồng bộ videos…</string>
     <string name="sync_video_content_text">Đang đồng bộ các chia sẻ videos</string>
     <string name="share_video">" chia sẻ một video"</string>
+    <string name="success_save_audio_to_gallery">Lưu âm thanh vào bộ sưu tập thành công</string>
+    <string name="error_save_audio_to_gallery">Có lỗi xảy ra khi lưu âm thanh này</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

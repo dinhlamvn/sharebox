@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
 import com.dinhlam.sharebox.worker.SyncVideoWorker
 import com.dinhlam.sharebox.worker.TiktokVideoDownloadWorker
+import com.dinhlam.sharebox.worker.YoutubeMp3DownloadWorker
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -58,6 +59,17 @@ object WorkerUtils {
                 Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
             ).setId(UUID.randomUUID()).build()
         WorkManager.getInstance(context).enqueue(tiktokDownloadVideoRequest)
+    }
+
+    fun enqueueJobDownloadYoutubeMp3(context: Context, entityId: Int, videoUrl: String) {
+        val youtubeDownloadMp3Request =
+            OneTimeWorkRequestBuilder<YoutubeMp3DownloadWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).setInputData(
+                Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
+            ).setId(UUID.randomUUID()).build()
+        WorkManager.getInstance(context).enqueue(youtubeDownloadMp3Request)
     }
 
     fun enqueueJobSyncVideoPeriodic(context: Context) {

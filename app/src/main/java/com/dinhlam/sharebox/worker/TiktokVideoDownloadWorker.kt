@@ -42,12 +42,12 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return createForegroundInfo(0, true, R.string.download_video_prepare)
+        return createForegroundInfo(0, true, R.string.download_preparing)
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            setForeground(createForegroundInfo(0, true, R.string.download_video_prepare))
+            setForeground(createForegroundInfo(0, true, R.string.download_preparing))
             val sourceUrl =
                 workerParams.inputData.getString("url") ?: return@withContext Result.success()
             val tiktokUrl = videoHelper.getTiktokFullUrl(sourceUrl)
@@ -143,14 +143,14 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
 
     private fun createForegroundInfo(
         progress: Int, indeterminate: Boolean = false,
-        @StringRes subTextRes: Int = R.string.download_video_subtext,
+        @StringRes subTextRes: Int = R.string.downloading_subtext,
     ): ForegroundInfo {
         return ForegroundInfo(
             workerParams.inputData.getInt("id", Random.nextInt()),
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
                 .setContentText(appContext.getString(subTextRes))
                 .setAutoCancel(false)
-                .setContentTitle(appContext.getString(R.string.download_video))
+                .setContentTitle(appContext.getString(R.string.downloading))
                 .setSmallIcon(R.drawable.ic_download).setProgress(100, progress, indeterminate)
                 .addAction(
                     0,

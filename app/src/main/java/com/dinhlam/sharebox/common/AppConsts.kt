@@ -5,6 +5,8 @@ object AppConsts {
 
     const val SSSTIK_SERVICE_BASE_URL: String = "https://ssstik.io/"
 
+    const val LIBRE_TUBE_SERVICE_BASE_URL: String = "https://pipedapi.kavin.rocks/"
+
     const val NUMBER_VISIBLE_BOX = 5
 
     const val LOADING_LIMIT_ITEM_PER_PAGE = 10

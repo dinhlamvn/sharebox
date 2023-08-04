@@ -2,8 +2,10 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.data.network.LibreTubeServices
 import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
+import com.dinhlam.sharebox.helper.CronetHelper
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -56,6 +58,16 @@ object NetworkModule {
         return getRetrofitBuilder(gson, httpClient)
             .baseUrl(AppConsts.SSSTIK_SERVICE_BASE_URL)
             .build().create(SSSTikServices::class.java)
+    }
+
+    @Provides
+    fun provideLibreTubeServices(
+        gson: Gson, httpClient: OkHttpClient, cronetHelper: CronetHelper,
+    ): LibreTubeServices {
+        return getRetrofitBuilder(gson, httpClient)
+            .callFactory(cronetHelper.callFactory)
+            .baseUrl(AppConsts.LIBRE_TUBE_SERVICE_BASE_URL)
+            .build().create(LibreTubeServices::class.java)
     }
 
     private fun getRetrofitBuilder(gson: Gson, httpClient: OkHttpClient): Retrofit.Builder {

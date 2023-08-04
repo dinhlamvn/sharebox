@@ -44,8 +44,34 @@ class LocalStorageHelper @Inject constructor(
             }
 
             val destUri =
-                resolver.insert(videoCollection, newVideo) ?: throw Exception("Dest uri is null")
+                resolver.insert(videoCollection, newVideo) ?: return@withContext
             resolver.openInputStream(sourceVideoUri)?.use { inputStream ->
+                resolver.openOutputStream(destUri)?.use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+        }
+
+    suspend fun saveAutoToGallery(sourceAudioUri: Uri) =
+        withContext(Dispatchers.IO) {
+            val resolver = appContext.contentResolver
+
+            val audioCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            } else {
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            }
+
+            val newAudio = ContentValues().apply {
+                put(
+                    MediaStore.Audio.Media.DISPLAY_NAME,
+                    "sharebox_audio_${FileUtils.getFileNameFromUri(sourceAudioUri)}"
+                )
+            }
+
+            val destUri =
+                resolver.insert(audioCollection, newAudio) ?: return@withContext
+            resolver.openInputStream(sourceAudioUri)?.use { inputStream ->
                 resolver.openOutputStream(destUri)?.use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
