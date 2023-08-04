@@ -97,7 +97,7 @@ class LocalStorageHelper @Inject constructor(
         }
 
         val destUri =
-            resolver.insert(imageCollection, newImage) ?: throw Exception("Dest uri is null")
+            resolver.insert(imageCollection, newImage) ?: return@withContext null
 
         imageSource.toString().takeIf { uriStr -> uriStr.startsWith("content://") }?.let { uriStr ->
             resolver.openInputStream(Uri.parse(uriStr))?.use { inputStream ->
