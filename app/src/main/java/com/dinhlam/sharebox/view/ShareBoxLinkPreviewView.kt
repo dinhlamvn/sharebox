@@ -86,9 +86,9 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         binding.shimmerContainer.showShimmer(true)
     }
 
-    fun setLink(url: String?, block: () -> Style = { Style() }) {
+    fun setLink(url: String?, block: Style.() -> Style = { Style() }) {
         url?.let { nonNullUrl ->
-            val style = block.invoke()
+            val style = block.invoke(Style())
             resetUi()
             binding.imageView.updateLayoutParams {
                 height = style.imageHeight

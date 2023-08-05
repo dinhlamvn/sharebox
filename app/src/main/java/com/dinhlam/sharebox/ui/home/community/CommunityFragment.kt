@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
@@ -31,13 +32,12 @@ import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.modelview.BoxModelView
 import com.dinhlam.sharebox.modelview.CarouselModelView
-import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
+import com.dinhlam.sharebox.modelview.grid.GridUrlModelView
 import com.dinhlam.sharebox.pref.AppSharePref
-import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,10 +65,12 @@ class CommunityFragment :
         }
 
     private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
-            return@LoadMoreLinearLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
+        LoadMoreGridLayoutManager(requireContext(), 2, blockShouldLoadMore = {
+            return@LoadMoreGridLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
         }) {
             viewModel.loadMores()
+        }.apply {
+            spanSizeLookup = BaseSpanSizeLookup(shareAdapter, 2)
         }
     }
 
@@ -105,23 +107,7 @@ class CommunityFragment :
                 )
             } else if (state.shares.isNotEmpty()) {
                 state.shares.forEach { shareDetail ->
-                    val videoMixer = state.videoMixers[shareDetail.shareId]
-                    val modelView = videoMixer?.let { videoMixerDetail ->
-                        VideoModelView(
-                            "video_${videoMixerDetail.originUrl}_${videoMixerDetail.id}",
-                            videoMixerDetail.id,
-                            videoMixerDetail.videoSource,
-                            videoMixerDetail.originUrl,
-                            videoMixerDetail.shareDetail,
-                            actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
-                            actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                            actionLike = BaseListAdapter.NoHashProp(::onLike),
-                            actionComment = BaseListAdapter.NoHashProp(::onComment),
-                            actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
-                            actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery),
-                            actionBoxClick = BaseListAdapter.NoHashProp(::onBoxClick)
-                        )
-                    } ?: shareDetail.shareData.buildShareModelViews(
+                    val modelView = shareDetail.shareData.buildShareModelViews(
                         screenHeight(),
                         shareDetail.shareId,
                         shareDetail.shareDate,
@@ -139,34 +125,15 @@ class CommunityFragment :
                         actionBookmark = ::onBookmark,
                         actionViewImage = ::viewImage,
                         actionViewImages = ::viewImages,
-                        actionBoxClick = ::onBoxClick
+                        actionBoxClick = ::onBoxClick,
+                        true
                     )
+
                     add(modelView)
 
-                    shareDetail.commentDetail?.let { commentDetail ->
-                        CommentModelView(
-                            commentDetail.id,
-                            commentDetail.userDetail.name,
-                            commentDetail.userDetail.avatar,
-                            commentDetail.content,
-                            commentDetail.commentDate
-                        )
-                    }?.let { commentModelView ->
-                        add(
-                            SizedBoxModelView(
-                                "divider_comment_${commentModelView.modelId}",
-                                height = 1.dp(),
-                            )
-                        )
-                        add(commentModelView)
+                    if (modelView !is GridUrlModelView) {
+                        add(SizedBoxModelView("separator_${shareDetail.shareId}"))
                     }
-
-                    add(
-                        SizedBoxModelView(
-                            "divider_${shareDetail.shareId}",
-                            height = 8.dp(),
-                        )
-                    )
                 }
 
                 if (state.canLoadMore) {

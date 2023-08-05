@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
+import com.dinhlam.sharebox.modelview.grid.GridUrlModelView
 import com.dinhlam.sharebox.modelview.list.ListImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImagesModelView
 import com.dinhlam.sharebox.modelview.list.ListTextModelView
@@ -34,28 +35,51 @@ fun ShareData.buildShareModelViews(
     actionViewImage: ((String, Uri) -> Unit)? = null,
     actionViewImages: Function2<String, List<Uri>, Unit>? = null,
     actionBoxClick: Function1<BoxDetail?, Unit>? = null,
+    useGrid: Boolean = false
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
-            ListUrlModelView(
-                shareId,
-                shareData.url,
-                shareDate,
-                shareNote,
-                likeNumber,
-                commentNumber,
-                user,
-                bookmarked,
-                liked,
-                boxDetail,
-                BaseListAdapter.NoHashProp(actionOpen),
-                BaseListAdapter.NoHashProp(actionShareToOther),
-                BaseListAdapter.NoHashProp(actionLike),
-                BaseListAdapter.NoHashProp(actionComment),
-                BaseListAdapter.NoHashProp(actionBookmark),
-                BaseListAdapter.NoHashProp(actionBoxClick),
-            )
+
+            if (useGrid) {
+                GridUrlModelView(
+                    shareId,
+                    shareData.url,
+                    shareDate,
+                    shareNote,
+                    likeNumber,
+                    commentNumber,
+                    user,
+                    bookmarked,
+                    liked,
+                    boxDetail,
+                    BaseListAdapter.NoHashProp(actionOpen),
+                    BaseListAdapter.NoHashProp(actionShareToOther),
+                    BaseListAdapter.NoHashProp(actionLike),
+                    BaseListAdapter.NoHashProp(actionComment),
+                    BaseListAdapter.NoHashProp(actionBookmark),
+                    BaseListAdapter.NoHashProp(actionBoxClick),
+                )
+            } else {
+                ListUrlModelView(
+                    shareId,
+                    shareData.url,
+                    shareDate,
+                    shareNote,
+                    likeNumber,
+                    commentNumber,
+                    user,
+                    bookmarked,
+                    liked,
+                    boxDetail,
+                    BaseListAdapter.NoHashProp(actionOpen),
+                    BaseListAdapter.NoHashProp(actionShareToOther),
+                    BaseListAdapter.NoHashProp(actionLike),
+                    BaseListAdapter.NoHashProp(actionComment),
+                    BaseListAdapter.NoHashProp(actionBookmark),
+                    BaseListAdapter.NoHashProp(actionBoxClick),
+                )
+            }
         }
 
         is ShareData.ShareText -> {

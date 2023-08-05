@@ -6,6 +6,7 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewSizedBoxBinding
 
 data class SizedBoxModelView(
@@ -14,6 +15,10 @@ data class SizedBoxModelView(
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     @ColorRes val backgroundColor: Int = 0
 ) : BaseListAdapter.BaseModelView(id) {
+
+    override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
+        return BaseSpanSizeLookup.SpanSizeConfig.Full
+    }
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup

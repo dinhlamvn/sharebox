@@ -139,7 +139,7 @@ data class VideoModelView(
                 append(buildContext.getString(R.string.share_video))
             }
             binding.shareLinkPreview.setLink(model.videoUri) {
-                ShareBoxLinkPreviewView.Style(
+                copy(
                     maxLineDesc = 0,
                     maxLineUrl = 0,
                     maxLineTitle = 1,

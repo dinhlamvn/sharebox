@@ -4,10 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewCarouselBinding
 
 data class CarouselModelView(val id: String, val modelViews: List<BaseListAdapter.BaseModelView>) :
     BaseListAdapter.BaseModelView(id) {
+
+    override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
+        return BaseSpanSizeLookup.SpanSizeConfig.Full
+    }
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
