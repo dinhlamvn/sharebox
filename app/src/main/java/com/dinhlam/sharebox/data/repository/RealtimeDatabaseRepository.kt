@@ -8,6 +8,7 @@ import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -121,34 +122,34 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     suspend fun sync() {
         syncDataInRef(
-            appSharePref.getLastIndexSyncShare(),
+            appSharePref.getLastKeySyncShare(),
             shareRef,
             ::onShareAdded,
-            appSharePref::setLastIndexSyncShare
+            appSharePref::setLastKeySyncShare
         )
         syncDataInRef(
-            appSharePref.getLastIndexSyncUser(),
+            appSharePref.getLastKeySyncUser(),
             userRef,
             ::onUserAdded,
-            appSharePref::setLastIndexSyncUser
+            appSharePref::setLastKeySyncUser
         )
         syncDataInRef(
-            appSharePref.getLastIndexSyncComment(),
+            appSharePref.getLastKeySyncComment(),
             commentRef,
             ::onCommentAdded,
-            appSharePref::setLastIndexSyncComment
+            appSharePref::setLastKeySyncComment
         )
         syncDataInRef(
-            appSharePref.getLastIndexSyncLike(),
+            appSharePref.getLastKeySyncLike(),
             likeRef,
             ::onLikeAdded,
-            appSharePref::setLastIndexSyncLike
+            appSharePref::setLastKeySyncLike
         )
         syncDataInRef(
-            appSharePref.getLastIndexSyncBox(),
+            appSharePref.getLastKeySyncBox(),
             boxRef,
             ::onBoxAdded,
-            appSharePref::setLastIndexSyncBox
+            appSharePref::setLastKeySyncBox
         )
     }
 
@@ -161,27 +162,29 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun syncDataInRef(
-        indexStart: Int,
+        startKey: String,
         ref: DatabaseReference,
         childAddedHandler: suspend (String, Map<String, Any>) -> Unit,
-        onDone: (Int) -> Unit
+        onDone: (String) -> Unit
     ) {
-        val dataSnapshot = ref.get().await()
+        val dataSnapshot =
+            ref.startAfter(null, startKey.takeIfNotNullOrBlank()).limitToLast(100).get().await()
         if (!dataSnapshot.hasChildren()) {
             return
         }
 
-        val childrenCount = dataSnapshot.childrenCount.toInt()
-        val list = dataSnapshot.children.toList()
+        val iterator = dataSnapshot.children.iterator()
+        var lastKey: String? = null
 
-        for (i in indexStart until childrenCount) {
-            val data = list[i]
+        while (iterator.hasNext()) {
+            val data = iterator.next()
             val key = data.key ?: continue
             val value = data.value?.cast<Map<String, Any>>() ?: continue
             childAddedHandler.invoke(key, value)
+            lastKey = key
         }
 
-        onDone(childrenCount)
+        lastKey?.let(onDone)
     }
 
     private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {

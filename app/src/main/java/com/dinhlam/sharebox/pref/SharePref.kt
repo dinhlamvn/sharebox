@@ -15,7 +15,7 @@ abstract class SharePref constructor(
 
     protected fun put(key: String, value: Any, sync: Boolean = false) {
         if (key.isBlank()) {
-            error("Key is required")
+            return
         }
         sharePref.edit(sync) {
             when (value) {
@@ -39,9 +39,6 @@ abstract class SharePref constructor(
 
     @Suppress("UNCHECKED_CAST")
     protected fun <T : Any> get(key: String, default: T): T {
-        if (key.isBlank()) {
-            error("Key is required")
-        }
         return sharePref.all[key] as? T ?: default
     }
 

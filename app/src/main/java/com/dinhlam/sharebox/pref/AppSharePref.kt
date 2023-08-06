@@ -75,23 +75,23 @@ class AppSharePref @Inject constructor(
 
     fun offFirstInstall() = put(KEY_FIRST_INSTALL, value = false, sync = true)
 
-    fun getLastIndexSyncShare() = get(KEY_LAST_INDEX_SYNC_SHARE, 0)
+    fun getLastKeySyncShare(): String = get(KEY_LAST_INDEX_SYNC_SHARE, "")
 
-    fun getLastIndexSyncUser() = get(KEY_LAST_INDEX_SYNC_USER, 0)
+    fun getLastKeySyncUser(): String = get(KEY_LAST_INDEX_SYNC_USER, "")
 
-    fun getLastIndexSyncComment() = get(KEY_LAST_INDEX_SYNC_COMMENT, 0)
+    fun getLastKeySyncComment(): String = get(KEY_LAST_INDEX_SYNC_COMMENT, "")
 
-    fun getLastIndexSyncLike() = get(KEY_LAST_INDEX_SYNC_LIKE, 0)
+    fun getLastKeySyncLike(): String = get(KEY_LAST_INDEX_SYNC_LIKE, "")
 
-    fun getLastIndexSyncBox() = get(KEY_LAST_INDEX_SYNC_BOX, 0)
+    fun getLastKeySyncBox(): String = get(KEY_LAST_INDEX_SYNC_BOX, "")
 
-    fun setLastIndexSyncShare(index: Int) = put(KEY_LAST_INDEX_SYNC_SHARE, index, true)
+    fun setLastKeySyncShare(key: String) = put(KEY_LAST_INDEX_SYNC_SHARE, key, true)
 
-    fun setLastIndexSyncUser(index: Int) = put(KEY_LAST_INDEX_SYNC_USER, index, true)
+    fun setLastKeySyncUser(key: String) = put(KEY_LAST_INDEX_SYNC_USER, key, true)
 
-    fun setLastIndexSyncComment(index: Int) = put(KEY_LAST_INDEX_SYNC_COMMENT, index, true)
+    fun setLastKeySyncComment(key: String) = put(KEY_LAST_INDEX_SYNC_COMMENT, key, true)
 
-    fun setLastIndexSyncLike(index: Int) = put(KEY_LAST_INDEX_SYNC_LIKE, index, true)
+    fun setLastKeySyncLike(key: String) = put(KEY_LAST_INDEX_SYNC_LIKE, key, true)
 
-    fun setLastIndexSyncBox(index: Int) = put(KEY_LAST_INDEX_SYNC_BOX, index, true)
+    fun setLastKeySyncBox(key: String) = put(KEY_LAST_INDEX_SYNC_BOX, key, true)
 }
