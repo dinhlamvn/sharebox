@@ -15,7 +15,7 @@ class CronetHelper @Inject constructor(@ApplicationContext appContext: Context) 
         .enableHttp2(true)
         .enableQuic(true)
         .enableBrotli(true)
-        .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_IN_MEMORY, 1024L * 1024L) // 1MiB
+        .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_IN_MEMORY, 1024L * 1024L * 10) // 10MB
         .build()
 
     private val _callFactory: CronetCallFactory by lazy {
