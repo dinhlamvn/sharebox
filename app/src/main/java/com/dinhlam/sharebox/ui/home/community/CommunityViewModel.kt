@@ -18,7 +18,6 @@ import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoMixerDetail
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -62,13 +61,7 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isRefreshing = true) }
         execute {
             val shares = loadShares(currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
-            val map = mutableMapOf<String, VideoMixerDetail>()
-            for (i in shares.indices) {
-                val videoMixer = videoMixerRepository.findOne(shares[i].shareId)
-                videoMixer?.let { map[shares[i].shareId] = it }
-            }
-
-            copy(shares = shares, isRefreshing = false, videoMixers = videoMixers.plus(map))
+            copy(shares = shares, isRefreshing = false)
         }
     }
 
@@ -92,7 +85,6 @@ class CommunityViewModel @Inject constructor(
                 isLoadingMore = false,
                 canLoadMore = shares.isNotEmpty(),
                 currentPage = currentPage + 1,
-                videoMixers = videoMixers.plus(map)
             )
         }
     }
@@ -192,7 +184,22 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun saveVideoToGallery(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
-        videoHelper.downloadVideo(context, id, videoSource, videoUri)
+    fun saveVideoToGallery(shareId: String, context: Context) {
+        doInBackground {
+            val videoMixer = videoMixerRepository.findOne(shareId) ?: return@doInBackground
+            videoHelper.downloadVideo(
+                context,
+                videoMixer.id,
+                videoMixer.videoSource,
+                videoMixer.originUrl
+            )
+        }
+    }
+
+    fun viewInSource(shareId: String, block: (VideoMixerDetail) -> Unit) {
+        doInBackground {
+            val videoMixer = videoMixerRepository.findOne(shareId) ?: return@doInBackground
+            block(videoMixer)
+        }
     }
 }

@@ -169,6 +169,10 @@ object Icons {
         return createIcon(context, FontAwesome.Icon.faw_comment_alt)
     }
 
+    fun moreIcon(context: Context): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_more_vert)
+    }
+
     fun likedIcon(context: Context): IconicsDrawable {
         return createIcon(
             context,

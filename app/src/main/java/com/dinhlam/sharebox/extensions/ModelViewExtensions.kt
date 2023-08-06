@@ -35,7 +35,8 @@ fun ShareData.buildShareModelViews(
     actionViewImage: ((String, Uri) -> Unit)? = null,
     actionViewImages: Function2<String, List<Uri>, Unit>? = null,
     actionBoxClick: Function1<BoxDetail?, Unit>? = null,
-    useGrid: Boolean = false
+    useGrid: Boolean = false,
+    actionMore: ((String) -> Unit)? = null,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -59,6 +60,7 @@ fun ShareData.buildShareModelViews(
                     BaseListAdapter.NoHashProp(actionComment),
                     BaseListAdapter.NoHashProp(actionBookmark),
                     BaseListAdapter.NoHashProp(actionBoxClick),
+                    BaseListAdapter.NoHashProp(actionMore),
                 )
             } else {
                 ListUrlModelView(

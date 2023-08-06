@@ -62,7 +62,7 @@
     <string name="user_level_format">%s • %s</string>
     <string name="sign_in_hint_user_name">Your name</string>
     <string name="sign_in_title_user_name">What should we call you?</string>
-    <string name="view_in_tiktok">TikTok</string>
+    <string name="view_in_source">View In Source</string>
     <string name="content_desc_button_add_box">Add a new box</string>
     <string name="create">Create</string>
     <string name="error_create_box">An error occurred while create box.</string>
@@ -146,6 +146,8 @@
     <string name="share_video">" share a video"</string>
     <string name="success_save_audio_to_gallery">Save audio to gallery success</string>
     <string name="error_save_audio_to_gallery">An error occurred while download audio</string>
+    <string name="bookmark">Bookmarks</string>
+    <string name="download">Download</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

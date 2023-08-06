@@ -60,7 +60,7 @@
     <string name="user_level_format">%s • %s</string>
     <string name="sign_in_hint_user_name">Tên của bạn</string>
     <string name="sign_in_title_user_name">Chúng tôi sẽ gọi bạn là gì?</string>
-    <string name="view_in_tiktok">TikTok</string>
+    <string name="view_in_source">Xem từ nguồn</string>
     <string name="content_desc_button_add_box">Tạo mới Box</string>
     <string name="create">Tạo</string>
     <string name="error_create_box">Lỗi xảy ra khi tạo Box.</string>
@@ -144,6 +144,8 @@
     <string name="share_video">" chia sẻ một video"</string>
     <string name="success_save_audio_to_gallery">Lưu âm thanh vào bộ sưu tập thành công</string>
     <string name="error_save_audio_to_gallery">Có lỗi xảy ra khi lưu âm thanh này</string>
+    <string name="bookmark">Đánh dấu</string>
+    <string name="download">Tải xuống</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

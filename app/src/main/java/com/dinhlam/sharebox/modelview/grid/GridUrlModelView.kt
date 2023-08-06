@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.Icons
 
@@ -48,6 +49,9 @@ data class GridUrlModelView(
     val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionMore: BaseListAdapter.NoHashProp<(String) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
 ) : BaseListAdapter.BaseModelView(shareId) {
 
     override fun createViewHolder(
@@ -68,6 +72,7 @@ data class GridUrlModelView(
             })
             binding.textLike.setDrawableCompat(start = Icons.likeIcon(buildContext))
             binding.textComment.setDrawableCompat(start = Icons.commentIcon(buildContext))
+            binding.imageMore.setImageDrawable(Icons.moreIcon(buildContext))
         }
 
         override fun onBind(model: GridUrlModelView, position: Int) {
@@ -75,6 +80,10 @@ data class GridUrlModelView(
                 buildContext, model.userDetail.avatar, binding.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+            }
+
+            binding.imageMore.setOnClickListener {
+                model.actionMore.prop?.invoke(model.shareId)
             }
 
             binding.textLike.setDrawableCompat(model.liked.asLikeIcon(buildContext))

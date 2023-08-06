@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
+import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
@@ -47,7 +49,8 @@ import javax.inject.Inject
 class CommunityFragment :
     BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>(),
     BoxSelectionDialogFragment.OnBoxSelectedListener,
-    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -126,7 +129,8 @@ class CommunityFragment :
                         actionViewImage = ::viewImage,
                         actionViewImages = ::viewImages,
                         actionBoxClick = ::onBoxClick,
-                        true
+                        useGrid = true,
+                        actionMore = ::onMore
                     )
 
                     add(modelView)
@@ -140,6 +144,45 @@ class CommunityFragment :
                     add(LoadingModelView("home_load_more_${state.currentPage}"))
                 } else if (state.isLoadingMore) {
                     add(LoadingModelView("home_loading_more_${state.currentPage}"))
+                }
+            }
+        }
+    }
+
+    private fun onMore(shareId: String) = getState(viewModel) { state ->
+        val share =
+            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+
+        val items = arrayListOf(
+            SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.shares)),
+            SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.bookmark))
+        )
+
+        if (share.isVideoShare) {
+            items.add(SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.download)))
+            items.add(SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.view_in_source)))
+        }
+
+        SingleChoiceBottomSheetDialogFragment().apply {
+            arguments = bundleOf(
+                AppExtras.EXTRA_CHOICE_ITEMS to items.toTypedArray(),
+                AppExtras.EXTRA_SHARE_ID to shareId
+            )
+        }.show(childFragmentManager, "SingleChoiceBottomSheetDialogFragment")
+    }
+
+    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+        getState(viewModel) { state ->
+            val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
+            val share =
+                state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+
+            when (position) {
+                0 -> shareHelper.shareToOther(share)
+                1 -> onBookmark(shareId)
+                2 -> viewModel.saveVideoToGallery(shareId, requireContext())
+                3 -> viewModel.viewInSource(shareId) {
+                    viewInSource(it.videoSource, share.shareData)
                 }
             }
         }
@@ -299,9 +342,5 @@ class CommunityFragment :
 
     private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
         shareHelper.viewInSource(requireContext(), videoSource, shareData)
-    }
-
-    private fun onSaveToGallery(id: Int, videoSource: VideoSource, videoUri: String) {
-        viewModel.saveVideoToGallery(requireContext(), id, videoSource, videoUri)
     }
 }
