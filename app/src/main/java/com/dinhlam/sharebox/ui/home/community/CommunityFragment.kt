@@ -303,22 +303,8 @@ class CommunityFragment :
         GuidelineDialogFragment().show(childFragmentManager, "GuidelineDialogFragment")
     }
 
-    private fun onOpen(shareId: String) = getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> {
-                shareHelper.openUrl(
-                    requireContext(), shareData.url, appSharePref.isCustomTabEnabled()
-                )
-            }
-
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(requireActivity(), shareData.text)
-            }
-
-            else -> {}
-        }
+    private fun onOpen(shareId: String) {
+        startActivity(router.shareDetail(requireContext(), shareId))
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

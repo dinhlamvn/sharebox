@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
+import com.dinhlam.sharebox.ui.sharedetail.ShareDetailActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 
 class AppRouter constructor(private val context: Context) : Router {
@@ -27,8 +28,10 @@ class AppRouter constructor(private val context: Context) : Router {
     }
 
     override fun signIn(signInForResult: Boolean): Intent {
-        return Intent(context, SignInActivity::class.java)
-            .putExtra(AppExtras.EXTRA_SIGN_IN_FOR_RESULT, signInForResult)
+        return Intent(
+            context,
+            SignInActivity::class.java
+        ).putExtra(AppExtras.EXTRA_SIGN_IN_FOR_RESULT, signInForResult)
     }
 
     override fun moveToChromeCustomTab(context: Context, url: String) {
@@ -84,10 +87,7 @@ class AppRouter constructor(private val context: Context) : Router {
     }
 
     override fun passcodeIntent(
-        context: Context,
-        passcode: String,
-        extras: Bundle,
-        desc: String?
+        context: Context, passcode: String, extras: Bundle, desc: String?
     ): Intent {
         return Intent(context, PasscodeActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_PASSCODE, passcode)
@@ -115,5 +115,11 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun settingIntent(): Intent {
         return Intent(context, SettingActivity::class.java)
+    }
+
+    override fun shareDetail(context: Context, shareId: String): Intent {
+        return Intent(context, ShareDetailActivity::class.java).putExtra(
+            AppExtras.EXTRA_SHARE_ID, shareId
+        )
     }
 }

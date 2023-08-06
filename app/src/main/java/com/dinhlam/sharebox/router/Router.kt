@@ -26,4 +26,6 @@ interface Router {
     fun playStoreIntent(packageName: String): Intent
     fun boxIntent(context: Context): Intent
     fun settingIntent(): Intent
+
+    fun shareDetail(context: Context, shareId: String): Intent
 }

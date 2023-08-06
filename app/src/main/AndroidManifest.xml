@@ -69,6 +69,14 @@
             android:value="@string/facebook_client_token" />
 
         <activity
+            android:name=".ui.sharedetail.ShareDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
             android:name=".ui.signin.SignInActivity"
             android:exported="false"
             android:screenOrientation="portrait"

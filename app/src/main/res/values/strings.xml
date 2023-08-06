@@ -107,14 +107,12 @@
     <string name="create_box">Create a Box</string>
     <string name="guideline">Guideline</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
-    <string name="title_guideline">Guideline</string>
     <string name="title_guideline_other_app">From other apps (Example Youtube)</string>
     <string name="title_guideline_other_app_step_1">Step 1. Click on Share button from other apps</string>
     <string name="title_guideline_other_app_step_2">Step 2. Choose Sharebox app from the dialog</string>
     <string name="title_guideline_in_app">From in app</string>
     <string name="title_guideline_in_app_step_1">Step 1. Toggle the options menu in Home</string>
     <string name="title_guideline_in_app_step_2">Step 2. Choose the action to move forward</string>
-    <string name="title_guideline_done">Cool! Your content will be snapped and visible to other people (like your friends).</string>
     <string name="go_to_community">Go to Community</string>
     <string name="error_save_video_to_gallery">An error occurred when save video to Gallery</string>
     <string name="success_save_video_to_gallery">Save video to Gallery successfully</string>
@@ -148,7 +146,6 @@
     <string name="error_save_audio_to_gallery">An error occurred while download audio</string>
     <string name="bookmark">Bookmarks</string>
     <string name="download">Download</string>
-    <string name="shares_in_box">Shares in box %s</string>
     <string name="limit_share_image">We just allow share maximum 10 images in time</string>
 
     <string-array name="bookmark_collection_option_menu_items">
