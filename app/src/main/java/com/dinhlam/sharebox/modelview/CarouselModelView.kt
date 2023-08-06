@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.modelview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewCarouselBinding
@@ -22,28 +21,12 @@ data class CarouselModelView(val id: String, val modelViews: List<BaseListAdapte
         ) {
 
             private val carouselAdapter = BaseListAdapter.createAdapter {
-                addAll(models)
+                models.forEach { it.attachTo(this) }
             }
 
             private val models = mutableListOf<BaseListAdapter.BaseModelView>()
 
             init {
-                carouselAdapter.registerAdapterDataObserver(object : AdapterDataObserver() {
-                    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                        super.onItemRangeInserted(positionStart, itemCount)
-                        if (positionStart == 0) {
-                            binding.recyclerView.smoothScrollToPosition(0)
-                        }
-                    }
-
-                    override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
-                        super.onItemRangeChanged(positionStart, itemCount)
-                        if (positionStart == 0) {
-                            binding.recyclerView.smoothScrollToPosition(0)
-                        }
-
-                    }
-                })
                 binding.recyclerView.adapter = carouselAdapter
                 carouselAdapter.requestBuildModelViews()
             }

@@ -24,6 +24,9 @@ interface BoxDao {
     @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT :limit OFFSET :offset")
     suspend fun find(limit: Int, offset: Int): List<Box>
 
+    @Query("SELECT * FROM `box` WHERE created_by = :userId ORDER BY last_seen DESC LIMIT :limit OFFSET :offset")
+    suspend fun find(userId: String, limit: Int, offset: Int): List<Box>
+
     @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT 6")
     suspend fun findLatestBoxes(): List<Box>
 

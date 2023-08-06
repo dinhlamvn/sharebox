@@ -55,6 +55,10 @@ class BoxRepository @Inject constructor(
         find(limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
 
+    suspend fun findByUser(userId: String, limit: Int, offset: Int): List<BoxDetail> = boxDao.runCatching {
+        find(userId, limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+    }.getOrDefault(emptyList())
+
     suspend fun count(): Int = boxDao.runCatching {
         count()
     }.getOrDefault(0)

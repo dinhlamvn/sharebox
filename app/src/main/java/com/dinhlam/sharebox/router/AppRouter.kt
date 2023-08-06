@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.router
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
@@ -79,6 +80,19 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, PasscodeActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_PASSCODE, passcode)
             putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
+        }
+    }
+
+    override fun passcodeIntent(
+        context: Context,
+        passcode: String,
+        extras: Bundle,
+        desc: String?
+    ): Intent {
+        return Intent(context, PasscodeActivity::class.java).apply {
+            putExtra(AppExtras.EXTRA_PASSCODE, passcode)
+            putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
+            putExtras(extras)
         }
     }
 

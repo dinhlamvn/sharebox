@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.home.profile
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
@@ -20,10 +21,14 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.Spacing
+import com.dinhlam.sharebox.modelview.BoxModelView
 import com.dinhlam.sharebox.modelview.ButtonModelView
+import com.dinhlam.sharebox.modelview.CarouselModelView
 import com.dinhlam.sharebox.modelview.DrawableImageModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
@@ -41,6 +46,22 @@ import javax.inject.Inject
 class ProfileFragment :
     BaseViewModelFragment<ProfileState, ProfileViewModel, FragmentProfileBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
+
+    private val resultLauncherVerifyPasscode =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val boxId = result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)
+                    ?: return@registerForActivityResult showToast(R.string.error_require_passcode)
+                val boxDetail = getState(viewModel) { state ->
+                    state.boxes.firstOrNull { boxDetail ->
+                        boxDetail.boxId == boxId
+                    }
+                } ?: return@registerForActivityResult showToast(R.string.error_require_passcode)
+                viewModel.setBox(boxDetail)
+            } else {
+                showToast(R.string.error_require_passcode)
+            }
+        }
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -122,6 +143,54 @@ class ProfileFragment :
                 SizedBoxModelView("divider", height = 8.dp())
             )
 
+            if (state.boxes.isNotEmpty()) {
+                add(
+                    TextModelView(
+                        "box_title",
+                        "Your boxes",
+                        height = 50.dp(),
+                        gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                        textAppearance = R.style.TextAppearance_MaterialComponents_Body1
+                    )
+                )
+
+                SizedBoxModelView("divider_top_carousel", height = 1.dp()).attachTo(this)
+
+                val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
+                    BoxModelView(
+                        "box_${boxDetail.boxId}",
+                        boxDetail.boxId,
+                        boxDetail.boxName,
+                        boxDetail.boxDesc,
+                        Spacing.All(
+                            if (idx == 0) 16.dp() else 8.dp(),
+                            16.dp(),
+                            if (idx == lastIndex) 16.dp() else 8.dp(),
+                            16.dp()
+                        ),
+                        !boxDetail.passcode.isNullOrBlank(),
+                        boxDetail.boxId == state.currentBox?.boxId,
+                        BaseListAdapter.NoHashProp(::onBoxClicked)
+                    )
+                }
+                add(CarouselModelView("carousel_box", boxModelViews))
+
+                SizedBoxModelView("divider_bottom_carousel", height = 8.dp()).attachTo(this)
+            }
+
+            state.currentBox?.let { boxDetail ->
+                TextModelView(
+                    "active_box_title",
+                    boxDetail.boxName,
+                    height = 50.dp(),
+                    gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                    textAppearance = R.style.TextAppearance_MaterialComponents_Headline6
+                ).attachTo(this)
+                SizedBoxModelView("divider_active_box_title", height = 1.dp()).attachTo(this)
+            }
+
+
+
             if (state.shares.isNotEmpty()) {
                 state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
@@ -153,6 +222,26 @@ class ProfileFragment :
 
                 if (state.isLoadingMore) {
                     add(LoadingModelView("loading_more_${state.currentPage}"))
+                }
+            }
+        }
+    }
+
+    private fun onBoxClicked(boxId: String) {
+        getState(viewModel) { state ->
+            state.boxes.firstOrNull { boxDetail -> boxDetail.boxId == boxId }?.let { boxDetail ->
+                if (boxDetail.passcode.isNullOrBlank()) {
+                    viewModel.setBox(boxDetail)
+                } else {
+                    val bundle = Bundle()
+                    bundle.putString(AppExtras.EXTRA_BOX_ID, boxId)
+                    resultLauncherVerifyPasscode.launch(
+                        router.passcodeIntent(
+                            requireContext(),
+                            boxDetail.passcode,
+                            bundle
+                        )
+                    )
                 }
             }
         }

@@ -51,6 +51,19 @@ interface ShareDao {
     )
     suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int): List<Share>
 
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s 
+        WHERE s.share_user_id = :userId 
+        AND s.share_box_id = :boxId 
+        ORDER BY s.share_date DESC
+        LIMIT :limit
+        OFFSET :offset
+    """
+    )
+    suspend fun findWhereInBox(userId: String, boxId: String, limit: Int, offset: Int): List<Share>
+
     @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
     suspend fun countByUser(userId: String): Int
 

@@ -89,6 +89,11 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
+    suspend fun findWhereInBox(userId: String, shareBoxId: String, limit: Int, offset: Int) = shareDao.runCatching {
+        val shares = findWhereInBox(userId, shareBoxId, limit, offset)
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
+    }.getOrDefault(emptyList())
+
     suspend fun findForSyncVideos(limit: Int) = shareDao.runCatching {
         findForSyncVideos(limit)
     }.getOrDefault(emptyList())

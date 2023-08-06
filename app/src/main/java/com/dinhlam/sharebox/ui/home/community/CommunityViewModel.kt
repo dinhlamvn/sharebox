@@ -89,7 +89,11 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    suspend fun loadShares(boxDetail: BoxDetail?, limit: Int, offset: Int): List<ShareDetail> {
+    private suspend fun loadShares(
+        boxDetail: BoxDetail?,
+        limit: Int,
+        offset: Int
+    ): List<ShareDetail> {
         return boxDetail?.let { box ->
             shareRepository.findWhereInBox(
                 box.boxId,
@@ -174,6 +178,9 @@ class CommunityViewModel @Inject constructor(
                 }
                 appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
             } ?: appSharePref.setLatestActiveBoxId("")
+        } else {
+            appSharePref.setLatestActiveBoxId("")
+            setState { copy(currentBox = null) }
         }
     }
 

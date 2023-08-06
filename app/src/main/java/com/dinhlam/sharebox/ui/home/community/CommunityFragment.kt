@@ -87,14 +87,19 @@ class CommunityFragment :
                 val lastIndex = state.boxes.size - 1
                 val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
                     BoxModelView(
-                        "box_${boxDetail.boxId}", boxDetail.boxName, boxDetail.boxDesc, Spacing.All(
+                        "box_${boxDetail.boxId}",
+                        boxDetail.boxId,
+                        boxDetail.boxName,
+                        boxDetail.boxDesc,
+                        Spacing.All(
                             if (idx == 0) 16.dp() else 8.dp(),
                             16.dp(),
                             if (idx == lastIndex) 16.dp() else 8.dp(),
                             16.dp()
-                        ), BaseListAdapter.NoHashProp(View.OnClickListener {
-                            viewModel.setBox(boxDetail)
-                        })
+                        ),
+                        !boxDetail.passcode.isNullOrBlank(),
+                        boxDetail.boxId == state.currentBox?.boxId,
+                        BaseListAdapter.NoHashProp(::onBoxClicked)
                     )
                 }
                 add(CarouselModelView("carousel_box", boxModelViews))
@@ -159,8 +164,18 @@ class CommunityFragment :
         )
 
         if (share.isVideoShare) {
-            items.add(SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.download)))
-            items.add(SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.view_in_source)))
+            items.add(
+                SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                    0,
+                    getString(R.string.download)
+                )
+            )
+            items.add(
+                SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                    0,
+                    getString(R.string.view_in_source)
+                )
+            )
         }
 
         SingleChoiceBottomSheetDialogFragment().apply {
@@ -342,5 +357,13 @@ class CommunityFragment :
 
     private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
         shareHelper.viewInSource(requireContext(), videoSource, shareData)
+    }
+
+    private fun onBoxClicked(boxId: String) {
+        getState(viewModel) { state ->
+            state.boxes.firstOrNull { boxDetail -> boxDetail.boxId == boxId }?.let { boxDetail ->
+                viewModel.setBox(boxDetail)
+            }
+        }
     }
 }

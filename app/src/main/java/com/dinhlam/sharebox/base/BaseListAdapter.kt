@@ -19,8 +19,10 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
-    private val modelViewsBuilder: MutableList<T>.() -> Unit
+    private val modelViewsBuilder: ModelListBuilder<T>.() -> Unit
 ) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
+
+    class ModelListBuilder<T> : ArrayList<T>()
 
     private val buildModelViewsScope =
         CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
@@ -48,10 +50,10 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     private suspend fun buildModelViewsInternal() {
-        val mutableList = mutableListOf<T>()
-        modelViewsBuilder.invoke(mutableList)
+        val builder = ModelListBuilder<T>()
+        modelViewsBuilder.invoke(builder)
         withContext(Dispatchers.Main) {
-            super.submitList(mutableList.toList())
+            super.submitList(builder.toList())
         }
     }
 
@@ -82,7 +84,7 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     companion object {
         @JvmStatic
         fun createAdapter(
-            modelViewsBuilder: MutableList<BaseModelView>.() -> Unit,
+            modelViewsBuilder: ModelListBuilder<BaseModelView>.() -> Unit,
         ): BaseListAdapter<BaseModelView> {
             return BaseListAdapter(modelViewsBuilder)
         }
@@ -158,6 +160,16 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
 
         open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =
             BaseSpanSizeLookup.SpanSizeConfig.Normal
+
+        fun attachTo(builder: ModelListBuilder<BaseModelView>) {
+            builder.add(this)
+        }
+
+        fun attachToIf(builder: ModelListBuilder<BaseModelView>, constraint: () -> Boolean) {
+            if (constraint()) {
+                builder.add(this)
+            }
+        }
     }
 
     abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(val binding: VB) :

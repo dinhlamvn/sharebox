@@ -1,20 +1,25 @@
 package com.dinhlam.sharebox.modelview
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBoxBinding
+import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.utils.Icons
 
 data class BoxModelView(
     val id: String,
+    val boxId: String,
     val name: String,
     val desc: String?,
     val margin: Spacing = Spacing.None,
-    val onClick: BaseListAdapter.NoHashProp<View.OnClickListener?> = BaseListAdapter.NoHashProp(null),
+    val hasPasscode: Boolean = false,
+    val active: Boolean = false,
+    val onClick: BaseListAdapter.NoHashProp<(String) -> Unit> = BaseListAdapter.NoHashProp(null),
 ) : BaseListAdapter.BaseModelView(id) {
 
     override fun createViewHolder(
@@ -27,9 +32,18 @@ data class BoxModelView(
 
             init {
                 binding.imageIcon.setImageDrawable(Icons.boxIcon(buildContext))
+                binding.imageLock.setImageDrawable(Icons.lockIcon(buildContext) {
+                    copy(sizeDp = 16)
+                })
             }
 
             override fun onBind(model: BoxModelView, position: Int) {
+                binding.viewBackground.setBackgroundColor(
+                    if (model.active) buildContext.getColorCompat(
+                        R.color.colorAccent
+                    ) else 0
+                )
+
                 binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     marginStart = model.margin.start
                     topMargin = model.margin.top
@@ -37,9 +51,12 @@ data class BoxModelView(
                     bottomMargin = model.margin.bottom
                 }
 
-                binding.container.setOnClickListener(model.onClick.prop)
+                binding.container.setOnClickListener {
+                    model.onClick.prop?.invoke(model.boxId)
+                }
                 binding.textName.text = model.name
                 binding.textDesc.text = model.desc
+                binding.imageLock.isVisible = model.hasPasscode
             }
 
             override fun onUnBind() {

@@ -4,12 +4,15 @@ import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,10 +26,14 @@ class ProfileViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val boxRepository: BoxRepository,
 ) : BaseViewModel<ProfileState>(ProfileState()) {
     init {
         getCurrentUserProfile()
-        loadShares()
+        consume(ProfileState::currentBox) {
+            loadShares()
+            loadBoxes()
+        }
     }
 
     private fun getCurrentUserProfile() = doInBackground {
@@ -36,18 +43,30 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadShares() {
         execute {
-            val shares = shareRepository.find(
-                userHelper.getCurrentUserId(), AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
-            )
+            val shares = loadShares(currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
             copy(shares = shares, isRefreshing = false)
+        }
+    }
+
+    private fun loadBoxes() {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
+        doInBackground {
+            val boxes = boxRepository.findByUser(
+                userHelper.getCurrentUserId(),
+                100,
+                0
+            )
+            setState { copy(boxes = boxes) }
         }
     }
 
     fun loadMores() {
         setState { copy(isLoadingMore = true) }
         execute {
-            val others = shareRepository.find(
-                userHelper.getCurrentUserId(),
+            val others = loadShares(
+                currentBox,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
@@ -60,10 +79,31 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun doOnRefresh() {
-        setState { ProfileState() }
-        getCurrentUserProfile()
-        loadShares()
+    private suspend fun loadShares(
+        boxDetail: BoxDetail?,
+        limit: Int,
+        offset: Int
+    ): List<ShareDetail> {
+        return boxDetail?.let { box ->
+            shareRepository.findWhereInBox(
+                userHelper.getCurrentUserId(),
+                box.boxId,
+                limit,
+                offset
+            )
+        } ?: shareRepository.find(userHelper.getCurrentUserId(), limit, offset)
+    }
+
+    fun doOnRefresh() = getState { state ->
+        if (state.currentBox == null) {
+            setState { ProfileState() }
+            getCurrentUserProfile()
+            loadShares()
+            loadBoxes()
+        } else {
+            setState { ProfileState() }
+            getCurrentUserProfile()
+        }
     }
 
     fun like(shareId: String) = doInBackground {
@@ -123,6 +163,14 @@ class ProfileViewModel @Inject constructor(
                     copy(shares = shareList)
                 }
             }
+        }
+    }
+
+    fun setBox(box: BoxDetail?) = getState { state ->
+        if (state.currentBox != box) {
+            setState { copy(currentBox = box) }
+        } else {
+            setState { copy(currentBox = null) }
         }
     }
 }
