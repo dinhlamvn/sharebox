@@ -24,8 +24,6 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.databinding.MenuItemWithTextBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
@@ -51,6 +49,8 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -247,8 +247,6 @@ class ShareReceiveActivity :
             showPopupListShareBox()
         }
 
-        handleShareData()
-
         if (!userHelper.isSignedIn()) {
             signInLauncher.launch(router.signIn(true))
         }
@@ -278,6 +276,8 @@ class ShareReceiveActivity :
         }
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+
+        handleShareData()
     }
 
     private fun requestShare() = getState(viewModel) { state ->
@@ -348,18 +348,23 @@ class ShareReceiveActivity :
     }
 
     private fun handleShareImages(intent: Intent) {
-        intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM)?.let { list ->
-            val data = list.mapNotNull { it.cast<Uri>() }
-            viewBinding.recyclerView.layoutManager =
-                LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-            PagerSnapHelper().attachToRecyclerView(viewBinding.recyclerView)
-            viewBinding.recyclerView.addItemDecoration(
-                HorizontalCirclePagerItemDecoration(
-                    colorActive = ContextCompat.getColor(this, R.color.colorPrimaryDark)
-                )
-            )
-            viewModel.setShareData(ShareData.ShareImages(data))
+        val images =
+            intent.getParcelableArrayListExtraCompat<Parcelable>(Intent.EXTRA_STREAM) ?: return
+
+        if (images.size > AppConsts.LIMIT_IMAGE_SHARE) {
+            showToast(R.string.limit_share_image)
         }
+
+        val takenImages = images.mapNotNull { it.cast<Uri>() }.take(AppConsts.LIMIT_IMAGE_SHARE)
+        viewBinding.recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        PagerSnapHelper().attachToRecyclerView(viewBinding.recyclerView)
+        viewBinding.recyclerView.addItemDecoration(
+            HorizontalCirclePagerItemDecoration(
+                colorActive = ContextCompat.getColor(this, R.color.colorPrimaryDark)
+            )
+        )
+        viewModel.setShareData(ShareData.ShareImages(takenImages))
     }
 
     private fun openHome() {

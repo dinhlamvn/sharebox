@@ -147,6 +147,7 @@
     <string name="bookmark">Đánh dấu</string>
     <string name="download">Tải xuống</string>
     <string name="shares_in_box">Shares in box %s</string>
+    <string name="limit_share_image">We just allow share maximum 10 images in time</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

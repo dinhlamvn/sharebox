@@ -26,4 +26,6 @@ object AppConsts {
     const val TIKTOK_O_PACKAGE_ID = "com.ss.android.ugc.trill"
 
     const val MIN_IMAGE_QUALITY = 30
+
+    const val LIMIT_IMAGE_SHARE = 10
 }
