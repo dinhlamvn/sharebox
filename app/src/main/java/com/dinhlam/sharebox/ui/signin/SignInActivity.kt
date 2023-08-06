@@ -148,7 +148,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }
 
-        viewBinding.imageSocial.isVisible = false
+        viewBinding.imageAppIcon.isVisible = false
         viewBinding.imageAvatar.isVisible = true
         viewBinding.textEditAvatar.isVisible = true
         viewBinding.textLayoutName.isVisible = true
@@ -199,7 +199,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         AuthUI.getInstance().signOut(this).addOnSuccessListener {
             showToast(R.string.logged_out)
             setupButtonForSignIn()
-            viewBinding.imageSocial.isVisible = true
+            viewBinding.imageAppIcon.isVisible = true
             viewBinding.imageAvatar.setImageDrawable(null)
             viewBinding.imageAvatar.isVisible = false
             viewBinding.textEditAvatar.isVisible = false

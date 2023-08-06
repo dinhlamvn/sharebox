@@ -47,15 +47,16 @@
             app:layout_constraintWidth_percent="0.5" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_social"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:id="@+id/image_app_icon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="16dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/app_sign_in_background"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_launcher"
             app:layout_constraintDimensionRatio="1,1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/text_layout_name"
             app:layout_constraintTop_toBottomOf="@id/text_desc" />
 
         <androidx.appcompat.widget.AppCompatTextView
