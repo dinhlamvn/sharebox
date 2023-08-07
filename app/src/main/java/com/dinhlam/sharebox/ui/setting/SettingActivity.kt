@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.coerceMinMax
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -41,6 +42,14 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        registerOnBackPressHandler {
+            if (isTaskRoot) {
+                startActivity(router.home(true))
+            } else {
+                finish()
+            }
+        }
 
         when (appSettingHelper.getTheme()) {
             AppSettings.Theme.LIGHT -> viewBinding.radioLight.isChecked = true
@@ -73,7 +82,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             copy(sizeDp = 16)
         }
         viewBinding.toolbar.setNavigationOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         viewBinding.seekbarImageDownloadQuality.progress =
