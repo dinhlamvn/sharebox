@@ -53,8 +53,8 @@
     <string name="expanded_text">Read less</string>
     <string name="shares_error">Can\'t share this content</string>
     <string name="shares_success">Shares successfully</string>
-    <string name="realtime_database_service_noti_subtext">Sync data</string>
-    <string name="realtime_database_service_noti_content">App is running…</string>
+    <string name="realtime_database_service_text">We are listening sharing from others.</string>
+    <string name="realtime_database_service_noti_content">Sharebox</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
@@ -130,7 +130,7 @@
     <string name="title_image_download_quality">Image quality save to Gallery</string>
     <string name="require_min_image_quality">Quality must be from %d</string>
     <string name="title_setting_sync_background">Synchronize data in background</string>
-    <string name="message_enqueue_sync_data">App will sync data in background every 24 hours.</string>
+    <string name="message_enqueue_sync_data">App will sync data in background every 6 hours.</string>
     <string name="message_cancel_enqueue_sync_data">Cancel sync data in background successfully</string>
     <string name="notify_data_sync_success_text">Many exciting content has been sync, let\'s explore right now.</string>
     <string name="notify_data_sync_success_title">Data sync success</string>
@@ -147,6 +147,7 @@
     <string name="bookmark">Bookmarks</string>
     <string name="download">Download</string>
     <string name="limit_share_image">We just allow share maximum 10 images in time</string>
+    <string name="sync_data_in_background_text">App is syncing data in background</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

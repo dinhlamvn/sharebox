@@ -10,12 +10,12 @@ import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils

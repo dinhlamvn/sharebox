@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -122,34 +121,24 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     suspend fun sync() {
         syncDataInRef(
-            appSharePref.getLastKeySyncShare(),
             shareRef,
-            ::onShareAdded,
-            appSharePref::setLastKeySyncShare
+            ::onShareAdded
         )
         syncDataInRef(
-            appSharePref.getLastKeySyncUser(),
             userRef,
-            ::onUserAdded,
-            appSharePref::setLastKeySyncUser
+            ::onUserAdded
         )
         syncDataInRef(
-            appSharePref.getLastKeySyncComment(),
             commentRef,
-            ::onCommentAdded,
-            appSharePref::setLastKeySyncComment
+            ::onCommentAdded
         )
         syncDataInRef(
-            appSharePref.getLastKeySyncLike(),
             likeRef,
-            ::onLikeAdded,
-            appSharePref::setLastKeySyncLike
+            ::onLikeAdded
         )
         syncDataInRef(
-            appSharePref.getLastKeySyncBox(),
             boxRef,
-            ::onBoxAdded,
-            appSharePref::setLastKeySyncBox
+            ::onBoxAdded
         )
     }
 
@@ -162,29 +151,22 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun syncDataInRef(
-        startKey: String,
         ref: DatabaseReference,
-        childAddedHandler: suspend (String, Map<String, Any>) -> Unit,
-        onDone: (String) -> Unit
+        childAddedHandler: suspend (String, Map<String, Any>) -> Unit
     ) {
-        val dataSnapshot =
-            ref.startAfter(null, startKey.takeIfNotNullOrBlank()).limitToLast(100).get().await()
+        val query = ref.limitToLast(100)
+        val dataSnapshot = query.get().await()
         if (!dataSnapshot.hasChildren()) {
             return
         }
 
         val iterator = dataSnapshot.children.iterator()
-        var lastKey: String? = null
-
         while (iterator.hasNext()) {
             val data = iterator.next()
             val key = data.key ?: continue
             val value = data.value?.cast<Map<String, Any>>() ?: continue
             childAddedHandler.invoke(key, value)
-            lastKey = key
         }
-
-        lastKey?.let(onDone)
     }
 
     private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {

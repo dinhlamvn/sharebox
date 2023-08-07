@@ -51,8 +51,8 @@
     <string name="expanded_text">Thu gọn</string>
     <string name="shares_error">Không thể chia sẻ nội dung này</string>
     <string name="shares_success">Đã chia sẻ</string>
-    <string name="realtime_database_service_noti_subtext">Đồng bộ dữ liệu</string>
-    <string name="realtime_database_service_noti_content">Ứng dụng đang chạy…</string>
+    <string name="realtime_database_service_text">Chúng tôi đang lắng nghe chia sẻ từ mọi người</string>
+    <string name="realtime_database_service_noti_content">Sharebox</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>
@@ -128,7 +128,7 @@
     <string name="title_image_download_quality">Chất lượng ảnh khi lưu vào Bộ Sưu Tập</string>
     <string name="require_min_image_quality">Chất lượng ảnh phải từ %d</string>
     <string name="title_setting_sync_background">Đồng bộ dữ liệu dưới nền</string>
-    <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi 24 giờ.</string>
+    <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi 6 giờ.</string>
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
     <string name="notify_data_sync_success_text">Nhiều nội dung đã được cập nhât, hãy khám phá ngay.</string>
     <string name="notify_data_sync_success_title">Dữ liệu đã cập nhật.</string>
@@ -144,7 +144,8 @@
     <string name="error_save_audio_to_gallery">Có lỗi xảy ra khi lưu âm thanh này</string>
     <string name="bookmark">Đánh dấu</string>
     <string name="download">Tải xuống</string>
-    <string name="limit_share_image">We just allow share maximum 10 images in time</string>
+    <string name="limit_share_image">Chúng tôi chỉ cho phép chia sẻ tối đa 10 ảnh cùng lúc</string>
+    <string name="sync_data_in_background_text">Ứng dụng đang đồng bộ dữ liệu dưới nền</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

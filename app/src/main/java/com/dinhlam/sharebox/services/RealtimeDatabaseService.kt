@@ -40,8 +40,8 @@ class RealtimeDatabaseService : Service() {
         startForeground(
             SERVICE_ID,
             NotificationCompat.Builder(this, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
-                .setContentText(getString(R.string.realtime_database_service_noti_content))
-                .setSubText(getString(R.string.realtime_database_service_noti_subtext))
+                .setSubText(getString(R.string.app_name))
+                .setContentText(getString(R.string.realtime_database_service_text))
                 .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(
                     PendingIntent.getActivity(
                         this,

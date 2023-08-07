@@ -42,11 +42,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         Intent(this, RealtimeDatabaseService::class.java)
     }
 
-    private val shareResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            LiveEventUtils.eventScrollToTopCommunity.postValue(true)
+    private val shareResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                LiveEventUtils.eventScrollToTopCommunity.postValue(true)
+            }
         }
-    }
 
     private val pickImagesResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

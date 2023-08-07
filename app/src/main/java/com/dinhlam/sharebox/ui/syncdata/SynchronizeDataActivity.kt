@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
+import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.WorkerUtils
@@ -29,12 +30,17 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     @Inject
     lateinit var router: Router
 
+    @Inject
+    lateinit var appSettingHelper: AppSettingHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         activityScope.launch(Dispatchers.IO) {
             try {
                 if (appSharePref.isFirstInstall()) {
+                    appSettingHelper.setSyncDataInBackground(true)
+                    WorkerUtils.enqueueJobSyncData(applicationContext)
                     realtimeDatabaseRepository.sync()
                     WorkerUtils.enqueueJobSyncVideoPeriodic(applicationContext)
                     appSharePref.offFirstInstall()

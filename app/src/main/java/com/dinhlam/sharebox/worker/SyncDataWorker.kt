@@ -13,14 +13,17 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.router.Router
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.delay
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted params: WorkerParameters,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val router: Router,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -35,7 +38,15 @@ class SyncDataWorker @AssistedInject constructor(
         Logger.debug("$this has been started")
         setForeground(getForegroundInfo())
         return try {
-            realtimeDatabaseRepository.sync()
+            realtimeDatabaseRepository.consume()
+
+            var time = 0
+
+            while (time < 10 * 600) {
+                time += 10
+                delay(10_000)
+            }
+
             notifyDataSyncSuccess()
             Result.success()
         } catch (e: Exception) {
@@ -50,9 +61,17 @@ class SyncDataWorker @AssistedInject constructor(
         return ForegroundInfo(
             SERVICE_ID,
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
-                .setContentText(appContext.getString(R.string.realtime_database_service_noti_content))
-                .setContentTitle(appContext.getString(R.string.realtime_database_service_noti_subtext))
-                .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setProgress(100, 0, true)
+                .setContentText(appContext.getString(R.string.sync_data_in_background_text))
+                .setSubText(appContext.getString(R.string.app_name))
+                .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false)
+                .setContentIntent(
+                    PendingIntent.getActivity(
+                        appContext,
+                        1,
+                        router.settingIntent(),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
                 .build()
         )
     }

@@ -20,6 +20,9 @@ object WorkerUtils {
     private const val TAG_WORKER_SYNC_DATA = "sharebox-worker-sync-data"
     private const val TAG_WORKER_SYNC_VIDEO = "sharebox-worker-sync-video"
 
+    private fun getWorkerSyncDataUUID(): UUID =
+        UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
+
     fun enqueueSyncUserData(context: Context) {
         val syncUserDataWorkerRequest =
             OneTimeWorkRequestBuilder<SyncUserDataWorker>().setConstraints(
@@ -29,25 +32,18 @@ object WorkerUtils {
     }
 
     fun enqueueJobSyncData(context: Context) {
-        val syncDataWorkerRequest = PeriodicWorkRequestBuilder<SyncDataWorker>(
-            24, TimeUnit.HOURS
-        ).addTag(TAG_WORKER_SYNC_DATA).setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
-        ).build()
-        WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
-    }
-
-    fun enqueueJobSyncDataOneTime(context: Context) {
-        val syncDataWorkerRequest = OneTimeWorkRequestBuilder<SyncDataWorker>().setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
-        ).build()
+        val syncDataWorkerRequest =
+            PeriodicWorkRequestBuilder<SyncDataWorker>(6, TimeUnit.HOURS).setId(
+                getWorkerSyncDataUUID()
+            ).setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).build()
         WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
     }
 
     fun cancelJobSyncData(context: Context) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(TAG_WORKER_SYNC_DATA)
+        WorkManager.getInstance(context).cancelWorkById(getWorkerSyncDataUUID())
     }
 
     fun enqueueJobDownloadTiktokVideo(context: Context, entityId: Int, videoUrl: String) {
