@@ -8,7 +8,10 @@ import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.WorkerUtils
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -133,15 +136,21 @@ class VideoHelper @Inject constructor(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun downloadVideo(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
         if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-            Toast.makeText(context, R.string.network_wifi_only_warning, Toast.LENGTH_SHORT).show()
+            GlobalScope.launch(Dispatchers.Main) {
+                Toast.makeText(context, R.string.network_wifi_only_warning, Toast.LENGTH_SHORT)
+                    .show()
+            }
             return
         }
         when (videoSource) {
             VideoSource.Tiktok -> WorkerUtils.enqueueJobDownloadTiktokVideo(context, id, videoUri)
             VideoSource.Youtube -> WorkerUtils.enqueueJobDownloadYoutubeMp3(context, id, videoUri)
-            else -> Toast.makeText(context, R.string.can_not_save_video, Toast.LENGTH_SHORT).show()
+            else -> GlobalScope.launch(Dispatchers.Main) {
+                Toast.makeText(context, R.string.can_not_save_video, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
