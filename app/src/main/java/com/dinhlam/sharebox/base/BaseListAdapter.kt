@@ -16,13 +16,14 @@ import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 
 class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     private val modelViewsBuilder: ModelListBuilder<T>.() -> Unit
 ) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
 
-    class ModelListBuilder<T> : ArrayList<T>()
+    class ModelListBuilder<T> : CopyOnWriteArrayList<T>()
 
     private val buildModelViewsScope =
         CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
