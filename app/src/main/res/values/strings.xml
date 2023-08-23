@@ -138,7 +138,7 @@
     <string name="can_not_save_video">Can\'t save this video</string>
     <string name="download_preparing">Preparing…</string>
     <string name="cancel">Cancel</string>
-    <string name="sync_video_content_title">Syncing videos...</string>
+    <string name="sync_video_content_title">Syncing videos…</string>
     <string name="sync_video_content_text">Syncing video shares</string>
     <string name="share_video">" share a video"</string>
     <string name="success_save_audio_to_gallery">Save audio to gallery success</string>
@@ -147,6 +147,7 @@
     <string name="download">Download</string>
     <string name="limit_share_image">We just allow share maximum 10 images in time</string>
     <string name="sync_data_in_background_text">App is syncing data in background</string>
+    <string name="sync_data_share_to_cloud">Syncing share to cloud…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

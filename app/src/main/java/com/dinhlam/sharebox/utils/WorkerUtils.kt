@@ -7,7 +7,9 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.worker.SyncDataWorker
+import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
 import com.dinhlam.sharebox.worker.SyncVideoWorker
 import com.dinhlam.sharebox.worker.TiktokVideoDownloadWorker
@@ -76,5 +78,15 @@ object WorkerUtils {
                 .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
         ).build()
         WorkManager.getInstance(context).enqueue(syncVideoWorkerRequest)
+    }
+
+    fun enqueueSyncShareToCloud(context: Context, shareId: String) {
+        val syncShareToCloudRequest =
+            OneTimeWorkRequestBuilder<SyncShareToCloudWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            ).setInputData(
+                Data.Builder().putString(AppExtras.EXTRA_SHARE_ID, shareId).build()
+            ).setId(UUID.randomUUID()).build()
+        WorkManager.getInstance(context).enqueue(syncShareToCloudRequest)
     }
 }

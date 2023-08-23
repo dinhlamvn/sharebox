@@ -5,12 +5,9 @@ import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.local.entity.Share
-import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.cast
@@ -20,8 +17,11 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.utils.FileUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,7 +35,6 @@ class ShareReceiveViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
-    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
@@ -110,7 +109,7 @@ class ShareReceiveViewModel @Inject constructor(
                 if (insertedShare.isVideoShare) {
                     handleShareVideo(insertedShare)
                 }
-                realtimeDatabaseRepository.push(insertedShare)
+                WorkerUtils.enqueueSyncShareToCloud(context, insertedShare.shareId)
                 bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
                         0, insertedShare.shareId, pickedBookmarkCollectionId

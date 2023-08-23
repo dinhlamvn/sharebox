@@ -145,6 +145,7 @@
     <string name="download">Tải xuống</string>
     <string name="limit_share_image">Chúng tôi chỉ cho phép chia sẻ tối đa 10 ảnh cùng lúc</string>
     <string name="sync_data_in_background_text">Ứng dụng đang đồng bộ dữ liệu dưới nền</string>
+    <string name="sync_data_share_to_cloud">Đang đồng bộ chia sẻ lên đám mây…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
