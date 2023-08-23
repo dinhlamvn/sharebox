@@ -5,6 +5,7 @@ import android.net.Uri
 import android.widget.Toast
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.data.repository.VideoMixerRepository
+import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.WorkerUtils
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,8 @@ import javax.inject.Singleton
 class VideoHelper @Inject constructor(
     private val okHttpClient: OkHttpClient,
     private val videoMixerRepository: VideoMixerRepository,
+    private val networkHelper: NetworkHelper,
+    private val appSettingHelper: AppSettingHelper,
 ) {
     fun getVideoSource(url: String): VideoSource? {
         return when {
@@ -131,6 +134,10 @@ class VideoHelper @Inject constructor(
     }
 
     fun downloadVideo(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
+        if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
+            Toast.makeText(context, R.string.network_wifi_only_warning, Toast.LENGTH_SHORT).show()
+            return
+        }
         when (videoSource) {
             VideoSource.Tiktok -> WorkerUtils.enqueueJobDownloadTiktokVideo(context, id, videoUri)
             VideoSource.Youtube -> WorkerUtils.enqueueJobDownloadYoutubeMp3(context, id, videoUri)

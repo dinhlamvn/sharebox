@@ -77,7 +77,7 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_auto">Automatic</string>
-    <string name="title_network_condition_video">Network condition for sync video</string>
+    <string name="title_network_condition_video">Network condition for download video</string>
     <string name="network_condition_wifi">Wifi only</string>
     <string name="network_condition_wifi_and_cellular">Both Wifi and cellular data</string>
     <string name="sign_out">Sign out</string>
@@ -148,6 +148,7 @@
     <string name="limit_share_image">We just allow share maximum 10 images in time</string>
     <string name="sync_data_in_background_text">App is syncing data in background</string>
     <string name="sync_data_share_to_cloud">Syncing share to cloud…</string>
+    <string name="network_wifi_only_warning">Wifi isn\'t connected. Try download later or change setting to using cellular data.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
