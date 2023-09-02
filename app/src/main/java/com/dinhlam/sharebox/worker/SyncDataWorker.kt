@@ -44,7 +44,7 @@ class SyncDataWorker @AssistedInject constructor(
 
             while (time < 10 * 600) {
                 time += 10
-                delay(10_000)
+                delay(1_000)
             }
 
             notifyDataSyncSuccess()
