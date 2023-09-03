@@ -147,6 +147,9 @@
     <string name="sync_data_in_background_text">Ứng dụng đang đồng bộ dữ liệu dưới nền</string>
     <string name="sync_data_share_to_cloud">Đang đồng bộ chia sẻ lên đám mây…</string>
     <string name="network_wifi_only_warning">Mạng Wifi không được kết nối. Thử tải lại sau hoặc thay đổi cài đặt sang dùng dữ liệu di động.</string>
+    <string name="alert_notice">Thông báo</string>
+    <string name="alert_request_post_notification_permission_message">Ứng dụng cần quyền POST NOFICATION để hiện thị thông báo trong khi thực hiện một số tác vụ: đồng bộ dữ liệu, tải nội dung trực tuyến,…</string>
+    <string name="alert_no_thanks">Không, cảm ơn</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
