@@ -150,7 +150,7 @@
     <string name="sync_data_share_to_cloud">Syncing share to cloud…</string>
     <string name="network_wifi_only_warning">Wifi isn\'t connected. Try download later or change setting to using cellular data.</string>
     <string name="alert_notice">Notice</string>
-    <string name="alert_request_post_notification_permission_message">App needs POST NOFICATION permission to display notifcations until do some jobs: sync data, download network contents,…</string>
+    <string name="alert_request_post_notification_permission_message">App needs POST NOTIFICATION permission to display notifications until do some jobs: sync data, download network contents,…</string>
     <string name="alert_no_thanks">No, thanks</string>
 
     <string-array name="bookmark_collection_option_menu_items">
