@@ -1,6 +1,13 @@
 package com.dinhlam.sharebox.ui.syncdata
 
+import android.annotation.TargetApi
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
@@ -20,6 +27,15 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     @Inject
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                goHome()
+            } else {
+                showAlertDialog()
+            }
+        }
+
     override fun onCreateViewBinding(): ActivitySynchronizeDataBinding {
         return ActivitySynchronizeDataBinding.inflate(layoutInflater)
     }
@@ -36,6 +52,24 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                goHome()
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                showAlertDialog()
+            } else {
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            goHome()
+        }
+    }
+
+    private fun goHome() {
         activityScope.launch(Dispatchers.IO) {
             try {
                 if (appSharePref.isFirstInstall()) {
@@ -53,5 +87,21 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                 startActivity(router.home(true))
             }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    private fun showAlertDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.alert_notice)
+            .setMessage(R.string.alert_request_post_notification_permission_message)
+            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+            .setNegativeButton(R.string.alert_no_thanks) { _, _ ->
+                goHome()
+            }
+            .create()
+            .show()
+
     }
 }
