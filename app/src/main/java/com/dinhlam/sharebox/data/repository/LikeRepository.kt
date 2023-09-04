@@ -16,14 +16,26 @@ class LikeRepository @Inject constructor(
         shareId: String,
         userId: String,
         likeId: String = LikeUtils.createLikeId(),
-        likeDate: Long = nowUTCTimeInMillis()
+        likeDate: Long = nowUTCTimeInMillis(),
+        synced: Boolean = false,
     ): Like? {
-        val like = Like(likeId = likeId, shareId = shareId, userId = userId, likeDate = likeDate)
+        val like = Like(
+            likeId = likeId,
+            shareId = shareId,
+            userId = userId,
+            likeDate = likeDate,
+            synced = synced
+        )
         return likeDao.runCatching {
             likeDao.insert(like)
             like
         }.getOrNull()
     }
+
+    suspend fun update(like: Like): Boolean = likeDao.runCatching {
+        update(like)
+        true
+    }.getOrDefault(false)
 
     suspend fun count(shareId: String) = likeDao.runCatching {
         countByShare(shareId)

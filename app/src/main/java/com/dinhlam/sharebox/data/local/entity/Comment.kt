@@ -19,5 +19,6 @@ data class Comment(
     @ColumnInfo(name = "user_id") val shareUserId: String,
     @ColumnInfo(name = "content") val content: String?,
     @ColumnInfo(name = "comment_date") val commentDate: Long,
+    @ColumnInfo(name = "synced", defaultValue = "0") val synced: Boolean,
     @ColumnInfo(name = "created_at") val createdAt: Long = nowUTCTimeInMillis()
 )

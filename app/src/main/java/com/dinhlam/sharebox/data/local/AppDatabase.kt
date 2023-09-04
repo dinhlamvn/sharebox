@@ -27,10 +27,10 @@ import com.dinhlam.sharebox.data.local.entity.VideoMixer
 
 @Database(
     entities = [Share::class, User::class, Like::class, Comment::class, BookmarkCollection::class, Bookmark::class, VideoMixer::class, Box::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class)
+        AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class),
     ]
 )
 @TypeConverters(ShareDataConverter::class, VideoSourceConverter::class)

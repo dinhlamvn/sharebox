@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.data.local.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.dinhlam.sharebox.data.local.entity.Like
 
 @Dao
@@ -10,6 +11,9 @@ interface LikeDao {
 
     @Insert
     suspend fun insert(vararg like: Like)
+
+    @Update
+    suspend fun update(like: Like)
 
     @Query("SELECT COUNT(*) FROM `like` WHERE share_id = :shareId")
     suspend fun countByShare(shareId: String): Int

@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.data.local.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.dinhlam.sharebox.data.local.entity.Comment
 
 @Dao
@@ -10,6 +11,9 @@ interface CommentDao {
 
     @Insert
     suspend fun insert(vararg comments: Comment)
+
+    @Update
+    suspend fun update(comment: Comment)
 
     @Query("SELECT * FROM comment WHERE share_id = :shareId ORDER BY id DESC")
     suspend fun find(shareId: String): List<Comment>

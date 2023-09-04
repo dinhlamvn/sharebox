@@ -23,6 +23,7 @@ data class Box(
     @ColumnInfo(name = "created_date") val createdDate: Long,
     @ColumnInfo(name = "passcode") val passcode: String?,
     @ColumnInfo(name = "last_seen") val lastSeen: Long,
+    @ColumnInfo(name = "synced", defaultValue = "0") val synced: Boolean,
     @ColumnInfo(name = "created_at") val createdAt: Long = nowUTCTimeInMillis(),
     @ColumnInfo(name = "updated_at") val updatedAt: Long = nowUTCTimeInMillis()
 )

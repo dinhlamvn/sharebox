@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.data.repository
 
-import android.content.Context
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Like
@@ -9,7 +8,6 @@ import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
-import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareType
@@ -18,7 +16,6 @@ import com.dinhlam.sharebox.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeUserObj
-import com.dinhlam.sharebox.pref.AppSharePref
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,7 +23,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -41,7 +37,6 @@ import javax.inject.Singleton
 
 @Singleton
 class RealtimeDatabaseRepository @Inject constructor(
-    @ApplicationContext private val appContext: Context,
     database: FirebaseDatabase,
     private val shareRepository: ShareRepository,
     private val userRepository: UserRepository,
@@ -50,8 +45,6 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val gson: Gson,
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
-    private val appSharePref: AppSharePref,
-    private val videoHelper: VideoHelper,
 ) {
 
     private val realtimeDatabaseScope = CoroutineScope(
@@ -82,6 +75,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     suspend fun push(share: Share) {
         try {
             shareRef.child(share.shareId).setValue(RealtimeShareObj.from(gson, share)).await()
+            shareRepository.update(share.copy(synced = true))
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -90,6 +84,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     suspend fun push(user: User) {
         try {
             userRef.child(user.userId).setValue(RealtimeUserObj.from(user)).await()
+            userRepository.update(user.copy(synced = true))
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -98,6 +93,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     suspend fun push(comment: Comment) {
         try {
             commentRef.child(comment.commentId).setValue(RealtimeCommentObj.from(comment)).await()
+            commentRepository.update(comment.copy(synced = true))
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -106,6 +102,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     suspend fun push(like: Like) {
         try {
             likeRef.child(like.likeId).setValue(RealtimeLikeObj.from(like)).await()
+            likeRepository.update(like.copy(synced = true))
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -114,6 +111,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     suspend fun push(box: Box) {
         try {
             boxRef.child(box.boxId).setValue(RealtimeBoxObj.from(box)).await()
+            boxRepository.update(box.copy(synced = true))
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -121,24 +119,19 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     suspend fun sync() {
         syncDataInRef(
-            shareRef,
-            ::onShareAdded
+            shareRef, ::onShareAdded
         )
         syncDataInRef(
-            userRef,
-            ::onUserAdded
+            userRef, ::onUserAdded
         )
         syncDataInRef(
-            commentRef,
-            ::onCommentAdded
+            commentRef, ::onCommentAdded
         )
         syncDataInRef(
-            likeRef,
-            ::onLikeAdded
+            likeRef, ::onLikeAdded
         )
         syncDataInRef(
-            boxRef,
-            ::onBoxAdded
+            boxRef, ::onBoxAdded
         )
     }
 
@@ -151,8 +144,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun syncDataInRef(
-        ref: DatabaseReference,
-        childAddedHandler: suspend (String, Map<String, Any>) -> Unit
+        ref: DatabaseReference, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
     ) {
         val query = ref.limitToLast(100)
         val dataSnapshot = query.get().await()
@@ -211,7 +203,7 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private suspend fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {
         val box = boxRepository.findOneRaw(boxId) ?: RealtimeBoxObj.from(jsonMap).run {
-            boxRepository.insert(id, name, desc, createdBy, createdDate, passcode)
+            boxRepository.insert(id, name, desc, createdBy, createdDate, passcode, synced = true)
         }
 
         if (box == null) {
@@ -259,7 +251,8 @@ class RealtimeDatabaseRepository @Inject constructor(
                 realtimeShareObj.shareBoxId,
                 realtimeShareObj.shareUserId,
                 realtimeShareObj.shareDate,
-                realtimeShareObj.isVideoShare
+                synced = true,
+                isVideoShare = realtimeShareObj.isVideoShare
             )
         }
     }
@@ -270,7 +263,8 @@ class RealtimeDatabaseRepository @Inject constructor(
             userId = realtimeUserObj.userId,
             name = realtimeUserObj.name,
             avatar = realtimeUserObj.avatar,
-            joinDate = realtimeUserObj.joinDate
+            joinDate = realtimeUserObj.joinDate,
+            synced = true
         )
 
         val newUser = user.copy(
@@ -278,7 +272,8 @@ class RealtimeDatabaseRepository @Inject constructor(
             avatar = realtimeUserObj.avatar,
             level = realtimeUserObj.level,
             drama = realtimeUserObj.drama,
-            joinDate = realtimeUserObj.joinDate
+            joinDate = realtimeUserObj.joinDate,
+            synced = true
         )
 
         if (!userRepository.upsert(newUser)) {
@@ -294,7 +289,8 @@ class RealtimeDatabaseRepository @Inject constructor(
                 realtimeCommentObj.shareId,
                 realtimeCommentObj.userId,
                 realtimeCommentObj.content,
-                realtimeCommentObj.commentDate
+                realtimeCommentObj.commentDate,
+                true
             )
 
             if (commentEntity == null) {
@@ -310,7 +306,8 @@ class RealtimeDatabaseRepository @Inject constructor(
                 realtimeLikeObj.shareId,
                 realtimeLikeObj.userId,
                 realtimeLikeObj.likeId,
-                realtimeLikeObj.likeDate
+                realtimeLikeObj.likeDate,
+                true
             )
 
             if (like == null) {

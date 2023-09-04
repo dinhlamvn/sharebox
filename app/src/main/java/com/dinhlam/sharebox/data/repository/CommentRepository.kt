@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.mapper.CommentToCommentDetailMapper
-import com.dinhlam.sharebox.model.CommentDetail
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.model.CommentDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,18 +19,25 @@ class CommentRepository @Inject constructor(
         shareId: String,
         userId: String,
         content: String?,
-        commentDate: Long = nowUTCTimeInMillis()
+        commentDate: Long = nowUTCTimeInMillis(),
+        synced: Boolean = false,
     ): Comment? = commentDao.runCatching {
         val comment = Comment(
             commentId = commentId,
             shareId = shareId,
             shareUserId = userId,
             content = content,
-            commentDate = commentDate
+            commentDate = commentDate,
+            synced = synced
         )
         insert(comment)
         comment
     }.getOrNull()
+
+    suspend fun update(comment: Comment): Boolean = commentDao.runCatching {
+        update(comment)
+        true
+    }.getOrDefault(false)
 
     suspend fun find(shareId: String): List<CommentDetail> {
         return commentDao.runCatching {

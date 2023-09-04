@@ -2,8 +2,8 @@ package com.dinhlam.sharebox.data.repository
 
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.entity.Box
-import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.model.BoxDetail
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
@@ -23,7 +23,8 @@ class BoxRepository @Inject constructor(
         createdBy: String,
         createdDate: Long = nowUTCTimeInMillis(),
         passcode: String? = null,
-        lastSeen: Long = nowUTCTimeInMillis()
+        lastSeen: Long = nowUTCTimeInMillis(),
+        synced: Boolean = false,
     ): Box? {
         val box = Box(
             boxId = boxId,
@@ -32,7 +33,8 @@ class BoxRepository @Inject constructor(
             createdBy = createdBy,
             createdDate = createdDate,
             passcode = passcode,
-            lastSeen = lastSeen
+            lastSeen = lastSeen,
+            synced = synced
         )
 
         return boxDao.runCatching {
@@ -40,6 +42,11 @@ class BoxRepository @Inject constructor(
             box
         }.getOrNull()
     }
+
+    suspend fun update(box: Box): Boolean = boxDao.runCatching {
+        update(box)
+        true
+    }.getOrDefault(false)
 
     suspend fun updateLastSeen(boxId: String, lastSeen: Long) {
         val box = boxDao.find(boxId) ?: return
@@ -55,9 +62,10 @@ class BoxRepository @Inject constructor(
         find(limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findByUser(userId: String, limit: Int, offset: Int): List<BoxDetail> = boxDao.runCatching {
-        find(userId, limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun findByUser(userId: String, limit: Int, offset: Int): List<BoxDetail> =
+        boxDao.runCatching {
+            find(userId, limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+        }.getOrDefault(emptyList())
 
     suspend fun count(): Int = boxDao.runCatching {
         count()

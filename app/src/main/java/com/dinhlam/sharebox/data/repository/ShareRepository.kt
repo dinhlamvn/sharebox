@@ -32,6 +32,7 @@ class ShareRepository @Inject constructor(
         shareBoxId: String?,
         shareUserId: String,
         shareDate: Long = nowUTCTimeInMillis(),
+        synced: Boolean = false,
         isVideoShare: Boolean = false,
     ): Share? = shareDao.runCatching {
         val share = Share(
@@ -41,6 +42,7 @@ class ShareRepository @Inject constructor(
             shareNote = shareNote,
             shareBoxId = shareBoxId,
             shareDate = shareDate,
+            synced = synced,
             isVideoShare = isVideoShare
         )
         insertAll(share)
@@ -89,10 +91,11 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findWhereInBox(userId: String, shareBoxId: String, limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findWhereInBox(userId, shareBoxId, limit, offset)
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun findWhereInBox(userId: String, shareBoxId: String, limit: Int, offset: Int) =
+        shareDao.runCatching {
+            val shares = findWhereInBox(userId, shareBoxId, limit, offset)
+            shares.asFlow().mapNotNull(::buildShareDetail).toList()
+        }.getOrDefault(emptyList())
 
     suspend fun findForSyncVideos(limit: Int) = shareDao.runCatching {
         findForSyncVideos(limit)

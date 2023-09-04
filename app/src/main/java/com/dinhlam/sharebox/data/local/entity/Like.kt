@@ -17,5 +17,6 @@ data class Like(
     @ColumnInfo("share_id") val shareId: String,
     @ColumnInfo("user_id") val userId: String,
     @ColumnInfo("like_date") val likeDate: Long,
-    @ColumnInfo(name = "created_at") val createdAt: Long = nowUTCTimeInMillis(),
+    @ColumnInfo(name = "synced", defaultValue = "0") val synced: Boolean,
+    @ColumnInfo("created_at") val createdAt: Long = nowUTCTimeInMillis(),
 )

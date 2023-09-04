@@ -3,8 +3,8 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.mapper.UserToUserDetailMapper
-import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.model.UserDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,13 +14,19 @@ class UserRepository @Inject constructor(
     private val userToUserDetailMapper: UserToUserDetailMapper
 ) {
 
-    suspend fun insert(userId: String, displayName: String, avatarUrl: String): User? =
+    suspend fun insert(
+        userId: String,
+        displayName: String,
+        avatarUrl: String,
+        synced: Boolean = false
+    ): User? =
         userDao.runCatching {
             val user = User(
                 userId = userId,
                 name = displayName,
                 avatar = avatarUrl,
-                joinDate = nowUTCTimeInMillis()
+                joinDate = nowUTCTimeInMillis(),
+                synced = synced
             )
             userDao.insert(user)
             user
