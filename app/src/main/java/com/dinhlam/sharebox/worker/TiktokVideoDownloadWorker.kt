@@ -41,6 +41,8 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
     private val localStorageHelper: LocalStorageHelper,
 ) : CoroutineWorker(appContext, workerParams) {
 
+    private var toast: Toast? = null
+
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return createForegroundInfo(0, true, R.string.download_preparing)
     }
@@ -82,49 +84,120 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
                 return@withContext Result.success()
             }
 
-            val downloadUrl = parseHtmlSSSTik(html) ?: return@withContext Result.success()
+            val galleryUrls = parseHtmlSSSTikGallery(html)
 
-            val outputDir = File(appContext.filesDir, "tiktok_videos")
-            if (!outputDir.exists() && !outputDir.mkdir()) {
-                return@withContext Result.success()
-            }
-            val outputFile = File(outputDir, "$videoId.mp4")
-            if (outputFile.exists()) {
-                outputFile.delete()
+            if (galleryUrls.isNotEmpty()) {
+                return@withContext downloadGallery(videoId, galleryUrls)
             }
 
-            if (!outputFile.createNewFile()) {
-                return@withContext Result.success()
-            }
-
-            sssTikServices.downloadFile(downloadUrl).saveFile(outputFile) { downloadState ->
-                when (downloadState) {
-                    is DownloadState.Downloading -> {
-                        setForeground(createForegroundInfo(downloadState.progress, false))
-                    }
-
-                    is DownloadState.Finished -> {
-                        val uri = FileUtils.getUriFromFile(appContext, outputFile)
-                        localStorageHelper.saveVideoToGallery(uri)
-                        localStorageHelper.cleanUp(uri)
-                        showToast(R.string.success_save_video_to_gallery)
-                    }
-
-                    is DownloadState.Failed -> {
-                        showToast(R.string.error_save_video_to_gallery)
-                    }
-                }
-            }
-
-            Result.success()
+            downloadVideo(videoId, html)
         } catch (e: Exception) {
             Result.failure()
         }
     }
 
+    private suspend fun downloadGallery(videoId: String, urls: List<String>): Result =
+        withContext(Dispatchers.IO) {
+            val outputDir =
+                FileUtils.createShareImagesDir(appContext) ?: return@withContext Result.success()
+            if (!outputDir.exists() && !outputDir.mkdir()) {
+                return@withContext Result.success()
+            }
+
+            val size = urls.size.toFloat()
+
+            urls.forEachIndexed { index, url ->
+                val outputFile = File(outputDir, "${videoId}_image_$index.jpg")
+                if (outputFile.exists()) {
+                    outputFile.delete()
+                }
+
+                if (!outputFile.createNewFile()) {
+                    return@forEachIndexed
+                }
+
+                setForeground(
+                    createForegroundInfo(
+                        index.plus(1).div(size).times(100).toInt(),
+                        false,
+                        R.string.downloading_image
+                    )
+                )
+
+                try {
+                    sssTikServices.downloadFile(url).use { body ->
+                        body.byteStream().use { bs ->
+                            outputFile.outputStream().use { os ->
+                                bs.copyTo(os)
+                                val uri = FileUtils.getUriFromFile(appContext, outputFile)
+                                localStorageHelper.saveImageToGallery(uri)
+                                localStorageHelper.cleanUp(uri)
+                                showToast(R.string.success_save_image_to_gallery)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    showToast(R.string.error_save_image_to_gallery)
+                }
+            }
+
+            return@withContext Result.success()
+        }
+
+
+    private suspend fun downloadVideo(videoId: String, html: String): Result {
+        val downloadUrl = parseHtmlSSSTik(html) ?: return Result.success()
+
+        val outputDir = File(appContext.filesDir, "tiktok_videos")
+        if (!outputDir.exists() && !outputDir.mkdir()) {
+            return Result.success()
+        }
+        val outputFile = File(outputDir, "$videoId.mp4")
+        if (outputFile.exists()) {
+            outputFile.delete()
+        }
+
+        if (!withContext(Dispatchers.IO) {
+                outputFile.createNewFile()
+            }) {
+            return Result.success()
+        }
+
+        sssTikServices.downloadFile(downloadUrl).saveFile(outputFile) { downloadState ->
+            when (downloadState) {
+                is DownloadState.Downloading -> {
+                    setForeground(createForegroundInfo(downloadState.progress, false))
+                }
+
+                is DownloadState.Finished -> {
+                    val uri = FileUtils.getUriFromFile(appContext, outputFile)
+                    localStorageHelper.saveVideoToGallery(uri)
+                    localStorageHelper.cleanUp(uri)
+                    showToast(R.string.success_save_video_to_gallery)
+                }
+
+                is DownloadState.Failed -> {
+                    showToast(R.string.error_save_video_to_gallery)
+                }
+            }
+        }
+
+        return Result.success()
+    }
+
     private suspend fun showToast(@StringRes strRes: Int) {
         withContext(Dispatchers.Main) {
-            Toast.makeText(appContext, strRes, Toast.LENGTH_SHORT).show()
+            toast?.cancel()
+            toast = Toast.makeText(appContext, strRes, Toast.LENGTH_SHORT)
+            toast?.show()
+        }
+    }
+
+    private fun parseHtmlSSSTikGallery(htmlString: String): List<String> {
+        val jsoup = Jsoup.parse(htmlString)
+        val slideTags = jsoup.getElementsByClass("splide__slide")
+        return slideTags.mapNotNull { element ->
+            element.getElementsByTag("a").firstOrNull()?.attr("href")
         }
     }
 
@@ -148,8 +221,7 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
         return ForegroundInfo(
             workerParams.inputData.getInt("id", Random.nextInt()),
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                .setContentText(appContext.getString(subTextRes))
-                .setAutoCancel(false)
+                .setContentText(appContext.getString(subTextRes)).setAutoCancel(false)
                 .setContentTitle(appContext.getString(R.string.downloading))
                 .setSmallIcon(R.drawable.ic_download).setProgress(100, progress, indeterminate)
                 .addAction(

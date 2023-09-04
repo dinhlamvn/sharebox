@@ -156,6 +156,8 @@
     <string name="alert_skip_sign_in_message">Just sign in with Google Account, you can post, comment,…easily and quickly. Are you sure to skip that?</string>
     <string name="sync_data_done_first_install">Sync data successfully, please choose an action to move next.</string>
     <string name="alert_skip">Skip</string>
+    <string name="error_save_image_to_gallery">Error save image to gallery</string>
+    <string name="downloading_image">Waiting for download image</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
