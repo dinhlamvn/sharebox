@@ -25,6 +25,7 @@ import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -41,6 +42,7 @@ import com.dinhlam.sharebox.modelview.grid.GridUrlModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -236,6 +238,8 @@ class CommunityFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewBinding.textTitle.setDrawableCompat(Icons.boxIcon(requireContext()))
+
         LiveEventUtils.eventScrollToTopCommunity.observe(viewLifecycleOwner) { shouldScroll ->
             if (shouldScroll) {
                 viewBinding.recyclerView.smoothScrollToPosition(0)
@@ -247,7 +251,6 @@ class CommunityFragment :
         viewBinding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_create_box -> createNewBox()
-                R.id.menu_guideline -> showGuideline()
             }
             true
         }

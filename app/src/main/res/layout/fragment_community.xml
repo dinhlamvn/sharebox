@@ -15,12 +15,12 @@
         app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_box"
             style="@style/AppMaterialCardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             app:cardCornerRadius="16dp"
-            android:id="@+id/card_box"
             app:cardElevation="6dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -33,10 +33,13 @@
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:drawablePadding="8dp"
+                android:ellipsize="marquee"
                 android:focusable="true"
                 android:gravity="center_vertical"
+                android:maxWidth="150dp"
                 android:padding="6dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
         </com.google.android.material.card.MaterialCardView>
 

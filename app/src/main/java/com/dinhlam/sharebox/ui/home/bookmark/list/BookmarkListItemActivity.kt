@@ -11,8 +11,6 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.dp
@@ -22,6 +20,7 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
@@ -163,22 +162,8 @@ class BookmarkListItemActivity :
         passcodeConfirmResultLauncher.launch(intent)
     }
 
-    private fun onOpen(shareId: String) = getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> {
-                shareHelper.openUrl(
-                    this, shareData.url, appSharePref.isCustomTabEnabled()
-                )
-            }
-
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(this, shareData.text)
-            }
-
-            else -> {}
-        }
+    private fun onOpen(shareId: String) {
+        startActivity(router.shareDetail(this, shareId))
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

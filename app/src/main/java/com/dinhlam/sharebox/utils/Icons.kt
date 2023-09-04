@@ -257,4 +257,12 @@ object Icons {
     fun sendIcon(context: Context): Drawable {
         return createIcon(context, GoogleMaterial.Icon.gmd_send)
     }
+
+    fun dramaIcon(context: Context): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_smile)
+    }
+
+    fun levelIcon(context: Context): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_clock)
+    }
 }

@@ -24,7 +24,6 @@ import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.modelview.BoxModelView
 import com.dinhlam.sharebox.modelview.ButtonModelView
@@ -134,6 +133,8 @@ class ProfileFragment :
                     nonNullUser.drama,
                     nonNullUser.level,
                     nonNullUser.joinDate,
+                    Icons.dramaIcon(requireContext()),
+                    Icons.levelIcon(requireContext()),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
                         openSettingPage()
                     })
@@ -144,15 +145,13 @@ class ProfileFragment :
             )
 
             if (state.boxes.isNotEmpty()) {
-                add(
-                    TextModelView(
-                        "box_title",
-                        "Your boxes",
-                        height = 50.dp(),
-                        gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                        textAppearance = R.style.TextAppearance_MaterialComponents_Body1
-                    )
-                )
+                TextModelView(
+                    "box_title",
+                    getString(R.string.your_boxes),
+                    height = 50.dp(),
+                    gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                    textAppearance = R.style.TextAppearance_MaterialComponents_Body1
+                ).attachTo(this)
 
                 SizedBoxModelView("divider_top_carousel", height = 1.dp()).attachTo(this)
 
@@ -287,23 +286,8 @@ class ProfileFragment :
         }
     }
 
-    private fun onOpen(shareId: String) = getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> {
-                shareHelper.openUrl(
-                    requireContext(), shareData.url, appSharePref.isCustomTabEnabled()
-                )
-            }
-
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(requireActivity(), shareData.text)
-            }
-
-            else -> {}
-        }
+    private fun onOpen(shareId: String) {
+        startActivity(router.shareDetail(requireContext(), shareId))
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

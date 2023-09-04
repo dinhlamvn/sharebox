@@ -13,7 +13,7 @@ fun Long.asProfileAge(): String {
 
     return when {
         years > 0 -> "$years y"
-        months > 0 -> "$months m"
+        months > 0 -> "$months mon"
         days > 0 -> "$days d"
         else -> "Recently"
     }
@@ -37,7 +37,7 @@ fun Long.asElapsedTimeDisplay(): String {
 
     return when {
         years > 0 -> "${years}y"
-        months > 0 -> "${months}m"
+        months > 0 -> "${months}mon"
         days > 0 -> "${days}d"
         hours > 0 -> "${hours}h"
         minutes > 0 -> "${minutes}min"

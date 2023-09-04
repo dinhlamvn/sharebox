@@ -103,8 +103,7 @@
     <string name="require_input_link">Please input the link to share</string>
     <string name="require_input_text_quote">Please input the text quote to share</string>
     <string name="invalidate_link">Link should be start with http:// or https://</string>
-    <string name="create_box">Create a Box</string>
-    <string name="guideline">Guideline</string>
+    <string name="create_box">New Box</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
     <string name="title_guideline_other_app">From other apps (Example Youtube)</string>
     <string name="title_guideline_other_app_step_1">Step 1. Click on Share button from other apps</string>
@@ -152,6 +151,7 @@
     <string name="alert_notice">Notice</string>
     <string name="alert_request_post_notification_permission_message">App needs POST NOTIFICATION permission to display notifications until do some jobs: sync data, download network contents,…</string>
     <string name="alert_no_thanks">No, thanks</string>
+    <string name="your_boxes">Your Boxes</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

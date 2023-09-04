@@ -21,6 +21,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/text_point_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_point_icon"

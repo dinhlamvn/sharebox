@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
@@ -63,6 +64,7 @@ class VideoMixerFragment :
                     videoMixerDetail.videoSource,
                     videoMixerDetail.originUrl,
                     videoMixerDetail.shareDetail,
+                    actionOpen = BaseListAdapter.NoHashProp(::onOpen),
                     actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
                     actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
                     actionLike = BaseListAdapter.NoHashProp(::onLike),
@@ -85,6 +87,10 @@ class VideoMixerFragment :
                 )
             }
         }
+    }
+
+    private fun onOpen(shareId: String) {
+        startActivity(router.shareDetail(requireContext(), shareId))
     }
 
     private fun onSaveToGallery(id: Int, videoSource: VideoSource, videoUri: String) {
@@ -113,6 +119,8 @@ class VideoMixerFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewBinding.textTitle.setDrawableCompat(Icons.boxIcon(requireContext()))
 
         viewBinding.imageSync.setImageDrawable(Icons.syncIcon(requireContext()))
 

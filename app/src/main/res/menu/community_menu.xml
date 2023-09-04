@@ -4,14 +4,7 @@
 
     <item
         android:id="@+id/menu_create_box"
-        android:icon="@drawable/ic_add"
         android:title="@string/create_box"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_guideline"
-        android:icon="@drawable/ic_question_mark"
-        android:title="@string/guideline"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
 </menu>

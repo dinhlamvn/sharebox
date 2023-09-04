@@ -101,8 +101,7 @@
     <string name="require_input_link">Vui lòng nhập địa chỉ để chia sẻ</string>
     <string name="require_input_text_quote">Vui lòng nhập nội dung trích dẫn</string>
     <string name="invalidate_link">Địa chỉ phải bắt đầu là http:// hoặc https://</string>
-    <string name="create_box">Tạo mới một Box</string>
-    <string name="guideline">Hướng dẫn</string>
+    <string name="create_box">Box mới</string>
     <string name="require_input_correct_weblink">Vui lòng nhập địa chỉ hợp lệ</string>
     <string name="title_guideline_other_app">Từ ứng dụng khác (Ví dụ Youtube)</string>
     <string name="title_guideline_other_app_step_1">Bước 1. Nhấp vào nút Chia sẻ trên ứng dụng đó</string>
@@ -148,8 +147,9 @@
     <string name="sync_data_share_to_cloud">Đang đồng bộ chia sẻ lên đám mây…</string>
     <string name="network_wifi_only_warning">Mạng Wifi không được kết nối. Thử tải lại sau hoặc thay đổi cài đặt sang dùng dữ liệu di động.</string>
     <string name="alert_notice">Thông báo</string>
-    <string name="alert_request_post_notification_permission_message">Ứng dụng cần quyền POST NOFICATION để hiện thị thông báo trong khi thực hiện một số tác vụ: đồng bộ dữ liệu, tải nội dung trực tuyến,…</string>
+    <string name="alert_request_post_notification_permission_message">Ứng dụng cần quyền Gửi Thông Báo để hiện thị thông báo trong khi thực hiện một số tác vụ: đồng bộ dữ liệu, tải nội dung trực tuyến,…</string>
     <string name="alert_no_thanks">Không, cảm ơn</string>
+    <string name="your_boxes">Box của bạn</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

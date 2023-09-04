@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
@@ -38,5 +39,9 @@ class ShareBoxUserPointView @JvmOverloads constructor(
 
     fun setPointNameText(pointNameText: String) {
         binding.textPointName.text = pointNameText
+    }
+
+    fun setPointIcon(drawable: Drawable?) {
+        binding.imagePointIcon.setImageDrawable(drawable)
     }
 }

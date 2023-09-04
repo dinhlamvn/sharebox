@@ -24,7 +24,6 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
-import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class VideoModelView(
     val id: String,
@@ -32,6 +31,9 @@ data class VideoModelView(
     val videoSource: VideoSource,
     val videoUri: String,
     val shareDetail: ShareDetail,
+    val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
+        null
+    ),
     val actionViewInSource: BaseListAdapter.NoHashProp<Function2<VideoSource, ShareData, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -110,7 +112,7 @@ data class VideoModelView(
             binding.bottomAction.setLikeIcon(model.shareDetail.liked.asLikeIcon(buildContext))
 
             binding.container.setOnClickListener {
-                model.actionShareToOther.prop?.invoke(model.shareDetail.shareId)
+                model.actionOpen.prop?.invoke(model.shareDetail.shareId)
             }
 
             binding.bottomAction.setOnShareClickListener {

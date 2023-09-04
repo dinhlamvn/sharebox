@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.modelview.profile
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ data class ProfileInfoModelView(
     val drama: Int,
     val level: Int,
     val joinDate: Long,
+    val dramaIcon: Drawable,
+    val levelIcon: Drawable,
     val actionSetting: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseModelView("user_info_$id") {
 
@@ -48,6 +51,9 @@ data class ProfileInfoModelView(
             binding.pointDrama.setPointText(model.drama.asDisplayPoint())
             binding.pointLevel.setPointText(UserUtils.getLevelTitle(model.level))
             binding.pointLevel.setPointNameText(model.joinDate.asProfileAge())
+
+            binding.pointDrama.setPointIcon(model.dramaIcon)
+            binding.pointLevel.setPointIcon(model.levelIcon)
         }
 
         override fun onUnBind() {
