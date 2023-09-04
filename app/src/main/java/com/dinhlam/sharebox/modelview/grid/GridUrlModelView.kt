@@ -109,7 +109,7 @@ data class GridUrlModelView(
                 }
             }
             binding.shareLinkPreview.setLink(model.url) {
-                copy(maxLineDesc = 1, maxLineUrl = 1, maxLineTitle = 1)
+                copy(maxLineDesc = 0, maxLineUrl = 0, maxLineTitle = 1)
             }
 
             binding.textBoxName.text =

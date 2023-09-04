@@ -8,7 +8,6 @@ import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.setTextAndVisibleIfNonBlankText
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -143,8 +142,8 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
             binding.textViewUrl.text = openGraphResult.url
-            binding.textViewTitle.setTextAndVisibleIfNonBlankText(openGraphResult.title)
-            binding.textViewDescription.setTextAndVisibleIfNonBlankText(openGraphResult.description)
+            binding.textViewTitle.text = openGraphResult.title
+            binding.textViewDescription.text = openGraphResult.description
             binding.shimmerContainer.hideShimmer()
             binding.shimmerContainer.isVisible = false
         }
