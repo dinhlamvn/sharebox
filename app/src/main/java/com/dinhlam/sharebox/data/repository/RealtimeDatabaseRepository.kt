@@ -146,7 +146,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     private suspend fun syncDataInRef(
         ref: DatabaseReference, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
     ) {
-        val query = ref.limitToLast(100)
+        val query = ref.limitToLast(50)
         val dataSnapshot = query.get().await()
         if (!dataSnapshot.hasChildren()) {
             return

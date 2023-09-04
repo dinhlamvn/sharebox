@@ -44,7 +44,7 @@
     <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
     <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
-    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_confirm">Confirmation</string>
     <string name="dialog_confirm_remove_bookmark">Are you sure to remove this bookmark?</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
@@ -152,6 +152,10 @@
     <string name="alert_request_post_notification_permission_message">App needs POST NOTIFICATION permission to display notifications until do some jobs: sync data, download network contents,…</string>
     <string name="alert_no_thanks">No, thanks</string>
     <string name="your_boxes">Your Boxes</string>
+    <string name="skip_sign_in">Skip Sign In</string>
+    <string name="alert_skip_sign_in_message">Just sign in with Google Account, you can post, comment,…easily and quickly. Are you sure to skip that?</string>
+    <string name="sync_data_done_first_install">Sync data successfully, please choose an action to move next.</string>
+    <string name="alert_skip">Skip</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

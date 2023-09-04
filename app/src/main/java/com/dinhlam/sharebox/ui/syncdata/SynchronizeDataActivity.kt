@@ -1,19 +1,23 @@
 package com.dinhlam.sharebox.ui.syncdata
 
 import android.annotation.TargetApi
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
 import com.dinhlam.sharebox.helper.AppSettingHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +30,9 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
 
     @Inject
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -78,14 +85,53 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                     realtimeDatabaseRepository.sync()
                     WorkerUtils.enqueueJobSyncVideoPeriodic(applicationContext)
                     appSharePref.offFirstInstall()
-                }
-
-                withContext(Dispatchers.Main) {
-                    startActivity(router.home(true))
+                    withContext(Dispatchers.Main) {
+                        if (userHelper.isSignedIn()) {
+                            startActivity(router.home(true))
+                        } else {
+                            doAfterSynced()
+                        }
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        startActivity(router.home(true))
+                    }
                 }
             } catch (e: Exception) {
                 startActivity(router.home(true))
             }
+        }
+    }
+
+    private fun doAfterSynced() {
+        viewBinding.progressBar.isVisible = false
+        viewBinding.imageDone.setImageDrawable(Icons.doneIcon(this))
+        viewBinding.textSync.text = getString(R.string.sync_data_done_first_install)
+        viewBinding.imageDone.isVisible = true
+        viewBinding.buttonSignIn.isVisible = true
+        viewBinding.buttonSkipSignIn.isVisible = true
+
+        viewBinding.buttonSignIn.setOnClickListener {
+            startActivity(
+                router.signIn(false)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
+        }
+
+        viewBinding.buttonSkipSignIn.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_confirm)
+                .setMessage(R.string.alert_skip_sign_in_message)
+                .setPositiveButton(R.string.sign_in) { _, _ ->
+                    startActivity(
+                        router.signIn(false)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    )
+                }
+                .setNegativeButton(R.string.alert_skip) { _, _ ->
+                    startActivity(router.home(true))
+                }
+                .show()
         }
     }
 

@@ -150,6 +150,10 @@
     <string name="alert_request_post_notification_permission_message">Ứng dụng cần quyền Gửi Thông Báo để hiện thị thông báo trong khi thực hiện một số tác vụ: đồng bộ dữ liệu, tải nội dung trực tuyến,…</string>
     <string name="alert_no_thanks">Không, cảm ơn</string>
     <string name="your_boxes">Box của bạn</string>
+    <string name="skip_sign_in">Skip Sign In</string>
+    <string name="alert_skip_sign_in_message">Chỉ cần đăng nhập với Tài khoản Google, bạn có thể tạo, bình luận,… dễ dàng và nhanh? Bạn có chắc sẽ bỏ qua?</string>
+    <string name="sync_data_done_first_install">Đã đồng bộ dữ liệu xong, vui lòng chọn hành động để đi tiếp.</string>
+    <string name="alert_skip">Bỏ qua</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
