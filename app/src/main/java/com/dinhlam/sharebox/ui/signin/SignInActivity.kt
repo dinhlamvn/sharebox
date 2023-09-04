@@ -11,10 +11,12 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.databinding.ActivitySignInBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -29,7 +31,9 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -64,6 +68,9 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     @Inject
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     private val signInForResult by lazy {
         intent.getBooleanExtra(
@@ -139,33 +146,43 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     private fun renderUserInfo(user: FirebaseUser) {
         val email = user.email ?: return signOut()
-        val displayName = user.displayName ?: return signOut()
-        val photoUrl = user.photoUrl?.toString() ?: return signOut()
-        viewBinding.buttonSignIn.setDrawableCompat(start = null)
-        viewBinding.buttonSignIn.setText(R.string.complete)
+        activityScope.launch(Dispatchers.IO) {
+            val userId = UserUtils.createUserId(email)
+            val currentUser = userRepository.findOneRaw(userId)
 
-        ImageLoader.INSTANCE.load(this, photoUrl, viewBinding.imageAvatar) {
-            copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
-        }
+            withContext(Dispatchers.Main) {
+                val displayName = currentUser?.name.takeIfNotNullOrBlank() ?: user.displayName
+                ?: return@withContext signOut()
+                val photoUrl =
+                    currentUser?.avatar.takeIfNotNullOrBlank() ?: user.photoUrl?.toString()
+                    ?: return@withContext signOut()
+                viewBinding.buttonSignIn.setDrawableCompat(start = null)
+                viewBinding.buttonSignIn.setText(R.string.complete)
 
-        viewBinding.imageAppIcon.isVisible = false
-        viewBinding.imageAvatar.isVisible = true
-        viewBinding.textEditAvatar.isVisible = true
-        viewBinding.textLayoutName.isVisible = true
-        viewBinding.textTitleUserName.isVisible = true
-        viewBinding.textInputName.setText(displayName)
+                ImageLoader.INSTANCE.load(this@SignInActivity, photoUrl, viewBinding.imageAvatar) {
+                    copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
+                }
 
-        viewBinding.buttonSignIn.setOnClickListener {
-            val name = viewBinding.textInputName.getTrimmedText()
-            createUser(email, name, photoUrl)
-        }
+                viewBinding.imageAppIcon.isVisible = false
+                viewBinding.imageAvatar.isVisible = true
+                viewBinding.textEditAvatar.isVisible = true
+                viewBinding.textLayoutName.isVisible = true
+                viewBinding.textTitleUserName.isVisible = true
+                viewBinding.textInputName.setText(displayName)
 
-        viewBinding.textInputName.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val name = viewBinding.textInputName.getTrimmedText()
-                createUser(email, name, photoUrl)
+                viewBinding.buttonSignIn.setOnClickListener {
+                    val name = viewBinding.textInputName.getTrimmedText()
+                    createUser(email, name, photoUrl)
+                }
+
+                viewBinding.textInputName.setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        val name = viewBinding.textInputName.getTrimmedText()
+                        createUser(email, name, photoUrl)
+                    }
+                    true
+                }
             }
-            true
         }
     }
 
@@ -214,8 +231,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun goHome() {
         viewBinding.viewLoading.hide()
         startActivity(
-            router.home()
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            router.home().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
 
