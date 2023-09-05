@@ -85,4 +85,9 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
+#facebook sdk
+-keep class com.facebook.** {
+   *;
+}
+
 -keepattributes Signature
