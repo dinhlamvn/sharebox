@@ -1,6 +1,6 @@
 <resources>
     <string name="share_activity_title">Chia sẻ vào Box</string>
-    <string name="share_direct_download_activity_title">Tải xuống</string>
+    <string name="share_direct_download_activity_title">Tải về máy</string>
     <string name="text_input_note_hint_desc">Đây là chia sẻ của?</string>
     <string name="view_more">Thêm…</string>
     <string name="confirmation">Xác nhận</string>

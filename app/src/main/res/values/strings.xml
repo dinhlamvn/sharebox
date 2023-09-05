@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Sharebox</string>
     <string name="share_activity_title">Shares to box</string>
-    <string name="share_direct_download_activity_title">Download</string>
+    <string name="share_direct_download_activity_title">Save to device</string>
     <string name="text_input_note_hint_desc">What\'s this?</string>
     <string name="view_more">More…</string>
     <string name="confirmation">Confirmation</string>
