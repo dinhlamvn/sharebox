@@ -119,7 +119,7 @@ class VideoHelper @Inject constructor(
         ) || url.contains("reel"))) || url.contains("fb.gg/v/")
     }
 
-    private suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String {
+    suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String {
         return when (videoSource) {
             VideoSource.Tiktok -> getTiktokFullUrl(url)
             VideoSource.Facebook -> getFullFacebookUrl(url)

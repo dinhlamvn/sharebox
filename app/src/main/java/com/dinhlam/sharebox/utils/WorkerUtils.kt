@@ -8,6 +8,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.worker.DirectDownloadShareWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
@@ -88,5 +89,15 @@ object WorkerUtils {
                 Data.Builder().putString(AppExtras.EXTRA_SHARE_ID, shareId).build()
             ).setId(UUID.randomUUID()).build()
         WorkManager.getInstance(context).enqueue(syncShareToCloudRequest)
+    }
+
+    fun enqueueDownloadShare(context: Context, shareUrl: String) {
+        val downloadShareRequest =
+            OneTimeWorkRequestBuilder<DirectDownloadShareWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            ).setInputData(
+                Data.Builder().putString(AppExtras.EXTRA_URL, shareUrl).build()
+            ).setId(UUID.randomUUID()).build()
+        WorkManager.getInstance(context).enqueue(downloadShareRequest)
     }
 }

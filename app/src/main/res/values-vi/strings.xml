@@ -1,5 +1,6 @@
 <resources>
     <string name="share_activity_title">Chia sẻ vào Box</string>
+    <string name="share_direct_download_activity_title">Tải xuống</string>
     <string name="text_input_note_hint_desc">Đây là chia sẻ của?</string>
     <string name="view_more">Thêm…</string>
     <string name="confirmation">Xác nhận</string>
@@ -153,6 +154,7 @@
     <string name="distribute_images_content">Đang phân phối ảnh tới những người khác</string>
     <string name="distribute_images_title">Phân phối ảnh</string>
     <string name="complete_progress">Hoàn thành (%s)</string>
+    <string name="nothing_to_download">Nothing to download</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
