@@ -6,8 +6,9 @@
     <string name="confirmation">Confirmation</string>
 
     <!-- Facebook declare -->
-    <string name="facebook_app_id">647232403661006</string>
-    <string name="facebook_client_token">58f30ca9da7ab64f6e8b147f7fd4cf9b</string>
+    <string name="facebook_app_id" translatable="false">647232403661006</string>
+    <string name="facebook_client_token" translatable="false">58f30ca9da7ab64f6e8b147f7fd4cf9b</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb647232403661006</string>
     <!-- End of facebook -->
 
     <string name="no_result">No shares</string>

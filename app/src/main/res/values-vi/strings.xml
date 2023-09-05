@@ -3,12 +3,6 @@
     <string name="text_input_note_hint_desc">Đây là chia sẻ của?</string>
     <string name="view_more">Thêm…</string>
     <string name="confirmation">Xác nhận</string>
-
-    <!-- Facebook declare -->
-    <string name="facebook_app_id">647232403661006</string>
-    <string name="facebook_client_token">58f30ca9da7ab64f6e8b147f7fd4cf9b</string>
-    <!-- End of facebook -->
-
     <string name="no_result">Không có chia sẻ nào</string>
     <string name="search_hint">Tìm kiếm…</string>
     <string name="title_profile">Tôi</string>
