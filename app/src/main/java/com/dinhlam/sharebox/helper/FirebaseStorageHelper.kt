@@ -52,7 +52,8 @@ class FirebaseStorageHelper @Inject constructor(
 
         val notificationBuilder = NotificationCompat.Builder(
             context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID
-        ).setContentText("We are distributing image to other people").setSubText("Distribute image")
+        ).setContentText(context.getString(R.string.distribute_images_content))
+            .setSubText(context.getString(R.string.distribute_images_title))
             .setProgress(100, 0, false).setSmallIcon(R.drawable.ic_file_upload_white)
 
         val uploadId = 456789
@@ -72,6 +73,18 @@ class FirebaseStorageHelper @Inject constructor(
             }.addOnCompleteListener {
                 notificationManagerCompat.cancel(uploadId)
             }.addOnFailureListener { error ->
+                Logger.error(error)
+            }.addOnSuccessListener {
+                Logger.debug("Success upload file $uri")
+            }.await()
+    }
+
+    suspend fun uploadShareImageFileWithoutNotification(
+        shareId: String, uri: Uri
+    ): UploadTask.TaskSnapshot = withContext(Dispatchers.IO) {
+
+        shareImagesRef.child(getUploadFilePath(shareId, uri)).putFile(uri)
+            .addOnFailureListener { error ->
                 Logger.error(error)
             }.addOnSuccessListener {
                 Logger.debug("Success upload file $uri")

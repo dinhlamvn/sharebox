@@ -1,9 +1,14 @@
 package com.dinhlam.sharebox.ui.sharereceive
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.webkit.MimeTypeMap
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -215,9 +220,37 @@ class ShareReceiveViewModel @Inject constructor(
         )
 
         share?.let { insertedShare ->
-            uris.forEach { uri ->
-                firebaseStorageHelper.uploadShareImageFile(context, insertedShare.shareId, uri)
+            val notificationManagerCompat = NotificationManagerCompat.from(context)
+
+            val notificationBuilder = NotificationCompat.Builder(
+                context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID
+            ).setContentText(context.getString(R.string.distribute_images_content))
+                .setSubText(context.getString(R.string.distribute_images_title))
+                .setAutoCancel(false).setProgress(100, 0, false)
+                .setSmallIcon(R.drawable.ic_file_upload_white)
+
+            val uploadId = 456789
+
+            uris.forEachIndexed { index, uri ->
+                val progress = index.plus(1f).div(uris.size).times(100).toInt()
+                notificationBuilder.setProgress(100, progress, false).setContentTitle(
+                        context.getString(
+                            R.string.complete_progress, "${index.plus(1)}/${uris.size}"
+                        )
+                    )
+                if (ContextCompat.checkSelfPermission(
+                        context, android.Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    notificationManagerCompat.notify(
+                        uploadId, notificationBuilder.build()
+                    )
+                }
+                firebaseStorageHelper.uploadShareImageFileWithoutNotification(
+                    insertedShare.shareId, uri
+                )
             }
+            notificationManagerCompat.cancel(uploadId)
         }
 
         return share

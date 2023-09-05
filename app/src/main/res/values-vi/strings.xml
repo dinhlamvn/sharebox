@@ -150,6 +150,9 @@
     <string name="alert_skip">Bỏ qua</string>
     <string name="error_save_image_to_gallery">Có lỗi khi lưu ảnh</string>
     <string name="downloading_image">Đang chờ tải hình ảnh</string>
+    <string name="distribute_images_content">Đang phân phối ảnh tới những người khác</string>
+    <string name="distribute_images_title">Phân phối ảnh</string>
+    <string name="complete_progress">Hoàn thành (%s)</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
