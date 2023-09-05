@@ -234,10 +234,10 @@ class ShareReceiveViewModel @Inject constructor(
             uris.forEachIndexed { index, uri ->
                 val progress = index.plus(1f).div(uris.size).times(100).toInt()
                 notificationBuilder.setProgress(100, progress, false).setContentTitle(
-                        context.getString(
-                            R.string.complete_progress, "${index.plus(1)}/${uris.size}"
-                        )
+                    context.getString(
+                        R.string.complete_progress, "${index.plus(1)}/${uris.size}"
                     )
+                )
                 if (ContextCompat.checkSelfPermission(
                         context, android.Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_GRANTED
