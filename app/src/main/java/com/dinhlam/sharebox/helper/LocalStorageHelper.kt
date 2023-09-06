@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import com.dinhlam.sharebox.extensions.appendIf
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -12,6 +13,7 @@ import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,7 +81,7 @@ class LocalStorageHelper @Inject constructor(
         }
 
     suspend fun saveImageToGallery(
-        imageSource: Uri,
+        imageSource: Uri, albumName: String? = null
     ) = withContext(Dispatchers.IO) {
         val resolver = appContext.contentResolver
 
@@ -93,7 +95,34 @@ class LocalStorageHelper @Inject constructor(
             val fileName = FileUtils.getFileNameFromUri(imageSource).appendIf(".jpg") { s ->
                 !s.endsWith(".jpg")
             }
-            put(MediaStore.Images.Media.DISPLAY_NAME, "sharebox_image_$fileName")
+            val imageFileName = "sharebox_image_$fileName"
+            put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName)
+
+            albumName?.let { album ->
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+
+                    val fullFinalPath =
+                        StringBuilder(Environment.getExternalStorageDirectory().absolutePath)
+                            .append(File.separator)
+                            .append(Environment.DIRECTORY_PICTURES).append(File.separator)
+                            .append(album)
+                            .append(File.separator)
+                            .append(imageFileName)
+                            .toString()
+                    File(fullFinalPath).parentFile?.also { file ->
+                        if (!file.exists()) {
+                            file.mkdirs()
+                        }
+                    }
+
+                    put(MediaStore.Images.Media.DATA, fullFinalPath)
+                } else {
+                    put(
+                        MediaStore.Images.Media.RELATIVE_PATH,
+                        Environment.DIRECTORY_PICTURES + File.separator + album
+                    )
+                }
+            }
         }
 
         val destUri =

@@ -105,6 +105,7 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
             }
 
             val size = urls.size.toFloat()
+            val albumName = "tiktok_images_${videoId}"
 
             urls.forEachIndexed { index, url ->
                 val outputFile = File(outputDir, "${videoId}_image_$index.jpg")
@@ -130,9 +131,8 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
                             outputFile.outputStream().use { os ->
                                 bs.copyTo(os)
                                 val uri = FileUtils.getUriFromFile(appContext, outputFile)
-                                localStorageHelper.saveImageToGallery(uri)
+                                localStorageHelper.saveImageToGallery(uri, albumName)
                                 localStorageHelper.cleanUp(uri)
-                                showToast(R.string.success_save_image_to_gallery)
                             }
                         }
                     }
@@ -140,6 +140,8 @@ class TiktokVideoDownloadWorker @AssistedInject constructor(
                     showToast(R.string.error_save_image_to_gallery)
                 }
             }
+
+            showToast(R.string.success_save_image_to_gallery)
 
             return@withContext Result.success()
         }
