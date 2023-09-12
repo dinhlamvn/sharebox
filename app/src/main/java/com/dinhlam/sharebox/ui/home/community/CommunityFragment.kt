@@ -38,7 +38,6 @@ import com.dinhlam.sharebox.modelview.CarouselModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.grid.GridUrlModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
@@ -117,7 +116,7 @@ class CommunityFragment :
                 )
             } else if (state.shares.isNotEmpty()) {
                 state.shares.forEach { shareDetail ->
-                    val modelView = shareDetail.shareData.buildShareModelViews(
+                    shareDetail.shareData.buildShareModelViews(
                         screenHeight(),
                         shareDetail.shareId,
                         shareDetail.shareDate,
@@ -136,21 +135,16 @@ class CommunityFragment :
                         actionViewImage = ::viewImage,
                         actionViewImages = ::viewImages,
                         actionBoxClick = ::onBoxClick,
-                        useGrid = true,
+                        useGrid = false,
                         actionMore = ::onMore
-                    )
 
-                    add(modelView)
+                    ).attachTo(this)
 
-                    if (modelView !is GridUrlModelView) {
-                        add(SizedBoxModelView("separator_${shareDetail.shareId}"))
-                    }
+                    SizedBoxModelView("separator_${shareDetail.shareId}").attachTo(this)
                 }
 
-                if (state.canLoadMore) {
-                    add(LoadingModelView("home_load_more_${state.currentPage}"))
-                } else if (state.isLoadingMore) {
-                    add(LoadingModelView("home_loading_more_${state.currentPage}"))
+                if (state.isLoadingMore) {
+                    LoadingModelView("home_loading_more_${state.currentPage}").attachTo(this)
                 }
             }
         }

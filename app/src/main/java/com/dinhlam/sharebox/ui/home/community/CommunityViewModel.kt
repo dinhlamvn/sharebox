@@ -61,7 +61,7 @@ class CommunityViewModel @Inject constructor(
         setState { copy(isRefreshing = true) }
         execute {
             val shares = loadShares(currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
-            copy(shares = shares, isRefreshing = false)
+            copy(shares = shares, isRefreshing = false, isLoadingMore = false)
         }
     }
 
@@ -73,13 +73,6 @@ class CommunityViewModel @Inject constructor(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-
-            val map = mutableMapOf<String, VideoMixerDetail>()
-            for (i in shares.indices) {
-                val videoMixer = videoMixerRepository.findOne(shares[i].shareId)
-                videoMixer?.let { map[shares[i].shareId] = it }
-            }
-
             copy(
                 shares = this.shares.plus(shares),
                 isLoadingMore = false,
