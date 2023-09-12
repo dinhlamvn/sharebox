@@ -200,7 +200,7 @@ class CommunityFragment :
     }
 
     private fun onBoxClick(boxDetail: BoxDetail?) {
-        viewModel.setBox(boxDetail)
+        boxDetail?.boxId?.let { boxId -> startActivity(router.boxDetail(requireContext(), boxId)) }
     }
 
     private fun viewImages(shareId: String, uris: List<Uri>) {

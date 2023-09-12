@@ -21,11 +21,19 @@ interface Router {
     fun passcodeIntent(context: Context, desc: String? = null): Intent
     fun passcodeIntent(context: Context, passcode: String, desc: String? = null): Intent
 
-    fun passcodeIntent(context: Context, passcode: String, extras: Bundle, desc: String? = null): Intent
+    fun passcodeIntent(
+        context: Context,
+        passcode: String,
+        extras: Bundle,
+        desc: String? = null
+    ): Intent
+
     fun viewIntent(url: String): Intent
     fun playStoreIntent(packageName: String): Intent
     fun boxIntent(context: Context): Intent
     fun settingIntent(): Intent
 
     fun shareDetail(context: Context, shareId: String): Intent
+
+    fun boxDetail(context: Context, boxId: String): Intent
 }

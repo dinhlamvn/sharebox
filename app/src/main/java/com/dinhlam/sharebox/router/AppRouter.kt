@@ -9,6 +9,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
+import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
@@ -120,6 +121,13 @@ class AppRouter constructor(private val context: Context) : Router {
     override fun shareDetail(context: Context, shareId: String): Intent {
         return Intent(context, ShareDetailActivity::class.java).putExtra(
             AppExtras.EXTRA_SHARE_ID, shareId
+        )
+    }
+
+    override fun boxDetail(context: Context, boxId: String): Intent {
+        return Intent(context, BoxDetailActivity::class.java).putExtra(
+            AppExtras.EXTRA_BOX_ID,
+            boxId
         )
     }
 }
