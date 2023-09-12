@@ -8,7 +8,7 @@ import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.ui.box.BoxActivity
+import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
@@ -110,7 +110,7 @@ class AppRouter constructor(private val context: Context) : Router {
     }
 
     override fun boxIntent(context: Context): Intent {
-        return Intent(context, BoxActivity::class.java)
+        return Intent(context, BoxCreateActivity::class.java)
     }
 
     override fun settingIntent(): Intent {

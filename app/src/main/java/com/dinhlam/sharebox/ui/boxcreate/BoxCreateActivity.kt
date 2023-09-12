@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.box
+package com.dinhlam.sharebox.ui.boxcreate
 
 import android.app.Activity
 import android.content.Intent
@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
-import com.dinhlam.sharebox.databinding.ActivityBoxBinding
+import com.dinhlam.sharebox.databinding.ActivityBoxCreateBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoxActivity : BaseActivity<ActivityBoxBinding>() {
+class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
 
     @Inject
     lateinit var boxRepository: BoxRepository
@@ -59,8 +59,8 @@ class BoxActivity : BaseActivity<ActivityBoxBinding>() {
 
     private var isVisiblePasscode: Boolean = false
 
-    override fun onCreateViewBinding(): ActivityBoxBinding {
-        return ActivityBoxBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(): ActivityBoxCreateBinding {
+        return ActivityBoxCreateBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

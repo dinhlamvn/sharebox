@@ -170,7 +170,7 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name=".ui.box.BoxActivity"
+            android:name=".ui.boxcreate.BoxCreateActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
