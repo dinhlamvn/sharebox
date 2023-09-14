@@ -7,12 +7,13 @@
         android:title="@string/title_community" />
 
     <item
-        android:id="@+id/navigation_video_mixer"
-        android:icon="@drawable/ic_video_library"
-        android:title="@string/title_video_mixer" />
+        android:id="@+id/navigation_trending"
+        android:icon="@drawable/ic_trending_up"
+        android:title="@string/title_trending" />
 
     <item
-        android:id="@+id/navigation_placeholder" />
+        android:id="@+id/navigation_placeholder"
+        android:title="" />
 
     <item
         android:id="@+id/navigation_bookmark"

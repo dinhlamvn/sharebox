@@ -155,6 +155,7 @@
     <string name="distribute_images_title">Phân phối ảnh</string>
     <string name="complete_progress">Hoàn thành (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
+    <string name="title_trending">Trending</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

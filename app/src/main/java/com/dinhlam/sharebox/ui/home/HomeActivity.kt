@@ -115,7 +115,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
                 when (position) {
                     0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_community
                     1 -> viewBinding.bottomNavigationView.selectedItemId =
-                        R.id.navigation_video_mixer
+                        R.id.navigation_trending
 
                     2 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_bookmark
                     3 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_profile
@@ -125,7 +125,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         viewBinding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             val pos = when (menuItem.itemId) {
-                R.id.navigation_video_mixer -> 1
+                R.id.navigation_trending -> 1
                 R.id.navigation_bookmark -> 2
                 R.id.navigation_profile -> 3
                 else -> 0
@@ -136,7 +136,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         viewBinding.bottomNavigationView.setOnItemReselectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.navigation_video_mixer -> LiveEventUtils.eventRefreshVideosMixer.postValue(
+                R.id.navigation_trending -> LiveEventUtils.eventRefreshVideosMixer.postValue(
                     true
                 )
 
