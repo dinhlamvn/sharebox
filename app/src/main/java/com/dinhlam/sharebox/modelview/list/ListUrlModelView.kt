@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
-import com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
 
 data class ListUrlModelView(
     val shareId: String,
@@ -113,7 +112,7 @@ data class ListUrlModelView(
                 bold {
                     append(model.userDetail.name)
                 }
-                append(buildContext.getString(R.string.share_web_link))
+                append(buildContext.getString(R.string.archive_web_link))
             }
             binding.shareLinkPreview.setLink(model.url) {
                 copy(maxLineDesc = 2, maxLineUrl = 1, maxLineTitle = 1)

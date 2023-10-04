@@ -115,7 +115,7 @@ data class ListTextModelView(
                 bold {
                     append(model.userDetail.name)
                 }
-                append(buildContext.getString(R.string.share_text))
+                append(buildContext.getString(R.string.archive_text))
             }
             binding.textShare.text = model.content
             binding.layoutUserInfo.textUserLevel.text =

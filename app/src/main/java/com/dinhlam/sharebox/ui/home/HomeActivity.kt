@@ -23,7 +23,7 @@ import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
 import com.dinhlam.sharebox.ui.home.community.CommunityFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
-import com.dinhlam.sharebox.ui.home.videomixer.VideoMixerFragment
+import com.dinhlam.sharebox.ui.home.trending.TrendingFragment
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,7 +81,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                1 -> VideoMixerFragment()
+                1 -> TrendingFragment()
                 2 -> BookmarkFragment()
                 3 -> ProfileFragment()
                 else -> CommunityFragment()
@@ -147,9 +147,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
 
         viewBinding.bottomNavigationView.menu.getItem(2).isEnabled = false
 
-        viewBinding.buttonShareUrl.setImageDrawable(Icons.urlIcon(this))
-        viewBinding.buttonShareImages.setImageDrawable(Icons.imagesIcon(this))
-        viewBinding.buttonShareText.setImageDrawable(Icons.quoteLeftIcon(this))
+        viewBinding.buttonArchiveUrl.setImageDrawable(Icons.urlIcon(this))
+        viewBinding.buttonArchiveImages.setImageDrawable(Icons.imagesIcon(this))
+        viewBinding.buttonArchiveText.setImageDrawable(Icons.quoteLeftIcon(this))
 
         toggleFabActionView(false)
 
@@ -161,39 +161,39 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
             toggleFabActionView(false)
         }
 
-        viewBinding.buttonShareText.setOnClickListener {
+        viewBinding.buttonArchiveText.setOnClickListener {
             toggleFabActionView(false)
             shareHelper.shareTextQuote(supportFragmentManager)
         }
 
-        viewBinding.buttonShareUrl.setOnClickListener {
+        viewBinding.buttonArchiveUrl.setOnClickListener {
             toggleFabActionView(false)
             shareHelper.shareLink(supportFragmentManager)
         }
 
-        viewBinding.buttonShareImages.setOnClickListener {
+        viewBinding.buttonArchiveImages.setOnClickListener {
             toggleFabActionView(false)
             pickImagesResultLauncher.launch(router.pickImageIntent(true))
         }
     }
 
     private fun isFabShown() =
-        viewBinding.buttonShareImages.isShown && viewBinding.buttonShareUrl.isShown && viewBinding.buttonShareText.isShown
+        viewBinding.buttonArchiveImages.isShown && viewBinding.buttonArchiveUrl.isShown && viewBinding.buttonArchiveText.isShown
 
     private fun toggleFabActionView(isVisible: Boolean) {
         if (isVisible) {
-            viewBinding.buttonShareImages.show()
-            viewBinding.buttonShareUrl.show()
-            viewBinding.buttonShareText.show()
+            viewBinding.buttonArchiveImages.show()
+            viewBinding.buttonArchiveUrl.show()
+            viewBinding.buttonArchiveText.show()
         } else {
-            viewBinding.buttonShareImages.hide()
-            viewBinding.buttonShareUrl.hide()
-            viewBinding.buttonShareText.hide()
+            viewBinding.buttonArchiveImages.hide()
+            viewBinding.buttonArchiveUrl.hide()
+            viewBinding.buttonArchiveText.hide()
         }
         viewBinding.viewFabOverlay.isVisible = isVisible
-        viewBinding.textShareUrl.isVisible = isVisible
-        viewBinding.textShareImages.isVisible = isVisible
-        viewBinding.textShareText.isVisible = isVisible
+        viewBinding.textArchiveUrl.isVisible = isVisible
+        viewBinding.textArchiveImages.isVisible = isVisible
+        viewBinding.textArchiveText.isVisible = isVisible
     }
 
     override fun onShareLink(link: String) {

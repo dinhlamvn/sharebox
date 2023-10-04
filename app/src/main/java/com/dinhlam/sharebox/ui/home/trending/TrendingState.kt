@@ -1,10 +1,10 @@
-package com.dinhlam.sharebox.ui.home.videomixer
+package com.dinhlam.sharebox.ui.home.trending
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.VideoMixerDetail
 
-data class VideoMixerState(
+data class TrendingState(
     val isRefreshing: Boolean = true,
     val videos: List<VideoMixerDetail> = emptyList(),
     val isLoadingMore: Boolean = false,

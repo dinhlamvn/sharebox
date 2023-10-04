@@ -130,7 +130,7 @@ data class ListImageModelView(
                 bold {
                     append(model.userDetail.name)
                 }
-                append(buildContext.getString(R.string.share_image))
+                append(buildContext.getString(R.string.archive_image))
             }
             binding.layoutUserInfo.textUserLevel.text =
                 buildContext.getString(

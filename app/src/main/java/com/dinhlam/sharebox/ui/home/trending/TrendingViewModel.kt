@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.videomixer
+package com.dinhlam.sharebox.ui.home.trending
 
 import android.content.Context
 import androidx.annotation.UiThread
@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class VideoMixerViewModel @Inject constructor(
+class TrendingViewModel @Inject constructor(
     private val videoMixerRepository: VideoMixerRepository,
     private val likeRepository: LikeRepository,
     private val userHelper: UserHelper,
@@ -36,11 +36,11 @@ class VideoMixerViewModel @Inject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val videoHelper: VideoHelper,
     private val shareRepository: ShareRepository,
-) : BaseViewModel<VideoMixerState>(VideoMixerState()) {
+) : BaseViewModel<TrendingState>(TrendingState()) {
 
     init {
         getLatestBox()
-        consume(VideoMixerState::currentBox) {
+        consume(TrendingState::currentBox) {
             loadVideoMixers()
         }
     }
@@ -87,7 +87,7 @@ class VideoMixerViewModel @Inject constructor(
     }
 
     fun doOnPullRefresh() {
-        setState { VideoMixerState() }
+        setState { TrendingState() }
         getLatestBox()
     }
 

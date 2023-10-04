@@ -55,7 +55,7 @@
     <string name="sign_in_hint_user_name">Tên của bạn</string>
     <string name="sign_in_title_user_name">Chúng tôi sẽ gọi bạn là gì?</string>
     <string name="view_in_source">Xem từ nguồn</string>
-    <string name="content_desc_button_add_box">Tạo mới Box</string>
+    <string name="content_desc_button_archive_url">Tạo mới Box</string>
     <string name="create">Tạo</string>
     <string name="error_create_box">Lỗi xảy ra khi tạo Box.</string>
     <string name="error_require_name">Tên không thể trống</string>
@@ -74,21 +74,21 @@
     <string name="network_condition_wifi">Chỉ dùng Wifi</string>
     <string name="network_condition_wifi_and_cellular">Dùng cả Wifi và dữ liệu di động</string>
     <string name="sign_out">Đăng xuất</string>
-    <string name="sign_out_confirm_message">Bạn có chắc sẽ đăng xuất không?</string>
+    <string name="sign_out_confirm_message">Bạn có chắc muốn đăng xuất không?</string>
     <string name="setting_about">%s • Phiên bản %s</string>
-    <string name="app_desc">Sharebox giúp bạn lưu giữ nội dung yêu thích và chia sẻ với mọi người.</string>
+    <string name="app_desc">Sharebox giúp bạn lưu trữ nội dung và chia sẻ với mọi người.</string>
     <string name="box_community">Cộng đồng</string>
-    <string name="share_web_link">" chia sẻ một trang web"</string>
-    <string name="share_text">" chia sẻ một trích dẫn"</string>
-    <string name="share_images">" chia sẻ vài ảnh"</string>
-    <string name="share_image">" chia sẻ một ảnh"</string>
-    <string name="share_a_link">Chia sẻ một địa chỉ web</string>
-    <string name="share_a_content">Chia sẻ một trích dẫn</string>
-    <string name="content_desc_button_share_text">Chia sẻ một trích dẫn</string>
-    <string name="share_some_images">Chia sẻ vài hình ảnh</string>
+    <string name="archive_web_link">" lưu trữ một trang web"</string>
+    <string name="archive_text">" lưu trữ một văn bản"</string>
+    <string name="archive_images">" lưu trữ vài ảnh"</string>
+    <string name="archive_image">" lưu trữ một ảnh"</string>
+    <string name="archive_a_link">Lưu trữ một địa chỉ web</string>
+    <string name="archive_a_content">Lưu trữ một văn bản</string>
+    <string name="content_desc_button_archive_text">Lưu trữ một trích dẫn</string>
+    <string name="share_some_images">Lưu trữ vài hình ảnh</string>
     <string name="content_desc_button_action">Mở danh sách hành động trên trang chủ</string>
     <string name="overlay">Lớp phủ</string>
-    <string name="content_desc_button_share_images">Chia sẻ vài ảnh</string>
+    <string name="content_desc_button_archive_images">Lưu trữ vài ảnh</string>
     <string name="complete">Hoàn thành</string>
     <string name="edit_avatar">Sửa ảnh đại diện</string>
     <string name="share_text_quote_hint">Nhập vào đây…</string>
@@ -155,7 +155,7 @@
     <string name="distribute_images_title">Phân phối ảnh</string>
     <string name="complete_progress">Hoàn thành (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
-    <string name="title_trending">Trending</string>
+    <string name="title_trending">Thịnh hành</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

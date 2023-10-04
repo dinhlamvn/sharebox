@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.videomixer
+package com.dinhlam.sharebox.ui.home.trending
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +8,10 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.databinding.FragmentVideoMixerBinding
+import com.dinhlam.sharebox.databinding.FragmentTrendingBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
@@ -30,8 +29,8 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class VideoMixerFragment :
-    BaseViewModelFragment<VideoMixerState, VideoMixerViewModel, FragmentVideoMixerBinding>(),
+class TrendingFragment :
+    BaseViewModelFragment<TrendingState, TrendingViewModel, FragmentTrendingBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     BoxSelectionDialogFragment.OnBoxSelectedListener {
 
@@ -99,8 +98,8 @@ class VideoMixerFragment :
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
-    ): FragmentVideoMixerBinding {
-        return FragmentVideoMixerBinding.inflate(inflater, container, false)
+    ): FragmentTrendingBinding {
+        return FragmentTrendingBinding.inflate(inflater, container, false)
     }
 
     private val layoutManager by lazy {
@@ -111,16 +110,14 @@ class VideoMixerFragment :
         }
     }
 
-    override val viewModel: VideoMixerViewModel by viewModels()
+    override val viewModel: TrendingViewModel by viewModels()
 
-    override fun onStateChanged(state: VideoMixerState) {
+    override fun onStateChanged(state: TrendingState) {
         videoAdapter.requestBuildModelViews()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewBinding.textTitle.setDrawableCompat(Icons.boxIcon(requireContext()))
 
         viewBinding.imageSync.setImageDrawable(Icons.syncIcon(requireContext()))
 
@@ -138,19 +135,11 @@ class VideoMixerFragment :
             viewModel.doOnPullRefresh()
         }
 
-        viewModel.consume(this, VideoMixerState::isLoadingMore) { isLoadMore ->
+        viewModel.consume(this, TrendingState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
 
-        viewModel.consume(viewLifecycleOwner, VideoMixerState::currentBox) { box ->
-            viewBinding.textTitle.text = box?.boxName ?: getString(R.string.box_community)
-        }
-
-        viewBinding.textTitle.setOnClickListener {
-            shareHelper.showBoxSelectionDialog(childFragmentManager)
-        }
-
-        viewModel.consume(viewLifecycleOwner, VideoMixerState::showLoading) { showLoading ->
+        viewModel.consume(viewLifecycleOwner, TrendingState::showLoading) { showLoading ->
             if (showLoading) {
                 viewBinding.viewLoading.show()
             } else {
