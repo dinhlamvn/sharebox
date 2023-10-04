@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.community
+package com.dinhlam.sharebox.ui.home.general
 
 import android.app.Activity
 import android.net.Uri
@@ -16,7 +16,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.FragmentCommunityBinding
+import com.dinhlam.sharebox.databinding.FragmentGeneralBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
@@ -47,16 +47,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CommunityFragment :
-    BaseViewModelFragment<CommunityState, CommunityViewModel, FragmentCommunityBinding>(),
+class GeneralFragment :
+    BaseViewModelFragment<GeneralState, GeneralViewModel, FragmentGeneralBinding>(),
     BoxSelectionDialogFragment.OnBoxSelectedListener,
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
-    ): FragmentCommunityBinding {
-        return FragmentCommunityBinding.inflate(inflater, container, false)
+    ): FragmentGeneralBinding {
+        return FragmentGeneralBinding.inflate(inflater, container, false)
     }
 
     private val createBoxResultLauncher =
@@ -223,25 +223,27 @@ class CommunityFragment :
     @Inject
     lateinit var userHelper: UserHelper
 
-    override val viewModel: CommunityViewModel by viewModels()
+    override val viewModel: GeneralViewModel by viewModels()
 
-    override fun onStateChanged(state: CommunityState) {
+    override fun onStateChanged(state: GeneralState) {
         shareAdapter.requestBuildModelViews()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.textTitle.setDrawableCompat(Icons.boxIcon(requireContext()))
+        viewBinding.textTitle.setDrawableCompat(
+            Icons.boxIcon(requireContext()),
+            end = Icons.dropdownIcon(requireContext()) { copy(sizeDp = 10) })
 
-        LiveEventUtils.eventScrollToTopCommunity.observe(viewLifecycleOwner) { shouldScroll ->
+        LiveEventUtils.eventScrollToTopGeneral.observe(viewLifecycleOwner) { shouldScroll ->
             if (shouldScroll) {
                 viewBinding.recyclerView.smoothScrollToPosition(0)
                 viewModel.doOnRefresh()
             }
         }
 
-        viewBinding.toolbar.inflateMenu(R.menu.community_menu)
+        viewBinding.toolbar.inflateMenu(R.menu.general_menu)
         viewBinding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_create_box -> createNewBox()
@@ -253,8 +255,8 @@ class CommunityFragment :
             shareHelper.showBoxSelectionDialog(childFragmentManager)
         }
 
-        viewModel.consume(this, CommunityState::currentBox) { currentBox ->
-            viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_community)
+        viewModel.consume(this, GeneralState::currentBox) { currentBox ->
+            viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_general)
         }
 
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -276,7 +278,7 @@ class CommunityFragment :
             viewBinding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consume(this, CommunityState::isLoadingMore) { isLoadMore ->
+        viewModel.consume(this, GeneralState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
 

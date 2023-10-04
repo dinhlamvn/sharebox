@@ -1,10 +1,10 @@
-package com.dinhlam.sharebox.ui.home.community
+package com.dinhlam.sharebox.ui.home.general
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareDetail
 
-data class CommunityState(
+data class GeneralState(
     val isRefreshing: Boolean = false,
     val shares: List<ShareDetail> = emptyList(),
     val isLoadingMore: Boolean = false,

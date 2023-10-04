@@ -16,7 +16,6 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.Icons
 
@@ -113,7 +112,7 @@ data class GridUrlModelView(
             }
 
             binding.textBoxName.text =
-                model.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
+                model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
 
             binding.textBoxName.setOnClickListener {
                 model.actionBoxClick.prop?.invoke(model.boxDetail)

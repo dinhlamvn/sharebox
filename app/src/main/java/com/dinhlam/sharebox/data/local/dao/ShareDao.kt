@@ -34,7 +34,7 @@ interface ShareDao {
         LIMIT :limit 
         OFFSET :offset"""
     )
-    suspend fun findForCommunity(limit: Int, offset: Int): List<Share>
+    suspend fun findForGeneral(limit: Int, offset: Int): List<Share>
 
     @Query("SELECT * FROM share WHERE share_id IN(:shareIds)")
     suspend fun find(shareIds: List<String>): List<Share>

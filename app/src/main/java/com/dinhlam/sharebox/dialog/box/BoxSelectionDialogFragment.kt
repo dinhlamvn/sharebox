@@ -144,7 +144,7 @@ class BoxSelectionDialogFragment :
             viewModel.search(editable.trimmedString())
         }
 
-        viewBinding.buttonGoToCommunity.setOnClickListener {
+        viewBinding.buttonGoToGeneral.setOnClickListener {
             returnSelectedBox("")
         }
     }

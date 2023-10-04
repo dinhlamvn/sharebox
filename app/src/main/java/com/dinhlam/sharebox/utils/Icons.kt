@@ -197,6 +197,14 @@ object Icons {
         )
     }
 
+    fun dropdownIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): Drawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_caret_down, block(IconBuilder(context))
+        )
+    }
+
     fun signOutIcon(context: Context): Drawable {
         return createIcon(
             context, FontAwesome.Icon.faw_sign_out_alt

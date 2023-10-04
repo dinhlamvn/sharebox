@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_community"
-        android:icon="@drawable/ic_community"
-        android:title="@string/title_community" />
+        android:id="@+id/navigation_general"
+        android:icon="@drawable/ic_general"
+        android:title="@string/title_general" />
 
     <item
         android:id="@+id/navigation_trending"

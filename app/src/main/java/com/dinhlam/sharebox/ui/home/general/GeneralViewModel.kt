@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.home.community
+package com.dinhlam.sharebox.ui.home.general
 
 import android.content.Context
 import androidx.annotation.UiThread
@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class CommunityViewModel @Inject constructor(
+class GeneralViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val likeRepository: LikeRepository,
     private val userHelper: UserHelper,
@@ -35,12 +35,12 @@ class CommunityViewModel @Inject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val videoMixerRepository: VideoMixerRepository,
     private val videoHelper: VideoHelper,
-) : BaseViewModel<CommunityState>(CommunityState(isRefreshing = true)) {
+) : BaseViewModel<GeneralState>(GeneralState(isRefreshing = true)) {
 
     init {
         getListBoxes()
         getCurrentActiveBox()
-        consume(CommunityState::currentBox) {
+        consume(GeneralState::currentBox) {
             loadShares()
         }
     }
@@ -93,11 +93,11 @@ class CommunityViewModel @Inject constructor(
                 limit,
                 offset
             )
-        } ?: shareRepository.findCommunityShares(limit, offset)
+        } ?: shareRepository.findGeneralShares(limit, offset)
     }
 
     fun doOnRefresh() {
-        setState { CommunityState() }
+        setState { GeneralState() }
         getListBoxes()
         getCurrentActiveBox()
     }

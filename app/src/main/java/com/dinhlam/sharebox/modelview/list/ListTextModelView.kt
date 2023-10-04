@@ -126,7 +126,7 @@ data class ListTextModelView(
                 )
 
             binding.textBoxName.text =
-                model.boxDetail?.boxName ?: buildContext.getText(R.string.box_community)
+                model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
 
             binding.textBoxName.setOnClickListener {
                 model.actionBoxClick.prop?.invoke(model.boxDetail)

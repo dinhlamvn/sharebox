@@ -16,7 +16,7 @@
     <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
     <string name="search_hint">Search…</string>
     <string name="title_profile">Profile</string>
-    <string name="title_community">Community</string>
+    <string name="title_general">General</string>
     <string name="like">(%d)</string>
     <string name="comment">(%d)</string>
     <string name="drama_point">Drama</string>
@@ -86,7 +86,7 @@
     <string name="sign_out_confirm_message">Are you sure to sign out?</string>
     <string name="setting_about">%s • Version %s</string>
     <string name="app_desc">Sharebox helps archive contents and share it with people in your life.</string>
-    <string name="box_community">Community</string>
+    <string name="box_general">General</string>
     <string name="archive_web_link">" archives a weblink"</string>
     <string name="archive_text">" archives a text"</string>
     <string name="archive_images">" archives some images"</string>
@@ -113,7 +113,7 @@
     <string name="title_guideline_in_app">From in app</string>
     <string name="title_guideline_in_app_step_1">Step 1. Toggle the options menu in Home</string>
     <string name="title_guideline_in_app_step_2">Step 2. Choose the action to move forward</string>
-    <string name="go_to_community">Go to Community</string>
+    <string name="go_to_general">Go to General</string>
     <string name="error_save_video_to_gallery">An error occurred when save video to Gallery</string>
     <string name="success_save_video_to_gallery">Save video to Gallery successfully</string>
     <string name="title_guideline_other_app_tiktok">From Tiktok</string>

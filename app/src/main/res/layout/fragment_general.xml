@@ -20,8 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -39,7 +39,7 @@
                 android:maxWidth="150dp"
                 android:padding="6dp"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
         </com.google.android.material.card.MaterialCardView>
 

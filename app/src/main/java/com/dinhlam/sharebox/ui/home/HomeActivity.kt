@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.home.bookmark.BookmarkFragment
-import com.dinhlam.sharebox.ui.home.community.CommunityFragment
+import com.dinhlam.sharebox.ui.home.general.GeneralFragment
 import com.dinhlam.sharebox.ui.home.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.home.trending.TrendingFragment
 import com.dinhlam.sharebox.utils.Icons
@@ -45,7 +45,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
     private val shareResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                LiveEventUtils.eventScrollToTopCommunity.postValue(true)
+                LiveEventUtils.eventScrollToTopGeneral.postValue(true)
             }
         }
 
@@ -84,7 +84,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
                 1 -> TrendingFragment()
                 2 -> BookmarkFragment()
                 3 -> ProfileFragment()
-                else -> CommunityFragment()
+                else -> GeneralFragment()
             }
         }
     }
@@ -113,7 +113,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         viewBinding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_community
+                    0 -> viewBinding.bottomNavigationView.selectedItemId = R.id.navigation_general
                     1 -> viewBinding.bottomNavigationView.selectedItemId =
                         R.id.navigation_trending
 
@@ -140,7 +140,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
                     true
                 )
 
-                R.id.navigation_community -> LiveEventUtils.eventScrollToTopCommunity.postValue(true)
+                R.id.navigation_general -> LiveEventUtils.eventScrollToTopGeneral.postValue(true)
                 R.id.navigation_profile -> LiveEventUtils.eventScrollToTopProfile.postValue(true)
             }
         }

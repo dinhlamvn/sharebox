@@ -7,7 +7,7 @@
     <string name="no_result">Không có chia sẻ nào</string>
     <string name="search_hint">Tìm kiếm…</string>
     <string name="title_profile">Tôi</string>
-    <string name="title_community">Cộng đồng</string>
+    <string name="title_general">Chung</string>
     <string name="like">(%d)</string>
     <string name="comment">(%d)</string>
     <string name="drama_point">Drama</string>
@@ -77,7 +77,7 @@
     <string name="sign_out_confirm_message">Bạn có chắc muốn đăng xuất không?</string>
     <string name="setting_about">%s • Phiên bản %s</string>
     <string name="app_desc">Sharebox giúp bạn lưu trữ nội dung và chia sẻ với mọi người.</string>
-    <string name="box_community">Cộng đồng</string>
+    <string name="box_general">Cộng đồng</string>
     <string name="archive_web_link">" lưu trữ một trang web"</string>
     <string name="archive_text">" lưu trữ một văn bản"</string>
     <string name="archive_images">" lưu trữ vài ảnh"</string>
@@ -104,7 +104,7 @@
     <string name="title_guideline_in_app">Bên trong ứng dụng</string>
     <string name="title_guideline_in_app_step_1">Bước 1. Mở danh sách hành động trên trang chủ</string>
     <string name="title_guideline_in_app_step_2">Bước 2. Chọn một hành động để đi tiếp</string>
-    <string name="go_to_community">Đi đến Cộng Đồng</string>
+    <string name="go_to_general">Đi đến Cộng Đồng</string>
     <string name="error_save_video_to_gallery">Có lỗi xảy ra khi lưu video vào Bộ Sưu Tập</string>
     <string name="success_save_video_to_gallery">Lưu video vào Bộ Sưu Tập thành công</string>
     <string name="title_guideline_other_app_tiktok">Từ Tiktok</string>
