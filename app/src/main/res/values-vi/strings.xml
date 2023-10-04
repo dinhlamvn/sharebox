@@ -79,11 +79,11 @@
     <string name="app_desc">Sharebox giúp bạn lưu trữ nội dung và chia sẻ với mọi người.</string>
     <string name="box_general">Cộng đồng</string>
     <string name="archive_web_link">" lưu trữ một trang web"</string>
-    <string name="archive_text">" lưu trữ một văn bản"</string>
+    <string name="archive_text">" lưu trữ một trích dẫn"</string>
     <string name="archive_images">" lưu trữ vài ảnh"</string>
     <string name="archive_image">" lưu trữ một ảnh"</string>
     <string name="archive_a_link">Lưu trữ một địa chỉ web</string>
-    <string name="archive_a_content">Lưu trữ một văn bản</string>
+    <string name="archive_a_content">Lưu trữ một trích dẫn</string>
     <string name="content_desc_button_archive_text">Lưu trữ một trích dẫn</string>
     <string name="share_some_images">Lưu trữ vài hình ảnh</string>
     <string name="content_desc_button_action">Mở danh sách hành động trên trang chủ</string>
@@ -156,6 +156,7 @@
     <string name="complete_progress">Hoàn thành (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
     <string name="title_trending">Thịnh hành</string>
+    <string name="number_image">+%d</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

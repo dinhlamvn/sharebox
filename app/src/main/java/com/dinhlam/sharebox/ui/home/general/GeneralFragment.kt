@@ -135,8 +135,6 @@ class GeneralFragment :
                         actionViewImage = ::viewImage,
                         actionViewImages = ::viewImages,
                         actionBoxClick = ::onBoxClick,
-                        useGrid = false,
-                        actionMore = ::onMore
 
                     ).attachTo(this)
 

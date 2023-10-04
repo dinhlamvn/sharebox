@@ -11,16 +11,9 @@
         android:layout_height="?attr/actionBarSize"
         app:contentInsetEnd="16dp"
         app:contentInsetStart="16dp"
-        app:title="@string/title_trending"
         app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/title_trending"
         app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_sync"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end|center_vertical"
-            android:scaleType="centerInside" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -38,11 +31,9 @@
         app:layout_constraintTop_toBottomOf="@id/divider">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/view_pager"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

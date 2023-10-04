@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.modelview.grid
+package com.dinhlam.sharebox.modelview.trending
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,8 +8,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.databinding.ModelViewGridUrlBinding
-import com.dinhlam.sharebox.extensions.asLikeIcon
+import com.dinhlam.sharebox.databinding.ModelViewTrendingShareWebLinkBinding
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -19,7 +18,7 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.Icons
 
-data class GridUrlModelView(
+data class TrendingShareWebLinkModelView(
     val shareId: String,
     val url: String?,
     val shareDate: Long,
@@ -27,28 +26,8 @@ data class GridUrlModelView(
     val likeNumber: Int = 0,
     val commentNumber: Int = 0,
     val userDetail: UserDetail,
-    val bookmarked: Boolean = false,
-    val liked: Boolean = false,
     val boxDetail: BoxDetail?,
     val actionOpen: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
-    val actionShareToOther: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
-    val actionLike: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
-    val actionComment: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
-    val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
-        null
-    ),
-    val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
-        null
-    ),
-    val actionMore: BaseListAdapter.NoHashProp<(String) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
 ) : BaseListAdapter.BaseModelView(shareId) {
@@ -56,12 +35,16 @@ data class GridUrlModelView(
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareGridUrlViewHolder(ModelViewGridUrlBinding.inflate(inflater, container, false))
+        return TrendingShareWebLinkViewHolder(
+            ModelViewTrendingShareWebLinkBinding.inflate(
+                inflater, container, false
+            )
+        )
     }
 
-    private class ShareGridUrlViewHolder(
-        binding: ModelViewGridUrlBinding
-    ) : BaseListAdapter.BaseViewHolder<GridUrlModelView, ModelViewGridUrlBinding>(
+    private class TrendingShareWebLinkViewHolder(
+        binding: ModelViewTrendingShareWebLinkBinding
+    ) : BaseListAdapter.BaseViewHolder<TrendingShareWebLinkModelView, ModelViewTrendingShareWebLinkBinding>(
         binding
     ) {
 
@@ -71,32 +54,17 @@ data class GridUrlModelView(
             })
             binding.textLike.setDrawableCompat(start = Icons.likeIcon(buildContext))
             binding.textComment.setDrawableCompat(start = Icons.commentIcon(buildContext))
-            binding.imageMore.setImageDrawable(Icons.moreIcon(buildContext))
         }
 
-        override fun onBind(model: GridUrlModelView, position: Int) {
+        override fun onBind(model: TrendingShareWebLinkModelView, position: Int) {
             ImageLoader.INSTANCE.load(
                 buildContext, model.userDetail.avatar, binding.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
 
-            binding.imageMore.setOnClickListener {
-                model.actionMore.prop?.invoke(model.shareId)
-            }
-
-            binding.textLike.setDrawableCompat(model.liked.asLikeIcon(buildContext))
-
             binding.textLike.text = buildContext.getString(R.string.like, model.likeNumber)
             binding.textComment.text = buildContext.getString(R.string.comment, model.commentNumber)
-
-            binding.buttonComment.setOnClickListener {
-                model.actionComment.prop?.invoke(model.shareId)
-            }
-
-            binding.buttonLike.setOnClickListener {
-                model.actionLike.prop?.invoke(model.shareId)
-            }
 
             binding.container.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
@@ -113,10 +81,6 @@ data class GridUrlModelView(
 
             binding.textBoxName.text =
                 model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
-
-            binding.textBoxName.setOnClickListener {
-                model.actionBoxClick.prop?.invoke(model.boxDetail)
-            }
 
             model.shareNote.takeIfNotNullOrBlank()?.let { text ->
                 binding.textViewNote.isVisible = true
@@ -136,6 +100,5 @@ data class GridUrlModelView(
             binding.textViewNote.text = null
             ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
         }
-
     }
 }

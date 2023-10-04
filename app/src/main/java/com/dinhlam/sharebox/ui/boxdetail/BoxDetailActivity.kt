@@ -78,8 +78,7 @@ class BoxDetailActivity :
                         actionComment = ::onComment,
                         actionBookmark = ::onBookmark,
                         actionViewImage = ::viewImage,
-                        actionViewImages = ::viewImages,
-                        useGrid = false
+                        actionViewImages = ::viewImages
                     ).attachTo(this)
 
                     SizedBoxModelView("separator_${shareDetail.shareId}").attachTo(this)

@@ -7,22 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentTrendingBinding
-import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
+import com.dinhlam.sharebox.extensions.buildTrendingShareModelViews
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
-import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,9 +26,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrendingFragment :
-    BaseViewModelFragment<TrendingState, TrendingViewModel, FragmentTrendingBinding>(),
-    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    BoxSelectionDialogFragment.OnBoxSelectedListener {
+    BaseViewModelFragment<TrendingState, TrendingViewModel, FragmentTrendingBinding>() {
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -40,47 +34,42 @@ class TrendingFragment :
     @Inject
     lateinit var router: Router
 
-    private val videoAdapter = BaseListAdapter.createAdapter {
+    private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("loading_video", height = ViewGroup.LayoutParams.MATCH_PARENT))
+                add(LoadingModelView("loading", height = ViewGroup.LayoutParams.MATCH_PARENT))
                 return@getState
             }
 
-            if (state.videos.isEmpty()) {
+            if (state.shares.isEmpty()) {
                 add(
                     TextModelView(
-                        "empty_message", getString(R.string.empty_video)
+                        "empty_message", getString(R.string.no_result)
                     )
                 )
                 return@getState
             }
 
-            state.videos.map { videoMixerDetail ->
-                VideoModelView(
-                    "video_${videoMixerDetail.originUrl}_${videoMixerDetail.id}",
-                    videoMixerDetail.id,
-                    videoMixerDetail.videoSource,
-                    videoMixerDetail.originUrl,
-                    videoMixerDetail.shareDetail,
-                    actionOpen = BaseListAdapter.NoHashProp(::onOpen),
-                    actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
-                    actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                    actionLike = BaseListAdapter.NoHashProp(::onLike),
-                    actionComment = BaseListAdapter.NoHashProp(::onComment),
-                    actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
-                    actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery),
-                    actionBoxClick = BaseListAdapter.NoHashProp(::onBoxClick)
+            state.shares.map { shareDetail ->
+                shareDetail.shareData.buildTrendingShareModelViews(
+                    screenHeight(),
+                    shareDetail.shareId,
+                    shareDetail.shareDate,
+                    shareDetail.shareNote,
+                    shareDetail.user,
+                    shareDetail.likeNumber,
+                    commentNumber = shareDetail.commentNumber,
+                    boxDetail = shareDetail.boxDetail,
+                    actionOpen = ::onOpen
                 )
             }.forEach { modelView ->
-                add(modelView)
-                add(SizedBoxModelView("divider_${modelView.id}", height = 8.dp()))
+                modelView.attachTo(this)
             }
 
             if (state.isLoadingMore) {
                 add(
                     LoadingModelView(
-                        "video_load_more_${state.currentPage}",
+                        "load_more_${state.currentPage}",
                         height = ViewGroup.LayoutParams.MATCH_PARENT
                     )
                 )
@@ -92,10 +81,6 @@ class TrendingFragment :
         startActivity(router.shareDetail(requireContext(), shareId))
     }
 
-    private fun onSaveToGallery(id: Int, videoSource: VideoSource, videoUri: String) {
-        viewModel.saveVideoToGallery(requireContext(), id, videoSource, videoUri)
-    }
-
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
     ): FragmentTrendingBinding {
@@ -103,8 +88,8 @@ class TrendingFragment :
     }
 
     private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(requireContext(), blockShouldLoadMore = {
-            return@LoadMoreLinearLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
+        LoadMoreGridLayoutManager(requireContext(), 2, blockShouldLoadMore = {
+            return@LoadMoreGridLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
         }) {
             viewModel.loadMores()
         }
@@ -113,13 +98,11 @@ class TrendingFragment :
     override val viewModel: TrendingViewModel by viewModels()
 
     override fun onStateChanged(state: TrendingState) {
-        videoAdapter.requestBuildModelViews()
+        shareAdapter.requestBuildModelViews()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewBinding.imageSync.setImageDrawable(Icons.syncIcon(requireContext()))
 
         LiveEventUtils.eventRefreshVideosMixer.observe(viewLifecycleOwner) { shouldRefresh ->
             if (shouldRefresh) {
@@ -127,8 +110,10 @@ class TrendingFragment :
             }
         }
 
-        viewBinding.viewPager.layoutManager = layoutManager
-        viewBinding.viewPager.adapter = videoAdapter
+        viewBinding.recyclerView.layoutManager = layoutManager.apply {
+            spanSizeLookup = BaseSpanSizeLookup(shareAdapter, 2)
+        }
+        viewBinding.recyclerView.adapter = shareAdapter
 
         viewBinding.swipeRefreshLayout.setOnRefreshListener {
             viewBinding.swipeRefreshLayout.isRefreshing = false
@@ -146,48 +131,6 @@ class TrendingFragment :
                 viewBinding.viewLoading.hide()
             }
         }
-
-        viewBinding.imageSync.setOnClickListener {
-            viewModel.syncVideos()
-        }
-    }
-
-    private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
-        shareHelper.viewInSource(requireContext(), videoSource, shareData)
-    }
-
-    private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
-        val video =
-            state.videos.firstOrNull { video -> video.shareId == shareId } ?: return@getState
-        shareHelper.shareToOther(video.shareDetail)
-    }
-
-    private fun onLike(shareId: String) {
-        viewModel.like(shareId)
-    }
-
-    private fun onBookmark(shareId: String) {
-        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager, shareId, collectionId
-            )
-        }
-    }
-
-    private fun onComment(shareId: String) {
-        shareHelper.showCommentDialog(childFragmentManager, shareId)
-    }
-
-    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
-        viewModel.bookmark(shareId, bookmarkCollectionId)
-    }
-
-    override fun onBoxSelected(boxId: String) {
-        viewModel.setBox(boxId)
-    }
-
-    private fun onBoxClick(boxDetail: BoxDetail?) {
-        viewModel.setBox(boxDetail)
     }
 }
 

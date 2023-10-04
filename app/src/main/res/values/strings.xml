@@ -88,12 +88,12 @@
     <string name="app_desc">Sharebox helps archive contents and share it with people in your life.</string>
     <string name="box_general">General</string>
     <string name="archive_web_link">" archives a weblink"</string>
-    <string name="archive_text">" archives a text"</string>
+    <string name="archive_text">" archives a quote"</string>
     <string name="archive_images">" archives some images"</string>
     <string name="archive_image">" archives an image"</string>
     <string name="archive_a_link">Archive a weblink</string>
-    <string name="archive_a_content">Archive a text</string>
-    <string name="content_desc_button_archive_text">Archive a text quote</string>
+    <string name="archive_a_content">Archive a quote</string>
+    <string name="content_desc_button_archive_text">Archive a quote</string>
     <string name="share_some_images">Archive some images</string>
     <string name="content_desc_button_action">Toggle some actions on home page</string>
     <string name="overlay">Overlay</string>
@@ -165,6 +165,7 @@
     <string name="complete_progress">Completed (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
     <string name="title_trending">Trending</string>
+    <string name="number_image">+%d</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

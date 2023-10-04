@@ -9,11 +9,13 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
-import com.dinhlam.sharebox.modelview.grid.GridUrlModelView
 import com.dinhlam.sharebox.modelview.list.ListImageModelView
 import com.dinhlam.sharebox.modelview.list.ListImagesModelView
 import com.dinhlam.sharebox.modelview.list.ListTextModelView
 import com.dinhlam.sharebox.modelview.list.ListUrlModelView
+import com.dinhlam.sharebox.modelview.trending.TrendingShareImagesModelView
+import com.dinhlam.sharebox.modelview.trending.TrendingShareQuoteModelView
+import com.dinhlam.sharebox.modelview.trending.TrendingShareWebLinkModelView
 import com.dinhlam.sharebox.utils.Icons
 
 fun ShareData.buildShareModelViews(
@@ -35,53 +37,28 @@ fun ShareData.buildShareModelViews(
     actionViewImage: ((String, Uri) -> Unit)? = null,
     actionViewImages: Function2<String, List<Uri>, Unit>? = null,
     actionBoxClick: Function1<BoxDetail?, Unit>? = null,
-    useGrid: Boolean = false,
-    actionMore: ((String) -> Unit)? = null,
 ): BaseListAdapter.BaseModelView {
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
-
-            if (useGrid) {
-                GridUrlModelView(
-                    shareId,
-                    shareData.url,
-                    shareDate,
-                    shareNote,
-                    likeNumber,
-                    commentNumber,
-                    user,
-                    bookmarked,
-                    liked,
-                    boxDetail,
-                    BaseListAdapter.NoHashProp(actionOpen),
-                    BaseListAdapter.NoHashProp(actionShareToOther),
-                    BaseListAdapter.NoHashProp(actionLike),
-                    BaseListAdapter.NoHashProp(actionComment),
-                    BaseListAdapter.NoHashProp(actionBookmark),
-                    BaseListAdapter.NoHashProp(actionBoxClick),
-                    BaseListAdapter.NoHashProp(actionMore),
-                )
-            } else {
-                ListUrlModelView(
-                    shareId,
-                    shareData.url,
-                    shareDate,
-                    shareNote,
-                    likeNumber,
-                    commentNumber,
-                    user,
-                    bookmarked,
-                    liked,
-                    boxDetail,
-                    BaseListAdapter.NoHashProp(actionOpen),
-                    BaseListAdapter.NoHashProp(actionShareToOther),
-                    BaseListAdapter.NoHashProp(actionLike),
-                    BaseListAdapter.NoHashProp(actionComment),
-                    BaseListAdapter.NoHashProp(actionBookmark),
-                    BaseListAdapter.NoHashProp(actionBoxClick),
-                )
-            }
+            ListUrlModelView(
+                shareId,
+                shareData.url,
+                shareDate,
+                shareNote,
+                likeNumber,
+                commentNumber,
+                user,
+                bookmarked,
+                liked,
+                boxDetail,
+                BaseListAdapter.NoHashProp(actionOpen),
+                BaseListAdapter.NoHashProp(actionShareToOther),
+                BaseListAdapter.NoHashProp(actionLike),
+                BaseListAdapter.NoHashProp(actionComment),
+                BaseListAdapter.NoHashProp(actionBookmark),
+                BaseListAdapter.NoHashProp(actionBoxClick),
+            )
         }
 
         is ShareData.ShareText -> {
@@ -172,4 +149,81 @@ fun Boolean.asBookmarkIcon(context: Context): Drawable {
 
 fun Boolean.asLikeIcon(context: Context): Drawable {
     return if (this) Icons.likedIcon(context) else Icons.likeIcon(context)
+}
+
+fun ShareData.buildTrendingShareModelViews(
+    screenHeight: Int,
+    shareId: String,
+    shareDate: Long,
+    shareNote: String?,
+    user: UserDetail,
+    likeNumber: Int = 0,
+    commentNumber: Int = 0,
+    boxDetail: BoxDetail?,
+    actionOpen: Function1<String, Unit>,
+): BaseListAdapter.BaseModelView {
+    return when (this) {
+        is ShareData.ShareUrl -> {
+            val shareData = this.castNonNull<ShareData.ShareUrl>()
+            TrendingShareWebLinkModelView(
+                shareId,
+                shareData.url,
+                shareDate,
+                shareNote,
+                likeNumber,
+                commentNumber,
+                user,
+                boxDetail,
+                BaseListAdapter.NoHashProp(actionOpen),
+            )
+        }
+
+        is ShareData.ShareText -> {
+            val shareData = this.castNonNull<ShareData.ShareText>()
+            TrendingShareQuoteModelView(
+                shareId,
+                shareData.text,
+                shareDate,
+                shareNote,
+                likeNumber,
+                commentNumber,
+                user,
+                boxDetail,
+                BaseListAdapter.NoHashProp(actionOpen),
+            )
+        }
+
+        is ShareData.ShareImage -> {
+            val shareData = this.castNonNull<ShareData.ShareImage>()
+            TrendingShareImagesModelView(
+                shareId,
+                shareData.uri,
+                1,
+                shareDate,
+                shareNote,
+                likeNumber,
+                commentNumber,
+                user,
+                boxDetail,
+                BaseListAdapter.NoHashProp(actionOpen),
+            )
+        }
+
+        is ShareData.ShareImages -> {
+            val shareData = this.castNonNull<ShareData.ShareImages>()
+
+            TrendingShareImagesModelView(
+                shareId,
+                shareData.uris.first(),
+                shareData.uris.size,
+                shareDate,
+                shareNote,
+                likeNumber,
+                commentNumber,
+                user,
+                boxDetail,
+                BaseListAdapter.NoHashProp(actionOpen),
+            )
+        }
+    }
 }
