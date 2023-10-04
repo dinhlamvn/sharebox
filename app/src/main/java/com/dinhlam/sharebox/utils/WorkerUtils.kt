@@ -20,9 +20,12 @@ import java.util.concurrent.TimeUnit
 object WorkerUtils {
 
     private const val TAG_WORKER_SYNC_DATA = "sharebox-worker-sync-data"
-    private const val TAG_WORKER_SYNC_VIDEO = "sharebox-worker-sync-video"
+    private const val TAG_WORKER_SYNC_DATA_ONE_TIME = "sharebox-worker-sync-data-one-time"
 
     private fun getWorkerSyncDataUUID(): UUID =
+        UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
+
+    private fun getWorkerSyncDataOneTimeUUID(): UUID =
         UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
 
     fun enqueueSyncUserData(context: Context) {
@@ -41,6 +44,13 @@ object WorkerUtils {
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
                     .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
             ).build()
+        WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
+    }
+
+    fun enqueueJobSyncDataOneTime(context: Context) {
+        val syncDataWorkerRequest = OneTimeWorkRequestBuilder<SyncDataWorker>().setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).build()
         WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
     }
 

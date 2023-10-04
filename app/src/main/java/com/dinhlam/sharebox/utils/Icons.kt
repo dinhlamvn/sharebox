@@ -259,7 +259,7 @@ object Icons {
     }
 
     fun syncIcon(context: Context): Drawable {
-        return createIcon(context, GoogleMaterial.Icon.gmd_sync)
+        return createIcon(context, GoogleMaterial.Icon.gmd_cloud_upload)
     }
 
     fun sendIcon(context: Context): Drawable {

@@ -81,4 +81,7 @@ interface ShareDao {
 
     @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
     suspend fun countByUser(userId: String): Int
+
+    @Query("SELECT * FROM share WHERE synced = 0")
+    suspend fun findForSyncToCloud(): List<Share>
 }

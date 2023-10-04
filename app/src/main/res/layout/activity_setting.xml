@@ -154,6 +154,20 @@
                 android:text="@string/title_setting_sync_background"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 app:layout_constraintTop_toBottomOf="@id/seekbar_image_download_quality" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/button_sync_to_cloud"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
+                android:paddingVertical="12dp"
+                android:text="@string/text_sync_to_cloud"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintTop_toBottomOf="@id/checkbox_sync_in_background" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

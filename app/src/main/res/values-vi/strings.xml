@@ -1,7 +1,7 @@
 <resources>
-    <string name="share_activity_title">Chia sẻ vào Box</string>
-    <string name="share_direct_download_activity_title">Tải về máy</string>
-    <string name="text_input_note_hint_desc">Đây là chia sẻ của?</string>
+    <string name="share_activity_title">Lưu trữ</string>
+    <string name="share_direct_download_activity_title">Tải về</string>
+    <string name="text_input_note_hint_desc">Đây là gì?</string>
     <string name="view_more">Thêm…</string>
     <string name="confirmation">Xác nhận</string>
     <string name="no_result">Không có chia sẻ nào</string>
@@ -16,7 +16,6 @@
     <string name="comment_title">Bình luận (%d)</string>
     <string name="comment_hint">Bạn đang nghĩ gì đó?</string>
     <string name="error_send_comment">Có lỗi xảy ra khi gửi bình luận</string>
-    <string name="title_video_mixer">Bộ trộn Videos</string>
     <string name="comments_input_hint">Bình luận…</string>
     <string name="title_bookmark">Đánh dấu</string>
     <string name="title_bookmark_collection">Bộ sưu lưu đánh dấu</string>
@@ -44,9 +43,9 @@
     <string name="bookmark_collection_delete_confirm_message">Bạn có chắc sẽ xóa bộ sưu tập này?</string>
     <string name="collapsed_text">Xem thêm</string>
     <string name="expanded_text">Thu gọn</string>
-    <string name="shares_error">Không thể chia sẻ nội dung này</string>
-    <string name="shares_success">Đã chia sẻ</string>
-    <string name="realtime_database_service_text">Chúng tôi đang lắng nghe chia sẻ từ mọi người</string>
+    <string name="shares_error">Không thể lưu trữ nội dung này</string>
+    <string name="shares_success">Đã lưu trữ</string>
+    <string name="realtime_database_service_text">Dữ liệu đang được cập nhật trong thời gian thực</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>
@@ -64,7 +63,6 @@
     <string name="choose_box">Chọn Box</string>
     <string name="total_box">+%d box nữa…</string>
     <string name="search_box_result_empty">Không có Box nào cả.</string>
-    <string name="empty_video">Không tìm thấy video nào.</string>
     <string name="title_setting">Cài đặt</string>
     <string name="title_theme">Chủ đề</string>
     <string name="theme_light">Sáng</string>
@@ -93,7 +91,7 @@
     <string name="edit_avatar">Sửa ảnh đại diện</string>
     <string name="share_text_quote_hint">Nhập vào đây…</string>
     <string name="share_link_hint">Nhập địa chỉ vào đây…</string>
-    <string name="require_input_link">Vui lòng nhập địa chỉ để chia sẻ</string>
+    <string name="require_input_link">Vui lòng nhập địa chỉ để lưu trữ</string>
     <string name="require_input_text_quote">Vui lòng nhập nội dung trích dẫn</string>
     <string name="invalidate_link">Địa chỉ phải bắt đầu là http:// hoặc https://</string>
     <string name="create_box">Box mới</string>
@@ -113,32 +111,27 @@
     <string name="title_other_app_tiktok_step_3">Step 3. Vào ứng dụng Sharebox. Giờ đây bạn có thể xem trước và lưu video về bộ sưu tập.</string>
     <string name="synchronize_data_message">Đang đồng bộ dữ liệu…</string>
     <string name="sign_in">Đăng nhập</string>
-    <string name="sign_in_message">Hãy đăng nhập để sử dụng nhiều tính năng của ứng dụng: Tạo một chia sẻ, thích, bình luận,…</string>
+    <string name="sign_in_message">Hãy đăng nhập để sử dụng nhiều tính năng của ứng dụng: Lưu trữ một nội dung, thích, bình luận,…</string>
     <string name="sign_in_to_comment">Đăng nhập để bình luận</string>
     <string name="require_sign_in_to_create_box">Vui lòng đăng nhập để tạo Box</string>
     <string name="success_save_image_to_gallery">Đã lưu ảnh vào Bộ Sưu Tập</string>
-    <string name="shares">Chia sẻ</string>
+    <string name="archives">Lưu trữ</string>
     <string name="title_image_download_quality">Chất lượng ảnh khi lưu vào Bộ Sưu Tập</string>
     <string name="require_min_image_quality">Chất lượng ảnh phải từ %d</string>
     <string name="title_setting_sync_background">Đồng bộ dữ liệu dưới nền</string>
     <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi 6 giờ.</string>
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
-    <string name="notify_data_sync_success_text">Nhiều nội dung đã được cập nhât, hãy khám phá ngay.</string>
-    <string name="notify_data_sync_success_title">Dữ liệu đã cập nhật.</string>
     <string name="downloading">Đang tải</string>
     <string name="downloading_subtext">Chờ tải xuống</string>
     <string name="can_not_save_video">Không thể tải video này</string>
     <string name="download_preparing">Đang chuẩn bị…</string>
     <string name="cancel">Hủy</string>
-    <string name="sync_video_content_title">Đồng bộ videos…</string>
-    <string name="sync_video_content_text">Đang đồng bộ các chia sẻ videos</string>
-    <string name="share_video">" chia sẻ một video"</string>
     <string name="success_save_audio_to_gallery">Lưu âm thanh vào bộ sưu tập thành công</string>
     <string name="error_save_audio_to_gallery">Có lỗi xảy ra khi lưu âm thanh này</string>
     <string name="bookmark">Đánh dấu</string>
     <string name="download">Tải xuống</string>
     <string name="limit_share_image">Chúng tôi chỉ cho phép chia sẻ tối đa 10 ảnh cùng lúc</string>
-    <string name="sync_data_in_background_text">Ứng dụng đang đồng bộ dữ liệu dưới nền</string>
+    <string name="sync_data_to_cloud">Ứng dụng đang đồng bộ dữ liệu lên đám mây</string>
     <string name="sync_data_share_to_cloud">Đang đồng bộ chia sẻ lên đám mây…</string>
     <string name="network_wifi_only_warning">Mạng Wifi không được kết nối. Thử tải lại sau hoặc thay đổi cài đặt sang dùng dữ liệu di động.</string>
     <string name="alert_notice">Thông báo</string>
@@ -146,7 +139,7 @@
     <string name="alert_no_thanks">Không, cảm ơn</string>
     <string name="your_boxes">Box của bạn</string>
     <string name="skip_sign_in">Skip Sign In</string>
-    <string name="alert_skip_sign_in_message">Chỉ cần đăng nhập với Tài khoản Google, bạn có thể tạo, bình luận,… dễ dàng và nhanh? Bạn có chắc sẽ bỏ qua?</string>
+    <string name="alert_skip_sign_in_message">Chỉ cần đăng nhập với Tài khoản Google, bạn có thể tạo, bình luận,… Bạn có chắc sẽ bỏ qua?</string>
     <string name="sync_data_done_first_install">Đã đồng bộ dữ liệu xong, vui lòng chọn hành động để đi tiếp.</string>
     <string name="alert_skip">Bỏ qua</string>
     <string name="error_save_image_to_gallery">Có lỗi khi lưu ảnh</string>
@@ -154,9 +147,10 @@
     <string name="distribute_images_content">Đang phân phối ảnh tới những người khác</string>
     <string name="distribute_images_title">Phân phối ảnh</string>
     <string name="complete_progress">Hoàn thành (%s)</string>
-    <string name="nothing_to_download">Nothing to download</string>
+    <string name="nothing_to_download">Không có gì để tải xuống</string>
     <string name="title_trending">Thịnh hành</string>
     <string name="number_image">+%d</string>
+    <string name="text_sync_to_cloud">Đồng bộ dữ liệu lên đám mây</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

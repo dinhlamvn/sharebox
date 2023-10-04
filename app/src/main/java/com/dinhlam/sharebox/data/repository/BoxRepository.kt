@@ -100,4 +100,8 @@ class BoxRepository @Inject constructor(
             box.lastSeen
         )
     }
+
+    suspend fun findForSyncToCloud(): List<Box> = boxDao.runCatching {
+        findForSyncToCloud()
+    }.getOrDefault(emptyList())
 }

@@ -154,7 +154,7 @@ class GeneralFragment :
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
 
         val items = arrayListOf(
-            SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.shares)),
+            SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.archives)),
             SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(0, getString(R.string.bookmark))
         )
 

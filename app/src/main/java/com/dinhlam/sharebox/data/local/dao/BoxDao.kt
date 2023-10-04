@@ -35,4 +35,7 @@ interface BoxDao {
 
     @Query("SELECT COUNT(*) FROM `box`")
     suspend fun count(): Int
+
+    @Query("SELECT * FROM box WHERE synced = 0")
+    suspend fun findForSyncToCloud(): List<Box>
 }

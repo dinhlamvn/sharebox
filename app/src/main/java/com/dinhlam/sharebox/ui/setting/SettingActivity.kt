@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -49,6 +50,11 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             } else {
                 finish()
             }
+        }
+
+        viewBinding.buttonSyncToCloud.setDrawableCompat(Icons.syncIcon(this))
+        viewBinding.buttonSyncToCloud.setOnClickListener {
+            WorkerUtils.enqueueJobSyncDataOneTime(this)
         }
 
         when (appSettingHelper.getTheme()) {
