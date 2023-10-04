@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
-import com.dinhlam.sharebox.data.local.converter.VideoSourceConverter
 import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
 import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.BoxDao
@@ -31,7 +30,7 @@ import com.dinhlam.sharebox.data.local.entity.User
         AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class),
     ]
 )
-@TypeConverters(ShareDataConverter::class, VideoSourceConverter::class)
+@TypeConverters(ShareDataConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shareDao(): ShareDao
     abstract fun userDao(): UserDao

@@ -30,6 +30,7 @@ object DatabaseModule {
         @ApplicationContext context: Context, gson: Gson
     ): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "share-box-db")
+            .fallbackToDestructiveMigration()
             .addTypeConverter(ShareDataConverter(gson)).build()
     }
 
