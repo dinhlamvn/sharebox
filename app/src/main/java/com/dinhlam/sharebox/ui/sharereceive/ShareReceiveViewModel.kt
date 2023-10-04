@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -111,9 +110,6 @@ class ShareReceiveViewModel @Inject constructor(
             }
 
             share?.let { insertedShare ->
-                if (insertedShare.isVideoShare) {
-                    handleShareVideo(insertedShare)
-                }
                 WorkerUtils.enqueueSyncShareToCloud(context, insertedShare.shareId)
                 bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
@@ -126,11 +122,6 @@ class ShareReceiveViewModel @Inject constructor(
                 copy(isSaveSuccess = false, showLoading = false)
             }
         }
-    }
-
-    private suspend fun handleShareVideo(share: Share) = withContext(Dispatchers.IO) {
-        val shareUrl = share.shareData.cast<ShareData.ShareUrl>() ?: return@withContext
-        videoHelper.syncVideo(share.shareId, shareUrl.url)
     }
 
     private suspend fun shareUrl(

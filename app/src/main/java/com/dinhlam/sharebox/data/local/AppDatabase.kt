@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.LikeDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
-import com.dinhlam.sharebox.data.local.dao.VideoMixerDao
 import com.dinhlam.sharebox.data.local.entity.Bookmark
 import com.dinhlam.sharebox.data.local.entity.BookmarkCollection
 import com.dinhlam.sharebox.data.local.entity.Box
@@ -23,11 +22,10 @@ import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
-import com.dinhlam.sharebox.data.local.entity.VideoMixer
 
 @Database(
-    entities = [Share::class, User::class, Like::class, Comment::class, BookmarkCollection::class, Bookmark::class, VideoMixer::class, Box::class],
-    version = 4,
+    entities = [Share::class, User::class, Like::class, Comment::class, BookmarkCollection::class, Bookmark::class, Box::class],
+    version = 5,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class),
@@ -41,7 +39,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun commentDao(): CommentDao
     abstract fun bookmarkCollectionDao(): BookmarkCollectionDao
     abstract fun bookmarkDao(): BookmarkDao
-    abstract fun videoMixerDao(): VideoMixerDao
     abstract fun boxDao(): BoxDao
 
     @DeleteColumn(

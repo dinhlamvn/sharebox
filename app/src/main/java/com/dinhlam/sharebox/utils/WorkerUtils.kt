@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.worker.DirectDownloadShareWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
-import com.dinhlam.sharebox.worker.SyncVideoWorker
 import com.dinhlam.sharebox.worker.TiktokVideoDownloadWorker
 import com.dinhlam.sharebox.worker.YoutubeMp3DownloadWorker
 import java.util.UUID
@@ -71,16 +70,6 @@ object WorkerUtils {
         WorkManager.getInstance(context).enqueue(youtubeDownloadMp3Request)
     }
 
-    fun enqueueJobSyncVideoPeriodic(context: Context) {
-        val syncVideoWorkerRequest = PeriodicWorkRequestBuilder<SyncVideoWorker>(
-            1, TimeUnit.HOURS
-        ).addTag(TAG_WORKER_SYNC_VIDEO).setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
-        ).build()
-        WorkManager.getInstance(context).enqueue(syncVideoWorkerRequest)
-    }
-
     fun enqueueSyncShareToCloud(context: Context, shareId: String) {
         val syncShareToCloudRequest =
             OneTimeWorkRequestBuilder<SyncShareToCloudWorker>().setConstraints(
@@ -91,7 +80,7 @@ object WorkerUtils {
         WorkManager.getInstance(context).enqueue(syncShareToCloudRequest)
     }
 
-    fun enqueueDownloadShare(context: Context, shareUrl: String) {
+    fun enqueueDownloadShare(context: Context, shareUrl: String?) {
         val downloadShareRequest =
             OneTimeWorkRequestBuilder<DirectDownloadShareWorker>().setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()

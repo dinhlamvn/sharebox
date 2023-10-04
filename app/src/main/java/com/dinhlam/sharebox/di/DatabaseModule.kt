@@ -11,7 +11,6 @@ import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.LikeDao
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
-import com.dinhlam.sharebox.data.local.dao.VideoMixerDao
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -74,13 +73,6 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): BookmarkDao {
         return appDatabase.bookmarkDao()
-    }
-
-    @Provides
-    fun provideVideoMixerDao(
-        appDatabase: AppDatabase
-    ): VideoMixerDao {
-        return appDatabase.videoMixerDao()
     }
 
     @Provides

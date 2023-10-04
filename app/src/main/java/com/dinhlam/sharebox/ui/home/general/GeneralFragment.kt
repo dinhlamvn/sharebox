@@ -43,6 +43,7 @@ import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -136,7 +137,7 @@ class GeneralFragment :
                         actionViewImages = ::viewImages,
                         actionBoxClick = ::onBoxClick,
 
-                    ).attachTo(this)
+                        ).attachTo(this)
 
                     SizedBoxModelView("separator_${shareDetail.shareId}").attachTo(this)
                 }
@@ -189,10 +190,8 @@ class GeneralFragment :
             when (position) {
                 0 -> shareHelper.shareToOther(share)
                 1 -> onBookmark(shareId)
-                2 -> viewModel.saveVideoToGallery(shareId, requireContext())
-                3 -> viewModel.viewInSource(shareId) {
-                    viewInSource(it.videoSource, share.shareData)
-                }
+                2 -> WorkerUtils.enqueueDownloadShare(requireContext(), share.shareData.cast<ShareData.ShareUrl>()?.url)
+                3 -> onOpen(shareId)
             }
         }
     }

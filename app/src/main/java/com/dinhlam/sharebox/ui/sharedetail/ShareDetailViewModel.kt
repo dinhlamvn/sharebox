@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.sharedetail
 
-import android.content.Context
 import androidx.annotation.UiThread
 import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.R
@@ -12,12 +11,10 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
-import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.CommentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +31,6 @@ class ShareDetailViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val userRepository: UserRepository,
-    private val videoMixerRepository: VideoMixerRepository,
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareDetailState>(ShareDetailState(savedStateHandle.getNonNull(AppExtras.EXTRA_SHARE_ID))) {
 
@@ -57,8 +53,7 @@ class ShareDetailViewModel @Inject constructor(
 
     private fun loadShareDetail() = execute {
         val share = shareRepository.findOne(shareId)
-        val videoMixerDetail = videoMixerRepository.findOne(shareId)
-        copy(share = share, videoMixerDetail = videoMixerDetail)
+        copy(share = share)
     }
 
     fun onRefresh() {
@@ -106,9 +101,5 @@ class ShareDetailViewModel @Inject constructor(
         val user = userRepository.findOne(userHelper.getCurrentUserId())
             ?: return@doInBackground setState { copy(currentUser = null) }
         setState { copy(currentUser = user) }
-    }
-
-    fun saveVideoToGallery(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
-        videoHelper.downloadVideo(context, id, videoSource, videoUri)
     }
 }

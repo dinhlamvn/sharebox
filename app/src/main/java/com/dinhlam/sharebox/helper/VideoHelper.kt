@@ -4,14 +4,10 @@ import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.WorkerUtils
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,7 +17,6 @@ import javax.inject.Singleton
 @Singleton
 class VideoHelper @Inject constructor(
     private val okHttpClient: OkHttpClient,
-    private val videoMixerRepository: VideoMixerRepository,
     private val networkHelper: NetworkHelper,
     private val appSettingHelper: AppSettingHelper,
 ) {
@@ -119,36 +114,36 @@ class VideoHelper @Inject constructor(
         ) || url.contains("reel"))) || url.contains("fb.gg/v/")
     }
 
-    suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String {
-        return when (videoSource) {
-            VideoSource.Tiktok -> getTiktokFullUrl(url)
-            VideoSource.Facebook -> getFullFacebookUrl(url)
-            VideoSource.Youtube -> url
+    suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String? {
+        return try {
+            when (videoSource) {
+                VideoSource.Tiktok -> getTiktokFullUrl(url)
+                VideoSource.Facebook -> getFullFacebookUrl(url)
+                VideoSource.Youtube -> url
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 
-    suspend fun syncVideo(shareId: String, shareUrl: String) {
-        videoMixerRepository.findOne(shareId) ?: run {
-            val videoSource = getVideoSource(shareUrl) ?: return
-            val videoSourceId = getVideoSourceId(videoSource, shareUrl)
-            val videoOriginUrl = getVideoOriginUrl(videoSource, shareUrl)
-            videoMixerRepository.insert(shareId, videoOriginUrl, videoSource, videoSourceId)
-        }
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    fun downloadVideo(context: Context, id: Int, videoSource: VideoSource, videoUri: String) {
+    suspend fun downloadVideo(
+        context: Context,
+        id: Int,
+        videoSource: VideoSource,
+        videoUri: String
+    ) {
         if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-            GlobalScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 Toast.makeText(context, R.string.network_wifi_only_warning, Toast.LENGTH_SHORT)
                     .show()
             }
             return
         }
+
         when (videoSource) {
             VideoSource.Tiktok -> WorkerUtils.enqueueJobDownloadTiktokVideo(context, id, videoUri)
             VideoSource.Youtube -> WorkerUtils.enqueueJobDownloadYoutubeMp3(context, id, videoUri)
-            else -> GlobalScope.launch(Dispatchers.Main) {
+            else -> withContext(Dispatchers.Main) {
                 Toast.makeText(context, R.string.can_not_save_video, Toast.LENGTH_SHORT).show()
             }
         }

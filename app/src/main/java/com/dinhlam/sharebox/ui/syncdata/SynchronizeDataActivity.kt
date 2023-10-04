@@ -83,7 +83,6 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                     appSettingHelper.setSyncDataInBackground(true)
                     WorkerUtils.enqueueJobSyncData(applicationContext)
                     realtimeDatabaseRepository.sync()
-                    WorkerUtils.enqueueJobSyncVideoPeriodic(applicationContext)
                     appSharePref.offFirstInstall()
                     withContext(Dispatchers.Main) {
                         if (userHelper.isSignedIn()) {

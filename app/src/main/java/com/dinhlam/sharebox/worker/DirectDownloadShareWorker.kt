@@ -31,7 +31,8 @@ class DirectDownloadShareWorker @AssistedInject constructor(
         val shareUrl =
             workerParams.inputData.getString(AppExtras.EXTRA_URL) ?: return Result.success()
         val videoSource = videoHelper.getVideoSource(shareUrl) ?: return Result.success()
-        val videoOriginUrl = videoHelper.getVideoOriginUrl(videoSource, shareUrl)
+        val videoOriginUrl =
+            videoHelper.getVideoOriginUrl(videoSource, shareUrl) ?: return Result.success()
         videoHelper.downloadVideo(appContext, Random.nextInt(), videoSource, videoOriginUrl)
         return Result.success()
     }

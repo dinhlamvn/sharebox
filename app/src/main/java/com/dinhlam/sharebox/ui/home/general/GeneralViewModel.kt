@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home.general
 
-import android.content.Context
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
@@ -9,7 +8,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.VideoMixerRepository
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -17,7 +15,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.VideoMixerDetail
 import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +30,6 @@ class GeneralViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val appSharePref: AppSharePref,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
-    private val videoMixerRepository: VideoMixerRepository,
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<GeneralState>(GeneralState(isRefreshing = true)) {
 
@@ -181,25 +177,6 @@ class GeneralViewModel @Inject constructor(
         doInBackground {
             val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
             setBox(boxDetail)
-        }
-    }
-
-    fun saveVideoToGallery(shareId: String, context: Context) {
-        doInBackground {
-            val videoMixer = videoMixerRepository.findOne(shareId) ?: return@doInBackground
-            videoHelper.downloadVideo(
-                context,
-                videoMixer.id,
-                videoMixer.videoSource,
-                videoMixer.originUrl
-            )
-        }
-    }
-
-    fun viewInSource(shareId: String, block: (VideoMixerDetail) -> Unit) {
-        doInBackground {
-            val videoMixer = videoMixerRepository.findOne(shareId) ?: return@doInBackground
-            block(videoMixer)
         }
     }
 }

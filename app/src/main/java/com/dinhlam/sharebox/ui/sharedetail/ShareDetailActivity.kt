@@ -24,7 +24,6 @@ import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.modelview.CommentModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
-import com.dinhlam.sharebox.modelview.videomixer.VideoModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
@@ -44,21 +43,7 @@ class ShareDetailActivity :
             val shareDetail =
                 state.share ?: return@getState LoadingModelView("loading").attachTo(this)
 
-            state.videoMixerDetail?.let { videoMixerDetail ->
-                VideoModelView(
-                    "video_${videoMixerDetail.originUrl}_${videoMixerDetail.id}",
-                    videoMixerDetail.id,
-                    videoMixerDetail.videoSource,
-                    videoMixerDetail.originUrl,
-                    videoMixerDetail.shareDetail,
-                    actionOpen = BaseListAdapter.NoHashProp(::onOpen),
-                    actionViewInSource = BaseListAdapter.NoHashProp(::viewInSource),
-                    actionShareToOther = BaseListAdapter.NoHashProp(::onShareToOther),
-                    actionLike = BaseListAdapter.NoHashProp(::onLike),
-                    actionBookmark = BaseListAdapter.NoHashProp(::onBookmark),
-                    actionSaveToGallery = BaseListAdapter.NoHashProp(::onSaveToGallery),
-                ).attachTo(this)
-            } ?: shareDetail.shareData.buildShareModelViews(
+            shareDetail.shareData.buildShareModelViews(
                 screenHeight(),
                 shareDetail.shareId,
                 shareDetail.shareDate,
@@ -149,14 +134,6 @@ class ShareDetailActivity :
         viewBinding.buttonSignIn.setOnClickListener {
             signInLauncher.launch(router.signIn(true))
         }
-    }
-
-    private fun onSaveToGallery(id: Int, videoSource: VideoSource, videoUri: String) {
-        viewModel.saveVideoToGallery(this, id, videoSource, videoUri)
-    }
-
-    private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
-        shareHelper.viewInSource(this, videoSource, shareData)
     }
 
     private fun onOpen(shareId: String) = getState(viewModel) { state ->
