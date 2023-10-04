@@ -43,7 +43,7 @@ class TrendingViewModel @Inject constructor(
     private suspend fun loadShares(
         limit: Int, offset: Int
     ): List<ShareDetail> {
-        return shareRepository.findGeneralShares(limit, offset)
+        return shareRepository.findTrendingShares(limit, offset)
     }
 
     fun doOnPullRefresh() {

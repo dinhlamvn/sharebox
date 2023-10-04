@@ -214,7 +214,7 @@ fun ShareData.buildTrendingShareModelViews(
 
             TrendingShareImagesModelView(
                 shareId,
-                shareData.uris.first(),
+                shareData.uris.firstOrNull(),
                 shareData.uris.size,
                 shareDate,
                 shareNote,

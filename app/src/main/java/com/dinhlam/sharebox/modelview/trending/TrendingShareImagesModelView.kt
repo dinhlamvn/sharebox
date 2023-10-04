@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.utils.Icons
 
 data class TrendingShareImagesModelView(
     val shareId: String,
-    val uri: Uri,
+    val uri: Uri?,
     val numberImage: Int,
     val shareDate: Long,
     val shareNote: String?,

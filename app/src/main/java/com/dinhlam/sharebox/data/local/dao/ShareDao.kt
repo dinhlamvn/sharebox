@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.data.local.dao
 
 import androidx.room.*
 import com.dinhlam.sharebox.data.local.entity.Share
+import com.dinhlam.sharebox.model.TrendingShare
 
 @Dao
 interface ShareDao {
@@ -35,6 +36,20 @@ interface ShareDao {
         OFFSET :offset"""
     )
     suspend fun findForGeneral(limit: Int, offset: Int): List<Share>
+
+    @Query(
+        """
+        SELECT s.share_id, COUNT(l.share_id) as score
+        FROM share as s 
+        LEFT JOIN box as b ON b.box_id = s.share_box_id 
+        JOIN `like` as l on l.share_id = s.share_id
+        WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL))
+        GROUP BY l.share_id
+        ORDER BY score DESC 
+        LIMIT :limit 
+        OFFSET :offset"""
+    )
+    suspend fun findForTrending(limit: Int, offset: Int): List<TrendingShare>
 
     @Query("SELECT * FROM share WHERE share_id IN(:shareIds)")
     suspend fun find(shareIds: List<String>): List<Share>

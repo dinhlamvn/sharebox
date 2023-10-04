@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.model.TrendingShare
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
 import kotlinx.coroutines.flow.asFlow
@@ -83,6 +84,15 @@ class ShareRepository @Inject constructor(
             limit = limit,
             offset = offset
         )
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
+    }.getOrDefault(emptyList())
+
+    suspend fun findTrendingShares(limit: Int, offset: Int) = shareDao.runCatching {
+        val trendingShares = findForTrending(
+            limit = limit,
+            offset = offset
+        )
+        val shares = find(trendingShares.map(TrendingShare::shareId))
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
