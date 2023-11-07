@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
+import android.net.Uri
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -30,4 +31,8 @@ fun String.appendIf(append: String, condition: (String) -> Boolean): String {
     } else {
         this
     }
+}
+
+fun String.trimToDomain(): String? {
+    return Uri.parse(this).host?.replaceFirst(Regex("www."), "")
 }

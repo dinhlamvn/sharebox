@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_url"
+        android:id="@+id/text_view_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -23,25 +23,10 @@
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/image_view"
-        tools:text="https://google.com" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_view_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_url"
         tools:text="This is title This is title This is title This is title This is title" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -51,11 +36,26 @@
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintEnd_toEndOf="@id/text_view_title"
         app:layout_constraintStart_toStartOf="@id/text_view_title"
         app:layout_constraintTop_toBottomOf="@id/text_view_title"
         tools:text="This is description" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_url"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_description"
+        tools:text="https://google.com" />
 
 
     <com.facebook.shimmer.ShimmerFrameLayout

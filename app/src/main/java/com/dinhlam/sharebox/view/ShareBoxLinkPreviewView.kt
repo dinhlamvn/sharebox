@@ -2,12 +2,14 @@ package com.dinhlam.sharebox.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.trimToDomain
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -71,10 +73,9 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         var type: String? = null
     )
 
-    private val binding: ViewShareBoxLinkPreviewBinding =
-        inflate(context, R.layout.view_share_box_link_preview, this).run {
-            ViewShareBoxLinkPreviewBinding.bind(this)
-        }
+    private val binding: ViewShareBoxLinkPreviewBinding = ViewShareBoxLinkPreviewBinding.inflate(
+        LayoutInflater.from(context), this
+    )
 
     private fun resetUi() {
         binding.textViewUrl.text = null
@@ -141,7 +142,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
             ) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
-            binding.textViewUrl.text = openGraphResult.url
+            binding.textViewUrl.text = openGraphResult.url?.trimToDomain()
             binding.textViewTitle.text = openGraphResult.title
             binding.textViewDescription.text = openGraphResult.description
             binding.shimmerContainer.hideShimmer()
