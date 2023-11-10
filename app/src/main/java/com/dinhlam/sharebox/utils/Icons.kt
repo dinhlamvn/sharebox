@@ -273,4 +273,28 @@ object Icons {
     fun levelIcon(context: Context): IconicsDrawable {
         return createIcon(context, FontAwesome.Icon.faw_clock)
     }
+
+    fun noteIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_note, block(IconBuilder(context)))
+    }
+
+    fun webIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_web, block(IconBuilder(context)))
+    }
+
+    fun imageIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_image, block(IconBuilder(context)))
+    }
+
+    fun downloadIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_file_download, block(IconBuilder(context)))
+    }
 }

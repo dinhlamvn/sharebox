@@ -13,8 +13,6 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
-import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
-import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.VideoHelper
@@ -30,9 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : BaseActivity<ActivityHomeBinding>(),
-    ShareTextQuoteInputDialogFragment.OnShareTextQuoteCallback,
-    ShareLinkInputDialogFragment.OnShareLinkCallback {
+class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     companion object {
         private const val PAGE_SIZE = 4
@@ -194,24 +190,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(),
         viewBinding.textArchiveUrl.isVisible = isVisible
         viewBinding.textArchiveImages.isVisible = isVisible
         viewBinding.textArchiveText.isVisible = isVisible
-    }
-
-    override fun onShareLink(link: String) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/*"
-            `package` = packageName
-            putExtra(Intent.EXTRA_TEXT, link)
-        }
-        shareResultLauncher.launch(intent)
-    }
-
-    override fun onShareTextQuote(text: String) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/*"
-            `package` = packageName
-            putExtra(Intent.EXTRA_TEXT, text)
-        }
-        shareResultLauncher.launch(intent)
     }
 
     override fun onDestroy() {

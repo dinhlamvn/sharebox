@@ -4,14 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/AppMaterialCardView"
     android:layout_width="100dp"
-    android:layout_height="180dp"
+    android:layout_height="wrap_content"
     app:cardCornerRadius="8dp"
     app:cardElevation="6dp">
-
-    <View
-        android:id="@+id/view_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
@@ -44,29 +39,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:gravity="center_horizontal|top"
             android:lines="2"
             android:paddingHorizontal="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_icon"
-            tools:text="This is simple box" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center_horizontal|top"
-            android:lines="3"
-            android:padding="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_name"
+            app:layout_constraintTop_toBottomOf="@id/image_icon"
             tools:text="This is simple box" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

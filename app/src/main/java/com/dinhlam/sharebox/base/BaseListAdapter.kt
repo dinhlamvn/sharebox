@@ -134,18 +134,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         }
     }
 
-    abstract class BaseModelView private constructor() {
-
-        constructor(id: String) : this() {
-            modelId = Ids.hashString64Bit(id)
-        }
-
-        constructor(id: Long) : this() {
-            modelId = Ids.hashLong64Bit(id)
-        }
-
-        var modelId: Long = 0L
-            private set
+    abstract class BaseModelView protected constructor(val modelId: Long) {
+        constructor(id: String) : this(Ids.hashString64Bit(id))
 
         abstract fun createViewHolder(
             inflater: LayoutInflater, container: ViewGroup

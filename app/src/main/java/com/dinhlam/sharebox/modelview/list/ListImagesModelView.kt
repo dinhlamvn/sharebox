@@ -4,30 +4,22 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.databinding.ModelViewListImagesBinding
-import com.dinhlam.sharebox.extensions.asBookmarkIcon
-import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
-import com.dinhlam.sharebox.extensions.asLikeIcon
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageModelView
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.utils.Icons
-import com.dinhlam.sharebox.utils.UserUtils
 
 data class ListImagesModelView(
     val shareId: String,
@@ -94,6 +86,9 @@ data class ListImagesModelView(
         private val models = mutableListOf<ImageModelView>()
 
         init {
+            binding.imageDownload.setImageDrawable(Icons.downloadIcon(buildContext) {
+                copy(sizeDp = 20)
+            })
             binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
@@ -115,66 +110,20 @@ data class ListImagesModelView(
             models.addAll(model.modelViews)
             adapter.requestBuildModelViews()
 
+            binding.textUserName.text = model.userDetail.name
             ImageLoader.INSTANCE.load(
                 buildContext,
                 model.userDetail.avatar,
-                binding.layoutUserInfo.imageAvatar
+                binding.imageAvatar
             ) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
-
-            binding.bottomAction.setBookmarkIcon(model.bookmarked.asBookmarkIcon(buildContext))
-            binding.bottomAction.setLikeIcon(model.liked.asLikeIcon(buildContext))
-
-            binding.container.setOnClickListener {
-                model.actionViewImages.prop?.invoke(model.shareId, model.uris)
-            }
-
-            binding.bottomAction.setOnShareClickListener {
-                model.actionShareToOther.prop?.invoke(model.shareId)
-            }
-
-            binding.bottomAction.setOnCommentClickListener {
-                model.actionComment.prop?.invoke(model.shareId)
-            }
-
-            binding.bottomAction.setOnLikeClickListener {
-                model.actionLike.prop?.invoke(model.shareId)
-            }
-
-            binding.bottomAction.setOnBookmarkClickListener {
-                model.actionStar.prop?.invoke(model.shareId)
-            }
-
-            binding.bottomAction.setLikeNumber(model.likeNumber)
-            binding.bottomAction.setCommentNumber(model.commentNumber)
-
-            binding.layoutUserInfo.textViewName.text = buildSpannedString {
-                bold {
-                    append(model.userDetail.name)
-                }
-                append(buildContext.getString(R.string.archive_images))
-            }
-            binding.layoutUserInfo.textUserLevel.text =
-                buildContext.getString(
-                    R.string.user_level_format,
-                    UserUtils.getLevelTitle(model.userDetail.level),
-                    model.shareDate.asElapsedTimeDisplay()
-                )
 
             binding.textBoxName.text =
                 model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
 
             binding.textBoxName.setOnClickListener {
                 model.actionBoxClick.prop?.invoke(model.boxDetail)
-            }
-
-            model.shareNote.takeIfNotNullOrBlank()?.let { text ->
-                binding.textViewNote.isVisible = true
-                binding.textViewNote.setReadMoreText(text)
-            } ?: binding.textViewNote.apply {
-                text = null
-                isVisible = false
             }
         }
 
@@ -185,11 +134,7 @@ data class ListImagesModelView(
         }
 
         private fun releaseUI() {
-            binding.textViewNote.text = null
-            binding.bottomAction.release()
-            ImageLoader.INSTANCE.release(buildContext, binding.layoutUserInfo.imageAvatar)
-            binding.layoutUserInfo.textViewName.text = null
-            binding.layoutUserInfo.textUserLevel.text = null
+            ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
         }
     }
 }

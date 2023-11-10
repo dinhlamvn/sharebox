@@ -75,9 +75,7 @@ data class TrendingShareWebLinkModelView(
                     append(model.userDetail.name)
                 }
             }
-            binding.shareLinkPreview.setLink(model.url) {
-                copy(maxLineDesc = 0, maxLineUrl = 0, maxLineTitle = 1)
-            }
+            binding.shareLinkPreview.setLink(model.url)
 
             binding.textBoxName.text =
                 model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)

@@ -1,12 +1,15 @@
 package com.dinhlam.sharebox.ui.home.general
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -20,13 +23,15 @@ import com.dinhlam.sharebox.databinding.FragmentGeneralBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.guideline.GuidelineDialogFragment
+import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
+import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareModelViews
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
@@ -36,12 +41,12 @@ import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.modelview.BoxModelView
 import com.dinhlam.sharebox.modelview.CarouselModelView
 import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.MainActionModelView
 import com.dinhlam.sharebox.modelview.SizedBoxModelView
 import com.dinhlam.sharebox.modelview.TextModelView
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +57,9 @@ class GeneralFragment :
     BaseViewModelFragment<GeneralState, GeneralViewModel, FragmentGeneralBinding>(),
     BoxSelectionDialogFragment.OnBoxSelectedListener,
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener,
+    ShareTextQuoteInputDialogFragment.OnShareTextQuoteCallback,
+    ShareLinkInputDialogFragment.OnShareLinkCallback {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
@@ -79,13 +86,67 @@ class GeneralFragment :
         }
     }
 
+    private val pickImagesResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val clipData = result.data?.clipData ?: return@registerForActivityResult
+                val pickCount =
+                    clipData.itemCount.takeIfGreaterThanZero() ?: return@registerForActivityResult
+                val intent = if (pickCount == 1) {
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "image/*"
+                        `package` = activity?.packageName
+                        putExtra(Intent.EXTRA_STREAM, clipData.getItemAt(0).uri)
+                    }
+                } else {
+                    Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                        type = "image/*"
+                        `package` = activity?.packageName
+                        val list = arrayListOf<Uri>()
+                        for (i in 0 until pickCount) {
+                            list.add(clipData.getItemAt(i).uri)
+                        }
+                        putParcelableArrayListExtra(Intent.EXTRA_STREAM, list)
+                    }
+                }
+                startActivity(intent)
+            }
+        }
+
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
+            MainActionModelView(
+                ContextCompat.getColor(requireContext(), R.color.colorPrimary),
+                BaseListAdapter.NoHashProp(View.OnClickListener {
+                    shareHelper.shareTextQuote(childFragmentManager)
+                }),
+                BaseListAdapter.NoHashProp(View.OnClickListener {
+                    shareHelper.shareLink(childFragmentManager)
+                }),
+                BaseListAdapter.NoHashProp(View.OnClickListener {
+                    pickImagesResultLauncher.launch(router.pickImageIntent(true))
+                }),
+            ).attachTo(this)
+
             if (state.isRefreshing) {
                 add(LoadingModelView("top_loading"))
             }
 
             if (state.boxes.isNotEmpty()) {
+                SizedBoxModelView(
+                    "margin_my_boxes",
+                    height = 32.dp(),
+                    backgroundColor = android.R.color.transparent
+                ).attachTo(this)
+
+                TextModelView(
+                    "recently_boxes_title",
+                    getString(R.string.recently_boxes),
+                    textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                    gravity = Gravity.START,
+                ).attachTo(this)
+
                 val lastIndex = state.boxes.size - 1
                 val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
                     BoxModelView(
@@ -106,7 +167,19 @@ class GeneralFragment :
                 }
                 add(CarouselModelView("carousel_box", boxModelViews))
 
-                add(SizedBoxModelView("divider_carousel", height = 1.dp()))
+                SizedBoxModelView(
+                    "margin_bottom_recently_boxes",
+                    height = 16.dp(),
+                    backgroundColor = android.R.color.transparent
+                ).attachTo(this)
+
+                TextModelView(
+                    "recently_shares_title",
+                    getString(R.string.recently_shares),
+                    textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                    gravity = Gravity.START,
+                ).attachTo(this)
             }
 
             if (state.shares.isEmpty() && !state.isRefreshing) {
@@ -139,7 +212,7 @@ class GeneralFragment :
 
                         ).attachTo(this)
 
-                    SizedBoxModelView("separator_${shareDetail.shareId}").attachTo(this)
+                    //SizedBoxModelView("separator_${shareDetail.shareId}").attachTo(this)
                 }
 
                 if (state.isLoadingMore) {
@@ -190,7 +263,11 @@ class GeneralFragment :
             when (position) {
                 0 -> shareHelper.shareToOther(share)
                 1 -> onBookmark(shareId)
-                2 -> WorkerUtils.enqueueDownloadShare(requireContext(), share.shareData.cast<ShareData.ShareUrl>()?.url)
+                2 -> WorkerUtils.enqueueDownloadShare(
+                    requireContext(),
+                    share.shareData.cast<ShareData.ShareUrl>()?.url
+                )
+
                 3 -> onOpen(shareId)
             }
         }
@@ -229,10 +306,6 @@ class GeneralFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.textTitle.setDrawableCompat(
-            Icons.boxIcon(requireContext()),
-            end = Icons.dropdownIcon(requireContext()) { copy(sizeDp = 10) })
-
         LiveEventUtils.eventScrollToTopGeneral.observe(viewLifecycleOwner) { shouldScroll ->
             if (shouldScroll) {
                 viewBinding.recyclerView.smoothScrollToPosition(0)
@@ -248,14 +321,6 @@ class GeneralFragment :
             true
         }
 
-        viewBinding.textTitle.setOnClickListener {
-            shareHelper.showBoxSelectionDialog(childFragmentManager)
-        }
-
-        viewModel.consume(this, GeneralState::currentBox) { currentBox ->
-            viewBinding.textTitle.text = currentBox?.boxName ?: getString(R.string.box_general)
-        }
-
         shareAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
@@ -269,11 +334,6 @@ class GeneralFragment :
             false
         viewBinding.recyclerView.layoutManager = layoutManager
         viewBinding.recyclerView.adapter = shareAdapter
-
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.doOnRefresh()
-            viewBinding.swipeRefreshLayout.isRefreshing = false
-        }
 
         viewModel.consume(this, GeneralState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
@@ -347,5 +407,23 @@ class GeneralFragment :
                 viewModel.setBox(boxDetail)
             }
         }
+    }
+
+    override fun onShareLink(link: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/*"
+            `package` = activity?.packageName
+            putExtra(Intent.EXTRA_TEXT, link)
+        }
+        startActivity(intent)
+    }
+
+    override fun onShareTextQuote(text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/*"
+            `package` = activity?.packageName
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        startActivity(intent)
     }
 }

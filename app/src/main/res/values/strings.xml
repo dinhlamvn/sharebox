@@ -160,6 +160,13 @@
     <string name="title_trending">Trending</string>
     <string name="number_image">+%d</string>
     <string name="text_sync_to_cloud">Sync data to cloud</string>
+    <string name="search">Search…</string>
+    <string name="note">Note</string>
+    <string name="web">Web</string>
+    <string name="images">Images</string>
+    <string name="my_boxes">My Boxes</string>
+    <string name="recently_boxes">Recently Boxes</string>
+    <string name="recently_shares">Recently Shares</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

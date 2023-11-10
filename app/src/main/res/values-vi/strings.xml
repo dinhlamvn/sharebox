@@ -151,6 +151,11 @@
     <string name="title_trending">Thịnh hành</string>
     <string name="number_image">+%d</string>
     <string name="text_sync_to_cloud">Đồng bộ dữ liệu lên đám mây</string>
+    <string name="search">Search…</string>
+    <string name="note">Note</string>
+    <string name="my_boxes">My Boxes</string>
+    <string name="recently_boxes">Recently Boxes</string>
+    <string name="recently_shares">Recently Shares</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
