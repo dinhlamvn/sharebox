@@ -43,7 +43,7 @@
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             app:layout_constraintBottom_toTopOf="@id/text_box_name"
-            app:layout_constraintEnd_toStartOf="@id/image_share"
+            app:layout_constraintEnd_toStartOf="@id/image_download"
             app:layout_constraintStart_toEndOf="@id/image_avatar"
             app:layout_constraintTop_toTopOf="@id/image_avatar"
             tools:text="Dinh" />
@@ -60,7 +60,7 @@
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-            app:layout_constraintEnd_toStartOf="@id/image_share"
+            app:layout_constraintEnd_toStartOf="@id/image_download"
             app:layout_constraintStart_toEndOf="@id/image_avatar"
             app:layout_constraintTop_toBottomOf="@id/text_user_name"
             tools:text="Dinh" />

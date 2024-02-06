@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.base
 import androidx.recyclerview.widget.GridLayoutManager
 
 class BaseSpanSizeLookup(
-    private val adapter: BaseListAdapter<BaseListAdapter.BaseModelView>,
+    private val adapter: BaseListAdapter,
     private val spanCount: Int,
     private val factory: SpanSizeFactory? = null
 ) : GridLayoutManager.SpanSizeLookup() {

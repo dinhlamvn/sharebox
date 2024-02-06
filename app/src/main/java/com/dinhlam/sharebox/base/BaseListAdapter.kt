@@ -19,24 +19,26 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 
-class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
-    private val modelViewsBuilder: ModelListBuilder<T>.() -> Unit
-) : ListAdapter<T, BaseListAdapter.BaseViewHolder<T, ViewBinding>>(DiffCallback()) {
+abstract class BaseListAdapter constructor(
+    private val modelViewsBuilder: (BaseListAdapter.() -> Unit)? = null
+) : ListAdapter<BaseListAdapter.BaseModelView, BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseModelView, ViewBinding>>(
+    DiffCallback()
+), MutableList<BaseListAdapter.BaseModelView> by CopyOnWriteArrayList() {
 
-    class ModelListBuilder<T> : CopyOnWriteArrayList<T>()
+    abstract fun buildModelViews()
 
     private val buildModelViewsScope =
         CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
 
     private var buildModelViewsJob: Job? = null
 
-    private val modelViewsManager = ModelViewsManager<T>()
+    private val modelViewsManager = ModelViewsManager()
 
-    override fun submitList(list: MutableList<T>?) {
+    override fun submitList(list: MutableList<BaseModelView>?) {
         error("No support direct call method")
     }
 
-    override fun submitList(list: MutableList<T>?, commitCallback: Runnable?) {
+    override fun submitList(list: MutableList<BaseModelView>?, commitCallback: Runnable?) {
         error("No support direct call method")
     }
 
@@ -51,25 +53,25 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     }
 
     private suspend fun buildModelViewsInternal() {
-        val builder = ModelListBuilder<T>()
-        modelViewsBuilder.invoke(builder)
+        clear()
+        modelViewsBuilder?.invoke(this) ?: buildModelViews()
         withContext(Dispatchers.Main) {
-            super.submitList(builder.toList())
+            super.submitList(this@BaseListAdapter.toList())
         }
     }
 
     init {
-        setHasStableIds(true)
+        super.setHasStableIds(true)
     }
 
-    private class ModelViewsManager<T : BaseModelView> {
-        private val modelViewTypeMap = mutableMapOf<Int, T>()
+    private class ModelViewsManager {
+        private val modelViewTypeMap = mutableMapOf<Int, BaseModelView>()
         private val rememberMap = mutableMapOf<String, Int>()
 
         fun getModel(viewType: Int) = modelViewTypeMap[viewType]
             ?: error("No model view is provided with view type $viewType")
 
-        fun getViewTypeAndRemember(model: T): Int {
+        fun getViewTypeAndRemember(model: BaseModelView): Int {
             val modelClassName = model::class.java.simpleName
             return rememberMap[modelClassName] ?: let {
                 val viewType = generateViewType()
@@ -85,30 +87,38 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
     companion object {
         @JvmStatic
         fun createAdapter(
-            modelViewsBuilder: ModelListBuilder<BaseModelView>.() -> Unit,
-        ): BaseListAdapter<BaseModelView> {
-            return BaseListAdapter(modelViewsBuilder)
+            modelViewsBuilder: BaseListAdapter.() -> Unit,
+        ): BaseListAdapter {
+            return object : BaseListAdapter(modelViewsBuilder) {
+                override fun buildModelViews() {
+                    // Do-Nothing
+                }
+            }
         }
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
-    ): BaseViewHolder<T, ViewBinding> {
+    ): BaseViewHolder<BaseModelView, ViewBinding> {
         val model = modelViewsManager.getModel(viewType)
         return model.createViewHolder(LayoutInflater.from(parent.context), parent).castNonNull()
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<T, ViewBinding>, position: Int) {
+    override fun onBindViewHolder(
+        holder: BaseViewHolder<BaseModelView, ViewBinding>, position: Int
+    ) {
         onBindViewHolder(holder, position, mutableListOf())
     }
 
     override fun onBindViewHolder(
-        holder: BaseViewHolder<T, ViewBinding>, position: Int, payloads: MutableList<Any>
+        holder: BaseViewHolder<BaseModelView, ViewBinding>,
+        position: Int,
+        payloads: MutableList<Any>
     ) {
         holder.onBind(getItem(position), position)
     }
 
-    override fun onViewRecycled(holder: BaseViewHolder<T, ViewBinding>) {
+    override fun onViewRecycled(holder: BaseViewHolder<BaseModelView, ViewBinding>) {
         holder.onUnBind()
     }
 
@@ -120,8 +130,8 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         return getItem(position).modelId
     }
 
-    fun getModelAtPosition(position: Int): T? {
-        return currentList.getOrNull(position)
+    fun getModelAtPosition(position: Int): BaseModelView? {
+        return getItem(position)
     }
 
     class NoHashProp<T>(val prop: T?) {
@@ -152,13 +162,13 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =
             BaseSpanSizeLookup.SpanSizeConfig.Normal
 
-        fun attachTo(builder: ModelListBuilder<BaseModelView>) {
-            builder.add(this)
+        fun attachTo(adapter: BaseListAdapter) {
+            adapter.add(this)
         }
 
-        fun attachToIf(builder: ModelListBuilder<BaseModelView>, constraint: () -> Boolean) {
+        fun attachToIf(adapter: BaseListAdapter, constraint: () -> Boolean) {
             if (constraint()) {
-                builder.add(this)
+                adapter.add(this)
             }
         }
     }
@@ -172,13 +182,13 @@ class BaseListAdapter<T : BaseListAdapter.BaseModelView> private constructor(
         abstract fun onUnBind()
     }
 
-    class DiffCallback<T : BaseModelView> : DiffUtil.ItemCallback<T>() {
-        override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
-            return newItem.areItemsTheSame(oldItem)
+    class DiffCallback : DiffUtil.ItemCallback<BaseModelView>() {
+        override fun areItemsTheSame(oldItem: BaseModelView, newItem: BaseModelView): Boolean {
+            return oldItem.areItemsTheSame(newItem)
         }
 
-        override fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
-            return newItem.areContentsTheSame(oldItem)
+        override fun areContentsTheSame(oldItem: BaseModelView, newItem: BaseModelView): Boolean {
+            return newItem.areContentsTheSame(newItem)
         }
     }
 }
