@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityShareDetailBinding
-import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
@@ -42,7 +42,7 @@ class ShareDetailActivity :
             val shareDetail =
                 state.share ?: return@getState LoadingListModel("loading").attachTo(this)
 
-            shareDetail.shareData.buildShareModelViews(
+            shareDetail.shareData.buildShareListModel(
                 screenHeight(),
                 shareDetail.shareId,
                 shareDetail.shareDate,

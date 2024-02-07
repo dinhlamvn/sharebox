@@ -9,12 +9,10 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ModelViewListImagesBinding
+import com.dinhlam.sharebox.databinding.ListModelShareImagesBinding
+import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.imageloader.ImageLoader
-import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
-import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageListModel
@@ -61,7 +59,7 @@ data class ListImagesListModel(
         container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*, *> {
         return ShareListImagesViewHolder(
-            ModelViewListImagesBinding.inflate(
+            ListModelShareImagesBinding.inflate(
                 inflater,
                 container,
                 false
@@ -74,8 +72,8 @@ data class ListImagesListModel(
     }
 
     private class ShareListImagesViewHolder(
-        binding: ModelViewListImagesBinding,
-    ) : BaseListAdapter.BaseViewHolder<ListImagesListModel, ModelViewListImagesBinding>(
+        binding: ListModelShareImagesBinding,
+    ) : BaseListAdapter.BaseViewHolder<ListImagesListModel, ListModelShareImagesBinding>(
         binding
     ) {
 
@@ -86,9 +84,6 @@ data class ListImagesListModel(
         private val models = mutableListOf<ImageListModel>()
 
         init {
-            binding.imageDownload.setImageDrawable(Icons.downloadIcon(buildContext) {
-                copy(sizeDp = 20)
-            })
             binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
@@ -110,31 +105,17 @@ data class ListImagesListModel(
             models.addAll(model.modelViews)
             adapter.requestBuildModelViews()
 
-            binding.textUserName.text = model.userDetail.name
-            ImageLoader.INSTANCE.load(
-                buildContext,
-                model.userDetail.avatar,
-                binding.imageAvatar
-            ) {
-                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
-            }
-
             binding.textBoxName.text =
                 model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
 
-            binding.textBoxName.setOnClickListener {
-                model.actionBoxClick.prop?.invoke(model.boxDetail)
-            }
+            binding.textShareDate.text = model.shareDate.format()
         }
 
         override fun onUnBind() {
             models.clear()
             adapter.requestBuildModelViews()
-            releaseUI()
-        }
-
-        private fun releaseUI() {
-            ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
+            binding.textBoxName.text = null
+            binding.textShareDate.text = null
         }
     }
 }

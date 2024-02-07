@@ -199,7 +199,7 @@ abstract class BaseListAdapter constructor(
             adapter.add(this)
         }
 
-        fun attachToIf(adapter: BaseListAdapter, constraint: () -> Boolean) {
+        fun attachTo(adapter: BaseListAdapter, constraint: () -> Boolean) {
             if (constraint()) {
                 adapter.add(this)
             }

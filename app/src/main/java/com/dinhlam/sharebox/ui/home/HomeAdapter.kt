@@ -16,7 +16,7 @@ import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
 import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
-import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
@@ -117,7 +117,7 @@ class HomeAdapter(
             TextListModel("text_empty", activity.getString(R.string.no_result)).attachTo(this)
         } else if (state.shares.isNotEmpty()) {
             state.shares.forEach { shareDetail ->
-                shareDetail.shareData.buildShareModelViews(
+                shareDetail.shareData.buildShareListModel(
                     activity.screenHeight(),
                     shareDetail.shareId,
                     shareDetail.shareDate,
@@ -139,9 +139,9 @@ class HomeAdapter(
                 ).attachTo(this)
             }
 
-            if (state.isLoadingMore) {
-                LoadingListModel("home_loading_more_${state.currentPage}").attachTo(this)
-            }
+            LoadingListModel("home_loading_more_${state.currentPage}", height = 100.dp()).attachTo(
+                this
+            ) { state.canLoadMore }
         }
     }
 

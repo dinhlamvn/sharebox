@@ -1,10 +1,12 @@
 package com.dinhlam.sharebox.modelview.list
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.databinding.ModelViewListTextBinding
+import com.dinhlam.sharebox.databinding.ListModelShareImageBinding
+import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
@@ -13,9 +15,9 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.Icons
 
-data class ListTextListModel(
+data class ShareImageListModel(
     val shareId: String,
-    val content: String?,
+    val uri: Uri,
     val shareDate: Long,
     val shareNote: String?,
     val likeNumber: Int = 0,
@@ -39,66 +41,52 @@ data class ListTextListModel(
     val actionStar: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(
         null
     ),
+    val actionViewImage: BaseListAdapter.NoHashProp<(String, Uri) -> Unit> = BaseListAdapter.NoHashProp(
+        null
+    ),
     val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
 ) : BaseListAdapter.BaseListModel(shareId) {
 
     override fun createViewHolder(
-        inflater: LayoutInflater,
-        container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListTextViewHolder(ModelViewListTextBinding.inflate(inflater, container, false))
-    }
+        inflater: LayoutInflater, container: ViewGroup
+    ): BaseListAdapter.BaseViewHolder<*, *> = ShareListImageViewHolder(inflater, container)
 
-    class ShareListTextViewHolder(
-        binding: ModelViewListTextBinding,
-    ) : BaseListAdapter.BaseViewHolder<ListTextListModel, ModelViewListTextBinding>(
-        binding
+    private class ShareListImageViewHolder(
+        inflater: LayoutInflater, container: ViewGroup
+    ) : BaseListAdapter.BaseViewHolder<ShareImageListModel, ListModelShareImageBinding>(
+        ListModelShareImageBinding.inflate(inflater, container, false)
     ) {
 
         init {
             binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
-            binding.imageQuoteLeft.setImageDrawable(Icons.quoteLeftIcon(buildContext))
-            binding.imageQuoteRight.setImageDrawable(Icons.quoteRightIcon(buildContext))
-            binding.imageShare.setImageDrawable(Icons.shareIcon(buildContext))
+            binding.imageDownload.setImageDrawable(Icons.downloadIcon(buildContext) {
+                copy(sizeDp = 20)
+            })
         }
 
-        override fun onBind(model: ListTextListModel, position: Int) {
-            binding.textUserName.text = model.userDetail.name
-            ImageLoader.INSTANCE.load(
-                buildContext, model.userDetail.avatar, binding.imageAvatar
-            ) {
-                copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
-            }
-
-            binding.container.setOnClickListener {
-                model.actionOpen.prop?.invoke(model.shareId)
+        override fun onBind(model: ShareImageListModel, position: Int) {
+            ImageLoader.INSTANCE.load(buildContext, model.uri, binding.imageShare) {
+                copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
 
             binding.imageShare.setOnClickListener {
-                model.actionShareToOther.prop?.invoke(model.shareId)
+                model.actionViewImage.prop?.invoke(model.shareId, model.uri)
             }
-
-            binding.textShare.text = model.content
 
             binding.textBoxName.text =
                 model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
 
-            binding.textBoxName.setOnClickListener {
-                model.actionBoxClick.prop?.invoke(model.boxDetail)
-            }
+            binding.textShareDate.text = model.shareDate.format()
         }
 
         override fun onUnBind() {
-            binding.textShare.text = null
-            releaseUI()
-        }
-
-        private fun releaseUI() {
-            ImageLoader.INSTANCE.release(buildContext, binding.imageAvatar)
+            ImageLoader.INSTANCE.release(buildContext, binding.imageShare)
+            binding.textBoxName.text = null
+            binding.textShareDate.text = null
         }
     }
 }

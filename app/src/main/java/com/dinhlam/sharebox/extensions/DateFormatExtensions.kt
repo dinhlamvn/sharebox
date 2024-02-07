@@ -1,5 +1,8 @@
 package com.dinhlam.sharebox.extensions
 
+import java.text.SimpleDateFormat
+import java.util.Locale
+
 fun Long.asProfileAge(): String {
     val subtractTime = nowUTCTimeInMillis() - this
 
@@ -43,4 +46,9 @@ fun Long.asElapsedTimeDisplay(): String {
         minutes > 0 -> "${minutes}min"
         else -> "a seconds ago"
     }
+}
+
+fun Long.format(format: String = "yyyy MMM d"): String {
+    val df = SimpleDateFormat(format, Locale.US)
+    return df.format(this)
 }

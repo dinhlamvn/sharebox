@@ -9,16 +9,16 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.modelview.ImageListModel
-import com.dinhlam.sharebox.modelview.list.ListImageListModel
+import com.dinhlam.sharebox.modelview.list.ShareImageListModel
 import com.dinhlam.sharebox.modelview.list.ListImagesListModel
-import com.dinhlam.sharebox.modelview.list.ListTextListModel
-import com.dinhlam.sharebox.modelview.list.ListUrlListModel
+import com.dinhlam.sharebox.modelview.list.ShareTextListModel
+import com.dinhlam.sharebox.modelview.list.ShareUrlListModel
 import com.dinhlam.sharebox.modelview.trending.TrendingShareImagesListModel
 import com.dinhlam.sharebox.modelview.trending.TrendingShareQuoteListModel
 import com.dinhlam.sharebox.modelview.trending.TrendingShareWebLinkListModel
 import com.dinhlam.sharebox.utils.Icons
 
-fun ShareData.buildShareModelViews(
+fun ShareData.buildShareListModel(
     screenHeight: Int,
     shareId: String,
     shareDate: Long,
@@ -41,7 +41,7 @@ fun ShareData.buildShareModelViews(
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
-            ListUrlListModel(
+            ShareUrlListModel(
                 shareId,
                 shareData.url,
                 shareDate,
@@ -63,7 +63,7 @@ fun ShareData.buildShareModelViews(
 
         is ShareData.ShareText -> {
             val shareData = this.castNonNull<ShareData.ShareText>()
-            ListTextListModel(
+            ShareTextListModel(
                 shareId,
                 shareData.text,
                 shareDate,
@@ -85,7 +85,7 @@ fun ShareData.buildShareModelViews(
 
         is ShareData.ShareImage -> {
             val shareData = this.castNonNull<ShareData.ShareImage>()
-            ListImageListModel(
+            ShareImageListModel(
                 shareId,
                 shareData.uri,
                 shareDate,

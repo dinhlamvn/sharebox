@@ -12,7 +12,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
-import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -50,7 +50,7 @@ class BookmarkListItemActivity :
                 add(TextListModel("text_empty", "No shares"))
             } else {
                 val models = state.shares.map { shareDetail ->
-                    shareDetail.shareData.buildShareModelViews(
+                    shareDetail.shareData.buildShareListModel(
                         screenHeight(),
                         shareDetail.shareId,
                         shareDetail.shareDate,

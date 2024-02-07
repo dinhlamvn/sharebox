@@ -8,13 +8,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.dinhlam.sharebox.base.BaseSpanSizeLookup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
-import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
+import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,12 +41,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
 
     private val layoutManager by lazy {
-        LoadMoreGridLayoutManager(this, 2, blockShouldLoadMore = {
-            return@LoadMoreGridLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
+        LoadMoreLinearLayoutManager(this, LinearLayoutManager.VERTICAL, blockShouldLoadMore = {
+            return@LoadMoreLinearLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
         }) {
             viewModel.loadMores()
-        }.apply {
-            spanSizeLookup = BaseSpanSizeLookup(homeAdapter, 2)
         }
     }
 

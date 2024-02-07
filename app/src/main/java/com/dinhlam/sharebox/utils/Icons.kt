@@ -297,4 +297,10 @@ object Icons {
     ): IconicsDrawable {
         return createIcon(context, GoogleMaterial.Icon.gmd_file_download, block(IconBuilder(context)))
     }
+
+    fun copyIcon(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_content_copy, block(IconBuilder(context)))
+    }
 }

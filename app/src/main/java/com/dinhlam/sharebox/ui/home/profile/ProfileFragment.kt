@@ -16,7 +16,7 @@ import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.screenHeight
@@ -192,7 +192,7 @@ class ProfileFragment :
 
             if (state.shares.isNotEmpty()) {
                 state.shares.map { shareDetail ->
-                    shareDetail.shareData.buildShareModelViews(
+                    shareDetail.shareData.buildShareListModel(
                         screenHeight(),
                         shareDetail.shareId,
                         shareDetail.shareDate,

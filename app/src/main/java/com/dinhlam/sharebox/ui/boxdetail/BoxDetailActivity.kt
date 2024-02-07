@@ -8,7 +8,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.extensions.buildShareModelViews
+import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -49,7 +49,7 @@ class BoxDetailActivity :
 
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            LoadingListModel("top_loading").attachToIf(this) {
+            LoadingListModel("top_loading").attachTo(this) {
                 state.isRefreshing
             }
 
@@ -61,7 +61,7 @@ class BoxDetailActivity :
                 )
             } else if (state.shares.isNotEmpty()) {
                 state.shares.forEach { shareDetail ->
-                    shareDetail.shareData.buildShareModelViews(
+                    shareDetail.shareData.buildShareListModel(
                         screenHeight(),
                         shareDetail.shareId,
                         shareDetail.shareDate,

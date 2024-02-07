@@ -37,13 +37,11 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_share"
-                style="@style/TextAppearance.MaterialComponents.Body2"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_margin="10dp"
                 android:ellipsize="end"
-                android:gravity="top|start"
-                android:maxLines="10"
-                android:padding="4dp"
+                android:textAppearance="@style/TextCaption"
                 app:layout_constraintBottom_toBottomOf="@id/image_quote_right"
                 app:layout_constraintEnd_toStartOf="@id/image_quote_right"
                 app:layout_constraintStart_toEndOf="@id/image_quote_left"
@@ -63,59 +61,44 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_avatar"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/container_text_share" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_user_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            app:layout_constraintBottom_toTopOf="@id/text_box_name"
-            app:layout_constraintEnd_toStartOf="@id/image_share"
-            app:layout_constraintStart_toEndOf="@id/image_avatar"
-            app:layout_constraintTop_toTopOf="@id/image_avatar"
-            tools:text="Dinh" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_box_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="8dp"
-            android:drawablePadding="4dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-            app:layout_constraintEnd_toStartOf="@id/image_share"
-            app:layout_constraintStart_toEndOf="@id/image_avatar"
-            app:layout_constraintTop_toBottomOf="@id/text_user_name"
-            tools:text="Dinh" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_share"
+            android:id="@+id/image_copy"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_box_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="4dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingHorizontal="16dp"
+            android:textAppearance="@style/TextBodyMedium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container_text_share"
+            tools:text="This is box name" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_share_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:textAppearance="@style/TextCaption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/image_avatar" />
+            app:layout_constraintTop_toBottomOf="@id/text_box_name"
+            tools:text="2022 Jul 17" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

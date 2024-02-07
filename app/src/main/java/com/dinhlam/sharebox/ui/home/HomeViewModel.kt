@@ -64,15 +64,15 @@ class HomeViewModel @Inject constructor(
     fun loadMores() {
         setState { copy(isLoadingMore = true) }
         execute {
-            val shares = loadShares(
+            val loadShares = loadShares(
                 currentBox,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
             copy(
-                shares = this.shares.plus(shares),
+                shares = this.shares.plus(loadShares),
                 isLoadingMore = false,
-                canLoadMore = shares.isNotEmpty(),
+                canLoadMore = loadShares.isNotEmpty(),
                 currentPage = currentPage + 1,
             )
         }
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
                 limit,
                 offset
             )
-        } ?: shareRepository.findGeneralShares(limit, offset)
+        } ?: shareRepository.findGeneralShares(userHelper.getCurrentUserId(), limit, offset)
     }
 
     fun doOnRefresh() {
