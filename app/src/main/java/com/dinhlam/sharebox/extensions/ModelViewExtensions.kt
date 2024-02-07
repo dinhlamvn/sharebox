@@ -8,14 +8,14 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
-import com.dinhlam.sharebox.modelview.ImageModelView
-import com.dinhlam.sharebox.modelview.list.ListImageModelView
-import com.dinhlam.sharebox.modelview.list.ListImagesModelView
-import com.dinhlam.sharebox.modelview.list.ListTextModelView
-import com.dinhlam.sharebox.modelview.list.ListUrlModelView
-import com.dinhlam.sharebox.modelview.trending.TrendingShareImagesModelView
-import com.dinhlam.sharebox.modelview.trending.TrendingShareQuoteModelView
-import com.dinhlam.sharebox.modelview.trending.TrendingShareWebLinkModelView
+import com.dinhlam.sharebox.modelview.ImageListModel
+import com.dinhlam.sharebox.modelview.list.ListImageListModel
+import com.dinhlam.sharebox.modelview.list.ListImagesListModel
+import com.dinhlam.sharebox.modelview.list.ListTextListModel
+import com.dinhlam.sharebox.modelview.list.ListUrlListModel
+import com.dinhlam.sharebox.modelview.trending.TrendingShareImagesListModel
+import com.dinhlam.sharebox.modelview.trending.TrendingShareQuoteListModel
+import com.dinhlam.sharebox.modelview.trending.TrendingShareWebLinkListModel
 import com.dinhlam.sharebox.utils.Icons
 
 fun ShareData.buildShareModelViews(
@@ -37,11 +37,11 @@ fun ShareData.buildShareModelViews(
     actionViewImage: ((String, Uri) -> Unit)? = null,
     actionViewImages: Function2<String, List<Uri>, Unit>? = null,
     actionBoxClick: Function1<BoxDetail?, Unit>? = null,
-): BaseListAdapter.BaseModelView {
+): BaseListAdapter.BaseListModel {
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
-            ListUrlModelView(
+            ListUrlListModel(
                 shareId,
                 shareData.url,
                 shareDate,
@@ -63,7 +63,7 @@ fun ShareData.buildShareModelViews(
 
         is ShareData.ShareText -> {
             val shareData = this.castNonNull<ShareData.ShareText>()
-            ListTextModelView(
+            ListTextListModel(
                 shareId,
                 shareData.text,
                 shareDate,
@@ -85,7 +85,7 @@ fun ShareData.buildShareModelViews(
 
         is ShareData.ShareImage -> {
             val shareData = this.castNonNull<ShareData.ShareImage>()
-            ListImageModelView(
+            ListImageListModel(
                 shareId,
                 shareData.uri,
                 shareDate,
@@ -110,7 +110,7 @@ fun ShareData.buildShareModelViews(
             val shareData = this.castNonNull<ShareData.ShareImages>()
 
             val modelViews = shareData.uris.map { uri ->
-                ImageModelView(
+                ImageListModel(
                     uri,
                     height = screenHeight.times(0.5f).toInt(),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
@@ -119,7 +119,7 @@ fun ShareData.buildShareModelViews(
                 )
             }
 
-            ListImagesModelView(
+            ListImagesListModel(
                 shareId,
                 shareData.uris,
                 shareDate,
@@ -161,11 +161,11 @@ fun ShareData.buildTrendingShareModelViews(
     commentNumber: Int = 0,
     boxDetail: BoxDetail?,
     actionOpen: Function1<String, Unit>,
-): BaseListAdapter.BaseModelView {
+): BaseListAdapter.BaseListModel {
     return when (this) {
         is ShareData.ShareUrl -> {
             val shareData = this.castNonNull<ShareData.ShareUrl>()
-            TrendingShareWebLinkModelView(
+            TrendingShareWebLinkListModel(
                 shareId,
                 shareData.url,
                 shareDate,
@@ -180,7 +180,7 @@ fun ShareData.buildTrendingShareModelViews(
 
         is ShareData.ShareText -> {
             val shareData = this.castNonNull<ShareData.ShareText>()
-            TrendingShareQuoteModelView(
+            TrendingShareQuoteListModel(
                 shareId,
                 shareData.text,
                 shareDate,
@@ -195,7 +195,7 @@ fun ShareData.buildTrendingShareModelViews(
 
         is ShareData.ShareImage -> {
             val shareData = this.castNonNull<ShareData.ShareImage>()
-            TrendingShareImagesModelView(
+            TrendingShareImagesListModel(
                 shareId,
                 shareData.uri,
                 1,
@@ -212,7 +212,7 @@ fun ShareData.buildTrendingShareModelViews(
         is ShareData.ShareImages -> {
             val shareData = this.castNonNull<ShareData.ShareImages>()
 
-            TrendingShareImagesModelView(
+            TrendingShareImagesListModel(
                 shareId,
                 shareData.uris.firstOrNull(),
                 shareData.uris.size,

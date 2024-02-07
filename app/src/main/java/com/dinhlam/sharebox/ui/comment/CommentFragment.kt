@@ -20,9 +20,9 @@ import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.modelview.CommentModelView
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.CommentListModel
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.TextListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -56,18 +56,18 @@ class CommentFragment :
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("loading_comment"))
+                add(LoadingListModel("loading_comment"))
                 return@getState
             }
 
             val comments = state.comments
             if (comments.isEmpty()) {
-                add(TextModelView("text_empty", "There are no comments yet."))
+                add(TextListModel("text_empty", "There are no comments yet."))
                 return@getState
             } else {
                 comments.forEach { comment ->
                     add(
-                        CommentModelView(
+                        CommentListModel(
                             comment.id,
                             comment.userDetail.name,
                             comment.userDetail.avatar,

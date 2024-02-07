@@ -65,7 +65,8 @@
     </style>
 
     <style name="AppTheme.AppNameTextAppearance" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="fontFamily">@font/suez_one</item>
+        <item name="android:textSize">25sp</item>
     </style>
 
 </resources>

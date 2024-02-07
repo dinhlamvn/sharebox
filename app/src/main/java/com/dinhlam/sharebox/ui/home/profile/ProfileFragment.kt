@@ -25,14 +25,14 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.Spacing
-import com.dinhlam.sharebox.modelview.BoxModelView
-import com.dinhlam.sharebox.modelview.ButtonModelView
-import com.dinhlam.sharebox.modelview.CarouselModelView
-import com.dinhlam.sharebox.modelview.DrawableImageModelView
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.SizedBoxModelView
-import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.profile.ProfileInfoModelView
+import com.dinhlam.sharebox.modelview.BoxListModel
+import com.dinhlam.sharebox.modelview.ButtonListModel
+import com.dinhlam.sharebox.modelview.CarouselListModel
+import com.dinhlam.sharebox.modelview.DrawableImageListModel
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.SizedBoxListModel
+import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.modelview.profile.ProfileInfoListModel
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
@@ -85,13 +85,13 @@ class ProfileFragment :
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("loading"))
+                add(LoadingListModel("loading"))
                 return@getState
             }
 
             val nonNullUser = state.currentUser ?: return@getState run {
                 add(
-                    TextModelView(
+                    TextListModel(
                         "text_sign_in_message",
                         getString(R.string.sign_in_message),
                         height = heightPercentage(70)
@@ -99,7 +99,7 @@ class ProfileFragment :
                 )
 
                 add(
-                    ButtonModelView(
+                    ButtonListModel(
                         "button_sign_in",
                         getString(R.string.sign_in),
                         Spacing.All(16.dp(), 16.dp(), 16.dp(), 16.dp()),
@@ -112,7 +112,7 @@ class ProfileFragment :
                 val margin = screenWidth().minus(48.dp()).div(2)
 
                 add(
-                    DrawableImageModelView(
+                    DrawableImageListModel(
                         Icons.settingIcon(requireContext()),
                         width = 48.dp(),
                         height = 48.dp(),
@@ -126,7 +126,7 @@ class ProfileFragment :
             }
 
             add(
-                ProfileInfoModelView(
+                ProfileInfoListModel(
                     nonNullUser.id,
                     nonNullUser.avatar,
                     nonNullUser.name,
@@ -141,11 +141,11 @@ class ProfileFragment :
                 )
             )
             add(
-                SizedBoxModelView("divider", height = 8.dp())
+                SizedBoxListModel("divider", height = 8.dp())
             )
 
             if (state.boxes.isNotEmpty()) {
-                TextModelView(
+                TextListModel(
                     "box_title",
                     getString(R.string.your_boxes),
                     height = 50.dp(),
@@ -153,10 +153,10 @@ class ProfileFragment :
                     textAppearance = R.style.TextAppearance_MaterialComponents_Body1
                 ).attachTo(this)
 
-                SizedBoxModelView("divider_top_carousel", height = 1.dp()).attachTo(this)
+                SizedBoxListModel("divider_top_carousel", height = 1.dp()).attachTo(this)
 
                 val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
-                    BoxModelView(
+                    BoxListModel(
                         "box_${boxDetail.boxId}",
                         boxDetail.boxId,
                         boxDetail.boxName,
@@ -172,20 +172,20 @@ class ProfileFragment :
                         BaseListAdapter.NoHashProp(::onBoxClicked)
                     )
                 }
-                add(CarouselModelView("carousel_box", boxModelViews))
+                add(CarouselListModel("carousel_box", boxModelViews))
 
-                SizedBoxModelView("divider_bottom_carousel", height = 8.dp()).attachTo(this)
+                SizedBoxListModel("divider_bottom_carousel", height = 8.dp()).attachTo(this)
             }
 
             state.currentBox?.let { boxDetail ->
-                TextModelView(
+                TextListModel(
                     "active_box_title",
                     boxDetail.boxName,
                     height = 50.dp(),
                     gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
                     textAppearance = R.style.TextAppearance_MaterialComponents_Headline6
                 ).attachTo(this)
-                SizedBoxModelView("divider_active_box_title", height = 1.dp()).attachTo(this)
+                SizedBoxListModel("divider_active_box_title", height = 1.dp()).attachTo(this)
             }
 
 
@@ -212,7 +212,7 @@ class ProfileFragment :
                 }.forEach { model ->
                     add(model)
                     add(
-                        SizedBoxModelView(
+                        SizedBoxListModel(
                             "divider_${model.modelId}",
                             height = 8.dp(),
                         )
@@ -220,7 +220,7 @@ class ProfileFragment :
                 }
 
                 if (state.isLoadingMore) {
-                    add(LoadingModelView("loading_more_${state.currentPage}"))
+                    add(LoadingListModel("loading_more_${state.currentPage}"))
                 }
             }
         }

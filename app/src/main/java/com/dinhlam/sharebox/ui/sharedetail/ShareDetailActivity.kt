@@ -20,10 +20,9 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.modelview.CommentModelView
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.SizedBoxModelView
+import com.dinhlam.sharebox.modelview.CommentListModel
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.SizedBoxListModel
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
@@ -41,7 +40,7 @@ class ShareDetailActivity :
     private val shareDetailAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             val shareDetail =
-                state.share ?: return@getState LoadingModelView("loading").attachTo(this)
+                state.share ?: return@getState LoadingListModel("loading").attachTo(this)
 
             shareDetail.shareData.buildShareModelViews(
                 screenHeight(),
@@ -61,12 +60,12 @@ class ShareDetailActivity :
             ).attachTo(this)
 
             state.comments.forEach { commentDetail ->
-                SizedBoxModelView(
+                SizedBoxListModel(
                     "divider_comment_${commentDetail.id}",
                     height = 1.dp(),
                 ).attachTo(this)
 
-                CommentModelView(
+                CommentListModel(
                     commentDetail.id,
                     commentDetail.userDetail.name,
                     commentDetail.userDetail.avatar,

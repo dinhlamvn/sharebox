@@ -14,9 +14,9 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.SizedBoxModelView
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.SizedBoxListModel
+import com.dinhlam.sharebox.modelview.TextListModel
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,13 +49,13 @@ class BoxDetailActivity :
 
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            LoadingModelView("top_loading").attachToIf(this) {
+            LoadingListModel("top_loading").attachToIf(this) {
                 state.isRefreshing
             }
 
             if (state.shares.isEmpty() && !state.isRefreshing) {
                 add(
-                    TextModelView(
+                    TextListModel(
                         "text_empty", getString(R.string.no_result)
                     )
                 )
@@ -81,11 +81,11 @@ class BoxDetailActivity :
                         actionViewImages = ::viewImages
                     ).attachTo(this)
 
-                    SizedBoxModelView("separator_${shareDetail.shareId}").attachTo(this)
+                    SizedBoxListModel("separator_${shareDetail.shareId}").attachTo(this)
                 }
 
                 if (state.isLoadingMore) {
-                    LoadingModelView("home_loading_more_${state.currentPage}").attachTo(this)
+                    LoadingListModel("home_loading_more_${state.currentPage}").attachTo(this)
                 }
             }
         }

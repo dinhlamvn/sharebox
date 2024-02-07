@@ -51,13 +51,13 @@ import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
-import com.dinhlam.sharebox.modelview.ImageModelView
-import com.dinhlam.sharebox.modelview.LoadingModelView
+import com.dinhlam.sharebox.modelview.ImageListModel
+import com.dinhlam.sharebox.modelview.LoadingListModel
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextModelView
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlModelView
+import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextListModel
+import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlListModel
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
@@ -136,19 +136,19 @@ class ShareReceiveActivity :
         getState(viewModel) { state ->
             when (val shareData = state.shareData) {
                 is ShareData.ShareText -> add(
-                    ShareReceiveTextModelView(
+                    ShareReceiveTextListModel(
                         "shareText", shareData.castNonNull<ShareData.ShareText>().text
                     )
                 )
 
                 is ShareData.ShareUrl -> add(
-                    ShareReceiveUrlModelView(
+                    ShareReceiveUrlListModel(
                         "shareWebLink", shareData.castNonNull<ShareData.ShareUrl>().url
                     )
                 )
 
                 is ShareData.ShareImage -> add(
-                    ImageModelView(
+                    ImageListModel(
                         shareData.castNonNull<ShareData.ShareImage>().uri,
                         screenHeight().times(0.5).toInt()
                     )
@@ -156,11 +156,11 @@ class ShareReceiveActivity :
 
                 is ShareData.ShareImages -> {
                     addAll(shareData.castNonNull<ShareData.ShareImages>().uris.map { uri ->
-                        ImageModelView(uri, height = screenHeight().times(0.5).toInt())
+                        ImageListModel(uri, height = screenHeight().times(0.5).toInt())
                     })
                 }
 
-                else -> add(LoadingModelView("loading"))
+                else -> add(LoadingListModel("loading"))
             }
         }
     }

@@ -3,6 +3,8 @@ package com.dinhlam.sharebox.base
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -21,24 +23,50 @@ import java.util.concurrent.Executors
 
 abstract class BaseListAdapter constructor(
     private val modelViewsBuilder: (BaseListAdapter.() -> Unit)? = null
-) : ListAdapter<BaseListAdapter.BaseModelView, BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseModelView, ViewBinding>>(
+) : ListAdapter<BaseListAdapter.BaseListModel, BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseListModel, ViewBinding>>(
     DiffCallback()
-), MutableList<BaseListAdapter.BaseModelView> by CopyOnWriteArrayList() {
+), MutableList<BaseListAdapter.BaseListModel> by CopyOnWriteArrayList(), DefaultLifecycleObserver {
 
     abstract fun buildModelViews()
 
     private val buildModelViewsScope =
         CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
 
+    private var recyclerView: RecyclerView? = null
+
     private var buildModelViewsJob: Job? = null
 
     private val modelViewsManager = ModelViewsManager()
 
-    override fun submitList(list: MutableList<BaseModelView>?) {
+    fun attachTo(recyclerView: RecyclerView, lifecycleOwner: LifecycleOwner) {
+        lifecycleOwner.lifecycle.addObserver(this)
+        this.recyclerView = recyclerView
+        this.recyclerView?.adapter = this
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        owner.lifecycle.removeObserver(this)
+        recyclerView?.adapter = null
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        requestBuildModelViews()
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        modelViewsManager.onClear()
+        this.clear()
+        super.submitList(null)
+    }
+
+    override fun submitList(list: MutableList<BaseListModel>?) {
         error("No support direct call method")
     }
 
-    override fun submitList(list: MutableList<BaseModelView>?, commitCallback: Runnable?) {
+    override fun submitList(list: MutableList<BaseListModel>?, commitCallback: Runnable?) {
         error("No support direct call method")
     }
 
@@ -65,13 +93,13 @@ abstract class BaseListAdapter constructor(
     }
 
     private class ModelViewsManager {
-        private val modelViewTypeMap = mutableMapOf<Int, BaseModelView>()
+        private val modelViewTypeMap = mutableMapOf<Int, BaseListModel>()
         private val rememberMap = mutableMapOf<String, Int>()
 
         fun getModel(viewType: Int) = modelViewTypeMap[viewType]
             ?: error("No model view is provided with view type $viewType")
 
-        fun getViewTypeAndRemember(model: BaseModelView): Int {
+        fun getViewTypeAndRemember(model: BaseListModel): Int {
             val modelClassName = model::class.java.simpleName
             return rememberMap[modelClassName] ?: let {
                 val viewType = generateViewType()
@@ -82,6 +110,11 @@ abstract class BaseListAdapter constructor(
         }
 
         private fun generateViewType(): Int = modelViewTypeMap.size + 1
+
+        fun onClear() {
+            this.modelViewTypeMap.clear()
+            this.rememberMap.clear()
+        }
     }
 
     companion object {
@@ -99,26 +132,26 @@ abstract class BaseListAdapter constructor(
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
-    ): BaseViewHolder<BaseModelView, ViewBinding> {
+    ): BaseViewHolder<BaseListModel, ViewBinding> {
         val model = modelViewsManager.getModel(viewType)
         return model.createViewHolder(LayoutInflater.from(parent.context), parent).castNonNull()
     }
 
     override fun onBindViewHolder(
-        holder: BaseViewHolder<BaseModelView, ViewBinding>, position: Int
+        holder: BaseViewHolder<BaseListModel, ViewBinding>, position: Int
     ) {
         onBindViewHolder(holder, position, mutableListOf())
     }
 
     override fun onBindViewHolder(
-        holder: BaseViewHolder<BaseModelView, ViewBinding>,
+        holder: BaseViewHolder<BaseListModel, ViewBinding>,
         position: Int,
         payloads: MutableList<Any>
     ) {
         holder.onBind(getItem(position), position)
     }
 
-    override fun onViewRecycled(holder: BaseViewHolder<BaseModelView, ViewBinding>) {
+    override fun onViewRecycled(holder: BaseViewHolder<BaseListModel, ViewBinding>) {
         holder.onUnBind()
     }
 
@@ -130,7 +163,7 @@ abstract class BaseListAdapter constructor(
         return getItem(position).modelId
     }
 
-    fun getModelAtPosition(position: Int): BaseModelView? {
+    fun getModelAtPosition(position: Int): BaseListModel? {
         return getItem(position)
     }
 
@@ -144,18 +177,18 @@ abstract class BaseListAdapter constructor(
         }
     }
 
-    abstract class BaseModelView protected constructor(val modelId: Long) {
+    abstract class BaseListModel protected constructor(val modelId: Long) {
         constructor(id: String) : this(Ids.hashString64Bit(id))
 
         abstract fun createViewHolder(
             inflater: LayoutInflater, container: ViewGroup
         ): BaseViewHolder<*, *>
 
-        open fun areItemsTheSame(other: BaseModelView): Boolean {
+        open fun areItemsTheSame(other: BaseListModel): Boolean {
             return this.modelId == other.modelId
         }
 
-        open fun areContentsTheSame(other: BaseModelView): Boolean {
+        open fun areContentsTheSame(other: BaseListModel): Boolean {
             return this == other
         }
 
@@ -173,7 +206,7 @@ abstract class BaseListAdapter constructor(
         }
     }
 
-    abstract class BaseViewHolder<T : BaseModelView, VB : ViewBinding>(val binding: VB) :
+    abstract class BaseViewHolder<T : BaseListModel, VB : ViewBinding>(val binding: VB) :
         RecyclerView.ViewHolder(binding.root) {
 
         protected val buildContext: Context = itemView.context
@@ -182,12 +215,12 @@ abstract class BaseListAdapter constructor(
         abstract fun onUnBind()
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<BaseModelView>() {
-        override fun areItemsTheSame(oldItem: BaseModelView, newItem: BaseModelView): Boolean {
+    class DiffCallback : DiffUtil.ItemCallback<BaseListModel>() {
+        override fun areItemsTheSame(oldItem: BaseListModel, newItem: BaseListModel): Boolean {
             return oldItem.areItemsTheSame(newItem)
         }
 
-        override fun areContentsTheSame(oldItem: BaseModelView, newItem: BaseModelView): Boolean {
+        override fun areContentsTheSame(oldItem: BaseListModel, newItem: BaseListModel): Boolean {
             return newItem.areContentsTheSame(newItem)
         }
     }

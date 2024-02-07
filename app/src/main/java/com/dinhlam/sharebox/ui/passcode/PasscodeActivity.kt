@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.vibrate
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.TextListModel
 import com.dinhlam.sharebox.utils.Icons
 import java.util.Stack
 
@@ -47,7 +47,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
     private val passcodeAdapter = BaseListAdapter.createAdapter {
         repeat(stack.size) { number ->
             add(
-                TextModelView(
+                TextListModel(
                     "code_filled_$number",
                     CHARACTER_CODE_FILLED,
                     width = codeBulletSize,
@@ -60,7 +60,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
         repeat(PASSCODE_LENGTH - stack.size) { number ->
             add(
-                TextModelView(
+                TextListModel(
                     "code_empty_$number",
                     CHARACTER_CODE_EMPTY,
                     width = codeBulletSize,
@@ -74,7 +74,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
     private val keypadAdapter = BaseListAdapter.createAdapter {
         repeat(9) { number ->
             add(
-                TextModelView(
+                TextListModel(
                     "text_number_$number",
                     "${number + 1}",
                     height = 70.dp(),
@@ -87,7 +87,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         }
 
         add(
-            TextModelView(
+            TextListModel(
                 "text_done",
                 CHARACTER_CODE_DONE,
                 height = 70.dp(),
@@ -99,7 +99,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         )
 
         add(
-            TextModelView(
+            TextListModel(
                 "text_zero",
                 "0",
                 height = 70.dp(),
@@ -111,7 +111,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         )
 
         add(
-            TextModelView(
+            TextListModel(
                 "text_backspace",
                 CHARACTER_CODE_BACKSPACE,
                 height = 70.dp(),

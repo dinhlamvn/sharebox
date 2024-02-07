@@ -19,8 +19,8 @@ import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.TextListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,14 +58,14 @@ class BoxSelectionDialogFragment :
     private val boxAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isLoading) {
-                add(LoadingModelView("loading_box", height = 100.dp()))
+                add(LoadingListModel("loading_box", height = 100.dp()))
                 return@getState
             }
 
             if (state.isSearching) {
                 if (state.searchBoxes.isEmpty()) {
                     add(
-                        TextModelView(
+                        TextListModel(
                             "text_search_result_empty",
                             getString(R.string.search_box_result_empty),
                             height = 100.dp()
@@ -73,7 +73,7 @@ class BoxSelectionDialogFragment :
                     )
                 } else {
                     state.searchBoxes.forEach { box ->
-                        add(TextModelView("text_${box.boxId}",
+                        add(TextListModel("text_${box.boxId}",
                             box.boxName,
                             height = 50.dp(),
                             gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
@@ -92,7 +92,7 @@ class BoxSelectionDialogFragment :
             }
 
             state.boxes.forEach { box ->
-                add(TextModelView("text_${box.boxId}",
+                add(TextListModel("text_${box.boxId}",
                     box.boxName,
                     height = 50.dp(),
                     gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
@@ -107,11 +107,11 @@ class BoxSelectionDialogFragment :
             }
 
             if (state.isLoadingMore) {
-                add(LoadingModelView("loading_more_${state.currentPage}", height = 50.dp()))
+                add(LoadingListModel("loading_more_${state.currentPage}", height = 50.dp()))
             } else {
                 if (state.totalBox > state.boxes.size) {
                     add(
-                        TextModelView(
+                        TextListModel(
                             "text_total_box",
                             getString(
                                 R.string.total_box, state.totalBox - state.boxes.size

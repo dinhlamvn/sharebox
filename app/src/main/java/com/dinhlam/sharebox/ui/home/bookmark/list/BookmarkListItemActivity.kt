@@ -21,9 +21,9 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.SizedBoxModelView
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.SizedBoxListModel
+import com.dinhlam.sharebox.modelview.TextListModel
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -42,12 +42,12 @@ class BookmarkListItemActivity :
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isSharesLoading) {
-                add(LoadingModelView("loading_share"))
+                add(LoadingListModel("loading_share"))
                 return@getState
             }
 
             if (state.shares.isEmpty()) {
-                add(TextModelView("text_empty", "No shares"))
+                add(TextListModel("text_empty", "No shares"))
             } else {
                 val models = state.shares.map { shareDetail ->
                     shareDetail.shareData.buildShareModelViews(
@@ -71,7 +71,7 @@ class BookmarkListItemActivity :
                 models.forEach { model ->
                     add(model)
                     add(
-                        SizedBoxModelView(
+                        SizedBoxListModel(
                             "divider_${model.modelId}",
                             height = 8.dp(),
                         )

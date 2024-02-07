@@ -9,7 +9,7 @@ class BaseSpanSizeLookup(
 ) : GridLayoutManager.SpanSizeLookup() {
 
     fun interface SpanSizeFactory {
-        fun getSpanSize(model: BaseListAdapter.BaseModelView, position: Int): Int
+        fun getSpanSize(model: BaseListAdapter.BaseListModel, position: Int): Int
     }
 
     sealed class SpanSizeConfig(open val spanCount: Int = 1) {
@@ -28,7 +28,7 @@ class BaseSpanSizeLookup(
         }
     }
 
-    private fun getSpanSizeInternal(model: BaseListAdapter.BaseModelView): Int {
+    private fun getSpanSizeInternal(model: BaseListAdapter.BaseListModel): Int {
         val spanSizeConfig = model.getSpanSizeConfig()
         if (spanSizeConfig is SpanSizeConfig.Full) {
             return spanCount

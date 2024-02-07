@@ -16,9 +16,9 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeWithEllipsizeEnd
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.TextPickerModelView
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.modelview.TextPickerListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,13 +70,13 @@ class BookmarkCollectionPickerDialogFragment :
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isLoading) {
-                add(LoadingModelView("loading"))
+                add(LoadingListModel("loading"))
                 return@getState
             }
 
             if (state.bookmarkCollections.isEmpty()) {
                 add(
-                    TextModelView(
+                    TextListModel(
                         "text_empty",
                         getString(R.string.dialog_bookmark_collection_picker_no_bookmarks)
                     )
@@ -85,7 +85,7 @@ class BookmarkCollectionPickerDialogFragment :
             }
 
             addAll(state.bookmarkCollections.map { bookmarkCollection ->
-                TextPickerModelView(
+                TextPickerListModel(
                     "picker_${bookmarkCollection.id}",
                     bookmarkCollection.name,
                     height = 50.dp(),

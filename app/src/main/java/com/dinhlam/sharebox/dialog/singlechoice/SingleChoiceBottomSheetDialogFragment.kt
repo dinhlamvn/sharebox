@@ -13,7 +13,7 @@ import com.dinhlam.sharebox.databinding.DialogSingleChoiceBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayExtraCompat
-import com.dinhlam.sharebox.modelview.IconTextModelView
+import com.dinhlam.sharebox.modelview.IconTextListModel
 import kotlinx.parcelize.Parcelize
 
 class SingleChoiceBottomSheetDialogFragment :
@@ -42,7 +42,7 @@ class SingleChoiceBottomSheetDialogFragment :
     private val choiceAdapter = BaseListAdapter.createAdapter {
         choiceItems.forEachIndexed { index, choiceItem ->
             add(
-                IconTextModelView(
+                IconTextListModel(
                     "choice_$index",
                     choiceItem.icon,
                     choiceItem.text,

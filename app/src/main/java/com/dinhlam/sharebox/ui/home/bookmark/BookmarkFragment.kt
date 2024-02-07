@@ -22,9 +22,9 @@ import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.BookmarkHelper
 import com.dinhlam.sharebox.logger.Logger
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.TextModelView
-import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionModelView
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.modelview.bookmark.BookmarkCollectionListModel
 import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -79,14 +79,14 @@ class BookmarkFragment :
     private val collectionAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("loading_collections"))
+                add(LoadingListModel("loading_collections"))
             }
 
             if (state.bookmarkCollections.isEmpty() && !state.isRefreshing) {
-                add(TextModelView("text_empty", getString(R.string.no_bookmark_collections)))
+                add(TextListModel("text_empty", getString(R.string.no_bookmark_collections)))
             } else if (state.bookmarkCollections.isNotEmpty()) {
                 addAll(state.bookmarkCollections.mapIndexed { idx, bookmarkCollection ->
-                    BookmarkCollectionModelView(
+                    BookmarkCollectionListModel(
                         bookmarkCollection.id,
                         bookmarkCollection.name,
                         bookmarkCollection.thumbnail,

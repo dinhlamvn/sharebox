@@ -11,12 +11,10 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentTrendingBinding
 import com.dinhlam.sharebox.extensions.buildTrendingShareModelViews
-import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.modelview.LoadingModelView
-import com.dinhlam.sharebox.modelview.SizedBoxModelView
-import com.dinhlam.sharebox.modelview.TextModelView
+import com.dinhlam.sharebox.modelview.LoadingListModel
+import com.dinhlam.sharebox.modelview.TextListModel
 import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.LiveEventUtils
@@ -37,13 +35,13 @@ class TrendingFragment :
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingModelView("loading", height = ViewGroup.LayoutParams.MATCH_PARENT))
+                add(LoadingListModel("loading", height = ViewGroup.LayoutParams.MATCH_PARENT))
                 return@getState
             }
 
             if (state.shares.isEmpty()) {
                 add(
-                    TextModelView(
+                    TextListModel(
                         "empty_message", getString(R.string.no_result)
                     )
                 )
@@ -68,7 +66,7 @@ class TrendingFragment :
 
             if (state.isLoadingMore) {
                 add(
-                    LoadingModelView(
+                    LoadingListModel(
                         "load_more_${state.currentPage}",
                         height = ViewGroup.LayoutParams.MATCH_PARENT
                     )
