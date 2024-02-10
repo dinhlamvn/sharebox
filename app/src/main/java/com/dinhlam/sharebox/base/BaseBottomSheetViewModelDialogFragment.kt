@@ -14,12 +14,12 @@ abstract class BaseBottomSheetViewModelDialogFragment<T : BaseViewModel.BaseStat
 
     abstract fun onStateChanged(state: T)
 
-    fun <R> getState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value)
+    fun <R> getState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.currentState)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.state.collect(::onStateChanged)
+            viewModel.stateFlow.collect(::onStateChanged)
         }
         viewModel.toastEvent.observe(this) { strRes ->
             showToast(strRes)

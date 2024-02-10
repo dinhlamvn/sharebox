@@ -15,12 +15,13 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
         fetchTotalBox()
     }
 
-    private fun getListBoxes() {
+    private fun getListBoxes() = getState { state ->
         setState { copy(isLoading = true) }
-        execute {
-            val boxes = boxRepository.find(
-                AppConsts.NUMBER_VISIBLE_BOX, currentPage * AppConsts.NUMBER_VISIBLE_BOX
+        suspend {
+            boxRepository.find(
+                AppConsts.NUMBER_VISIBLE_BOX, state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
+        }.execute { boxes ->
             copy(boxes = boxes, isLoading = false, currentPage = currentPage + 1)
         }
     }
@@ -37,10 +38,11 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
             return@getState
         }
         setState { copy(isLoadingMore = true) }
-        execute {
-            val boxes = boxRepository.find(
-                AppConsts.NUMBER_VISIBLE_BOX, currentPage * AppConsts.NUMBER_VISIBLE_BOX
+        suspend {
+            boxRepository.find(
+                AppConsts.NUMBER_VISIBLE_BOX, state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
+        }.execute {
             copy(
                 boxes = this.boxes.plus(boxes),
                 currentPage = currentPage + 1,

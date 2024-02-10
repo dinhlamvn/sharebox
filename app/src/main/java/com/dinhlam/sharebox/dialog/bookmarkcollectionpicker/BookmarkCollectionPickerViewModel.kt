@@ -3,10 +3,10 @@ package com.dinhlam.sharebox.dialog.bookmarkcollectionpicker
 import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.extensions.getNonNull
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -27,15 +27,19 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
         loadBookmarkCollections()
     }
 
-    private fun loadBookmarkCollections() = execute {
-        val collections = bookmarkCollectionRepository.find()
-        val bookmarkCollection = collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
-        copy(
-            bookmarkCollections = collections,
-            isLoading = false,
-            pickedBookmarkCollection = bookmarkCollection,
-            originalBookmarkCollection = bookmarkCollection,
-        )
+    private fun loadBookmarkCollections() = getState { state ->
+        suspend {
+            val collections = bookmarkCollectionRepository.find()
+            val collection = state.collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
+            Pair(collections, collection)
+        }.execute { pair ->
+            copy(
+                bookmarkCollections = pair.first,
+                isLoading = false,
+                pickedBookmarkCollection = pair.second,
+                originalBookmarkCollection = pair.second,
+            )
+        }
     }
 
     fun reloadAfterCreateNewBookmarkCollection() = doInBackground {

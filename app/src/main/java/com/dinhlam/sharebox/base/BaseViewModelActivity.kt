@@ -15,13 +15,13 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
 
     abstract fun onStateChanged(state: T)
 
-    fun <R> getState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.state.value)
+    fun <R> getState(viewModel: VM, block: (T) -> R) = block.invoke(viewModel.currentState)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect(::onStateChanged)
+                viewModel.stateFlow.collect(::onStateChanged)
             }
         }
 

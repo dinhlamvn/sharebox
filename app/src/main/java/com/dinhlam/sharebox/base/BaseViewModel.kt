@@ -11,29 +11,31 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
-import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KProperty1
 
 abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewModel() {
 
     interface BaseState
 
-    private val stateScope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
+    private val stateScope =
+        CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
 
     private data class Consumer<V>(
         val value: V
@@ -42,8 +44,10 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     private val setStateChannel = Channel<suspend T.() -> T>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(T) -> Unit>(Channel.UNLIMITED)
 
-    private val _state = MutableStateFlow(initState)
-    val state: StateFlow<T> = _state
+    @Volatile
+    var currentState: T = initState
+    private val _stateFlow = MutableStateFlow(currentState)
+    val stateFlow: Flow<T> = _stateFlow
 
     private val _toastEvent = OneTimeLiveData(0)
     val toastEvent: LiveData<Int> = _toastEvent
@@ -52,12 +56,12 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     init {
         stateScope.launch {
             while (isActive) {
-                val currentState = state.value
                 select {
                     setStateChannel.onReceive { reducer ->
                         val newState = reducer.invoke(currentState)
                         if (newState != currentState) {
-                            _state.emit(newState)
+                            currentState = newState
+                            _stateFlow.emit(newState)
                         }
                     }
 
@@ -69,7 +73,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    protected fun setState(block: suspend T.() -> T) {
+    protected fun setState(block: T.() -> T) {
         setStateChannel.trySend(block)
     }
 
@@ -77,18 +81,18 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         getStateChannel.trySend(block)
     }
 
-    protected fun execute(
-        context: CoroutineContext = Dispatchers.IO,
-        onError: ((Throwable) -> Unit)? = null,
-        block: suspend T.() -> T
-    ) {
-        viewModelScope.launch(context) {
-            try {
-                setState { block(this) }
-            } catch (e: Exception) {
-                onError?.invoke(e)
-            }
+    protected fun <R : Any?> (suspend () -> R).execute(stateReducer: T.(R) -> T): Job {
+        return stateScope.launch(Dispatchers.IO) {
+            val result = invoke()
+            setState { stateReducer(result) }
         }
+    }
+
+    protected fun execute(
+        onError: ((Throwable) -> Unit)? = null,
+        stateReducer: suspend T.() -> T
+    ) = getState { state ->
+        suspend { stateReducer(state) }.execute { this }
     }
 
     protected fun doInBackground(
@@ -103,12 +107,9 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     fun <V> consume(
-        lifecycleOwner: LifecycleOwner,
-        property: KProperty1<T, V>,
-        block: (V) -> Unit
+        lifecycleOwner: LifecycleOwner, property: KProperty1<T, V>, block: (V) -> Unit
     ) {
-        state.map { Consumer(property.get(it)) }
-            .distinctUntilChanged()
+        stateFlow.map { Consumer(property.get(it)) }.distinctUntilChanged()
             .resolveConsumer(lifecycleOwner) { consumer ->
                 block(consumer.value)
             }
@@ -117,8 +118,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     protected fun <V> consume(
         property: KProperty1<T, V>, block: suspend (V) -> Unit
     ) {
-        state.map { Consumer(property.get(it)) }
-            .distinctUntilChanged()
+        stateFlow.map { Consumer(property.get(it)) }.distinctUntilChanged()
             .resolveConsumer { consumer ->
                 block(consumer.value)
             }
@@ -143,8 +143,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     private fun <T> Flow<T>.resolveConsumer(
-        lifecycleOwner: LifecycleOwner? = null,
-        block: suspend (T) -> Unit
+        lifecycleOwner: LifecycleOwner? = null, block: suspend (T) -> Unit
     ) {
         lifecycleOwner?.let { owner ->
             owner.lifecycleScope.launch {

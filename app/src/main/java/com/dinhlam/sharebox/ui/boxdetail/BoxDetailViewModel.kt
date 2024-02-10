@@ -35,27 +35,32 @@ class BoxDetailViewModel @Inject constructor(
         loadShares()
     }
 
-    private fun loadBoxDetail() = execute {
-        val boxDetail = boxRepository.findOne(boxId) ?: return@execute this
-        copy(boxDetail = boxDetail)
+    private fun loadBoxDetail() = getState { state ->
+        suspend {
+            boxRepository.findOne(state.boxId)
+        }.execute { boxDetail ->
+            copy(boxDetail = boxDetail)
+        }
     }
 
-    private fun loadShares() {
+    private fun loadShares() = getState { state ->
         setState { copy(isRefreshing = true) }
-        execute {
-            val shares = loadShares(boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+        suspend {
+            loadShares(state.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+        }.execute { shares ->
             copy(shares = shares, isRefreshing = false, isLoadingMore = false)
         }
     }
 
-    fun loadMores() {
+    fun loadMores() = getState { state ->
         setState { copy(isLoadingMore = true) }
-        execute {
-            val shares = loadShares(
-                boxId,
+        suspend {
+            loadShares(
+                state.boxId,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
+        }.execute { shares ->
             copy(
                 shares = this.shares.plus(shares),
                 isLoadingMore = false,

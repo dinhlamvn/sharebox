@@ -32,28 +32,34 @@ class CommentViewModel @Inject constructor(
         setState { copy(currentUser = user) }
     }
 
-    private fun loadComments() {
+    private fun loadComments() = getState { state ->
         setState { copy(isRefreshing = true) }
-        execute {
-            val comments = commentRepository.find(shareId)
+        suspend {
+            commentRepository.find(state.shareId)
+        }.execute { comments ->
             copy(comments = comments, isRefreshing = false)
         }
     }
 
-    fun sendComment(comment: String) = execute {
-        val commentEntity = commentRepository.insert(
-            CommentUtils.createCommentId(), shareId, userHelper.getCurrentUserId(), comment
-        )
-
-        commentEntity?.let { cmtEntity ->
+    fun sendComment(comment: String) = getState { state ->
+        suspend {
+            val cmtEntity = commentRepository.insert(
+                CommentUtils.createCommentId(),
+                state.shareId,
+                userHelper.getCurrentUserId(),
+                comment
+            )!!
             realtimeDatabaseRepository.push(cmtEntity)
-            val newComment = commentRepository.findOne(cmtEntity.commentId) ?: return@execute copy()
-            val newList = comments.toMutableList()
-            newList.add(0, newComment)
-            copy(comments = newList)
-        } ?: run {
-            postShowToast(R.string.error_send_comment)
-            this
+            commentRepository.findOne(cmtEntity.commentId)
+        }.execute { comment ->
+            comment?.let { cmtEntity ->
+                val newList = comments.toMutableList()
+                newList.add(0, cmtEntity)
+                copy(comments = newList)
+            } ?: run {
+                postShowToast(R.string.error_send_comment)
+                this
+            }
         }
     }
 }

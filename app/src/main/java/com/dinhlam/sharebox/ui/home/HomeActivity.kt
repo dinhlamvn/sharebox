@@ -59,7 +59,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
-    private val pickImagesResultLauncher =
+    val pickImagesResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val clipData = result.data?.clipData ?: return@registerForActivityResult
@@ -96,7 +96,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
+        //ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
         viewBinding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
             false

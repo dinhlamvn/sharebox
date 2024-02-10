@@ -14,7 +14,6 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.utils.BookmarkUtils
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import java.io.File
 import javax.inject.Inject
 
@@ -35,7 +34,7 @@ class BookmarkCollectionFormViewModel @Inject constructor(
 
     fun performActionDone(context: Context, name: String, desc: String) {
         setState { copy(errorName = null, errorDesc = null) }
-        execute(Dispatchers.IO) {
+        execute {
             if (name.isEmpty()) {
                 return@execute copy(errorName = R.string.bookmark_collection_error_require_name)
             }

@@ -57,7 +57,7 @@ class HomeAdapter(
                 shareHelper.shareLink(activity.supportFragmentManager)
             }),
             NoHashProp(View.OnClickListener {
-                //pickImagesResultLauncher.launch(router.pickImageIntent(true))
+                activity.pickImagesResultLauncher.launch(router.pickImageIntent(true))
             }),
         ).attachTo(this)
 
@@ -114,7 +114,7 @@ class HomeAdapter(
         }
 
         if (state.shares.isEmpty() && !state.isRefreshing) {
-            TextListModel("text_empty", activity.getString(R.string.no_result)).attachTo(this)
+            TextListModel("text_empty", activity.getString(R.string.no_result), height = 100.dp()).attachTo(this)
         } else if (state.shares.isNotEmpty()) {
             state.shares.forEach { shareDetail ->
                 shareDetail.shareData.buildShareListModel(

@@ -37,59 +37,61 @@ class HomeViewModel @Inject constructor(
         getListBoxes()
         getCurrentActiveBox()
         consume(HomeState::currentBox) {
-            loadShares()
+            getShares()
         }
     }
 
-    private fun getListBoxes() = execute {
-        val boxes = boxRepository.findLatestBoxWithoutPasscode()
+    private fun getListBoxes() = suspend {
+        boxRepository.findByUser(userHelper.getCurrentUserId(), 1000, 0)
+    }.execute { boxes ->
         copy(boxes = boxes)
     }
 
-    private fun getCurrentActiveBox() = execute {
+    private fun getCurrentActiveBox() = suspend {
         val boxId = appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
-            ?: return@execute loadShares().let { this }
-        val box = boxRepository.findOne(boxId) ?: return@execute loadShares().let { this }
+        boxId?.let { id -> boxRepository.findOne(id) }
+    }.execute { box ->
         copy(currentBox = box, isRefreshing = false)
     }
 
-    private fun loadShares() {
-        setState { copy(isRefreshing = true) }
-        execute {
-            val shares = loadShares(currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
-            copy(shares = shares, isRefreshing = false, isLoadingMore = false)
+    private fun getShares() {
+        getState { state ->
+            setState { copy(isRefreshing = true) }
+            suspend {
+                getShares(
+                    state.currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
+                )
+            }.execute { shares ->
+                copy(shares = shares, isRefreshing = false, isLoadingMore = false)
+            }
         }
     }
 
-    fun loadMores() {
-        setState { copy(isLoadingMore = true) }
-        execute {
-            val loadShares = loadShares(
-                currentBox,
+    fun loadMores() = getState { state ->
+        suspend {
+            getShares(
+                state.currentBox,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
+        }.execute { shares ->
             copy(
-                shares = this.shares.plus(loadShares),
+                shares = this.shares.plus(shares),
                 isLoadingMore = false,
-                canLoadMore = loadShares.isNotEmpty(),
+                canLoadMore = shares.isNotEmpty(),
                 currentPage = currentPage + 1,
             )
         }
     }
 
-    private suspend fun loadShares(
-        boxDetail: BoxDetail?,
-        limit: Int,
-        offset: Int
+    private suspend fun getShares(
+        boxDetail: BoxDetail?, limit: Int, offset: Int
     ): List<ShareDetail> {
         return boxDetail?.let { box ->
             shareRepository.findWhereInBox(
-                box.boxId,
-                limit,
-                offset
+                box.boxId, limit, offset
             )
-        } ?: shareRepository.findGeneralShares(userHelper.getCurrentUserId(), limit, offset)
+        } ?: shareRepository.find(userHelper.getCurrentUserId(), limit, offset)
     }
 
     fun doOnRefresh() {
