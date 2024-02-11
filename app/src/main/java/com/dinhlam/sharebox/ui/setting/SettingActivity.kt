@@ -1,11 +1,13 @@
 package com.dinhlam.sharebox.ui.setting
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.isVisible
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
@@ -40,6 +42,16 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
     @Inject
     lateinit var router: Router
+
+    private val signInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
+    )
+
+    private fun handleSignInResult(activityResult: ActivityResult) {
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,12 +90,15 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             requestChangeNetworkCondition(checkedId)
         }
 
-        binding.imageSignOut.setOnClickListener {
-            requestSignOut()
+        binding.imageAction.setOnClickListener {
+            if (userHelper.isSignedIn()) {
+                requestSignOut()
+            } else {
+                signInLauncher.launch(router.signIn(true))
+            }
         }
 
-        binding.imageSignOut.isVisible = userHelper.isSignedIn()
-        binding.imageSignOut.setImageDrawable(Icons.signOutIcon(this))
+        binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
         binding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)
         }
