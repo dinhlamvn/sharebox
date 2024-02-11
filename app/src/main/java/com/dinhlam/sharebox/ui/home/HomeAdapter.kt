@@ -7,7 +7,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
@@ -25,13 +24,12 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.Spacing
-import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.modelview.BoxListModel
-import com.dinhlam.sharebox.modelview.CarouselListModel
-import com.dinhlam.sharebox.modelview.LoadingListModel
-import com.dinhlam.sharebox.modelview.MainActionListModel
-import com.dinhlam.sharebox.modelview.SizedBoxListModel
-import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.CarouselListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
+import com.dinhlam.sharebox.listmodel.MainActionListModel
+import com.dinhlam.sharebox.listmodel.SizedBoxListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.WorkerUtils
 
@@ -99,9 +97,7 @@ class HomeAdapter(
             CarouselListModel("carousel_box", boxModelViews).attachTo(this)
         } else {
             TextListModel(
-                "text_empty_boxes",
-                activity.getString(R.string.no_boxes),
-                height = 100.dp()
+                "text_empty_boxes", activity.getString(R.string.no_boxes), height = 100.dp()
             ).attachTo(this)
         }
 
@@ -121,9 +117,7 @@ class HomeAdapter(
 
         if (state.shares.isEmpty() && !state.isRefreshing) {
             TextListModel(
-                "text_empty",
-                activity.getString(R.string.no_result),
-                height = 100.dp()
+                "text_empty", activity.getString(R.string.no_result), height = 100.dp()
             ).attachTo(this)
         } else if (state.shares.isNotEmpty()) {
             state.shares.forEach { shareDetail ->
@@ -140,9 +134,6 @@ class HomeAdapter(
                     boxDetail = shareDetail.boxDetail,
                     actionOpen = ::onOpen,
                     actionShareToOther = ::onShareToOther,
-                    actionLike = ::onLike,
-                    actionComment = ::onComment,
-                    actionBookmark = ::onBookmark,
                     actionViewImage = ::viewImage,
                     actionViewImages = ::viewImages,
                     actionBoxClick = ::onBoxClick
@@ -151,6 +142,12 @@ class HomeAdapter(
         }
 
         if (state.generalShares.isNotEmpty()) {
+            SizedBoxListModel(
+                "margin_bottom_recently_boxes",
+                height = 16.dp(),
+                backgroundColor = android.R.color.transparent
+            ).attachTo(this)
+
             TextListModel(
                 "general_share_shares_title",
                 activity.getString(R.string.general_shares),
@@ -178,13 +175,10 @@ class HomeAdapter(
                     liked = shareDetail.liked,
                     boxDetail = shareDetail.boxDetail,
                     actionOpen = ::onOpen,
-                    actionShareToOther = ::onShareToOther,
-                    actionLike = ::onLike,
-                    actionComment = ::onComment,
-                    actionBookmark = ::onBookmark,
                     actionViewImage = ::viewImage,
                     actionViewImages = ::viewImages,
-                    actionBoxClick = ::onBoxClick
+                    actionBoxClick = ::onBoxClick,
+                    actionShareToOther = ::onGeneralShareToOther
                 ).attachTo(this)
             }
         }
@@ -192,41 +186,6 @@ class HomeAdapter(
         LoadingListModel("home_loading_more_${state.currentPage}", height = 100.dp()).attachTo(
             this
         ) { state.canLoadMore }
-    }
-
-    private fun onMore(shareId: String) = activity.getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-
-        val items = arrayListOf(
-            SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
-                0, activity.getString(R.string.archives)
-            ), SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
-                0, activity.getString(R.string.bookmark)
-            )
-        )
-
-        if (share.isVideoShare) {
-            items.add(
-                SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
-                    0, activity.getString(R.string.download)
-                )
-            )
-            items.add(
-                SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
-                    0, activity.getString(R.string.view_in_source)
-                )
-            )
-        }
-
-        SingleChoiceBottomSheetDialogFragment().apply {
-            arguments = bundleOf(
-                AppExtras.EXTRA_CHOICE_ITEMS to items.toTypedArray(),
-                AppExtras.EXTRA_SHARE_ID to shareId
-            )
-        }.show(
-            activity.supportFragmentManager, "SingleChoiceBottomSheetDialogFragment"
-        )
     }
 
     private fun onOpen(shareId: String) {
@@ -239,12 +198,10 @@ class HomeAdapter(
         shareHelper.shareToOther(share)
     }
 
-    private fun onLike(shareId: String) {
-        if (!userHelper.isSignedIn()) {
-            activity.startActivity(router.signIn())
-            return
-        }
-        viewModel.like(shareId)
+    private fun onGeneralShareToOther(shareId: String) = activity.getState(viewModel) { state ->
+        val share =
+            state.generalShares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+        shareHelper.shareToOther(share)
     }
 
     private fun onBookmark(shareId: String) {
@@ -255,22 +212,12 @@ class HomeAdapter(
         }
     }
 
-    private fun onComment(shareId: String) {
-        shareHelper.showCommentDialog(
-            activity.supportFragmentManager, shareId
-        )
-    }
-
     override fun onBoxSelected(boxId: String) {
         viewModel.setBox(boxId)
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
         viewModel.bookmark(shareId, bookmarkCollectionId)
-    }
-
-    private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
-        shareHelper.viewInSource(activity, videoSource, shareData)
     }
 
     private fun onBoxClicked(boxId: String) {

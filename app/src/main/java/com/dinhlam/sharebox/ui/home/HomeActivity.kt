@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.base.BaseViewModelActivity
@@ -99,12 +100,12 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.imageSetting.setImageDrawable(Icons.settingIcon(this))
-        binding.imageSetting.setOnClickListener {
-            startActivity(router.settingIntent())
+        binding.imageProfile.setImageDrawable(Icons.userIcon(this))
+        binding.imageProfile.setOnClickListener {
+            startActivity(router.profile(this))
         }
 
-        //ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
+        ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
         binding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
             false

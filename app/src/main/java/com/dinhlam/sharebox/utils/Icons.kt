@@ -298,9 +298,9 @@ object Icons {
         return createIcon(context, GoogleMaterial.Icon.gmd_file_download, block(IconBuilder(context)))
     }
 
-    fun copyIcon(
+    fun userIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
-        return createIcon(context, GoogleMaterial.Icon.gmd_content_copy, block(IconBuilder(context)))
+        return createIcon(context, FontAwesome.Icon.faw_user, block(IconBuilder(context)))
     }
 }

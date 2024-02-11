@@ -76,7 +76,7 @@
 
 -keep class com.dinhlam.sharebox.model.** { *; }
 
--keep class com.dinhlam.sharebox.modelview.** { *; }
+-keep class com.dinhlam.sharebox.listmodel.** { *; }
 
 -keepattributes *Annotation*
 -dontwarn sun.misc.**

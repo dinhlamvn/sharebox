@@ -16,9 +16,9 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.takeWithEllipsizeEnd
-import com.dinhlam.sharebox.modelview.LoadingListModel
-import com.dinhlam.sharebox.modelview.TextListModel
-import com.dinhlam.sharebox.modelview.TextPickerListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.TextPickerListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,21 +70,19 @@ class BookmarkCollectionPickerDialogFragment :
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isLoading) {
-                add(LoadingListModel("loading"))
+                LoadingListModel("loading").attachTo(this)
                 return@getState
             }
 
             if (state.bookmarkCollections.isEmpty()) {
-                add(
-                    TextListModel(
-                        "text_empty",
-                        getString(R.string.dialog_bookmark_collection_picker_no_bookmarks)
-                    )
-                )
+                TextListModel(
+                    "text_empty",
+                    getString(R.string.dialog_bookmark_collection_picker_no_bookmarks)
+                ).attachTo(this)
                 return@getState
             }
 
-            addAll(state.bookmarkCollections.map { bookmarkCollection ->
+            state.bookmarkCollections.forEach { bookmarkCollection ->
                 TextPickerListModel(
                     "picker_${bookmarkCollection.id}",
                     bookmarkCollection.name,
@@ -97,8 +95,8 @@ class BookmarkCollectionPickerDialogFragment :
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                         viewModel.onPickBookmarkCollection(bookmarkCollection)
                     })
-                )
-            })
+                ).attachTo(this)
+            }
         }
     }
 

@@ -20,9 +20,9 @@ import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.modelview.CommentListModel
-import com.dinhlam.sharebox.modelview.LoadingListModel
-import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.listmodel.CommentListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -56,25 +56,23 @@ class CommentFragment :
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
-                add(LoadingListModel("loading_comment"))
+                LoadingListModel("loading_comment").attachTo(this)
                 return@getState
             }
 
             val comments = state.comments
             if (comments.isEmpty()) {
-                add(TextListModel("text_empty", "There are no comments yet."))
+                TextListModel("text_empty", "There are no comments yet.").attachTo(this)
                 return@getState
             } else {
                 comments.forEach { comment ->
-                    add(
-                        CommentListModel(
-                            comment.id,
-                            comment.userDetail.name,
-                            comment.userDetail.avatar,
-                            comment.content,
-                            comment.commentDate
-                        )
-                    )
+                    CommentListModel(
+                        comment.id,
+                        comment.userDetail.name,
+                        comment.userDetail.avatar,
+                        comment.content,
+                        comment.commentDate
+                    ).attachTo(this)
                 }
             }
         }

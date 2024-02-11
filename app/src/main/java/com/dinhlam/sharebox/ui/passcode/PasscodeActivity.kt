@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.vibrate
-import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.utils.Icons
 import java.util.Stack
 
@@ -46,81 +46,69 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
     private val passcodeAdapter = BaseListAdapter.createAdapter {
         repeat(stack.size) { number ->
-            add(
-                TextListModel(
-                    "code_filled_$number",
-                    CHARACTER_CODE_FILLED,
-                    width = codeBulletSize,
-                    height = codeBulletSize,
-                    textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1
-                )
-            )
+            TextListModel(
+                "code_filled_$number",
+                CHARACTER_CODE_FILLED,
+                width = codeBulletSize,
+                height = codeBulletSize,
+                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1
+            ).attachTo(this)
         }
 
 
         repeat(PASSCODE_LENGTH - stack.size) { number ->
-            add(
-                TextListModel(
-                    "code_empty_$number",
-                    CHARACTER_CODE_EMPTY,
-                    width = codeBulletSize,
-                    height = codeBulletSize,
-                    textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1
-                )
-            )
+            TextListModel(
+                "code_empty_$number",
+                CHARACTER_CODE_EMPTY,
+                width = codeBulletSize,
+                height = codeBulletSize,
+                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1
+            ).attachTo(this)
         }
     }
 
     private val keypadAdapter = BaseListAdapter.createAdapter {
         repeat(9) { number ->
-            add(
-                TextListModel(
-                    "text_number_$number",
-                    "${number + 1}",
-                    height = 70.dp(),
-                    textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
-                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        onNumberClicked(number + 1)
-                    })
-                )
-            )
+            TextListModel(
+                "text_number_$number",
+                "${number + 1}",
+                height = 70.dp(),
+                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    onNumberClicked(number + 1)
+                })
+            ).attachTo(this)
         }
 
-        add(
-            TextListModel(
-                "text_done",
-                CHARACTER_CODE_DONE,
-                height = 70.dp(),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
-                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    onDone()
-                })
-            )
-        )
+        TextListModel(
+            "text_done",
+            CHARACTER_CODE_DONE,
+            height = 70.dp(),
+            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+            actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                onDone()
+            })
+        ).attachTo(this)
 
-        add(
-            TextListModel(
-                "text_zero",
-                "0",
-                height = 70.dp(),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
-                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    onNumberClicked(0)
-                })
-            )
-        )
+        TextListModel(
+            "text_zero",
+            "0",
+            height = 70.dp(),
+            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+            actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                onNumberClicked(0)
+            })
+        ).attachTo(this)
 
-        add(
-            TextListModel(
-                "text_backspace",
-                CHARACTER_CODE_BACKSPACE,
-                height = 70.dp(),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
-                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    onBackspace()
-                })
-            )
-        )
+        TextListModel(
+            "text_backspace",
+            CHARACTER_CODE_BACKSPACE,
+            height = 70.dp(),
+            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+            actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                onBackspace()
+            })
+        ).attachTo(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

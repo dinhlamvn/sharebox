@@ -49,10 +49,10 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.listmodel.ImageListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
-import com.dinhlam.sharebox.modelview.ImageListModel
-import com.dinhlam.sharebox.modelview.LoadingListModel
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.router.Router
@@ -135,32 +135,28 @@ class ShareReceiveActivity :
     private val shareContentAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             when (val shareData = state.shareData) {
-                is ShareData.ShareText -> add(
-                    ShareReceiveTextListModel(
-                        "shareText", shareData.castNonNull<ShareData.ShareText>().text
-                    )
-                )
+                is ShareData.ShareText -> ShareReceiveTextListModel(
+                    "shareText", shareData.castNonNull<ShareData.ShareText>().text
+                ).attachTo(this)
 
-                is ShareData.ShareUrl -> add(
-                    ShareReceiveUrlListModel(
-                        "shareWebLink", shareData.castNonNull<ShareData.ShareUrl>().url
-                    )
-                )
+                is ShareData.ShareUrl -> ShareReceiveUrlListModel(
+                    "shareWebLink", shareData.castNonNull<ShareData.ShareUrl>().url
+                ).attachTo(this)
 
-                is ShareData.ShareImage -> add(
-                    ImageListModel(
-                        shareData.castNonNull<ShareData.ShareImage>().uri,
-                        screenHeight().times(0.5).toInt()
-                    )
-                )
+                is ShareData.ShareImage -> ImageListModel(
+                    shareData.castNonNull<ShareData.ShareImage>().uri,
+                    screenHeight().times(0.5).toInt()
+                ).attachTo(this)
 
                 is ShareData.ShareImages -> {
-                    addAll(shareData.castNonNull<ShareData.ShareImages>().uris.map { uri ->
-                        ImageListModel(uri, height = screenHeight().times(0.5).toInt())
-                    })
+                    shareData.castNonNull<ShareData.ShareImages>().uris.map { uri ->
+                        ImageListModel(uri, height = screenHeight().times(0.5).toInt()).attachTo(
+                            this
+                        )
+                    }
                 }
 
-                else -> add(LoadingListModel("loading"))
+                else -> LoadingListModel("loading").attachTo(this)
             }
         }
     }

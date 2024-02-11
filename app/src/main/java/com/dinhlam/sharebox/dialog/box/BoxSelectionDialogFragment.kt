@@ -19,8 +19,8 @@ import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
-import com.dinhlam.sharebox.modelview.LoadingListModel
-import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,22 +58,20 @@ class BoxSelectionDialogFragment :
     private val boxAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isLoading) {
-                add(LoadingListModel("loading_box", height = 100.dp()))
+                LoadingListModel("loading_box", height = 100.dp()).attachTo(this)
                 return@getState
             }
 
             if (state.isSearching) {
                 if (state.searchBoxes.isEmpty()) {
-                    add(
-                        TextListModel(
-                            "text_search_result_empty",
-                            getString(R.string.search_box_result_empty),
-                            height = 100.dp()
-                        )
-                    )
+                    TextListModel(
+                        "text_search_result_empty",
+                        getString(R.string.search_box_result_empty),
+                        height = 100.dp()
+                    ).attachTo(this)
                 } else {
                     state.searchBoxes.forEach { box ->
-                        add(TextListModel("text_${box.boxId}",
+                        TextListModel("text_${box.boxId}",
                             box.boxName,
                             height = 50.dp(),
                             gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
@@ -84,7 +82,7 @@ class BoxSelectionDialogFragment :
                             ),
                             endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(
                                 requireContext()
-                            ) { copy(sizeDp = 16) } else null))
+                            ) { copy(sizeDp = 16) } else null).attachTo(this)
                     }
                 }
 
@@ -92,7 +90,7 @@ class BoxSelectionDialogFragment :
             }
 
             state.boxes.forEach { box ->
-                add(TextListModel("text_${box.boxId}",
+                TextListModel("text_${box.boxId}",
                     box.boxName,
                     height = 50.dp(),
                     gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
@@ -103,27 +101,27 @@ class BoxSelectionDialogFragment :
                     ),
                     endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(
                         requireContext()
-                    ) { copy(sizeDp = 16) } else null))
+                    ) { copy(sizeDp = 16) } else null).attachTo(this)
             }
 
             if (state.isLoadingMore) {
-                add(LoadingListModel("loading_more_${state.currentPage}", height = 50.dp()))
+                LoadingListModel("loading_more_${state.currentPage}", height = 50.dp()).attachTo(
+                    this
+                )
             } else {
                 if (state.totalBox > state.boxes.size) {
-                    add(
-                        TextListModel(
-                            "text_total_box",
-                            getString(
-                                R.string.total_box, state.totalBox - state.boxes.size
-                            ),
-                            height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                            actionClick = BaseListAdapter.NoHashProp(
-                                View.OnClickListener {
-                                    viewModel.loadNextPage()
-                                },
-                            ),
-                        )
-                    )
+                    TextListModel(
+                        "text_total_box",
+                        getString(
+                            R.string.total_box, state.totalBox - state.boxes.size
+                        ),
+                        height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                        actionClick = BaseListAdapter.NoHashProp(
+                            View.OnClickListener {
+                                viewModel.loadNextPage()
+                            },
+                        ),
+                    ).attachTo(this)
                 }
             }
         }

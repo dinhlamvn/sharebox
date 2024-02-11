@@ -14,9 +14,9 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.modelview.LoadingListModel
-import com.dinhlam.sharebox.modelview.SizedBoxListModel
-import com.dinhlam.sharebox.modelview.TextListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
+import com.dinhlam.sharebox.listmodel.SizedBoxListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,11 +54,9 @@ class BoxDetailActivity :
             }
 
             if (state.shares.isEmpty() && !state.isRefreshing) {
-                add(
-                    TextListModel(
-                        "text_empty", getString(R.string.no_result)
-                    )
-                )
+                TextListModel(
+                    "text_empty", getString(R.string.no_result)
+                ).attachTo(this)
             } else if (state.shares.isNotEmpty()) {
                 state.shares.forEach { shareDetail ->
                     shareDetail.shareData.buildShareListModel(

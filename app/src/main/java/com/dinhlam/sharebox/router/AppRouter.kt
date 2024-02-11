@@ -8,12 +8,13 @@ import android.provider.MediaStore
 import androidx.browser.customtabs.CustomTabsIntent
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
+import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
-import com.dinhlam.sharebox.ui.home.bookmark.form.BookmarkCollectionFormActivity
-import com.dinhlam.sharebox.ui.home.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
+import com.dinhlam.sharebox.ui.profile.ProfileActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.sharedetail.ShareDetailActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
@@ -129,5 +130,9 @@ class AppRouter constructor(private val context: Context) : Router {
             AppExtras.EXTRA_BOX_ID,
             boxId
         )
+    }
+
+    override fun profile(context: Context): Intent {
+        return Intent(context, ProfileActivity::class.java)
     }
 }

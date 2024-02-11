@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.LocalStorageHelper
-import com.dinhlam.sharebox.modelview.ImageListModel
+import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -46,11 +46,11 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
             ?: return dismiss()
 
         val adapter = BaseListAdapter.createAdapter {
-            addAll(uris.map { uri ->
+            uris.forEach { uri ->
                 ImageListModel(
                     uri, height = heightPercentage(60)
-                )
-            })
+                ).attachTo(this)
+            }
         }
 
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)

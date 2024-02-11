@@ -25,7 +25,7 @@ abstract class BaseListAdapter constructor(
     private val modelViewsBuilder: (BaseListAdapter.() -> Unit)? = null
 ) : ListAdapter<BaseListAdapter.BaseListModel, BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseListModel, ViewBinding>>(
     DiffCallback()
-), MutableList<BaseListAdapter.BaseListModel> by CopyOnWriteArrayList(), DefaultLifecycleObserver {
+), DefaultLifecycleObserver {
 
     abstract fun buildModelViews()
 
@@ -37,6 +37,8 @@ abstract class BaseListAdapter constructor(
     private var buildModelViewsJob: Job? = null
 
     private val modelViewsManager = ModelViewsManager()
+
+    private val listModels: MutableList<BaseListModel> = CopyOnWriteArrayList()
 
     fun attachTo(recyclerView: RecyclerView, lifecycleOwner: LifecycleOwner) {
         lifecycleOwner.lifecycle.addObserver(this)
@@ -58,8 +60,12 @@ abstract class BaseListAdapter constructor(
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         modelViewsManager.onClear()
-        this.clear()
+        listModels.clear()
         super.submitList(null)
+    }
+
+    protected fun addModel(baseListModel: BaseListModel) {
+        listModels.add(baseListModel)
     }
 
     override fun submitList(list: MutableList<BaseListModel>?) {
@@ -81,10 +87,10 @@ abstract class BaseListAdapter constructor(
     }
 
     private suspend fun buildModelViewsInternal() {
-        clear()
+        listModels.clear()
         modelViewsBuilder?.invoke(this) ?: buildModelViews()
         withContext(Dispatchers.Main) {
-            super.submitList(this@BaseListAdapter.toList())
+            super.submitList(listModels.toList())
         }
     }
 
@@ -196,12 +202,12 @@ abstract class BaseListAdapter constructor(
             BaseSpanSizeLookup.SpanSizeConfig.Normal
 
         fun attachTo(adapter: BaseListAdapter) {
-            adapter.add(this)
+            adapter.addModel(this)
         }
 
         fun attachTo(adapter: BaseListAdapter, constraint: () -> Boolean) {
             if (constraint()) {
-                adapter.add(this)
+                adapter.addModel(this)
             }
         }
     }
