@@ -65,19 +65,19 @@ class HomeAdapter(
             LoadingListModel("top_loading").attachTo(this)
         }
 
+        SizedBoxListModel(
+            "margin_my_boxes", height = 32.dp(), backgroundColor = android.R.color.transparent
+        ).attachTo(this)
+
+        TextListModel(
+            "title_your_boxes",
+            activity.getString(R.string.your_boxes),
+            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+            height = ViewGroup.LayoutParams.WRAP_CONTENT,
+            gravity = Gravity.START,
+        ).attachTo(this)
+
         if (state.boxes.isNotEmpty()) {
-            SizedBoxListModel(
-                "margin_my_boxes", height = 32.dp(), backgroundColor = android.R.color.transparent
-            ).attachTo(this)
-
-            TextListModel(
-                "title_your_boxes",
-                activity.getString(R.string.your_boxes),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
-                height = ViewGroup.LayoutParams.WRAP_CONTENT,
-                gravity = Gravity.START,
-            ).attachTo(this)
-
             val lastIndex = state.boxes.size - 1
             val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
                 BoxListModel(
@@ -97,24 +97,34 @@ class HomeAdapter(
                 )
             }
             CarouselListModel("carousel_box", boxModelViews).attachTo(this)
-
-            SizedBoxListModel(
-                "margin_bottom_recently_boxes",
-                height = 16.dp(),
-                backgroundColor = android.R.color.transparent
-            ).attachTo(this)
-
+        } else {
             TextListModel(
-                "recently_shares_title",
-                activity.getString(R.string.recently_shares),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
-                height = ViewGroup.LayoutParams.WRAP_CONTENT,
-                gravity = Gravity.START,
+                "text_empty_boxes",
+                activity.getString(R.string.no_boxes),
+                height = 100.dp()
             ).attachTo(this)
         }
 
+        SizedBoxListModel(
+            "margin_bottom_recently_boxes",
+            height = 16.dp(),
+            backgroundColor = android.R.color.transparent
+        ).attachTo(this)
+
+        TextListModel(
+            "recently_shares_title",
+            activity.getString(R.string.recently_shares),
+            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+            height = ViewGroup.LayoutParams.WRAP_CONTENT,
+            gravity = Gravity.START,
+        ).attachTo(this)
+
         if (state.shares.isEmpty() && !state.isRefreshing) {
-            TextListModel("text_empty", activity.getString(R.string.no_result), height = 100.dp()).attachTo(this)
+            TextListModel(
+                "text_empty",
+                activity.getString(R.string.no_result),
+                height = 100.dp()
+            ).attachTo(this)
         } else if (state.shares.isNotEmpty()) {
             state.shares.forEach { shareDetail ->
                 shareDetail.shareData.buildShareListModel(
@@ -138,11 +148,50 @@ class HomeAdapter(
                     actionBoxClick = ::onBoxClick
                 ).attachTo(this)
             }
-
-            LoadingListModel("home_loading_more_${state.currentPage}", height = 100.dp()).attachTo(
-                this
-            ) { state.canLoadMore }
         }
+
+        if (state.generalShares.isNotEmpty()) {
+            TextListModel(
+                "general_share_shares_title",
+                activity.getString(R.string.general_shares),
+                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+                height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                gravity = Gravity.START,
+            ).attachTo(this)
+
+            SizedBoxListModel(
+                "margin_bottom_recently_boxes",
+                height = 16.dp(),
+                backgroundColor = android.R.color.transparent
+            ).attachTo(this)
+
+            state.generalShares.forEach { shareDetail ->
+                shareDetail.shareData.buildShareListModel(
+                    activity.screenHeight(),
+                    shareDetail.shareId,
+                    shareDetail.shareDate,
+                    shareDetail.shareNote,
+                    shareDetail.user,
+                    shareDetail.likeNumber,
+                    commentNumber = shareDetail.commentNumber,
+                    bookmarked = shareDetail.bookmarked,
+                    liked = shareDetail.liked,
+                    boxDetail = shareDetail.boxDetail,
+                    actionOpen = ::onOpen,
+                    actionShareToOther = ::onShareToOther,
+                    actionLike = ::onLike,
+                    actionComment = ::onComment,
+                    actionBookmark = ::onBookmark,
+                    actionViewImage = ::viewImage,
+                    actionViewImages = ::viewImages,
+                    actionBoxClick = ::onBoxClick
+                ).attachTo(this)
+            }
+        }
+
+        LoadingListModel("home_loading_more_${state.currentPage}", height = 100.dp()).attachTo(
+            this
+        ) { state.canLoadMore }
     }
 
     private fun onMore(shareId: String) = activity.getState(viewModel) { state ->

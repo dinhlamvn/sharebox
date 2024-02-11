@@ -85,29 +85,29 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.viewLoading.show()
+        binding.viewLoading.show()
 
         if (userHelper.isSignedIn()) {
             return goHome()
         }
 
-        viewBinding.viewLoading.hide()
-        viewBinding.buttonSignIn.isVisible = true
+        binding.viewLoading.hide()
+        binding.buttonSignIn.isVisible = true
         AuthUI.getInstance().signOut(this)
         setupButtonForSignIn()
 
-        viewBinding.textEditAvatar.setOnClickListener {
+        binding.textEditAvatar.setOnClickListener {
             avatarResultLauncher.launch(router.pickImageIntent())
         }
 
-        viewBinding.textEditAvatar.setDrawableCompat(end = Icons.editIcon(this) {
+        binding.textEditAvatar.setDrawableCompat(end = Icons.editIcon(this) {
             copy(sizeDp = 16)
         })
     }
 
     private fun setupButtonForSignIn() {
-        viewBinding.buttonSignIn.setDrawableCompat(Icons.googleIcon(this))
-        viewBinding.buttonSignIn.setOnClickListener {
+        binding.buttonSignIn.setDrawableCompat(Icons.googleIcon(this))
+        binding.buttonSignIn.setOnClickListener {
             requestSignIn()
         }
     }
@@ -156,28 +156,28 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                 val photoUrl =
                     currentUser?.avatar.takeIfNotNullOrBlank() ?: user.photoUrl?.toString()
                     ?: return@withContext signOut()
-                viewBinding.buttonSignIn.setDrawableCompat(start = null)
-                viewBinding.buttonSignIn.setText(R.string.complete)
+                binding.buttonSignIn.setDrawableCompat(start = null)
+                binding.buttonSignIn.setText(R.string.complete)
 
-                ImageLoader.INSTANCE.load(this@SignInActivity, photoUrl, viewBinding.imageAvatar) {
+                ImageLoader.INSTANCE.load(this@SignInActivity, photoUrl, binding.imageAvatar) {
                     copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
                 }
 
-                viewBinding.imageAppIcon.isVisible = false
-                viewBinding.imageAvatar.isVisible = true
-                viewBinding.textEditAvatar.isVisible = true
-                viewBinding.textLayoutName.isVisible = true
-                viewBinding.textTitleUserName.isVisible = true
-                viewBinding.textInputName.setText(displayName)
+                binding.imageAppIcon.isVisible = false
+                binding.imageAvatar.isVisible = true
+                binding.textEditAvatar.isVisible = true
+                binding.textLayoutName.isVisible = true
+                binding.textTitleUserName.isVisible = true
+                binding.textInputName.setText(displayName)
 
-                viewBinding.buttonSignIn.setOnClickListener {
-                    val name = viewBinding.textInputName.getTrimmedText()
+                binding.buttonSignIn.setOnClickListener {
+                    val name = binding.textInputName.getTrimmedText()
                     createUser(email, name, photoUrl)
                 }
 
-                viewBinding.textInputName.setOnEditorActionListener { _, actionId, _ ->
+                binding.textInputName.setOnEditorActionListener { _, actionId, _ ->
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        val name = viewBinding.textInputName.getTrimmedText()
+                        val name = binding.textInputName.getTrimmedText()
                         createUser(email, name, photoUrl)
                     }
                     true
@@ -187,7 +187,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun createUser(email: String, name: String, photoUrl: String) {
-        viewBinding.viewLoading.show()
+        binding.viewLoading.show()
         activityScope.launch {
             val userId = UserUtils.createUserId(email)
             val avatarUrl = customAvatarUri?.let { uri ->
@@ -199,7 +199,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             userHelper.createUser(userId, name, avatarUrl, { user ->
                 realtimeDatabaseRepository.push(user)
                 if (signInForResult) {
-                    viewBinding.viewLoading.hide()
+                    binding.viewLoading.hide()
                     setResult(Activity.RESULT_OK)
                     finish()
                 } else {
@@ -216,20 +216,20 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         AuthUI.getInstance().signOut(this).addOnSuccessListener {
             showToast(R.string.logged_out)
             setupButtonForSignIn()
-            viewBinding.imageAppIcon.isVisible = true
-            viewBinding.imageAvatar.setImageDrawable(null)
-            viewBinding.imageAvatar.isVisible = false
-            viewBinding.textEditAvatar.isVisible = false
+            binding.imageAppIcon.isVisible = true
+            binding.imageAvatar.setImageDrawable(null)
+            binding.imageAvatar.isVisible = false
+            binding.textEditAvatar.isVisible = false
             customAvatarUri = null
-            viewBinding.textInputName.text = null
-            viewBinding.textLayoutName.isVisible = false
-            viewBinding.textTitleUserName.isVisible = false
-            viewBinding.viewLoading.hide()
+            binding.textInputName.text = null
+            binding.textLayoutName.isVisible = false
+            binding.textTitleUserName.isVisible = false
+            binding.viewLoading.hide()
         }
     }
 
     private fun goHome() {
-        viewBinding.viewLoading.hide()
+        binding.viewLoading.hide()
         startActivity(
             router.home().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )
@@ -238,7 +238,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun showAvatar(data: Intent?) {
         val uri = data?.data ?: return
         customAvatarUri = uri
-        ImageLoader.INSTANCE.load(this, uri, viewBinding.imageAvatar) {
+        ImageLoader.INSTANCE.load(this, uri, binding.imageAvatar) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }
     }

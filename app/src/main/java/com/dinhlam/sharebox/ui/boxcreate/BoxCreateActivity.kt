@@ -52,7 +52,7 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val passcode = result?.data?.getStringExtra(AppExtras.EXTRA_PASSCODE)
                     ?: return@registerForActivityResult
-                viewBinding.textEditPasscode.setText(passcode)
+                binding.textEditPasscode.setText(passcode)
                 Logger.debug(passcode)
             }
         }
@@ -66,42 +66,42 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.imageClear.setImageDrawable(Icons.clearIcon(this) {
+        binding.imageClear.setImageDrawable(Icons.clearIcon(this) {
             copy(sizeDp = 16)
         })
 
-        viewBinding.imageClear.setOnClickListener {
-            viewBinding.textEditPasscode.text?.clear()
+        binding.imageClear.setOnClickListener {
+            binding.textEditPasscode.text?.clear()
         }
 
-        viewBinding.textEditPasscode.doAfterTextChanged { text ->
+        binding.textEditPasscode.doAfterTextChanged { text ->
             val takenText = text.trimmedString()
 
             if (takenText.isBlank()) {
-                viewBinding.textLayoutPasscode.endIconDrawable = null
+                binding.textLayoutPasscode.endIconDrawable = null
             } else {
                 togglePasscodeVisibility()
             }
 
-            viewBinding.imageClear.isVisible = takenText.isNotBlank()
+            binding.imageClear.isVisible = takenText.isNotBlank()
         }
 
-        viewBinding.textLayoutPasscode.setEndIconOnClickListener {
+        binding.textLayoutPasscode.setEndIconOnClickListener {
             isVisiblePasscode = !isVisiblePasscode
             togglePasscodeVisibility()
         }
 
-        viewBinding.textEditName.doAfterTextChanged { editable ->
+        binding.textEditName.doAfterTextChanged { editable ->
             if (editable.trimmedString().isNotBlank()) {
-                viewBinding.textEditName.error = null
+                binding.textEditName.error = null
             }
         }
 
-        viewBinding.textEditPasscode.setOnClickListener {
+        binding.textEditPasscode.setOnClickListener {
             passcodeResultLauncher.launch(router.passcodeIntent(this))
         }
 
-        viewBinding.buttonCreate.setOnClickListener {
+        binding.buttonCreate.setOnClickListener {
             createNewBox()
         }
     }
@@ -109,29 +109,29 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
     @UiThread
     private fun togglePasscodeVisibility() {
         if (isVisiblePasscode) {
-            viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
-            viewBinding.textEditPasscode.transformationMethod =
+            binding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
+            binding.textEditPasscode.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
         } else {
-            viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
-            viewBinding.textEditPasscode.transformationMethod =
+            binding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
+            binding.textEditPasscode.transformationMethod =
                 PasswordTransformationMethod.getInstance()
         }
     }
 
     private fun createNewBox() {
-        val name = viewBinding.textEditName.getTrimmedText()
-        val desc = viewBinding.textEditDesc.getTrimmedText()
-        val passcode = viewBinding.textEditPasscode.getTrimmedText()
+        val name = binding.textEditName.getTrimmedText()
+        val desc = binding.textEditDesc.getTrimmedText()
+        val passcode = binding.textEditPasscode.getTrimmedText()
 
         if (name.isEmpty()) {
-            viewBinding.textEditName.error = getString(R.string.error_require_name)
+            binding.textEditName.error = getString(R.string.error_require_name)
             return
         }
 
         activityScope.launch {
             withContext(Dispatchers.Main) {
-                viewBinding.viewLoading.show()
+                binding.viewLoading.show()
             }
 
             val box = boxRepository.insert(
@@ -153,7 +153,7 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
             } ?: run {
                 withContext(Dispatchers.Main) {
                     showToast(R.string.error_create_box)
-                    viewBinding.viewLoading.hide()
+                    binding.viewLoading.hide()
                 }
             }
         }

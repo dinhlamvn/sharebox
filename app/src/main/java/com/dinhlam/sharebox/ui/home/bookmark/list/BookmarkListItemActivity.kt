@@ -106,13 +106,13 @@ class BookmarkListItemActivity :
     }
 
     private fun updateUi(bookmarkCollection: BookmarkCollectionDetail) {
-        ImageLoader.INSTANCE.load(this, bookmarkCollection.thumbnail, viewBinding.imageTopBar)
+        ImageLoader.INSTANCE.load(this, bookmarkCollection.thumbnail, binding.imageTopBar)
         ImageLoader.INSTANCE.load(
-            this, bookmarkCollection.thumbnail, viewBinding.imageThumbnailSmall
+            this, bookmarkCollection.thumbnail, binding.imageThumbnailSmall
         ) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }
-        viewBinding.toolbar.title = bookmarkCollection.name
+        binding.toolbar.title = bookmarkCollection.name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,23 +124,23 @@ class BookmarkListItemActivity :
             bookmarkCollection?.let(::updateUi)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(viewBinding.appbar) { _, insets ->
-            (viewBinding.toolbar.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
+        ViewCompat.setOnApplyWindowInsetsListener(binding.appbar) { _, insets ->
+            (binding.toolbar.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
                 insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             WindowInsetsCompat.CONSUMED
         }
 
-        viewBinding.appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
+        binding.appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
             val eightyPercent = appBar.totalScrollRange * 0.8
-            viewBinding.imageThumbnailSmall.alpha =
+            binding.imageThumbnailSmall.alpha =
                 verticalOffset.absoluteValue / eightyPercent.toFloat()
         }
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewBinding.swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewBinding.recyclerView.adapter = shareAdapter
+        binding.recyclerView.adapter = shareAdapter
 
         viewModel.consume(
             this, BookmarkListItemState::requestVerifyPasscode

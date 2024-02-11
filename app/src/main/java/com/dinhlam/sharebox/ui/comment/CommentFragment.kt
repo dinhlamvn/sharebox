@@ -81,7 +81,7 @@ class CommentFragment :
     }
 
     override fun onStateChanged(state: CommentState) {
-        viewBinding.textTitle.text = getString(R.string.comment_title, state.comments.size)
+        binding.textTitle.text = getString(R.string.comment_title, state.comments.size)
         invalidateUserInfo(state.currentUser)
         adapter.requestBuildModelViews()
     }
@@ -89,22 +89,22 @@ class CommentFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.imageClose.setImageDrawable(Icons.closeIcon(requireContext()) {
+        binding.imageClose.setImageDrawable(Icons.closeIcon(requireContext()) {
             copy(sizeDp = 16)
         })
 
-        viewBinding.textComment.setOnClickListener {
+        binding.textComment.setOnClickListener {
             CommentInputDialogFragment().show(childFragmentManager, "CommentInputDialogFragment")
         }
 
-        viewBinding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
         adapter.requestBuildModelViews()
 
-        viewBinding.imageClose.setOnClickListener {
+        binding.imageClose.setOnClickListener {
             dismissAllowingStateLoss()
         }
 
-        viewBinding.buttonSignIn.setOnClickListener {
+        binding.buttonSignIn.setOnClickListener {
             signInLauncher.launch(router.signIn(true))
         }
     }
@@ -115,17 +115,17 @@ class CommentFragment :
 
     private fun invalidateUserInfo(userDetail: UserDetail?) {
         val nonNullUser = userDetail ?: return run {
-            viewBinding.buttonSignIn.isVisible = true
-            viewBinding.imageAvatar.isVisible = false
-            viewBinding.textComment.isVisible = false
+            binding.buttonSignIn.isVisible = true
+            binding.imageAvatar.isVisible = false
+            binding.textComment.isVisible = false
         }
 
-        viewBinding.buttonSignIn.isVisible = false
-        viewBinding.imageAvatar.isVisible = true
-        viewBinding.textComment.isVisible = true
+        binding.buttonSignIn.isVisible = false
+        binding.imageAvatar.isVisible = true
+        binding.textComment.isVisible = true
 
         ImageLoader.INSTANCE.load(
-            requireContext(), nonNullUser.avatar, viewBinding.imageAvatar
+            requireContext(), nonNullUser.avatar, binding.imageAvatar
         ) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }

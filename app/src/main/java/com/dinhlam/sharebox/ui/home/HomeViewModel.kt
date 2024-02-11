@@ -37,8 +37,9 @@ class HomeViewModel @Inject constructor(
         getListBoxes()
         getCurrentActiveBox()
         consume(HomeState::currentBox) {
-            getShares()
+            getRecentlyShares()
         }
+        loadMores()
     }
 
     private fun getListBoxes() = suspend {
@@ -54,29 +55,25 @@ class HomeViewModel @Inject constructor(
         copy(currentBox = box, isRefreshing = false)
     }
 
-    private fun getShares() {
-        getState { state ->
-            setState { copy(isRefreshing = true) }
-            suspend {
-                getShares(
-                    state.currentBox, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0
-                )
-            }.execute { shares ->
-                copy(shares = shares, isRefreshing = false, isLoadingMore = false)
-            }
+    private fun getRecentlyShares() {
+        suspend {
+            shareRepository.find(userHelper.getCurrentUserId(), 10, 0)
+        }.execute { shares ->
+            copy(shares = shares, isRefreshing = false)
         }
     }
 
     fun loadMores() = getState { state ->
+        setState { copy(isLoadingMore = true) }
         suspend {
-            getShares(
+            getGeneralShares(
                 state.currentBox,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
         }.execute { shares ->
             copy(
-                shares = this.shares.plus(shares),
+                generalShares = this.generalShares.plus(shares),
                 isLoadingMore = false,
                 canLoadMore = shares.isNotEmpty(),
                 currentPage = currentPage + 1,
@@ -84,20 +81,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getShares(
+    private suspend fun getGeneralShares(
         boxDetail: BoxDetail?, limit: Int, offset: Int
     ): List<ShareDetail> {
         return boxDetail?.let { box ->
             shareRepository.findWhereInBox(
                 box.boxId, limit, offset
             )
-        } ?: shareRepository.find(userHelper.getCurrentUserId(), limit, offset)
-    }
-
-    fun doOnRefresh() {
-        setState { HomeState() }
-        getListBoxes()
-        getCurrentActiveBox()
+        } ?: shareRepository.findGeneralShares(userHelper.getCurrentUserId(), limit, offset)
     }
 
     fun like(shareId: String) = doInBackground {

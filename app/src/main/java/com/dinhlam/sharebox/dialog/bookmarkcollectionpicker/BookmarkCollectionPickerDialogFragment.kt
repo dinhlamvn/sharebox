@@ -111,17 +111,17 @@ class BookmarkCollectionPickerDialogFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.bottomCreateNew.setDrawableCompat(Icons.plusIcon(requireContext()) {
+        binding.bottomCreateNew.setDrawableCompat(Icons.plusIcon(requireContext()) {
             copy(sizeDp = 20)
         })
 
-        viewBinding.buttonDone.setDrawableCompat(Icons.doneIcon(requireContext()) {
+        binding.buttonDone.setDrawableCompat(Icons.doneIcon(requireContext()) {
             copy(sizeDp = 20)
         })
 
-        viewBinding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
-        viewBinding.buttonDone.setOnClickListener {
+        binding.buttonDone.setOnClickListener {
             getState(viewModel) { state ->
                 if (state.pickedBookmarkCollection?.id != state.originalBookmarkCollection?.id) {
                     state.originalBookmarkCollection?.takeIf { collection -> !collection.passcode.isNullOrBlank() }
@@ -132,7 +132,7 @@ class BookmarkCollectionPickerDialogFragment :
             }
         }
 
-        viewBinding.bottomCreateNew.setOnClickListener {
+        binding.bottomCreateNew.setOnClickListener {
             resultLauncherCreateBookmarkCollection.launch(
                 router.bookmarkCollectionFormIntent(
                     requireContext()

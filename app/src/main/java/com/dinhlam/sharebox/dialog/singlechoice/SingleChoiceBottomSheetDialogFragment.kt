@@ -62,10 +62,10 @@ class SingleChoiceBottomSheetDialogFragment :
             return dismiss()
         }
 
-        viewBinding.root.updateLayoutParams {
+        binding.root.updateLayoutParams {
             height = choiceItems.size.coerceAtMost(6) * 50.dp()
         }
-        viewBinding.recyclerView.adapter = choiceAdapter
+        binding.recyclerView.adapter = choiceAdapter
         choiceAdapter.requestBuildModelViews()
     }
 

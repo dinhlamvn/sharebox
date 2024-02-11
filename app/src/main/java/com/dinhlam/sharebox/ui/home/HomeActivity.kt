@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.base.BaseViewModelActivity
@@ -15,7 +14,9 @@ import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
@@ -26,6 +27,9 @@ import javax.inject.Inject
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>() {
 
     override val viewModel: HomeViewModel by viewModels()
+
+    @Inject
+    lateinit var router: Router
 
     override fun onStateChanged(state: HomeState) {
         homeAdapter.requestBuildModelViews()
@@ -95,13 +99,17 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.imageSetting.setImageDrawable(Icons.settingIcon(this))
+        binding.imageSetting.setOnClickListener {
+            startActivity(router.settingIntent())
+        }
 
         //ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
-        viewBinding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
+        binding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
             false
-        viewBinding.recyclerView.layoutManager = layoutManager
-        homeAdapter.attachTo(viewBinding.recyclerView, this)
+        binding.recyclerView.layoutManager = layoutManager
+        homeAdapter.attachTo(binding.recyclerView, this)
 
         viewModel.consume(this, HomeState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore

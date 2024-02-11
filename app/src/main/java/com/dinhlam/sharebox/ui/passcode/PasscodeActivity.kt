@@ -126,19 +126,19 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.imageLock.setImageDrawable(Icons.lockIcon(this) {
+        binding.imageLock.setImageDrawable(Icons.lockIcon(this) {
             copy(sizeDp = 32)
         })
 
-        viewBinding.recyclerViewCode.itemAnimator = null
-        viewBinding.recyclerViewCode.adapter = passcodeAdapter
+        binding.recyclerViewCode.itemAnimator = null
+        binding.recyclerViewCode.adapter = passcodeAdapter
         passcodeAdapter.requestBuildModelViews()
 
-        viewBinding.recyclerViewKeypad.adapter = keypadAdapter
+        binding.recyclerViewKeypad.adapter = keypadAdapter
         keypadAdapter.requestBuildModelViews()
 
         intent.getStringExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION)?.let { passcodeDescription ->
-            viewBinding.textDesc.text = passcodeDescription
+            binding.textDesc.text = passcodeDescription
         }
     }
 
@@ -192,12 +192,12 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
     private fun notifyPasscodeInvalid() {
         vibrate(500)
-        viewBinding.cardLock.startAnimation(
+        binding.cardLock.startAnimation(
             AnimationUtils.loadAnimation(
                 this, R.anim.lock_shake
             )
         )
-        viewBinding.recyclerViewCode.startAnimation(
+        binding.recyclerViewCode.startAnimation(
             AnimationUtils.loadAnimation(
                 this, R.anim.passcode_shake
             )

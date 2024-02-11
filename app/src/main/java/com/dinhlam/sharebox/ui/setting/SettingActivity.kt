@@ -52,50 +52,50 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
-        viewBinding.buttonSyncToCloud.setDrawableCompat(Icons.syncIcon(this))
-        viewBinding.buttonSyncToCloud.setOnClickListener {
+        binding.buttonSyncToCloud.setDrawableCompat(Icons.syncIcon(this))
+        binding.buttonSyncToCloud.setOnClickListener {
             WorkerUtils.enqueueJobSyncDataOneTime(this)
         }
 
         when (appSettingHelper.getTheme()) {
-            AppSettings.Theme.LIGHT -> viewBinding.radioLight.isChecked = true
-            AppSettings.Theme.DARK -> viewBinding.radioDark.isChecked = true
-            else -> viewBinding.radioAuto.isChecked = true
+            AppSettings.Theme.LIGHT -> binding.radioLight.isChecked = true
+            AppSettings.Theme.DARK -> binding.radioDark.isChecked = true
+            else -> binding.radioAuto.isChecked = true
         }
 
         when (appSettingHelper.getNetworkCondition()) {
-            AppSettings.NetworkCondition.WIFI_CELLULAR_DATA -> viewBinding.radioWifiAndCellular.isChecked =
+            AppSettings.NetworkCondition.WIFI_CELLULAR_DATA -> binding.radioWifiAndCellular.isChecked =
                 true
 
-            else -> viewBinding.radioWifiOnly.isChecked = true
+            else -> binding.radioWifiOnly.isChecked = true
         }
 
-        viewBinding.radioGroupTheme.setOnCheckedChangeListener { _, checkedId ->
+        binding.radioGroupTheme.setOnCheckedChangeListener { _, checkedId ->
             requestChangeTheme(checkedId)
         }
 
-        viewBinding.radioGroupNetworkCondition.setOnCheckedChangeListener { _, checkedId ->
+        binding.radioGroupNetworkCondition.setOnCheckedChangeListener { _, checkedId ->
             requestChangeNetworkCondition(checkedId)
         }
 
-        viewBinding.imageSignOut.setOnClickListener {
+        binding.imageSignOut.setOnClickListener {
             requestSignOut()
         }
 
-        viewBinding.imageSignOut.isVisible = userHelper.isSignedIn()
-        viewBinding.imageSignOut.setImageDrawable(Icons.signOutIcon(this))
-        viewBinding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
+        binding.imageSignOut.isVisible = userHelper.isSignedIn()
+        binding.imageSignOut.setImageDrawable(Icons.signOutIcon(this))
+        binding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)
         }
-        viewBinding.toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        viewBinding.seekbarImageDownloadQuality.progress =
+        binding.seekbarImageDownloadQuality.progress =
             appSettingHelper.getImageDownloadQuality()
 
 
-        viewBinding.seekbarImageDownloadQuality.setOnSeekBarChangeListener(object :
+        binding.seekbarImageDownloadQuality.setOnSeekBarChangeListener(object :
             OnSeekBarChangeListener {
 
             private var toast: Toast? = null
@@ -123,9 +123,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         })
 
-        viewBinding.checkboxSyncInBackground.isChecked = appSettingHelper.isSyncDataInBackground()
+        binding.checkboxSyncInBackground.isChecked = appSettingHelper.isSyncDataInBackground()
 
-        viewBinding.checkboxSyncInBackground.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkboxSyncInBackground.setOnCheckedChangeListener { _, isChecked ->
             appSettingHelper.setSyncDataInBackground(isChecked)
             if (isChecked) {
                 WorkerUtils.enqueueJobSyncData(applicationContext)
@@ -136,7 +136,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
-        viewBinding.textAbout.text = getString(
+        binding.textAbout.text = getString(
             R.string.setting_about, getString(R.string.app_name), BuildConfig.VERSION_NAME
         )
     }

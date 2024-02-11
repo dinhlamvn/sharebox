@@ -103,21 +103,21 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     }
 
     private fun doAfterSynced() {
-        viewBinding.progressBar.isVisible = false
-        viewBinding.imageDone.setImageDrawable(Icons.doneIcon(this))
-        viewBinding.textSync.text = getString(R.string.sync_data_done_first_install)
-        viewBinding.imageDone.isVisible = true
-        viewBinding.buttonSignIn.isVisible = true
-        viewBinding.buttonSkipSignIn.isVisible = true
+        binding.progressBar.isVisible = false
+        binding.imageDone.setImageDrawable(Icons.doneIcon(this))
+        binding.textSync.text = getString(R.string.sync_data_done_first_install)
+        binding.imageDone.isVisible = true
+        binding.buttonSignIn.isVisible = true
+        binding.buttonSkipSignIn.isVisible = true
 
-        viewBinding.buttonSignIn.setOnClickListener {
+        binding.buttonSignIn.setOnClickListener {
             startActivity(
                 router.signIn(false)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             )
         }
 
-        viewBinding.buttonSkipSignIn.setOnClickListener {
+        binding.buttonSkipSignIn.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_confirm)
                 .setMessage(R.string.alert_skip_sign_in_message)

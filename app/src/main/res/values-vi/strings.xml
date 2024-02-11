@@ -156,6 +156,10 @@
     <string name="my_boxes">My Boxes</string>
     <string name="recently_boxes">Recently Boxes</string>
     <string name="recently_shares">Recently Shares</string>
+    <string name="general_shares">Chia sẻ tử mọi người</string>
+    <string name="web">Web</string>
+    <string name="images">Images</string>
+    <string name="no_boxes">No boxes</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

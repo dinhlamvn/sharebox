@@ -269,15 +269,15 @@ class ProfileFragment :
 
         LiveEventUtils.eventScrollToTopProfile.observe(viewLifecycleOwner) { shouldScroll ->
             if (shouldScroll) {
-                viewBinding.recyclerView.smoothScrollToPosition(0)
+                binding.recyclerView.smoothScrollToPosition(0)
             }
         }
 
-        viewBinding.recyclerView.layoutManager = layoutManager
-        viewBinding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = layoutManager
+        binding.recyclerView.adapter = adapter
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewBinding.swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnRefresh()
         }
 

@@ -34,7 +34,7 @@ class BoxDetailActivity :
 
     override fun onStateChanged(state: BoxDetailState) {
         shareAdapter.requestBuildModelViews()
-        viewBinding.textTitle.title = state.boxDetail?.boxName
+        binding.textTitle.title = state.boxDetail?.boxName
     }
 
     private val layoutManager by lazy {
@@ -103,12 +103,12 @@ class BoxDetailActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.recyclerView.layoutManager = layoutManager
-        viewBinding.recyclerView.adapter = shareAdapter
+        binding.recyclerView.layoutManager = layoutManager
+        binding.recyclerView.adapter = shareAdapter
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.doOnRefresh()
-            viewBinding.swipeRefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 

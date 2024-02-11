@@ -55,52 +55,52 @@ class BookmarkCollectionFormActivity :
 
     override fun onStateChanged(state: BookmarkCollectionFormState) {
         if (state.passcode.isNullOrBlank()) {
-            viewBinding.textLayoutPasscode.endIconDrawable = null
+            binding.textLayoutPasscode.endIconDrawable = null
         } else {
             if (state.isPasscodeVisible) {
-                viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
-                viewBinding.textEditPasscode.transformationMethod =
+                binding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
+                binding.textEditPasscode.transformationMethod =
                     HideReturnsTransformationMethod.getInstance()
             } else {
-                viewBinding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
-                viewBinding.textEditPasscode.transformationMethod =
+                binding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
+                binding.textEditPasscode.transformationMethod =
                     PasswordTransformationMethod.getInstance()
             }
         }
-        viewBinding.imageClear.isVisible = !state.passcode.isNullOrBlank()
-        viewBinding.textLayoutPasscode.setEndIconActivated(!state.passcode.isNullOrBlank())
-        viewBinding.textErrorThumbnail.isVisible = state.errorThumbnail
-        viewBinding.textEditPasscode.setText(state.passcode)
+        binding.imageClear.isVisible = !state.passcode.isNullOrBlank()
+        binding.textLayoutPasscode.setEndIconActivated(!state.passcode.isNullOrBlank())
+        binding.textErrorThumbnail.isVisible = state.errorThumbnail
+        binding.textEditPasscode.setText(state.passcode)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding.imageClear.setImageDrawable(Icons.clearIcon(this) {
+        binding.imageClear.setImageDrawable(Icons.clearIcon(this) {
             copy(sizeDp = 16)
         })
 
-        viewBinding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
+        binding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)
         }
 
-        viewBinding.imageDone.setImageDrawable(Icons.doneIcon(this) {
+        binding.imageDone.setImageDrawable(Icons.doneIcon(this) {
             copy(sizeDp = 16)
         })
 
-        viewBinding.toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        viewBinding.imageClear.setOnClickListener {
+        binding.imageClear.setOnClickListener {
             viewModel.clearPasscode()
         }
 
-        viewBinding.textLayoutPasscode.setEndIconOnClickListener {
+        binding.textLayoutPasscode.setEndIconOnClickListener {
             viewModel.togglePasscodeVisibility()
         }
 
-        viewBinding.textEditPasscode.setOnClickListener {
+        binding.textEditPasscode.setOnClickListener {
             passcodeResultLauncher.launch(router.passcodeIntent(this))
         }
 
@@ -110,36 +110,36 @@ class BookmarkCollectionFormActivity :
             }
         }
 
-        viewBinding.buttonThumbnail.setOnClickListener {
+        binding.buttonThumbnail.setOnClickListener {
             requestPickThumbnail()
         }
 
-        viewBinding.imageDone.setOnClickListener {
-            val name = viewBinding.textEditName.getTrimmedText()
-            val desc = viewBinding.textEditDesc.getTrimmedText()
+        binding.imageDone.setOnClickListener {
+            val name = binding.textEditName.getTrimmedText()
+            val desc = binding.textEditDesc.getTrimmedText()
             viewModel.performActionDone(this, name, desc)
         }
 
-        viewBinding.textEditName.doAfterTextChanged { editable ->
+        binding.textEditName.doAfterTextChanged { editable ->
             viewModel.clearErrorName(editable.trimmedString())
         }
 
-        viewBinding.textEditDesc.doAfterTextChanged { editable ->
+        binding.textEditDesc.doAfterTextChanged { editable ->
             viewModel.clearErrorDesc(editable.trimmedString())
         }
 
         viewModel.consume(this, BookmarkCollectionFormState::errorName) { errorRes ->
             errorRes?.let { res ->
-                viewBinding.textEditName.error = getString(res)
-                viewBinding.textEditName.requestFocus()
-            } ?: viewBinding.textEditName.apply { error = null }
+                binding.textEditName.error = getString(res)
+                binding.textEditName.requestFocus()
+            } ?: binding.textEditName.apply { error = null }
         }
 
         viewModel.consume(this, BookmarkCollectionFormState::errorDesc) { errorRes ->
             errorRes?.let { res ->
-                viewBinding.textEditDesc.error = getString(res)
-                viewBinding.textEditDesc.requestFocus()
-            } ?: viewBinding.textEditDesc.apply { error = null }
+                binding.textEditDesc.error = getString(res)
+                binding.textEditDesc.requestFocus()
+            } ?: binding.textEditDesc.apply { error = null }
         }
 
         getState(viewModel) { state ->
@@ -147,13 +147,13 @@ class BookmarkCollectionFormActivity :
                 ImageLoader.INSTANCE.load(
                     this,
                     collectionDetail.thumbnail,
-                    viewBinding.imageThumbnail
+                    binding.imageThumbnail
                 ) {
                     copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
                 }
-                viewBinding.textEditName.setText(collectionDetail.name)
-                viewBinding.textEditDesc.setText(collectionDetail.desc)
-                viewBinding.textEditPasscode.setText(collectionDetail.passcode)
+                binding.textEditName.setText(collectionDetail.name)
+                binding.textEditDesc.setText(collectionDetail.desc)
+                binding.textEditPasscode.setText(collectionDetail.passcode)
             }
         }
     }
@@ -170,7 +170,7 @@ class BookmarkCollectionFormActivity :
     private fun showThumbnail(data: Intent?) {
         val uri = data?.data ?: return
         viewModel.setThumbnail(uri)
-        ImageLoader.INSTANCE.load(this, uri, viewBinding.imageThumbnail) {
+        ImageLoader.INSTANCE.load(this, uri, binding.imageThumbnail) {
             copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
         }
     }

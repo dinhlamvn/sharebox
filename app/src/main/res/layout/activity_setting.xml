@@ -9,7 +9,6 @@
         style="@style/Widget.Material3.Toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="12dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:contentInsetEnd="16dp"
         app:contentInsetStart="16dp"

@@ -108,13 +108,13 @@ class TrendingFragment :
             }
         }
 
-        viewBinding.recyclerView.layoutManager = layoutManager.apply {
+        binding.recyclerView.layoutManager = layoutManager.apply {
             spanSizeLookup = BaseSpanSizeLookup(shareAdapter, 2)
         }
-        viewBinding.recyclerView.adapter = shareAdapter
+        binding.recyclerView.adapter = shareAdapter
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewBinding.swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnPullRefresh()
         }
 
@@ -124,9 +124,9 @@ class TrendingFragment :
 
         viewModel.consume(viewLifecycleOwner, TrendingState::showLoading) { showLoading ->
             if (showLoading) {
-                viewBinding.viewLoading.show()
+                binding.viewLoading.show()
             } else {
-                viewBinding.viewLoading.hide()
+                binding.viewLoading.hide()
             }
         }
     }

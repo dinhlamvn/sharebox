@@ -15,20 +15,20 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     abstract fun onCreateViewBinding(): VB
 
-    private var binding: VB? = null
+    private var _binding: VB? = null
 
-    protected val viewBinding: VB
-        get() = binding!!
+    protected val binding: VB
+        get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = onCreateViewBinding()
-        setContentView(binding!!.root)
+        _binding = onCreateViewBinding()
+        setContentView(_binding!!.root)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding = null
+        _binding = null
         activityScope.cancel()
     }
 }

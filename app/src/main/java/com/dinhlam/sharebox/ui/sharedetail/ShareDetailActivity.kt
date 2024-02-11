@@ -100,37 +100,37 @@ class ShareDetailActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding.recyclerView.adapter = shareDetailAdapter
+        binding.recyclerView.adapter = shareDetailAdapter
         shareDetailAdapter.requestBuildModelViews()
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.onRefresh()
-            viewBinding.swipeRefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewBinding.imageSend.setImageDrawable(Icons.sendIcon(this))
+        binding.imageSend.setImageDrawable(Icons.sendIcon(this))
 
-        viewBinding.imageSend.setOnClickListener {
-            val comment = viewBinding.editComment.getTrimmedText()
+        binding.imageSend.setOnClickListener {
+            val comment = binding.editComment.getTrimmedText()
             viewModel.sendComment(comment)
-            viewBinding.editComment.text?.clear()
-            viewBinding.editComment.hideKeyboard()
+            binding.editComment.text?.clear()
+            binding.editComment.hideKeyboard()
         }
 
         viewModel.consume(this, ShareDetailState::currentUser) { userDetail ->
             userDetail?.let { user ->
                 ImageLoader.INSTANCE.load(
-                    this, user.avatar, viewBinding.imageAvatar
+                    this, user.avatar, binding.imageAvatar
                 ) {
                     copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
                 }
-                viewBinding.buttonSignIn.isVisible = false
+                binding.buttonSignIn.isVisible = false
             } ?: apply {
-                viewBinding.buttonSignIn.isVisible = true
+                binding.buttonSignIn.isVisible = true
             }
         }
 
-        viewBinding.buttonSignIn.setOnClickListener {
+        binding.buttonSignIn.setOnClickListener {
             signInLauncher.launch(router.signIn(true))
         }
     }

@@ -119,18 +119,18 @@ class BookmarkFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.recyclerView.layoutManager =
+        binding.recyclerView.layoutManager =
             GridLayoutManager(requireContext(), COLLECTION_SPAN_COUNT).apply {
                 spanSizeLookup = BaseSpanSizeLookup(collectionAdapter, COLLECTION_SPAN_COUNT)
             }
-        viewBinding.recyclerView.adapter = collectionAdapter
+        binding.recyclerView.adapter = collectionAdapter
 
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            viewBinding.swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnRefresh()
         }
 
-        viewBinding.buttonAdd.setOnClickListener {
+        binding.buttonAdd.setOnClickListener {
             bookmarkCollectionFormResultLauncher.launch(
                 router.bookmarkCollectionFormIntent(requireContext())
             )

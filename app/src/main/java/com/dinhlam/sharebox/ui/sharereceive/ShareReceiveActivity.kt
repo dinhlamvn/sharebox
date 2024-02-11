@@ -172,10 +172,10 @@ class ShareReceiveActivity :
 
     private fun updateUserInfo(activeUser: UserDetail?) {
         activeUser?.let { user ->
-            ImageLoader.INSTANCE.load(this, user.avatar, viewBinding.imageAvatar) {
+            ImageLoader.INSTANCE.load(this, user.avatar, binding.imageAvatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
-            viewBinding.textViewName.text = user.name
+            binding.textViewName.text = user.name
         }
     }
 
@@ -192,20 +192,20 @@ class ShareReceiveActivity :
             }
         }
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(viewBinding.container)
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.container)
         bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
         bottomSheetBehavior.halfExpandedRatio = 0.8f
         bottomSheetBehavior.peekHeight = heightPercentage(80)
 
         viewModel.consume(this, ShareReceiveState::showLoading) { isShow ->
             if (isShow) {
-                viewBinding.viewLoading.show()
+                binding.viewLoading.show()
             } else {
-                viewBinding.viewLoading.hide()
+                binding.viewLoading.hide()
             }
         }
 
-        viewBinding.recyclerView.adapter = shareContentAdapter
+        binding.recyclerView.adapter = shareContentAdapter
 
         viewModel.consume(this, ShareReceiveState::isSaveSuccess) { isSaveSuccess ->
             if (isSaveSuccess) {
@@ -219,19 +219,19 @@ class ShareReceiveActivity :
             }
         }
 
-        viewBinding.containerButtonShare.setOnClickListener {
+        binding.containerButtonShare.setOnClickListener {
             requestShare()
         }
 
-        viewBinding.imageShareBookmark.setOnClickListener {
+        binding.imageShareBookmark.setOnClickListener {
             showBookmarkCollectionPicker()
         }
 
         viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
             val boxName = currentBox?.boxName ?: getString(R.string.box_general)
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
-            viewBinding.textShareBox.text = boxName
-            viewBinding.textShareBox.setDrawableCompat(
+            binding.textShareBox.text = boxName
+            binding.textShareBox.setDrawableCompat(
                 start = Icons.boxIcon(this),
                 end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
             )
@@ -239,11 +239,11 @@ class ShareReceiveActivity :
 
         viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
             collectionDetail?.let {
-                viewBinding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
-            } ?: viewBinding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
+                binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
+            } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
         }
 
-        viewBinding.textShareBox.setOnClickListener {
+        binding.textShareBox.setOnClickListener {
             showPopupListShareBox()
         }
 
@@ -251,25 +251,25 @@ class ShareReceiveActivity :
             signInLauncher.launch(router.signIn(true))
         }
 
-        viewBinding.imageAddBox.setImageDrawable(Icons.addIcon(this))
-        viewBinding.imageAddBox.setOnClickListener {
+        binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
+        binding.imageAddBox.setOnClickListener {
             createBoxResultLauncher.launch(router.boxIntent(this))
         }
 
-        viewBinding.imageClose.setImageDrawable(Icons.closeIcon(this) {
+        binding.imageClose.setImageDrawable(Icons.closeIcon(this) {
             copy(sizeDp = 16)
         })
-        viewBinding.imageClose.setOnClickListener {
+        binding.imageClose.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        viewBinding.textInputNote.setOnFocusChangeListener { _, hasFocus ->
+        binding.textInputNote.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 activityScope.launch {
                     delay(700)
                     withContext(Dispatchers.Main) {
-                        viewBinding.scrollView.fullScroll(View.FOCUS_DOWN)
+                        binding.scrollView.fullScroll(View.FOCUS_DOWN)
                     }
                 }
             }
@@ -294,7 +294,7 @@ class ShareReceiveActivity :
 
     private fun share() {
         hideKeyboard()
-        val shareNote = viewBinding.textInputNote.getTrimmedText()
+        val shareNote = binding.textInputNote.getTrimmedText()
         viewModel.share(shareNote, this@ShareReceiveActivity)
     }
 
@@ -356,10 +356,10 @@ class ShareReceiveActivity :
         }
 
         val takenImages = images.mapNotNull { it.cast<Uri>() }.take(AppConsts.LIMIT_IMAGE_SHARE)
-        viewBinding.recyclerView.layoutManager =
+        binding.recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        PagerSnapHelper().attachToRecyclerView(viewBinding.recyclerView)
-        viewBinding.recyclerView.addItemDecoration(
+        PagerSnapHelper().attachToRecyclerView(binding.recyclerView)
+        binding.recyclerView.addItemDecoration(
             HorizontalCirclePagerItemDecoration(
                 colorActive = ContextCompat.getColor(this, R.color.colorPrimaryDark)
             )
@@ -451,7 +451,7 @@ class ShareReceiveActivity :
         popupWindow.contentView = popupView
 
         popupWindow.showAsDropDown(
-            viewBinding.containerShareBox,
+            binding.containerShareBox,
             0,
             boxes.size.plus(if (hasViewMore) 2 else 1).times(-1).times(60).dp()
         )
