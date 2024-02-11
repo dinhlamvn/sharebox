@@ -72,15 +72,13 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         binding.textViewUrl.text = null
         binding.textViewTitle.text = null
         binding.imageView.setImageDrawable(null)
-        binding.shimmerContainer.isVisible = true
-        binding.shimmerContainer.showShimmer(true)
+        binding.frameLoading.isVisible = true
     }
 
     fun setLink(url: String?) {
         url?.let { nonNullUrl ->
             resetUi()
-            binding.shimmerContainer.isVisible = true
-            binding.shimmerContainer.showShimmer(true)
+            binding.frameLoading.isVisible = true
             linkPreviewScope.launch {
                 AGENTS.forEach { agent ->
                     val openGraphResult =
@@ -108,15 +106,13 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
             }
             binding.textViewUrl.text = openGraphResult.url?.trimToDomain()
             binding.textViewTitle.text = openGraphResult.title
-            binding.shimmerContainer.hideShimmer()
-            binding.shimmerContainer.isVisible = false
+            binding.frameLoading.isVisible = false
         }
 
     private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
         ImageLoader.INSTANCE.load(context, R.drawable.image_no_preview, binding.imageView)
         binding.textViewUrl.text = url
-        binding.shimmerContainer.hideShimmer()
-        binding.shimmerContainer.isVisible = false
+        binding.frameLoading.isVisible = false
     }
 
     private fun getLinkInfo(url: String, agent: String): OpenGraphResult? {
