@@ -29,13 +29,14 @@ class BookmarkListItemViewModel @Inject constructor(
         loadShares()
     }
 
-    private fun loadBookmarkCollectionDetail() = execute {
-        val bookmarkCollection = bookmarkCollectionRepository.find(bookmarkCollectionId)
-        val passcode = bookmarkCollection?.passcode ?: ""
-        copy(
-            bookmarkCollection = bookmarkCollection,
-            requestVerifyPasscode = passcode.isNotEmpty()
-        )
+    private fun loadBookmarkCollectionDetail() = getState { state ->
+        suspend { bookmarkCollectionRepository.find(state.bookmarkCollectionId) }.execute { bookmarkCollectionDetail ->
+            val passcode = bookmarkCollectionDetail?.passcode ?: ""
+            copy(
+                bookmarkCollection = bookmarkCollectionDetail,
+                requestVerifyPasscode = passcode.isNotEmpty()
+            )
+        }
     }
 
     private fun loadShares() = getState { state ->

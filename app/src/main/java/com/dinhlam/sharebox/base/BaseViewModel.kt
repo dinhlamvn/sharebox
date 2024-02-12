@@ -1,28 +1,26 @@
 package com.dinhlam.sharebox.base
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty1
@@ -31,8 +29,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     interface BaseState
 
-    private val stateScope =
-        CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+    private val stateScope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
 
     private data class Consumer<V>(
         val value: V
@@ -44,11 +41,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     @Volatile
     var currentState: T = initState
     private val _stateFlow = MutableStateFlow(currentState)
-    val stateFlow: Flow<T> = _stateFlow
-
-    private val _toastEvent = OneTimeLiveData(0)
-    val toastEvent: LiveData<Int> = _toastEvent
-    private var toastJob: Job? = null
+    val stateFlow: Flow<T> = _stateFlow.asSharedFlow()
 
     init {
         stateScope.launch {
@@ -78,28 +71,32 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         getStateChannel.trySend(block)
     }
 
-    protected fun <R : Any?> (suspend () -> R).execute(stateReducer: T.(R) -> T): Job {
-        return stateScope.launch(Dispatchers.IO) {
-            val result = invoke()
-            setState { stateReducer(result) }
+    protected fun <R : Any?> (suspend () -> R).execute(
+        errorCatcher: ((Throwable) -> Unit)? = null, stateReducer: T.(R) -> T
+    ): Job {
+        return stateScope.launch {
+            try {
+                val result = invoke()
+                setState { stateReducer(result) }
+            } catch (e: Throwable) {
+                errorCatcher?.invoke(e)
+            }
         }
     }
 
-    protected fun execute(
-        onError: ((Throwable) -> Unit)? = null,
-        stateReducer: suspend T.() -> T
-    ) = getState { state ->
-        suspend { stateReducer(state) }.execute { this }
+    protected fun <R : Any> Deferred<R>.execute(
+        errorCatcher: ((Throwable) -> Unit)? = null, stateReducer: T.(R) -> T
+    ): Job {
+        return suspend { await() }.execute(errorCatcher, stateReducer)
     }
 
     protected fun doInBackground(
-        onError: ((Throwable) -> Unit)? = null,
-        block: suspend CoroutineScope.() -> Unit
+        errorCatcher: ((Throwable) -> Unit)? = null, block: suspend CoroutineScope.() -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
         try {
             block.invoke(this)
         } catch (e: Exception) {
-            onError?.invoke(e)
+            errorCatcher?.invoke(e)
         }
     }
 
@@ -119,18 +116,6 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             .resolveConsumer { consumer ->
                 block(consumer.value)
             }
-    }
-
-    protected fun postShowToast(@StringRes strRes: Int) {
-        if (toastJob?.isCompleted == false) {
-            toastJob?.cancel()
-        }
-        toastJob = viewModelScope.launch {
-            delay(500)
-            withContext(Dispatchers.Main) {
-                _toastEvent.setValue(strRes)
-            }
-        }
     }
 
     override fun onCleared() {

@@ -51,11 +51,11 @@ class ShareReceiveViewModel @Inject constructor(
         loadBoxes()
     }
 
-    private fun getLatestBox() = execute {
+    private fun getLatestBox() = doInBackground {
         val boxId =
-            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@execute this
-        val box = boxRepository.findOne(boxId) ?: return@execute this
-        copy(currentBox = box)
+            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@doInBackground
+        val box = boxRepository.findOne(boxId) ?: return@doInBackground
+        setState { copy(currentBox = box) }
     }
 
     fun getCurrentUserProfile() {
@@ -74,53 +74,50 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun setShareData(shareData: ShareData) = setState { copy(shareData = shareData) }
 
-    fun share(note: String?, context: Context) {
+    fun share(note: String?, context: Context) = getState { state ->
         setState { copy(showLoading = true) }
-        execute(onError = {
-            postShowToast(R.string.share_receive_error_share)
-        }) {
-            val share = when (val shareData = shareData) {
+        suspend {
+            val share = when (val shareData = state.shareData) {
                 is ShareData.ShareUrl -> shareUrl(
                     note,
                     shareData.castNonNull(),
-                    currentBox,
+                    state.currentBox,
                 )
 
                 is ShareData.ShareText -> shareText(
                     note,
                     shareData.castNonNull(),
-                    currentBox,
+                    state.currentBox,
                 )
 
                 is ShareData.ShareImage -> shareImage(
                     context,
                     note,
                     shareData.castNonNull(),
-                    currentBox,
+                    state.currentBox,
                 )
 
                 is ShareData.ShareImages -> shareImages(
                     context,
                     note,
                     shareData.castNonNull(),
-                    currentBox,
+                    state.currentBox,
                 )
 
                 else -> null
             }
-
             share?.let { insertedShare ->
                 WorkerUtils.enqueueSyncShareToCloud(context, insertedShare.shareId)
-                bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
+                state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
                         0, insertedShare.shareId, pickedBookmarkCollectionId
                     )
-                    copy(isSaveSuccess = true, showLoading = false)
-                } ?: copy(isSaveSuccess = true, showLoading = false)
-            } ?: run {
-                postShowToast(R.string.shares_error)
-                copy(isSaveSuccess = false, showLoading = false)
-            }
+
+                    true
+                } ?: false
+            } ?: false
+        }.execute { saveSuccess ->
+            copy(isSaveSuccess = saveSuccess, showLoading = false)
         }
     }
 

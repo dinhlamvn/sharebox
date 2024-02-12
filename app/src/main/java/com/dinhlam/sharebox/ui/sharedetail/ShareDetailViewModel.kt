@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.ui.sharedetail
 
 import androidx.annotation.UiThread
 import androidx.lifecycle.SavedStateHandle
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -45,15 +44,15 @@ class ShareDetailViewModel @Inject constructor(
 
     private fun loadComments(shareDetail: ShareDetail?) {
         val share = shareDetail ?: return setState { copy(comments = emptyList()) }
-        execute {
-            val comments = commentRepository.find(share.shareId)
+        suspend { commentRepository.find(share.shareId) }.execute { comments ->
             copy(comments = comments)
         }
     }
 
-    private fun loadShareDetail() = execute {
-        val share = shareRepository.findOne(shareId)
-        copy(share = share)
+    private fun loadShareDetail() = getState { state ->
+        suspend { shareRepository.findOne(state.shareId) }.execute { shareDetail ->
+            copy(share = shareDetail)
+        }
     }
 
     fun onRefresh() {
@@ -80,20 +79,17 @@ class ShareDetailViewModel @Inject constructor(
             }
         }
 
-    fun sendComment(comment: String) = execute {
-        val commentEntity = commentRepository.insert(
-            CommentUtils.createCommentId(), shareId, userHelper.getCurrentUserId(), comment
-        )
-
-        commentEntity?.let { cmtEntity ->
-            realtimeDatabaseRepository.push(cmtEntity)
-            val newComment = commentRepository.findOne(cmtEntity.commentId) ?: return@execute copy()
-            val newList = comments.toMutableList()
-            newList.add(0, newComment)
-            copy(comments = newList)
-        } ?: run {
-            postShowToast(R.string.error_send_comment)
-            this
+    fun sendComment(s: String) = getState { state ->
+        suspend {
+            val comment = commentRepository.insert(
+                CommentUtils.createCommentId(), state.shareId, userHelper.getCurrentUserId(), s
+            )
+            comment?.let { cmt ->
+                realtimeDatabaseRepository.push(cmt)
+                state.comments.plus(commentRepository.findOne(cmt.commentId)!!)
+            } ?: state.comments
+        }.execute { comments ->
+            copy(comments = comments)
         }
     }
 

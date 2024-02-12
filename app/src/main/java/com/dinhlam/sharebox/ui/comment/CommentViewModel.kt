@@ -56,10 +56,7 @@ class CommentViewModel @Inject constructor(
                 val newList = comments.toMutableList()
                 newList.add(0, cmtEntity)
                 copy(comments = newList)
-            } ?: run {
-                postShowToast(R.string.error_send_comment)
-                this
-            }
+            } ?: this
         }
     }
 }
