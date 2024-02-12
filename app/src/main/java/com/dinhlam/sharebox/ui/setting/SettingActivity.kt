@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
@@ -98,6 +99,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
+        binding.imageAction.isVisible = userHelper.isSignedIn()
         binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
         binding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)

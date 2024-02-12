@@ -15,9 +15,8 @@ class ProfileViewModel @Inject constructor(
         getCurrentUserProfile()
     }
 
-    fun getCurrentUserProfile() = doInBackground {
-        setState { copy(isRefreshing = true) }
-        val user = userRepository.findOne(userHelper.getCurrentUserId()) ?: return@doInBackground
-        setState { copy(currentUser = user, isRefreshing = false) }
-    }
+    fun getCurrentUserProfile() =
+        suspend { userRepository.findOne(userHelper.getCurrentUserId()) }.execute { user ->
+            copy(currentUser = user, isRefreshing = false)
+        }
 }

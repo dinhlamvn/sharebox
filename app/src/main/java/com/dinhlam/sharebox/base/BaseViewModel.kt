@@ -41,7 +41,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     @Volatile
     var currentState: T = initState
     private val _stateFlow = MutableStateFlow(currentState)
-    val stateFlow: Flow<T> = _stateFlow.asSharedFlow()
+    val stateFlow: Flow<T> = _stateFlow.asSharedFlow().distinctUntilChanged()
 
     init {
         stateScope.launch {
@@ -84,7 +84,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    protected fun <R : Any> Deferred<R>.execute(
+    protected fun <R : Any?> Deferred<R>.execute(
         errorCatcher: ((Throwable) -> Unit)? = null, stateReducer: T.(R) -> T
     ): Job {
         return suspend { await() }.execute(errorCatcher, stateReducer)
