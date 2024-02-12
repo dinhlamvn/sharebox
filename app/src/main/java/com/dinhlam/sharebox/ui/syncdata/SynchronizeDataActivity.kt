@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySynchronizeDataBinding
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -59,6 +60,13 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        binding.buttonSignIn.setOnClickListener {
+            startActivity(
+                router.signIn(false)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -91,13 +99,17 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                             doAfterSynced()
                         }
                     }
-                } else {
+                } else if (userHelper.isSignedIn()) {
                     withContext(Dispatchers.Main) {
                         startActivity(router.home(true))
                     }
-                }
+                } else startActivity(
+                    router.signIn(false)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                )
             } catch (e: Exception) {
-                startActivity(router.home(true))
+                showToast(e.message)
+                finishAndRemoveTask()
             }
         }
     }
@@ -108,30 +120,6 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
         binding.textSync.text = getString(R.string.sync_data_done_first_install)
         binding.imageDone.isVisible = true
         binding.buttonSignIn.isVisible = true
-        binding.buttonSkipSignIn.isVisible = true
-
-        binding.buttonSignIn.setOnClickListener {
-            startActivity(
-                router.signIn(false)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
-        }
-
-        binding.buttonSkipSignIn.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_confirm)
-                .setMessage(R.string.alert_skip_sign_in_message)
-                .setPositiveButton(R.string.sign_in) { _, _ ->
-                    startActivity(
-                        router.signIn(false)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    )
-                }
-                .setNegativeButton(R.string.alert_skip) { _, _ ->
-                    startActivity(router.home(true))
-                }
-                .show()
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)

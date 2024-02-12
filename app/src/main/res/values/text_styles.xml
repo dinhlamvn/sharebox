@@ -13,7 +13,4 @@
         <item name="fontFamily">@font/roboto</item>
     </style>
 
-    <style name="TextCaptionMedium" parent="TextCaption">
-        <item name="fontFamily">@font/roboto_medium</item>
-    </style>
 </resources>
