@@ -37,4 +37,5 @@ interface Router {
     fun boxDetail(context: Context, boxId: String): Intent
 
     fun profile(context: Context): Intent
+    fun shareText(context: Context): Intent
 }

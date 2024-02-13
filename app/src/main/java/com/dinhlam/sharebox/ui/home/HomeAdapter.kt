@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.content.Context
 import android.net.Uri
 import android.view.Gravity
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.extensions.buildShareListModel
+import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.screenWidth
@@ -21,25 +23,30 @@ import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
+import javax.inject.Inject
 
-class HomeAdapter(
-    private val activity: HomeActivity,
-    private val viewModel: HomeViewModel,
+@ActivityScoped
+class HomeAdapter @Inject constructor(
+    @ActivityContext private val context: Context,
     private val shareHelper: ShareHelper,
     private val router: Router,
 ) : BaseListAdapter() {
+    private val activity: HomeActivity = context.castNonNull()
+    private val viewModel: HomeViewModel = activity.viewModel
 
     override fun buildModelViews() = activity.getState(viewModel) { state ->
         MainActionListModel(
             ContextCompat.getColor(activity, R.color.colorPrimary),
             NoHashProp(View.OnClickListener {
-                shareHelper.shareTextQuote(activity.supportFragmentManager)
+                activity.requestShareText()
             }),
             NoHashProp(View.OnClickListener {
                 shareHelper.shareLink(activity.supportFragmentManager)
             }),
             NoHashProp(View.OnClickListener {
-                activity.pickImagesResultLauncher.launch(router.pickImageIntent(true))
+                activity.requestShareImages()
             }),
         ).attachTo(this)
 

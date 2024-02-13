@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
+import com.dinhlam.sharebox.ui.sharetext.ShareTextActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import com.dinhlam.sharebox.utils.Icons
 
@@ -158,5 +159,9 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun profile(context: Context): Intent {
         return Intent(context, ProfileActivity::class.java)
+    }
+
+    override fun shareText(context: Context): Intent {
+        return Intent(context, ShareTextActivity::class.java)
     }
 }

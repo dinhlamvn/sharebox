@@ -170,14 +170,12 @@
         <activity
             android:name=".ui.boxcreate.BoxCreateActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.passcode.PasscodeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
@@ -185,7 +183,6 @@
             android:name=".ui.syncdata.SynchronizeDataActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
 
@@ -217,28 +214,30 @@
         <activity
             android:name=".ui.setting.SettingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.profile.ProfileActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.bookmark.BookmarkActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.boxdetail.BoxDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
+            android:name="com.dinhlam.sharebox.ui.sharetext.ShareTextActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
