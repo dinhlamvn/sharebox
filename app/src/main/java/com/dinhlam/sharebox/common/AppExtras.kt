@@ -10,5 +10,6 @@ object AppExtras {
     const val EXTRA_CHOICE_ITEMS = "extra-choice-items"
     const val EXTRA_SIGN_IN_FOR_RESULT = "extra-sign-in-for-result"
     const val EXTRA_BOX_ID = "extra-box-id"
+    const val EXTRA_BOX_NAME = "extra-box-name"
     const val EXTRA_URL = "extra-url"
 }

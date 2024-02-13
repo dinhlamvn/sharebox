@@ -12,7 +12,6 @@ import androidx.core.graphics.drawable.toBitmap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.receiver.ShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
@@ -22,6 +21,7 @@ import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
+import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
 import com.dinhlam.sharebox.ui.sharetext.ShareTextActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import com.dinhlam.sharebox.utils.Icons
@@ -42,13 +42,18 @@ class AppRouter constructor(private val context: Context) : Router {
         ).putExtra(AppExtras.EXTRA_SIGN_IN_FOR_RESULT, signInForResult)
     }
 
-    override fun moveToChromeCustomTab(context: Context, url: String, boxDetail: BoxDetail?) {
+    override fun moveToChromeCustomTab(
+        context: Context,
+        url: String,
+        boxId: String?,
+        boxName: String?
+    ) {
         val shareDesc = context.getString(R.string.archives)
         val shareBitmap = Icons.archiveIcon(context) {
             copy(colorRes = android.R.color.black)
         }.toBitmap()
         val broadcastReceiverIntent = Intent(context, ShareBroadcastReceiver::class.java)
-            .putExtra(AppExtras.EXTRA_BOX_ID, boxDetail?.boxId)
+            .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -63,7 +68,7 @@ class AppRouter constructor(private val context: Context) : Router {
         }.toBitmap())
         remoteViews.setTextViewText(
             R.id.text_box_name,
-            boxDetail?.boxName ?: context.getString(R.string.box_general)
+            boxName ?: context.getString(R.string.box_general)
         )
 
         CustomTabsIntent.Builder().setShareState(CustomTabsIntent.SHARE_STATE_OFF)
@@ -163,5 +168,9 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun shareText(context: Context): Intent {
         return Intent(context, ShareTextActivity::class.java)
+    }
+
+    override fun shareLink(context: Context): Intent {
+        return Intent(context, ShareLinkActivity::class.java)
     }
 }

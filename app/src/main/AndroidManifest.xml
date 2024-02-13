@@ -241,6 +241,12 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name="com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name=".provider.ShareSaverFileProvider"
             android:authorities="${applicationId}.file_provider"

@@ -43,7 +43,7 @@ class HomeAdapter @Inject constructor(
                 activity.requestShareText()
             }),
             NoHashProp(View.OnClickListener {
-                shareHelper.shareLink(activity.supportFragmentManager)
+                activity.requestShareLink()
             }),
             NoHashProp(View.OnClickListener {
                 activity.requestShareImages()

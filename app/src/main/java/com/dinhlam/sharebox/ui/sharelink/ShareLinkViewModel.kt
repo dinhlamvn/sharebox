@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.dialog.sharelink
+package com.dinhlam.sharebox.ui.sharelink
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BoxRepository
@@ -8,9 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ShareLinkDialogViewModel @Inject constructor(
+class ShareLinkViewModel @Inject constructor(
     private val boxRepository: BoxRepository, private val appSharePref: AppSharePref
-) : BaseViewModel<ShareLinkDialogState>(ShareLinkDialogState()) {
+) : BaseViewModel<ShareLinkState>(ShareLinkState()) {
 
     init {
         getCurrentBox()

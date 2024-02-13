@@ -4,12 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.BoxDetail
 
 interface Router {
     fun home(isNewTask: Boolean = false): Intent
     fun signIn(signInForResult: Boolean = false): Intent
-    fun moveToChromeCustomTab(context: Context, url: String, boxDetail: BoxDetail?)
+    fun moveToChromeCustomTab(context: Context, url: String, boxId: String?, boxName: String?)
     fun moveToBrowser(url: String)
     fun bookmarkCollectionFormIntent(context: Context): Intent
     fun bookmarkCollectionFormIntent(
@@ -38,4 +37,6 @@ interface Router {
 
     fun profile(context: Context): Intent
     fun shareText(context: Context): Intent
+
+    fun shareLink(context: Context): Intent
 }

@@ -14,12 +14,10 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.sharelink.ShareLinkDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -36,7 +34,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 @ActivityScoped
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
-    ShareLinkDialogFragment.OnShareLinkCallback,
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
@@ -68,6 +65,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 LiveEventUtils.eventScrollToTopGeneral.postValue(true)
+            }
+        }
+
+    private val shareLinkResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val link =
+                    data.getStringExtra(AppExtras.EXTRA_URL) ?: return@registerForActivityResult
+                val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)
+                val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
+                router.moveToChromeCustomTab(this, link, boxId, boxName)
             }
         }
 
@@ -143,8 +152,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         stopService(realtimeDatabaseServiceIntent)
     }
 
-    override fun onShareLink(link: String, boxDetail: BoxDetail?) {
-        router.moveToChromeCustomTab(this, link, boxDetail)
+    private fun onShareLink(link: String, boxId: String?, boxName: String?) {
+
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
@@ -198,6 +207,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 supportFragmentManager, shareId, collectionId
             )
         }
+    }
+
+    fun requestShareLink() {
+        shareLinkResultLauncher.launch(router.shareLink(this))
     }
 
     fun requestShareImages() {
