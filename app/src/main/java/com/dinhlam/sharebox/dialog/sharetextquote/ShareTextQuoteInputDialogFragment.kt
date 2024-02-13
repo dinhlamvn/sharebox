@@ -40,35 +40,35 @@ class ShareTextQuoteInputDialogFragment : BaseDialogFragment<DialogShareTextQuot
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.buttonDone.setOnClickListener {
+        binding.buttonDone.setOnClickListener {
             onDone()
         }
 
-        viewBinding.editTextQuote.setHorizontallyScrolling(false)
-        viewBinding.editTextQuote.maxLines = Int.MAX_VALUE
+        binding.editTextQuote.setHorizontallyScrolling(false)
+        binding.editTextQuote.maxLines = Int.MAX_VALUE
 
-        viewBinding.editTextQuote.setOnEditorActionListener { _, actionId, _ ->
+        binding.editTextQuote.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 onDone()
             }
             true
         }
 
-        viewBinding.editTextQuote.requestFocus()
+        binding.editTextQuote.requestFocus()
         lifecycleScope.launch {
             delay(500)
-            viewBinding.editTextQuote.showKeyboard()
+            binding.editTextQuote.showKeyboard()
         }
     }
 
     private fun onDone() {
-        viewBinding.editTextQuote.hideKeyboard()
-        val text = viewBinding.editTextQuote.getTrimmedText().takeIfNotNullOrBlank()
+        binding.editTextQuote.hideKeyboard()
+        val text = binding.editTextQuote.getTrimmedText().takeIfNotNullOrBlank()
             ?: return showToast(R.string.require_input_text_quote)
 
         activity?.cast<OnShareTextQuoteCallback>()?.onShareTextQuote(text)
             ?: parentFragment.cast<OnShareTextQuoteCallback>()?.onShareTextQuote(text)
-        viewBinding.editTextQuote.text?.clear()
+        binding.editTextQuote.text?.clear()
         dismiss()
     }
 }

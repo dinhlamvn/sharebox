@@ -295,12 +295,23 @@ object Icons {
     fun downloadIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
-        return createIcon(context, GoogleMaterial.Icon.gmd_file_download, block(IconBuilder(context)))
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_file_download,
+            block(IconBuilder(context))
+        )
     }
 
     fun userIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(context, FontAwesome.Icon.faw_user, block(IconBuilder(context)))
+    }
+
+    fun archiveIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, GoogleMaterial.Icon.gmd_archive, block(IconBuilder(context)))
     }
 }

@@ -5,21 +5,28 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/text_title"
+        android:id="@+id/toolbar"
         style="@style/Widget.Material3.Toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="12dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/title_bookmark_collection"
-        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textAppearance="@style/TextBodyMedium" />
+
+
+    </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintTop_toBottomOf="@id/text_title" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
@@ -35,7 +42,6 @@
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
-            android:padding="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

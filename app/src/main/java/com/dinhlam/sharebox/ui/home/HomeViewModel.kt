@@ -8,14 +8,9 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.orElse
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.pref.AppSharePref
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,17 +23,12 @@ class HomeViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
-    private val appSharePref: AppSharePref,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
-    private val videoHelper: VideoHelper,
 ) : BaseViewModel<HomeState>(HomeState(isRefreshing = true)) {
 
     init {
         getListBoxes()
-        getCurrentActiveBox()
-        consume(HomeState::currentBox) {
-            getRecentlyShares()
-        }
+        getRecentlyShares()
         loadMores()
     }
 
@@ -48,16 +38,9 @@ class HomeViewModel @Inject constructor(
         copy(boxes = boxes)
     }
 
-    private fun getCurrentActiveBox() = suspend {
-        val boxId = appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank()
-        boxId?.let { id -> boxRepository.findOne(id) }
-    }.execute { box ->
-        copy(currentBox = box, isRefreshing = false)
-    }
-
     private fun getRecentlyShares() {
         suspend {
-            shareRepository.find(userHelper.getCurrentUserId(), 10, 0)
+            shareRepository.findRecentlyShares(userHelper.getCurrentUserId(), 10, 0)
         }.execute { shares ->
             copy(shares = shares, isRefreshing = false)
         }
@@ -67,7 +50,6 @@ class HomeViewModel @Inject constructor(
         setState { copy(isLoadingMore = true) }
         suspend {
             getGeneralShares(
-                state.currentBox,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
@@ -82,13 +64,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun getGeneralShares(
-        boxDetail: BoxDetail?, limit: Int, offset: Int
+        limit: Int, offset: Int
     ): List<ShareDetail> {
-        return boxDetail?.let { box ->
-            shareRepository.findWhereInBox(
-                box.boxId, limit, offset
-            )
-        } ?: shareRepository.findGeneralShares(userHelper.getCurrentUserId(), limit, offset)
+        return shareRepository.findGeneralShares(limit, offset)
     }
 
     fun like(shareId: String) = doInBackground {
@@ -151,25 +129,10 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-    fun setBox(box: BoxDetail?) = getState { state ->
-        if (state.currentBox != box) {
-            setState { copy(currentBox = box) }
-            box?.let { nonNullBox ->
-                doInBackground {
-                    boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
-                }
-                appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
-            } ?: appSharePref.setLatestActiveBoxId("")
-        } else {
-            appSharePref.setLatestActiveBoxId("")
-            setState { copy(currentBox = null) }
-        }
-    }
-
-    fun setBox(boxId: String) {
-        doInBackground {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
-            setBox(boxDetail)
-        }
+    fun doOnRefresh() {
+        setState { HomeState(isRefreshing = true) }
+        getListBoxes()
+        getRecentlyShares()
+        loadMores()
     }
 }

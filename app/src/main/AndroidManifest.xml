@@ -75,14 +75,6 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".ui.sharedetail.ShareDetailActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
             android:name=".ui.signin.SignInActivity"
             android:exported="false"
             android:screenOrientation="portrait"
@@ -287,6 +279,7 @@
                 tools:node="remove" />
         </provider>
 
+        <receiver android:name="com.dinhlam.sharebox.receiver.ShareBroadcastReceiver" />
     </application>
 
 </manifest>

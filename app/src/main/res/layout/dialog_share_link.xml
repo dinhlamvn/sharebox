@@ -6,35 +6,86 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.textfield.TextInputEditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edit_link"
-        style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:drawable/editbox_background_normal"
         android:focusable="true"
         android:gravity="start|top"
         android:hint="@string/share_link_hint"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/button_done"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:textAppearance="@style/TextBody"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/container_share_box"
+        style="@style/AppMaterialCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_link">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_share_box"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="6dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                tools:text="No box" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_add_box"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:scaleType="centerInside" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_done"
-        style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="48dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp"
         android:backgroundTintMode="src_over"
         android:gravity="center"
-        android:text="@string/action_done"
+        android:text="@string/go"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_link"
+        app:layout_constraintTop_toBottomOf="@id/container_share_box"
         tools:visibility="visible" />
 
 

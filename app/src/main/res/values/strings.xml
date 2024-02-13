@@ -78,10 +78,9 @@
     <string name="complete">Complete</string>
     <string name="edit_avatar">Edit avatar</string>
     <string name="share_text_quote_hint">Type here…</string>
-    <string name="share_link_hint">Type link here…</string>
+    <string name="share_link_hint">Enter or Paste your url…</string>
     <string name="require_input_link">Please input the link to archive</string>
     <string name="require_input_text_quote">Please input the text quote to archive</string>
-    <string name="invalidate_link">Link should be start with http:// or https://</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
     <string name="title_guideline_other_app">From other apps (Example Youtube)</string>
     <string name="title_guideline_other_app_step_1">Step 1. Click on Share button from other apps</string>
@@ -136,6 +135,8 @@
     <string name="recently_shares">Recently Shares</string>
     <string name="general_shares">People\'s shares</string>
     <string name="no_boxes">No boxes</string>
+    <string name="desc_image">This is an image</string>
+    <string name="go">Go</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

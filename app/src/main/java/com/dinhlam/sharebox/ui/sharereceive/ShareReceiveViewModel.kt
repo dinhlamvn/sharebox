@@ -249,7 +249,7 @@ class ShareReceiveViewModel @Inject constructor(
             setState { copy(currentBox = box) }
             box?.let { nonNullBox ->
                 doInBackground {
-                    boxRepository.updateLastSeen(nonNullBox.boxId, nowUTCTimeInMillis())
+                    boxRepository.updateLastSeen(nonNullBox.boxId)
                 }
                 appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
             } ?: appSharePref.setLatestActiveBoxId("")

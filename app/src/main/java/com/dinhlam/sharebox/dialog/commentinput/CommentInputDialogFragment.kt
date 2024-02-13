@@ -41,39 +41,39 @@ class CommentInputDialogFragment : BaseDialogFragment<DialogCommentInputBinding>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.buttonSend.setOnClickListener {
+        binding.buttonSend.setOnClickListener {
             sendComment()
         }
 
-        viewBinding.editComment.setHorizontallyScrolling(false)
-        viewBinding.editComment.maxLines = 5
+        binding.editComment.setHorizontallyScrolling(false)
+        binding.editComment.maxLines = 5
 
-        viewBinding.editComment.setOnEditorActionListener { _, actionId, _ ->
+        binding.editComment.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 sendComment()
             }
             true
         }
 
-        viewBinding.buttonSend.isEnabled = false
-        viewBinding.editComment.doAfterTextChanged { editable ->
-            viewBinding.buttonSend.isEnabled = editable.trimmedString().isNotEmpty()
+        binding.buttonSend.isEnabled = false
+        binding.editComment.doAfterTextChanged { editable ->
+            binding.buttonSend.isEnabled = editable.trimmedString().isNotEmpty()
         }
 
-        viewBinding.editComment.requestFocus()
+        binding.editComment.requestFocus()
         lifecycleScope.launch {
             delay(500)
-            viewBinding.editComment.showKeyboard()
+            binding.editComment.showKeyboard()
         }
     }
 
     private fun sendComment() {
-        viewBinding.editComment.hideKeyboard()
-        viewBinding.editComment.getTrimmedText().takeIfNotNullOrBlank()?.let { nonBlankText ->
+        binding.editComment.hideKeyboard()
+        binding.editComment.getTrimmedText().takeIfNotNullOrBlank()?.let { nonBlankText ->
             parentFragment.cast<OnSubmitCommentCallback>()
                 ?.onSubmitComment(nonBlankText)
         }
-        viewBinding.editComment.text?.clear()
+        binding.editComment.text?.clear()
         dismiss()
     }
 }

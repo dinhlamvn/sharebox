@@ -22,7 +22,7 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
         super.onViewCreated(view, savedInstanceState)
         val textContent = arguments?.getString(Intent.EXTRA_TEXT) ?: ""
         val htmlText = textContent.replace("\n", "<br>")
-        viewBinding.textContent.text =
+        binding.textContent.text =
             HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 }

@@ -31,8 +31,12 @@ class BoxDetailViewModel @Inject constructor(
 ) : BaseViewModel<BoxDetailState>(BoxDetailState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))) {
 
     init {
+        consume(BoxDetailState::boxId) { boxId ->
+            boxRepository.updateLastSeen(boxId)
+            loadShares(boxId)
+
+        }
         loadBoxDetail()
-        loadShares()
     }
 
     private fun loadBoxDetail() = getState { state ->
@@ -43,10 +47,9 @@ class BoxDetailViewModel @Inject constructor(
         }
     }
 
-    private fun loadShares() = getState { state ->
-        setState { copy(isRefreshing = true) }
+    private fun loadShares(boxId: String) {
         suspend {
-            loadShares(state.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+            loadShares(boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
         }.execute { shares ->
             copy(shares = shares, isRefreshing = false, isLoadingMore = false)
         }
@@ -60,11 +63,11 @@ class BoxDetailViewModel @Inject constructor(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-        }.execute { shares ->
+        }.execute { loadedShares ->
             copy(
-                shares = this.shares.plus(shares),
+                shares = this.shares.plus(loadedShares),
                 isLoadingMore = false,
-                canLoadMore = shares.isNotEmpty(),
+                canLoadMore = loadedShares.isNotEmpty(),
                 currentPage = currentPage + 1,
             )
         }
@@ -82,9 +85,9 @@ class BoxDetailViewModel @Inject constructor(
         )
     }
 
-    fun doOnRefresh() {
-        setState { BoxDetailState(boxId, boxDetail) }
-        loadShares()
+    fun doOnRefresh() = getState { state ->
+        setState { BoxDetailState(boxId = state.boxId) }
+        loadBoxDetail()
     }
 
     fun like(shareId: String) = doInBackground {

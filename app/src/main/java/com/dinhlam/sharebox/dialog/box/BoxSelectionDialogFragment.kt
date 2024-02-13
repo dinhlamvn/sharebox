@@ -135,14 +135,14 @@ class BoxSelectionDialogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewBinding.recyclerView.adapter = boxAdapter
+        binding.recyclerView.adapter = boxAdapter
         boxAdapter.requestBuildModelViews()
 
-        viewBinding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
+        binding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
             viewModel.search(editable.trimmedString())
         }
 
-        viewBinding.buttonGoToGeneral.setOnClickListener {
+        binding.buttonGoToGeneral.setOnClickListener {
             returnSelectedBox("")
         }
     }
@@ -165,8 +165,8 @@ class BoxSelectionDialogFragment :
     }
 
     private fun returnSelectedBox(boxId: String) {
-        activity?.cast<OnBoxSelectedListener>()?.onBoxSelected(boxId)
-            ?: parentFragment.cast<OnBoxSelectedListener>()?.onBoxSelected(boxId)
+        parentFragment?.cast<OnBoxSelectedListener>()?.onBoxSelected(boxId)
+            ?: activity.cast<OnBoxSelectedListener>()?.onBoxSelected(boxId)
         dismiss()
     }
 

@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
-import com.dinhlam.sharebox.dialog.sharelink.ShareLinkInputDialogFragment
+import com.dinhlam.sharebox.dialog.sharelink.ShareLinkDialogFragment
 import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
@@ -115,14 +115,6 @@ class ShareHelper @Inject constructor(
         }
     }
 
-    fun openUrl(context: Context, url: String, isEnableCustomTab: Boolean = true) {
-        if (isEnableCustomTab) {
-            router.moveToChromeCustomTab(context, url)
-        } else {
-            router.moveToBrowser(url)
-        }
-    }
-
     fun openTextViewerDialog(activity: FragmentActivity, text: String) {
         TextViewerDialogFragment().apply {
             arguments = Bundle().apply {
@@ -185,7 +177,7 @@ class ShareHelper @Inject constructor(
     }
 
     fun shareLink(fragmentManager: FragmentManager) {
-        ShareLinkInputDialogFragment().show(fragmentManager, "ShareLinkInputDialogFragment")
+        ShareLinkDialogFragment().show(fragmentManager, "ShareLinkInputDialogFragment")
     }
 
     suspend fun calcTrendingScore(shareId: String): Int {

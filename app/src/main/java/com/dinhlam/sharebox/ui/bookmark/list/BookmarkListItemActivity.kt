@@ -161,7 +161,7 @@ class BookmarkListItemActivity :
     }
 
     private fun onOpen(shareId: String) {
-        startActivity(router.shareDetail(this, shareId))
+
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

@@ -48,9 +48,9 @@ class BoxRepository @Inject constructor(
         true
     }.getOrDefault(false)
 
-    suspend fun updateLastSeen(boxId: String, lastSeen: Long) {
+    suspend fun updateLastSeen(boxId: String) {
         val box = boxDao.find(boxId) ?: return
-        val newBox = box.copy(lastSeen = lastSeen)
+        val newBox = box.copy(lastSeen = nowUTCTimeInMillis())
         boxDao.update(newBox)
     }
 

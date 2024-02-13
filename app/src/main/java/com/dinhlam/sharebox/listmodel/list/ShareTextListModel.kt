@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.listmodel.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelShareTextBinding
@@ -40,6 +41,7 @@ data class ShareTextListModel(
     val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
+    val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
 ) : BaseListAdapter.BaseListModel(shareId) {
 
     override fun createViewHolder(
@@ -68,6 +70,9 @@ data class ShareTextListModel(
         }
 
         override fun onBind(model: ShareTextListModel, position: Int) {
+            binding.root.updateLayoutParams {
+                width = model.width
+            }
             binding.root.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
             }

@@ -40,8 +40,8 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     @Volatile
     var currentState: T = initState
-    private val _stateFlow = MutableStateFlow(currentState)
-    val stateFlow: Flow<T> = _stateFlow.asSharedFlow().distinctUntilChanged()
+    private val _stateFlow = MutableStateFlow(initState)
+    val stateFlow: Flow<T> = _stateFlow.asSharedFlow()
 
     init {
         stateScope.launch {

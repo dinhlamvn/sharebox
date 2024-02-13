@@ -54,15 +54,15 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         }
 
         val layoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-        viewBinding.recyclerView.layoutManager = layoutManager
+        binding.recyclerView.layoutManager = layoutManager
 
         val spanHelper = PagerSnapHelper()
-        spanHelper.attachToRecyclerView(viewBinding.recyclerView)
-        viewBinding.recyclerView.adapter = adapter
+        spanHelper.attachToRecyclerView(binding.recyclerView)
+        binding.recyclerView.adapter = adapter
         adapter.requestBuildModelViews()
         updatePageNumber(1, uris.size)
 
-        viewBinding.recyclerView.addOnScrollListener(object : OnScrollListener() {
+        binding.recyclerView.addOnScrollListener(object : OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     updatePageNumber(layoutManager.findFirstVisibleItemPosition() + 1, uris.size)
@@ -70,15 +70,15 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
             }
         })
 
-        viewBinding.imageSaveToGallery.setImageDrawable(Icons.saveIcon(requireContext()))
-        viewBinding.imageSaveToGallery.setOnClickListener {
+        binding.imageSaveToGallery.setImageDrawable(Icons.saveIcon(requireContext()))
+        binding.imageSaveToGallery.setOnClickListener {
             val currentPos = layoutManager.findFirstVisibleItemPosition()
             val uri = uris.getOrNull(currentPos) ?: return@setOnClickListener
-            viewBinding.viewLoading.show()
+            binding.viewLoading.show()
             fragmentScope.launch(Dispatchers.IO) {
                 localStorageHelper.saveImageToGallery(uri)
                 withContext(Dispatchers.Main) {
-                    viewBinding.viewLoading.hide()
+                    binding.viewLoading.hide()
                     showToast(R.string.success_save_image_to_gallery)
                 }
             }
@@ -86,7 +86,7 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
     }
 
     private fun updatePageNumber(position: Int, size: Int) {
-        viewBinding.textNumber.text = getString(R.string.page_number, position, size)
+        binding.textNumber.text = getString(R.string.page_number, position, size)
     }
 
     override fun getTheme(): Int {

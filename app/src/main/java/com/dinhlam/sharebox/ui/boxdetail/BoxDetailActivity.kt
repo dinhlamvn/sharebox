@@ -10,15 +10,16 @@ import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.listmodel.LoadingListModel
+import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.listmodel.SizedBoxListModel
-import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ class BoxDetailActivity :
 
     override fun onStateChanged(state: BoxDetailState) {
         shareAdapter.requestBuildModelViews()
-        binding.textTitle.title = state.boxDetail?.boxName
+        binding.textTitle.text = state.boxDetail?.boxName
     }
 
     private val layoutManager by lazy {
@@ -78,13 +79,9 @@ class BoxDetailActivity :
                         actionViewImage = ::viewImage,
                         actionViewImages = ::viewImages
                     ).attachTo(this)
-
-                    SizedBoxListModel("separator_${shareDetail.shareId}").attachTo(this)
                 }
 
-                if (state.isLoadingMore) {
-                    LoadingListModel("home_loading_more_${state.currentPage}").attachTo(this)
-                }
+                LoadingListModel("home_loading_more_${state.currentPage}").attachTo(this) { state.canLoadMore && state.shares.size > 3 }
             }
         }
     }
@@ -108,6 +105,8 @@ class BoxDetailActivity :
             viewModel.doOnRefresh()
             binding.swipeRefreshLayout.isRefreshing = false
         }
+
+        binding.textTitle.setDrawableCompat(Icons.boxIcon(this))
     }
 
     private fun viewImages(shareId: String, uris: List<Uri>) {
@@ -119,7 +118,7 @@ class BoxDetailActivity :
     }
 
     private fun onOpen(shareId: String) {
-        startActivity(router.shareDetail(this, shareId))
+
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

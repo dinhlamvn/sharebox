@@ -7,9 +7,9 @@ import com.dinhlam.sharebox.model.ShareDetail
 data class BoxDetailState(
     val boxId: String,
     val boxDetail: BoxDetail? = null,
-    val isRefreshing: Boolean = false,
+    val isRefreshing: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val isLoadingMore: Boolean = false,
     val currentPage: Int = 1,
-    val canLoadMore: Boolean = true,
+    val canLoadMore: Boolean = false,
 ) : BaseViewModel.BaseState

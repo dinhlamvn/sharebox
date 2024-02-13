@@ -79,9 +79,17 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findGeneralShares(shareUserId: String, limit: Int, offset: Int) = shareDao.runCatching {
+    suspend fun findGeneralShares(limit: Int, offset: Int) = shareDao.runCatching {
         val shares = findForGeneral(
-            shareUserId,
+            limit = limit,
+            offset = offset
+        )
+        shares.asFlow().mapNotNull(::buildShareDetail).toList()
+    }.getOrDefault(emptyList())
+
+    suspend fun findRecentlyShares(userId: String, limit: Int, offset: Int) = shareDao.runCatching {
+        val shares = findForRecently(
+            userId,
             limit = limit,
             offset = offset
         )

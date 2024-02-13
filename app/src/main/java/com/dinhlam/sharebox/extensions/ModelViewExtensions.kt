@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.extensions
 
 import android.net.Uri
 import android.view.View
+import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.listmodel.list.ListImagesListModel
@@ -31,6 +32,7 @@ fun ShareData.buildShareListModel(
     actionViewImage: ((String, Uri) -> Unit)? = null,
     actionViewImages: Function2<String, List<Uri>, Unit>? = null,
     actionBoxClick: Function1<BoxDetail?, Unit>? = null,
+    width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
 ): BaseListAdapter.BaseListModel {
     return when (this) {
         is ShareData.ShareUrl -> {
@@ -52,6 +54,7 @@ fun ShareData.buildShareListModel(
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
                 BaseListAdapter.NoHashProp(actionBoxClick),
+                width
             )
         }
 
@@ -74,6 +77,7 @@ fun ShareData.buildShareListModel(
                 BaseListAdapter.NoHashProp(actionComment),
                 BaseListAdapter.NoHashProp(actionBookmark),
                 BaseListAdapter.NoHashProp(actionBoxClick),
+                width
             )
         }
 
@@ -97,6 +101,7 @@ fun ShareData.buildShareListModel(
                 BaseListAdapter.NoHashProp(actionBookmark),
                 BaseListAdapter.NoHashProp(actionViewImage),
                 BaseListAdapter.NoHashProp(actionBoxClick),
+                width
             )
         }
 
@@ -132,6 +137,7 @@ fun ShareData.buildShareListModel(
                 BaseListAdapter.NoHashProp(actionBookmark),
                 BaseListAdapter.NoHashProp(actionViewImages),
                 BaseListAdapter.NoHashProp(actionBoxClick),
+                width
             )
         }
     }

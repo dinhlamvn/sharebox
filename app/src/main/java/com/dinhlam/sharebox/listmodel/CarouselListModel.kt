@@ -38,8 +38,7 @@ data class CarouselListModel(val id: String, val modelViews: List<BaseListAdapte
             }
 
             override fun onUnBind() {
-                models.clear()
-                carouselAdapter.requestBuildModelViews()
+
             }
         }
     }

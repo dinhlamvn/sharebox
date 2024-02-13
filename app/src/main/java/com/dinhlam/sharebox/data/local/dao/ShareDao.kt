@@ -22,8 +22,20 @@ interface ShareDao {
     @Query("SELECT * FROM share WHERE share_id = :shareId")
     suspend fun findOne(shareId: String): Share?
 
-    @Query("SELECT * FROM share WHERE share_user_id = :shareUserId AND share_box_id IS NULL ORDER BY share_date DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM share AS s WHERE share_user_id = :shareUserId ORDER BY share_date DESC LIMIT :limit OFFSET :offset")
     suspend fun find(shareUserId: String, limit: Int, offset: Int): List<Share>
+
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s 
+        LEFT JOIN box as b ON b.box_id = s.share_box_id
+        WHERE s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)
+        ORDER BY s.share_date DESC 
+        LIMIT :limit 
+        OFFSET :offset"""
+    )
+    suspend fun findForGeneral(limit: Int, offset: Int): List<Share>
 
     @Query(
         """
@@ -35,7 +47,7 @@ interface ShareDao {
         LIMIT :limit 
         OFFSET :offset"""
     )
-    suspend fun findForGeneral(shareUserId: String, limit: Int, offset: Int): List<Share>
+    suspend fun findForRecently(shareUserId: String, limit: Int, offset: Int): List<Share>
 
     @Query(
         """

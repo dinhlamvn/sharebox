@@ -52,6 +52,7 @@ data class ListImagesListModel(
     val actionBoxClick: BaseListAdapter.NoHashProp<(BoxDetail?) -> Unit> = BaseListAdapter.NoHashProp(
         null
     ),
+    val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
 ) : BaseListAdapter.BaseListModel(shareId) {
 
     override fun createViewHolder(
@@ -102,6 +103,9 @@ data class ListImagesListModel(
         }
 
         override fun onBind(model: ListImagesListModel, position: Int) {
+            binding.root.updateLayoutParams {
+                width = model.width
+            }
             binding.root.setOnClickListener {
                 model.actionOpen.prop?.invoke(model.shareId)
             }

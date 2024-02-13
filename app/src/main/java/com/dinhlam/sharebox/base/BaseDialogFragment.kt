@@ -26,33 +26,33 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
     abstract fun onCreateViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
-    private var binding: VB? = null
+    private var _binding: VB? = null
 
     protected val fragmentScope by lazyOf(MainScope() + CoroutineName("FragmentScope") + Job())
 
-    protected val viewBinding: VB
-        get() = binding!!
+    protected val binding: VB
+        get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return MaterialAlertDialogBuilder(requireContext(), theme).apply {
-            binding = onCreateViewBinding(layoutInflater, null)
-            setView(viewBinding.root)
+            _binding = onCreateViewBinding(layoutInflater, null)
+            setView(binding.root)
         }.create()
     }
 
     override fun getView(): View? {
-        return viewBinding.root
+        return binding.root
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return viewBinding.root
+        return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 
     override fun onStart() {

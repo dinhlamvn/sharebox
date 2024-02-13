@@ -12,38 +12,45 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
+import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.sharelink.ShareLinkDialogFragment
+import com.dinhlam.sharebox.dialog.sharetextquote.ShareTextQuoteInputDialogFragment
+import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
+import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.LiveEventUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 @AndroidEntryPoint
 @ActivityScoped
-class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>() {
+class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
+    ShareLinkDialogFragment.OnShareLinkCallback,
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener,
+    ShareTextQuoteInputDialogFragment.OnShareTextQuoteCallback {
 
     override val viewModel: HomeViewModel by viewModels()
 
     @Inject
     lateinit var router: Router
 
+    @Inject
+    lateinit var shareHelper: ShareHelper
+
     override fun onStateChanged(state: HomeState) {
         homeAdapter.requestBuildModelViews()
     }
-
-    private val createBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val boxId = result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)
-                    ?: return@registerForActivityResult
-                viewModel.setBox(boxId)
-            }
-        }
 
     private val layoutManager by lazy {
         LoadMoreLinearLayoutManager(this, LinearLayoutManager.VERTICAL, blockShouldLoadMore = {
@@ -115,10 +122,84 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewModel.consume(this, HomeState::isLoadingMore) { isLoadMore ->
             layoutManager.hadTriggerLoadMore = isLoadMore
         }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.doOnRefresh()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopService(realtimeDatabaseServiceIntent)
+    }
+
+    override fun onShareLink(link: String, boxDetail: BoxDetail?) {
+        router.moveToChromeCustomTab(this, link, boxDetail)
+    }
+
+    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
+        viewModel.bookmark(shareId, bookmarkCollectionId)
+    }
+
+    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+        getState(viewModel) { state ->
+            val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
+            val share =
+                state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+
+            when (position) {
+                0 -> shareHelper.shareToOther(share)
+                1 -> onBookmark(shareId)
+                2 -> WorkerUtils.enqueueDownloadShare(
+                    this, share.shareData.cast<ShareData.ShareUrl>()?.url
+                )
+                3 -> onOpen(shareId)
+            }
+        }
+    }
+
+    private fun onOpen(shareId: String) = getState(viewModel) { state ->
+        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
+            ?: return@getState
+        openShare(share)
+    }
+
+    fun openShare(share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareText -> {
+                shareHelper.openTextViewerDialog(this, shareData.text)
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                this,
+                share.shareId,
+                shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                this,
+                share.shareId,
+                shareData.uris
+            )
+        }
+    }
+
+    private fun onBookmark(shareId: String) {
+        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
+            shareHelper.showBookmarkCollectionPickerDialog(
+                supportFragmentManager, shareId, collectionId
+            )
+        }
+    }
+
+    override fun onShareTextQuote(text: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/*"
+            `package` = packageName
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+        startActivity(intent)
     }
 }
