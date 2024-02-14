@@ -143,7 +143,7 @@
     <string name="download_video">Download Video</string>
     <string name="download_image">Download Image</string>
     <string name="download_all_images">Download all images (%d)</string>
-    <string name="downloading_all_image">Downloading...(%d/%d)</string>
+    <string name="downloading_all_image">Downloading…(%d/%d)</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
