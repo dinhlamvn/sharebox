@@ -37,7 +37,7 @@ class AppSharePref @Inject constructor(
 
     @IntRange(from = 0, to = 1)
     fun getNetworkCondition(): Int {
-        return get(KEY_SETTING_NETWORK_CONDITION, 0)
+        return get(KEY_SETTING_NETWORK_CONDITION, 1)
     }
 
     fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, true)
