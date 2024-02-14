@@ -13,12 +13,14 @@ import androidx.core.graphics.drawable.toBitmap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
+import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileActivity
@@ -45,18 +47,16 @@ class AppRouter constructor(private val context: Context) : Router {
     }
 
     override fun moveToChromeCustomTab(
-        context: Context,
-        url: String,
-        boxId: String?,
-        boxName: String?,
-        supportDownload: Boolean
+        context: Context, url: String, boxId: String?, boxName: String?, supportDownload: Boolean
     ) {
         val shareDesc = context.getString(R.string.archives)
         val shareBitmap = Icons.archiveIcon(context) {
             copy(colorRes = android.R.color.black)
         }.toBitmap()
-        val broadcastReceiverIntent = Intent(context, CustomTabsShareBroadcastReceiver::class.java)
-            .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
+        val broadcastReceiverIntent = Intent(
+            context,
+            CustomTabsShareBroadcastReceiver::class.java
+        ).putExtra(AppExtras.EXTRA_BOX_ID, boxId)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -71,8 +71,7 @@ class AppRouter constructor(private val context: Context) : Router {
         }.toBitmap())
 
         remoteViews.setTextViewText(
-            R.id.text_box_name,
-            boxName ?: context.getString(R.string.box_general)
+            R.id.text_box_name, boxName ?: context.getString(R.string.box_general)
         )
 
         if (supportDownload) {
@@ -99,8 +98,7 @@ class AppRouter constructor(private val context: Context) : Router {
             CustomTabsIntent.Builder().setShareState(CustomTabsIntent.SHARE_STATE_OFF)
                 .setSecondaryToolbarViews(remoteViews, clickableIds, downloadPendingIntent)
                 .setColorScheme(CustomTabsIntent.COLOR_SCHEME_LIGHT)
-                .setActionButton(shareBitmap, shareDesc, pendingIntent)
-                .build()
+                .setActionButton(shareBitmap, shareDesc, pendingIntent).build()
 
         customTabsIntent.intent.setPackage("com.android.chrome")
         customTabsIntent.launchUrl(context, Uri.parse(url))
@@ -200,5 +198,20 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun shareLink(context: Context): Intent {
         return Intent(context, ShareLinkActivity::class.java)
+    }
+
+    override fun downloadPopup(
+        context: Context,
+        videos: List<DownloadData>,
+        audios: List<DownloadData>,
+        images: List<DownloadData>
+    ): Intent {
+        return Intent(context, DownloadPopupActivity::class.java).putParcelableArrayListExtra(
+            AppExtras.EXTRA_DOWNLOAD_VIDEOS, arrayListOf(*videos.toTypedArray())
+        ).putParcelableArrayListExtra(
+            AppExtras.EXTRA_DOWNLOAD_AUDIOS, arrayListOf(*audios.toTypedArray())
+        ).putParcelableArrayListExtra(
+            AppExtras.EXTRA_DOWNLOAD_IMAGES, arrayListOf(*images.toTypedArray())
+        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }
 }

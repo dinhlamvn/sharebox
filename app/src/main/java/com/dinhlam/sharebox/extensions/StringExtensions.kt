@@ -36,3 +36,7 @@ fun String.appendIf(append: String, condition: (String) -> Boolean): String {
 fun String.trimToDomain(): String? {
     return Uri.parse(this).host?.replaceFirst(Regex("www."), "")
 }
+
+fun String.asFileExtension(): String {
+    return substringAfter("/")
+}

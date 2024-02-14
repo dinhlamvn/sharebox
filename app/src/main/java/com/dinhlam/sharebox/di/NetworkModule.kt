@@ -3,7 +3,6 @@ package com.dinhlam.sharebox.di
 import android.content.Context
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.network.LibreTubeServices
-import com.dinhlam.sharebox.data.network.LoveTikServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.helper.CronetHelper
 import com.google.gson.Gson
@@ -40,15 +39,6 @@ object NetworkModule {
             .writeTimeout(30_000, TimeUnit.MILLISECONDS)
             .cache(Cache(cacheDir, 1024 * 1024 * 50)).build()
 
-    }
-
-    @Provides
-    fun provideLoveTikServices(
-        gson: Gson, httpClient: OkHttpClient
-    ): LoveTikServices {
-        return getRetrofitBuilder(gson, httpClient)
-            .baseUrl(AppConsts.LOVETIK_SERVICE_BASE_URL)
-            .build().create(LoveTikServices::class.java)
     }
 
     @Provides

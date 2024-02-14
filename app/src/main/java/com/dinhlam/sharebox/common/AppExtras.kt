@@ -12,4 +12,8 @@ object AppExtras {
     const val EXTRA_BOX_ID = "extra-box-id"
     const val EXTRA_BOX_NAME = "extra-box-name"
     const val EXTRA_URL = "extra-url"
+    const val EXTRA_DOWNLOAD_VIDEOS = "extra-download-videos"
+    const val EXTRA_DOWNLOAD_AUDIOS = "extra-download-audios"
+    const val EXTRA_DOWNLOAD_IMAGES = "extra-download-images"
+    const val EXTRA_ID = "extra-id"
 }

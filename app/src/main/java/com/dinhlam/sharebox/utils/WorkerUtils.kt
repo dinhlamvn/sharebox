@@ -12,8 +12,8 @@ import com.dinhlam.sharebox.worker.DirectDownloadShareWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
 import com.dinhlam.sharebox.worker.SyncUserDataWorker
-import com.dinhlam.sharebox.worker.TiktokVideoDownloadWorker
-import com.dinhlam.sharebox.worker.YoutubeMp3DownloadWorker
+import com.dinhlam.sharebox.worker.TiktokDownloadWorker
+import com.dinhlam.sharebox.worker.YoutubeDownloadWorker
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -59,25 +59,25 @@ object WorkerUtils {
     }
 
     fun enqueueJobDownloadTiktokVideo(context: Context, entityId: Int, videoUrl: String) {
-        val tiktokDownloadVideoRequest =
-            OneTimeWorkRequestBuilder<TiktokVideoDownloadWorker>().setConstraints(
+        val tiktokDownloadRequest =
+            OneTimeWorkRequestBuilder<TiktokDownloadWorker>().setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
                     .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
             ).setInputData(
                 Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
             ).setId(UUID.randomUUID()).build()
-        WorkManager.getInstance(context).enqueue(tiktokDownloadVideoRequest)
+        WorkManager.getInstance(context).enqueue(tiktokDownloadRequest)
     }
 
-    fun enqueueJobDownloadYoutubeMp3(context: Context, entityId: Int, videoUrl: String) {
-        val youtubeDownloadMp3Request =
-            OneTimeWorkRequestBuilder<YoutubeMp3DownloadWorker>().setConstraints(
+    fun enqueueJobDownloadYoutube(context: Context, entityId: Int, videoUrl: String) {
+        val youtubeDownloadRequest =
+            OneTimeWorkRequestBuilder<YoutubeDownloadWorker>().setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
                     .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
             ).setInputData(
                 Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
             ).setId(UUID.randomUUID()).build()
-        WorkManager.getInstance(context).enqueue(youtubeDownloadMp3Request)
+        WorkManager.getInstance(context).enqueue(youtubeDownloadRequest)
     }
 
     fun enqueueSyncShareToCloud(context: Context, shareId: String) {

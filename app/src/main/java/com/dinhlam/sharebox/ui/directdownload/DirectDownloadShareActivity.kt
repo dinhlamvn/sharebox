@@ -15,6 +15,12 @@ class DirectDownloadShareActivity : AppCompatActivity() {
         handleShareData()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShareData()
+    }
+
     private fun handleShareData() {
         val (action, type) = intent.action to intent.type
         when {

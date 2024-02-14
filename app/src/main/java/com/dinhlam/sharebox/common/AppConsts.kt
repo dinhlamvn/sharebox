@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.common
 
 object AppConsts {
-    const val LOVETIK_SERVICE_BASE_URL: String = "https://lovetik.com/"
 
     const val SSSTIK_SERVICE_BASE_URL: String = "https://ssstik.io/"
 
