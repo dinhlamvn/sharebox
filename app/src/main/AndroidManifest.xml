@@ -284,7 +284,8 @@
                 tools:node="remove" />
         </provider>
 
-        <receiver android:name="com.dinhlam.sharebox.receiver.ShareBroadcastReceiver" />
+        <receiver android:name="com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver" />
+        <receiver android:name="com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver" />
     </application>
 
 </manifest>

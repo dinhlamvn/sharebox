@@ -100,21 +100,13 @@ class ShareLinkActivity :
                 R.string.require_input_link
             )
 
-        val correctLink = if (!link.startsWith("https://")) {
-            "https://$link"
-        } else if (!link.startsWith("http://")) {
-            "http://$link"
-        } else {
-            link
-        }
-
-        if (!correctLink.isWebLink()) {
+        if (!link.isWebLink()) {
             return@getState showToast(R.string.require_input_correct_weblink)
         }
 
         setResult(
             Activity.RESULT_OK, Intent()
-                .putExtra(AppExtras.EXTRA_URL, correctLink)
+                .putExtra(AppExtras.EXTRA_URL, link)
                 .putExtra(AppExtras.EXTRA_BOX_ID, state.currentBox?.boxId)
                 .putExtra(AppExtras.EXTRA_BOX_NAME, state.currentBox?.boxName)
         )

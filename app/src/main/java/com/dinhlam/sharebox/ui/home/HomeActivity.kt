@@ -76,7 +76,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                     data.getStringExtra(AppExtras.EXTRA_URL) ?: return@registerForActivityResult
                 val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)
                 val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
-                router.moveToChromeCustomTab(this, link, boxId, boxName)
+                router.moveToChromeCustomTab(
+                    this,
+                    link,
+                    boxId,
+                    boxName,
+                    shareHelper.isSupportDownloadLink(link)
+                )
             }
         }
 

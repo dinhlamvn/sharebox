@@ -30,4 +30,12 @@
         android:textColor="@android:color/black"
         tools:text="This is box name" />
 
+    <ImageView
+        android:id="@+id/image_download"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/desc_image"
+        android:scaleType="centerInside" />
+
 </LinearLayout>

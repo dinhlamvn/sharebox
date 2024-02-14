@@ -6,13 +6,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.RemoteViews
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.drawable.toBitmap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.receiver.ShareBroadcastReceiver
+import com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver
+import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
@@ -46,18 +48,19 @@ class AppRouter constructor(private val context: Context) : Router {
         context: Context,
         url: String,
         boxId: String?,
-        boxName: String?
+        boxName: String?,
+        supportDownload: Boolean
     ) {
         val shareDesc = context.getString(R.string.archives)
         val shareBitmap = Icons.archiveIcon(context) {
             copy(colorRes = android.R.color.black)
         }.toBitmap()
-        val broadcastReceiverIntent = Intent(context, ShareBroadcastReceiver::class.java)
+        val broadcastReceiverIntent = Intent(context, CustomTabsShareBroadcastReceiver::class.java)
             .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            ShareBroadcastReceiver.REQUEST_CODE,
+            CustomTabsShareBroadcastReceiver.REQUEST_CODE,
             broadcastReceiverIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -66,16 +69,41 @@ class AppRouter constructor(private val context: Context) : Router {
         remoteViews.setImageViewBitmap(R.id.image_box, Icons.boxIcon(context) {
             copy(colorRes = android.R.color.black)
         }.toBitmap())
+
         remoteViews.setTextViewText(
             R.id.text_box_name,
             boxName ?: context.getString(R.string.box_general)
         )
 
-        CustomTabsIntent.Builder().setShareState(CustomTabsIntent.SHARE_STATE_OFF)
-            .setSecondaryToolbarViews(remoteViews, null, null)
-            .setColorScheme(CustomTabsIntent.COLOR_SCHEME_LIGHT)
-            .setActionButton(shareBitmap, shareDesc, pendingIntent).build()
-            .launchUrl(context, Uri.parse(url))
+        if (supportDownload) {
+            remoteViews.setImageViewBitmap(R.id.image_download, Icons.downloadIcon(context) {
+                copy(colorRes = android.R.color.black, sizeDp = 24)
+            }.toBitmap())
+        } else {
+            remoteViews.setViewVisibility(R.id.image_download, View.GONE)
+        }
+
+        val clickableIds = intArrayOf(R.id.image_download)
+
+        val downloadBroadcastReceiverIntent =
+            Intent(context, CustomTabsDownloadBroadcastReceiver::class.java)
+
+        val downloadPendingIntent = PendingIntent.getBroadcast(
+            context,
+            CustomTabsDownloadBroadcastReceiver.REQUEST_CODE,
+            downloadBroadcastReceiverIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val customTabsIntent =
+            CustomTabsIntent.Builder().setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+                .setSecondaryToolbarViews(remoteViews, clickableIds, downloadPendingIntent)
+                .setColorScheme(CustomTabsIntent.COLOR_SCHEME_LIGHT)
+                .setActionButton(shareBitmap, shareDesc, pendingIntent)
+                .build()
+
+        customTabsIntent.intent.setPackage("com.android.chrome")
+        customTabsIntent.launchUrl(context, Uri.parse(url))
     }
 
     override fun moveToBrowser(url: String) {

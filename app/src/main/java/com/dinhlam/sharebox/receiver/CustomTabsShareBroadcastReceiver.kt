@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.receiver
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -13,22 +12,13 @@ import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ShareBroadcastReceiver : BroadcastReceiver() {
-
-    private val coroutineScope = CoroutineScope(
-        Executors.newSingleThreadExecutor()
-            .asCoroutineDispatcher() + CoroutineName("Broadcast Receiver Scope")
-    )
+class CustomTabsShareBroadcastReceiver : BaseBroadcastReceiver() {
 
     companion object {
         const val REQUEST_CODE = 1345

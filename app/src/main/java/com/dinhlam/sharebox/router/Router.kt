@@ -8,7 +8,13 @@ import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 interface Router {
     fun home(isNewTask: Boolean = false): Intent
     fun signIn(signInForResult: Boolean = false): Intent
-    fun moveToChromeCustomTab(context: Context, url: String, boxId: String?, boxName: String?)
+    fun moveToChromeCustomTab(
+        context: Context,
+        url: String,
+        boxId: String?,
+        boxName: String?,
+        supportDownload: Boolean
+    )
     fun moveToBrowser(url: String)
     fun bookmarkCollectionFormIntent(context: Context): Intent
     fun bookmarkCollectionFormIntent(

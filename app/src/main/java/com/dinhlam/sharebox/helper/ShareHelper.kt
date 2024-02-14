@@ -256,4 +256,14 @@ class ShareHelper @Inject constructor(
             context.startActivity(router.playStoreIntent(AppConsts.FACEBOOK_M_PACKAGE_ID))
         }
     }
+
+    fun isSupportDownloadLink(url: String): Boolean {
+        return arrayOf(
+            "tiktok.com",
+            "youtube.com",
+            "fb.com",
+            "facebook.com",
+            "you.tube"
+        ).any { supportLink -> url.contains(supportLink, true) }
+    }
 }
