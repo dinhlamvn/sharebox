@@ -57,7 +57,14 @@ class YoutubeMp3DownloadWorker @AssistedInject constructor(
                 libreTubeServices.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), videoId)
 
             val strResponse = responseBody.body()?.use { res -> res.string() }
-                ?: return@withContext Result.success()
+                ?: return@withContext withContext(Dispatchers.Main) {
+                    Toast.makeText(appContext, R.string.download_failed, Toast.LENGTH_SHORT).show()
+                    if (runAttemptCount < 3) {
+                        Result.retry()
+                    } else {
+                        Result.failure()
+                    }
+                }
 
             val json = JSONObject(strResponse)
             val audioStreams = json.getJSONArray("audioStreams") ?: JSONArray()

@@ -137,6 +137,7 @@
     <string name="no_boxes">No boxes</string>
     <string name="desc_image">This is an image</string>
     <string name="go">Go</string>
+    <string name="download_failed">Can\'t download this content, trying again!</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

@@ -32,8 +32,8 @@
 
     <ImageView
         android:id="@+id/image_download"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/desc_image"
         android:scaleType="centerInside" />
