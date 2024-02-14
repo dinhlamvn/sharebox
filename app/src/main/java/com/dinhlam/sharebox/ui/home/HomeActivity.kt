@@ -8,7 +8,6 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
@@ -16,6 +15,7 @@ import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareData
@@ -131,6 +131,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        registerOnBackPressHandler {
+            if (binding.recyclerView.computeVerticalScrollOffset() > 0) {
+                binding.recyclerView.smoothScrollToPosition(0)
+            } else {
+                finish()
+            }
+        }
+
         binding.imageProfile.setImageDrawable(Icons.userIcon(this))
         binding.imageProfile.setOnClickListener {
             startActivity(router.profile(this))
@@ -138,8 +147,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
-        binding.recyclerView.itemAnimator?.cast<DefaultItemAnimator>()?.supportsChangeAnimations =
-            false
         binding.recyclerView.layoutManager = layoutManager
         homeAdapter.attachTo(binding.recyclerView, this)
 
@@ -156,10 +163,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onDestroy() {
         super.onDestroy()
         stopService(realtimeDatabaseServiceIntent)
-    }
-
-    private fun onShareLink(link: String, boxId: String?, boxName: String?) {
-
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
