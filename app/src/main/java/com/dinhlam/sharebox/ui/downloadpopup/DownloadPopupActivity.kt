@@ -38,6 +38,15 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
             intent.getParcelableArrayListExtraCompat<DownloadData>(AppExtras.EXTRA_DOWNLOAD_IMAGES)
                 ?: emptyList()
 
+        if (videos.isEmpty() && audios.isEmpty() && images.isEmpty()) {
+            return@createAdapter TextListModel(
+                "empty",
+                getString(R.string.nothing_to_download),
+                textAppearance = R.style.TextBodyMedium,
+                height = 50.dp(),
+            ).attachTo(this)
+        }
+
         if (videos.isNotEmpty()) {
             TextListModel(
                 "title_video",
@@ -114,6 +123,7 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
                 height = 16.dp(),
                 backgroundColor = android.R.color.transparent
             ).attachTo(this)
+
             TextListModel(
                 "title_image",
                 getString(R.string.download_image),
@@ -121,8 +131,6 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
                 height = 50.dp(),
                 gravity = Gravity.START
             ).attachTo(this)
-
-            SizedBoxListModel("image_title_divider", height = 1.dp()).attachTo(this)
 
             TextListModel(
                 "download_all_image",

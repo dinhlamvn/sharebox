@@ -22,6 +22,8 @@ class DirectDownloadShareWorker @AssistedInject constructor(
     private val videoHelper: VideoHelper,
 ) : CoroutineWorker(appContext, workerParams) {
 
+    private val notiId = Random.nextInt()
+
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return createForegroundInfo()
     }
@@ -33,16 +35,16 @@ class DirectDownloadShareWorker @AssistedInject constructor(
         val videoSource = videoHelper.getVideoSource(shareUrl) ?: return Result.success()
         val videoOriginUrl =
             videoHelper.getVideoOriginUrl(videoSource, shareUrl) ?: return Result.success()
-        videoHelper.downloadVideo(appContext, Random.nextInt(), videoSource, videoOriginUrl)
+        videoHelper.downloadVideo(appContext, notiId, videoSource, videoOriginUrl)
         return Result.success()
     }
 
     private fun createForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
-            111222,
+            notiId,
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                .setContentText(appContext.getString(R.string.downloading))
-                .setContentTitle(appContext.getString(R.string.app_name))
+                .setContentText(appContext.getString(R.string.download_preparing))
+                .setAutoCancel(false).setContentTitle(appContext.getString(R.string.downloading))
                 .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(
                     WorkManager.getInstance(appContext).createCancelPendingIntent(workerParams.id)
                 ).build()

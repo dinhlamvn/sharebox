@@ -144,7 +144,7 @@ class VideoHelper @Inject constructor(
             VideoSource.Tiktok -> WorkerUtils.enqueueJobDownloadTiktokVideo(context, id, videoUri)
             VideoSource.Youtube -> WorkerUtils.enqueueJobDownloadYoutube(context, id, videoUri)
             else -> withContext(Dispatchers.Main) {
-                Toast.makeText(context, R.string.can_not_save_video, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.nothing_to_download, Toast.LENGTH_SHORT).show()
             }
         }
     }
