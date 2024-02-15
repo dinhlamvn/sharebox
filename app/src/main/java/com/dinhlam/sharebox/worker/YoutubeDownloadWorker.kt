@@ -45,9 +45,8 @@ class YoutubeDownloadWorker @AssistedInject constructor(
                 )
             )
             val sourceUrl =
-                workerParams.inputData.getString("url") ?: return@withContext Result.success()
-            val videoId =
-                Uri.parse(sourceUrl).getQueryParameter("v") ?: return@withContext Result.success()
+                workerParams.inputData.getString("url") ?: return@withContext Result.failure()
+            val videoId = getVideoId(sourceUrl) ?: return@withContext Result.failure()
 
             val responseBody =
                 libreTubeServices.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), videoId)
@@ -77,13 +76,17 @@ class YoutubeDownloadWorker @AssistedInject constructor(
             for (i in 0 until videoStreams.length()) {
                 val videoObj = videoStreams.getJSONObject(i)
                 val mimeType = videoObj.getString("mimeType")
+                val isVideoOnly = videoObj.getBoolean("videoOnly")
+                val videoQuality = videoObj.getString("quality")
                 if (mimeType.contains("video/mp4", true)) {
+                    val suffix = if (isVideoOnly) {
+                        "($videoQuality) - No Sound"
+                    } else {
+                        "($videoQuality})"
+                    }
                     videos.add(
                         DownloadData(
-                            videoId,
-                            mimeType,
-                            "(${videoObj.getString("quality")})",
-                            videoObj.getString("url")
+                            videoId, mimeType, suffix, videoObj.getString("url")
                         )
                     )
                 }
@@ -112,6 +115,14 @@ class YoutubeDownloadWorker @AssistedInject constructor(
         } catch (e: Exception) {
             Result.failure()
         }
+    }
+
+    private fun getVideoId(sourceUrl: String): String? {
+        val uri = Uri.parse(sourceUrl)
+        if (sourceUrl.contains("/shorts/")) {
+            return uri.lastPathSegment
+        }
+        return uri.getQueryParameter("v")
     }
 
     private fun createForegroundInfo(subText: String): ForegroundInfo {
