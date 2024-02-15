@@ -10,7 +10,6 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,7 +28,6 @@ class HomeViewModel @Inject constructor(
     init {
         getListBoxes()
         getRecentlyShares()
-        loadMores()
     }
 
     private fun getListBoxes() = suspend {
@@ -40,7 +38,11 @@ class HomeViewModel @Inject constructor(
 
     private fun getRecentlyShares() {
         suspend {
-            shareRepository.findRecentlyShares(userHelper.getCurrentUserId(), 10, 0)
+            shareRepository.findRecentlyShares(
+                userHelper.getCurrentUserId(),
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                0
+            )
         }.execute { shares ->
             copy(shares = shares, isRefreshing = false)
         }
@@ -49,24 +51,19 @@ class HomeViewModel @Inject constructor(
     fun loadMores() = getState { state ->
         setState { copy(isLoadingMore = true) }
         suspend {
-            getGeneralShares(
+            shareRepository.findRecentlyShares(
+                userHelper.getCurrentUserId(),
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-        }.execute { shares ->
+        }.execute { loadShares ->
             copy(
-                generalShares = this.generalShares.plus(shares),
+                shares = this.shares.plus(loadShares),
                 isLoadingMore = false,
-                canLoadMore = shares.isNotEmpty(),
+                canLoadMore = loadShares.isNotEmpty(),
                 currentPage = currentPage + 1,
             )
         }
-    }
-
-    private suspend fun getGeneralShares(
-        limit: Int, offset: Int
-    ): List<ShareDetail> {
-        return shareRepository.findGeneralShares(limit, offset)
     }
 
     fun like(shareId: String) = doInBackground {
@@ -133,6 +130,5 @@ class HomeViewModel @Inject constructor(
         setState { HomeState(isRefreshing = true) }
         getListBoxes()
         getRecentlyShares()
-        loadMores()
     }
 }

@@ -129,13 +129,13 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
             return
         }
 
-        activityScope.launch {
+        activityScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
                 binding.viewLoading.show()
             }
 
             val box = boxRepository.insert(
-                BoxUtils.createBoxId(name),
+                BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$name"),
                 name,
                 desc,
                 userHelper.getCurrentUserId(),

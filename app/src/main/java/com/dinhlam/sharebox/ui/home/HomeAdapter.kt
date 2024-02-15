@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
 import com.dinhlam.sharebox.listmodel.CarouselListModel
@@ -111,52 +110,13 @@ class HomeAdapter @Inject constructor(
                 "text_empty", activity.getString(R.string.no_result), height = 100.dp()
             ).attachTo(this)
         } else if (state.shares.isNotEmpty()) {
-            val models = state.shares.map { shareDetail ->
-                shareDetail.shareData.buildShareListModel(
-                    activity.screenHeight(),
-                    shareDetail.shareId,
-                    shareDetail.shareDate,
-                    shareDetail.shareNote,
-                    shareDetail.user,
-                    shareDetail.likeNumber,
-                    commentNumber = shareDetail.commentNumber,
-                    bookmarked = shareDetail.bookmarked,
-                    liked = shareDetail.liked,
-                    boxDetail = shareDetail.boxDetail,
-                    actionOpen = ::onOpen,
-                    actionShareToOther = ::onShareToOther,
-                    actionViewImage = ::viewImage,
-                    actionViewImages = ::viewImages,
-                    actionBoxClick = ::onBoxClick,
-                    width = activity.screenWidth().times(0.8f).toInt()
-                )
-            }
-
-            CarouselListModel("recently", models).attachTo(this)
-        }
-
-        if (state.generalShares.isNotEmpty()) {
             SizedBoxListModel(
                 "margin_bottom_recently_boxes",
                 height = 16.dp(),
                 backgroundColor = android.R.color.transparent
             ).attachTo(this)
 
-            TextListModel(
-                "general_share_shares_title",
-                activity.getString(R.string.general_shares),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
-                height = ViewGroup.LayoutParams.WRAP_CONTENT,
-                gravity = Gravity.START,
-            ).attachTo(this)
-
-            SizedBoxListModel(
-                "margin_bottom_recently_boxes",
-                height = 16.dp(),
-                backgroundColor = android.R.color.transparent
-            ).attachTo(this)
-
-            state.generalShares.forEach { shareDetail ->
+            state.shares.forEach { shareDetail ->
                 shareDetail.shareData.buildShareListModel(
                     activity.screenHeight(),
                     shareDetail.shareId,
@@ -172,7 +132,7 @@ class HomeAdapter @Inject constructor(
                     actionViewImage = ::viewImage,
                     actionViewImages = ::viewImages,
                     actionBoxClick = ::onBoxClick,
-                    actionShareToOther = ::onGeneralShareToOther
+                    actionShareToOther = ::onShareToOther
                 ).attachTo(this)
             }
         }
@@ -184,21 +144,13 @@ class HomeAdapter @Inject constructor(
 
     private fun onOpen(shareId: String) = activity.getState(viewModel) { state ->
         val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
-            ?: state.generalShares.firstOrNull { shareDetail ->
-                shareDetail.shareId == shareId
-            } ?: return@getState
+            ?: return@getState
         activity.openShare(share)
     }
 
     private fun onShareToOther(shareId: String) = activity.getState(viewModel) { state ->
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.shareToOther(share)
-    }
-
-    private fun onGeneralShareToOther(shareId: String) = activity.getState(viewModel) { state ->
-        val share =
-            state.generalShares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
         shareHelper.shareToOther(share)
     }
 

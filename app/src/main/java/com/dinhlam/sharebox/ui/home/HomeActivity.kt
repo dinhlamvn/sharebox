@@ -57,6 +57,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
     }
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { _ ->
+                    viewModel.doOnRefresh()
+                }
+            }
+        }
+
     private val realtimeDatabaseServiceIntent by lazy(LazyThreadSafetyMode.NONE) {
         Intent(this, RealtimeDatabaseService::class.java)
     }
@@ -158,6 +167,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             binding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnRefresh()
         }
+
+        binding.buttonCreateBox.setOnClickListener {
+            requestCreateBox()
+        }
     }
 
     override fun onDestroy() {
@@ -216,6 +229,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 supportFragmentManager, shareId, collectionId
             )
         }
+    }
+
+    fun requestCreateBox() {
+        createBoxResultLauncher.launch(router.boxIntent(this))
     }
 
     fun requestShareLink() {
