@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="@string/comment_title"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textAppearance="@style/TextTitle"
             app:layout_constraintBottom_toBottomOf="@id/image_close"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/image_close" />
@@ -85,7 +85,7 @@
             android:lines="1"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="@style/TextBody"
             app:layout_constraintBottom_toBottomOf="@id/image_avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/image_avatar"
@@ -101,7 +101,7 @@
             android:backgroundTintMode="src_over"
             android:gravity="center"
             android:text="@string/sign_in_to_comment"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="@style/TextBody"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="GOGO" />
 

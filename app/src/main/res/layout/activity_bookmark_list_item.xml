@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:collapsedTitleTextAppearance="@style/TextBody"
             app:collapsedTitleTextColor="@android:color/white"
             app:contentScrim="@android:color/transparent"
             app:expandedTitleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6"
@@ -44,9 +44,9 @@
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
                 app:layout_collapseMode="pin"
-                app:subtitleTextAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:subtitleTextAppearance="@style/TextCaption"
                 app:titleMarginStart="8dp"
-                app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:titleTextAppearance="@style/TextBody"
                 tools:subtitle="Hello World"
                 tools:title="Hello">
 

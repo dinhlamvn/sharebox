@@ -12,7 +12,7 @@
         android:paddingVertical="16dp"
         android:text="@string/choose_box"
         android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextTitle"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatEditText

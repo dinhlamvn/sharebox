@@ -104,7 +104,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="textMultiLine"
                     android:minLines="5"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textAppearance="@style/TextBody"
                     android:textColorHint="#757575"
                     android:textSize="22sp"
                     app:layout_constraintTop_toBottomOf="@id/recycler_view" />
@@ -159,7 +159,7 @@
                     android:maxLines="1"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textAppearance="@style/TextBody"
                     tools:text="No box" />
 
                 <androidx.appcompat.widget.AppCompatImageView

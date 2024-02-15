@@ -17,7 +17,7 @@ data class TextPickerListModel(
     val text: String,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
-    val textAppearance: Int = R.style.TextAppearance_MaterialComponents_Body2,
+    val textAppearance: Int = R.style.TextBody,
     val isPicked: Boolean = false,
     val startIcon: Drawable? = null,
     val pickedIcon: Drawable? = null,

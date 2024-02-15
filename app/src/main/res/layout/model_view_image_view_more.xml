@@ -20,7 +20,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_number"
-        style="@style/TextAppearance.MaterialComponents.Body2"
+        style="@style/TextBody"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#99000000"

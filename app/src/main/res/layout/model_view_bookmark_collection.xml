@@ -42,7 +42,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:lines="2"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextCaption"
             app:layout_constraintTop_toBottomOf="@id/text_name"
             tools:text="Listen to music by Sam Interface on Apple Music. Find top songs and albums by Sam Interface including Alive" />
 

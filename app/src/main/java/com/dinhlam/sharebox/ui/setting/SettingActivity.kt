@@ -110,6 +110,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
         binding.seekbarImageDownloadQuality.progress =
             appSettingHelper.getImageDownloadQuality()
+        binding.textQuality.text = "${binding.seekbarImageDownloadQuality.progress}"
 
 
         binding.seekbarImageDownloadQuality.setOnSeekBarChangeListener(object :
@@ -127,6 +128,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                     )
                     seekBar?.progress = AppConsts.MIN_IMAGE_QUALITY
                 }
+                binding.textQuality.text = "${seekBar?.progress ?: 0}"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {

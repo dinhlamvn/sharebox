@@ -10,10 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="12dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textAppearance="@style/TextTitle"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/title_bookmark_collection"
-        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+        app:titleTextAppearance="@style/TextTitle" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"

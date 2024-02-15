@@ -9,4 +9,4 @@
     android:gravity="center_vertical"
     android:maxLines="1"
     android:paddingHorizontal="16dp"
-    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+    android:textAppearance="@style/TextBody" />

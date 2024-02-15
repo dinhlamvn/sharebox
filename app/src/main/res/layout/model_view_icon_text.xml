@@ -9,5 +9,5 @@
     android:ellipsize="middle"
     android:gravity="center_vertical"
     android:paddingHorizontal="16dp"
-    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+    android:textAppearance="@style/TextBody"
     tools:drawableStart="@tools:sample/avatars" />
