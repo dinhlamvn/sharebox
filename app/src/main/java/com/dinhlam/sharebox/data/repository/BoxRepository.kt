@@ -4,6 +4,7 @@ import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.model.BoxDetail
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
@@ -54,8 +55,8 @@ class BoxRepository @Inject constructor(
         boxDao.update(newBox)
     }
 
-    suspend fun search(query: String): List<BoxDetail> = boxDao.runCatching {
-        search(query).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+    suspend fun search(query: String, userId: String): List<BoxDetail> = boxDao.runCatching {
+        search(query, userId).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
 
     suspend fun find(limit: Int, offset: Int): List<BoxDetail> = boxDao.runCatching {
@@ -70,6 +71,8 @@ class BoxRepository @Inject constructor(
     suspend fun count(): Int = boxDao.runCatching {
         count()
     }.getOrDefault(0)
+
+    suspend fun count(userId: String): Int = boxDao.count(userId)
 
     suspend fun findOne(boxId: String): BoxDetail? = boxDao.runCatching {
         val box = find(boxId) ?: return@runCatching null

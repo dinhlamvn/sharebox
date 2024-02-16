@@ -3,11 +3,15 @@ package com.dinhlam.sharebox.dialog.box
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository: BoxRepository) :
+class BoxSelectionDialogViewModel @Inject constructor(
+    private val boxRepository: BoxRepository,
+    private val userHelper: UserHelper
+) :
     BaseViewModel<BoxSelectionDialogState>(BoxSelectionDialogState()) {
 
     init {
@@ -18,7 +22,8 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
     private fun getListBoxes() = getState { state ->
         setState { copy(isLoading = true) }
         suspend {
-            boxRepository.find(
+            boxRepository.findByUser(
+                userHelper.getCurrentUserId(),
                 AppConsts.NUMBER_VISIBLE_BOX, state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
         }.execute { boxes ->
@@ -28,8 +33,9 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
 
     private fun fetchTotalBox() {
         doInBackground {
-            val totalBox = boxRepository.count()
-            setState { copy(totalBox = totalBox) }
+            suspend { boxRepository.count(userHelper.getCurrentUserId()) }.execute { total ->
+                copy(totalBox = total)
+            }
         }
     }
 
@@ -39,7 +45,8 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
         }
         setState { copy(isLoadingMore = true) }
         suspend {
-            boxRepository.find(
+            boxRepository.findByUser(
+                userHelper.getCurrentUserId(),
                 AppConsts.NUMBER_VISIBLE_BOX, state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
         }.execute {
@@ -59,7 +66,7 @@ class BoxSelectionDialogViewModel @Inject constructor(private val boxRepository:
             )
         }
         doInBackground {
-            val searchBoxes = boxRepository.search(query)
+            val searchBoxes = boxRepository.search(query, userHelper.getCurrentUserId())
             setState { copy(searchBoxes = searchBoxes, isSearching = true) }
         }
     }

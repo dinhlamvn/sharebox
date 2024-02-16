@@ -18,8 +18,8 @@ interface BoxDao {
     @Query("SELECT * FROM `box` WHERE box_id = :boxId")
     suspend fun find(boxId: String): Box?
 
-    @Query("SELECT * FROM `box` WHERE box_name LIKE '%' || :query || '%' ORDER BY box_name ASC")
-    suspend fun search(query: String): List<Box>
+    @Query("SELECT * FROM `box` WHERE (created_by = :userId AND box_name LIKE '%' || :query || '%') OR box_id = :query ORDER BY box_name ASC")
+    suspend fun search(query: String, userId: String): List<Box>
 
     @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT :limit OFFSET :offset")
     suspend fun find(limit: Int, offset: Int): List<Box>
@@ -35,6 +35,9 @@ interface BoxDao {
 
     @Query("SELECT COUNT(*) FROM `box`")
     suspend fun count(): Int
+
+    @Query("SELECT COUNT(*) FROM `box` WHERE created_by = :userId")
+    suspend fun count(userId: String): Int
 
     @Query("SELECT * FROM box WHERE synced = 0")
     suspend fun findForSyncToCloud(): List<Box>
