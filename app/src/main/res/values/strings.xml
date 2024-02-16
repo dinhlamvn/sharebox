@@ -148,6 +148,7 @@
     <string name="tips_search_box">*Tip: You can type the box\'s id to access a Box.</string>
     <string name="access_box">Access a box</string>
     <string name="require_choose_box">Choose box to archive</string>
+    <string name="newest_box">Newest Boxes</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

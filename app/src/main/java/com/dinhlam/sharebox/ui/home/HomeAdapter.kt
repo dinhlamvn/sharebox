@@ -60,8 +60,8 @@ class HomeAdapter @Inject constructor(
 
         TextListModel(
             "title_your_boxes",
-            activity.getString(R.string.your_boxes),
-            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+            activity.getString(R.string.newest_box),
+            textAppearance = R.style.TextTitleMedium,
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             gravity = Gravity.START,
         ).attachTo(this)
@@ -110,7 +110,7 @@ class HomeAdapter @Inject constructor(
         TextListModel(
             "recently_shares_title",
             activity.getString(R.string.recently_shares),
-            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle2,
+            textAppearance = R.style.TextTitleMedium,
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             gravity = Gravity.START,
         ).attachTo(this)

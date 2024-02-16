@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getListBoxes() = suspend {
-        boxRepository.findByUser(userHelper.getCurrentUserId(), 1000, 0)
+        boxRepository.findByUser(userHelper.getCurrentUserId(), 10, 0)
     }.execute { boxes ->
         copy(boxes = boxes)
     }
