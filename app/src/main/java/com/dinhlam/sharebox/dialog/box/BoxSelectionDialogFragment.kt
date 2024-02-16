@@ -141,14 +141,10 @@ class BoxSelectionDialogFragment :
         binding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
             viewModel.search(editable.trimmedString())
         }
-
-        binding.buttonGoToGeneral.setOnClickListener {
-            returnSelectedBox("")
-        }
     }
 
     override fun getSpacing(): Int {
-        return 32
+        return 16
     }
 
     private fun onBoxSelected(boxId: String, boxName: String, passcode: String?) {

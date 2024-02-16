@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.CarouselListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
@@ -90,6 +91,15 @@ class HomeAdapter @Inject constructor(
                 "text_empty_boxes", activity.getString(R.string.no_boxes), height = 100.dp()
             ).attachTo(this)
         }
+
+        ButtonListModel(
+            "button_choose_box",
+            activity.getString(R.string.access_box),
+            margin = Spacing.All(16.dp(), 16.dp(), 16.dp(), 16.dp()),
+            onClick = NoHashProp(View.OnClickListener {
+                activity.requestChooseBox()
+            })
+        ).attachTo(this)
 
         SizedBoxListModel(
             "margin_bottom_recently_boxes",

@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -35,7 +36,8 @@ import javax.inject.Inject
 @ActivityScoped
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener,
+    BoxSelectionDialogFragment.OnBoxSelectedListener {
 
     override val viewModel: HomeViewModel by viewModels()
 
@@ -235,6 +237,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         createBoxResultLauncher.launch(router.boxIntent(this))
     }
 
+    fun requestChooseBox() {
+        shareHelper.showBoxSelectionDialog(supportFragmentManager)
+    }
+
     fun requestShareLink() {
         shareLinkResultLauncher.launch(router.shareLink(this))
     }
@@ -254,5 +260,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             putExtra(Intent.EXTRA_TEXT, text)
         }
         startActivity(intent)
+    }
+
+    override fun onBoxSelected(boxId: String) {
+        startActivity(router.boxDetail(this, boxId))
     }
 }

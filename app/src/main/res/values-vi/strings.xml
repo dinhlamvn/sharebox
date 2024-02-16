@@ -136,6 +136,9 @@
     <string name="downloading_all_image">Đang tải về…(%d/%d)</string>
     <string name="download_image">Download Image</string>
     <string name="create_box">Create Box</string>
+    <string name="tips_search_box">*Tip: You can type the BoxId to access a Box.</string>
+    <string name="access_box">Access a box</string>
+
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

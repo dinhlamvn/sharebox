@@ -43,19 +43,15 @@
         android:layout_height="1dp"
         app:layout_constraintTop_toBottomOf="@id/recycler_view" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_go_to_general"
-        style="@style/Widget.Material3.Button"
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTintMode="src_over"
-        android:gravity="center"
-        android:text="@string/go_to_general"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        android:text="@string/tips_search_box"
+        android:textColor="?android:textColorHint"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider_bottom" />
+        app:layout_constraintTop_toBottomOf="@id/recycler_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
