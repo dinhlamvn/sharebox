@@ -16,8 +16,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
@@ -46,16 +44,7 @@ class ShareReceiveViewModel @Inject constructor(
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
     init {
-        getLatestBox()
         getCurrentUserProfile()
-        loadBoxes()
-    }
-
-    private fun getLatestBox() = doInBackground {
-        val boxId =
-            appSharePref.getLatestActiveBoxId().takeIfNotNullOrBlank() ?: return@doInBackground
-        val box = boxRepository.findOne(boxId) ?: return@doInBackground
-        setState { copy(currentBox = box) }
     }
 
     fun getCurrentUserProfile() {
@@ -65,11 +54,6 @@ class ShareReceiveViewModel @Inject constructor(
                 ?: return@doInBackground setState { copy(showLoading = false) }
             setState { copy(activeUser = user, showLoading = false) }
         }
-    }
-
-    fun loadBoxes() = doInBackground {
-        val boxes = boxRepository.findLatestBox()
-        setState { copy(boxes = boxes) }
     }
 
     fun setShareData(shareData: ShareData) = setState { copy(shareData = shareData) }
@@ -112,9 +96,8 @@ class ShareReceiveViewModel @Inject constructor(
                     bookmarkRepository.bookmark(
                         0, insertedShare.shareId, pickedBookmarkCollectionId
                     )
-
-                    true
-                } ?: false
+                }
+                true
             } ?: false
         }.execute { saveSuccess ->
             copy(isSaveSuccess = saveSuccess, showLoading = false)
@@ -247,12 +230,6 @@ class ShareReceiveViewModel @Inject constructor(
     fun setBox(box: BoxDetail?) = getState { state ->
         if (state.currentBox != box) {
             setState { copy(currentBox = box) }
-            box?.let { nonNullBox ->
-                doInBackground {
-                    boxRepository.updateLastSeen(nonNullBox.boxId)
-                }
-                appSharePref.setLatestActiveBoxId(nonNullBox.boxId)
-            } ?: appSharePref.setLatestActiveBoxId("")
         }
     }
 
@@ -267,8 +244,12 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun setBox(boxId: String) {
         doInBackground {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setBox(null)
-            setBox(boxDetail)
+            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setState {
+                copy(
+                    currentBox = null
+                )
+            }
+            setState { copy(currentBox = boxDetail) }
         }
     }
 }

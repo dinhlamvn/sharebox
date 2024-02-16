@@ -138,6 +138,7 @@
     <string name="create_box">Create Box</string>
     <string name="tips_search_box">*Tip: You can type the BoxId to access a Box.</string>
     <string name="access_box">Access a box</string>
+    <string name="require_choose_box">Choose box to archive</string>
 
 
     <string-array name="bookmark_collection_option_menu_items">

@@ -7,10 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.ScrollView
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,13 +22,10 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
-import com.dinhlam.sharebox.databinding.MenuItemWithTextBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
@@ -42,7 +36,6 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.takeIfNotEmpty
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -78,7 +71,6 @@ class ShareReceiveActivity :
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { boxId ->
                     viewModel.setBox(boxId)
-                    viewModel.loadBoxes()
                 }
             }
         }
@@ -98,15 +90,6 @@ class ShareReceiveActivity :
 
         }
     }
-
-    private val passcodeConfirmResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                share()
-            } else {
-                showToast(R.string.error_require_passcode)
-            }
-        }
 
     @Inject
     lateinit var router: Router
@@ -216,7 +199,7 @@ class ShareReceiveActivity :
         }
 
         binding.containerButtonShare.setOnClickListener {
-            requestShare()
+            share()
         }
 
         binding.imageShareBookmark.setOnClickListener {
@@ -224,7 +207,7 @@ class ShareReceiveActivity :
         }
 
         viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
-            val boxName = currentBox?.boxName ?: getString(R.string.box_general)
+            val boxName = currentBox?.boxName
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
             binding.textShareBox.text = boxName
             binding.textShareBox.setDrawableCompat(
@@ -240,7 +223,7 @@ class ShareReceiveActivity :
         }
 
         binding.textShareBox.setOnClickListener {
-            showPopupListShareBox()
+            shareHelper.showBoxSelectionDialog(supportFragmentManager)
         }
 
         if (!userHelper.isSignedIn()) {
@@ -276,20 +259,20 @@ class ShareReceiveActivity :
         handleShareData()
     }
 
-    private fun requestShare() = getState(viewModel) { state ->
-        val boxPasscode =
-            state.currentBox?.passcode.takeIfNotNullOrBlank() ?: return@getState share()
-        val boxName = state.currentBox?.boxName ?: ""
-        val intent = router.passcodeIntent(this, boxPasscode)
-        intent.putExtra(
-            AppExtras.EXTRA_PASSCODE_DESCRIPTION,
-            getString(R.string.dialog_bookmark_collection_picker_verify_passcode, boxName)
-        )
-        passcodeConfirmResultLauncher.launch(intent)
-    }
-
-    private fun share() {
+    private fun share() = getState(viewModel) { state ->
         hideKeyboard()
+
+        if (state.currentBox == null) {
+            showToast(R.string.require_choose_box)
+            binding.containerShareBox.startAnimation(
+                AnimationUtils.loadAnimation(
+                    this,
+                    R.anim.zoom_in
+                )
+            )
+            return@getState
+        }
+
         val shareNote = binding.textInputNote.getTrimmedText()
         viewModel.share(shareNote, this@ShareReceiveActivity)
     }
@@ -367,89 +350,6 @@ class ShareReceiveActivity :
         startActivity(
             router.home()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
-    }
-
-    private fun showPopupListShareBox() = getState(viewModel) { state ->
-        val boxes =
-            state.boxes.takeIfNotEmpty()?.take(AppConsts.NUMBER_VISIBLE_BOX) ?: return@getState
-        val width = ViewGroup.LayoutParams.WRAP_CONTENT
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        val popupWindow = PopupWindow(this, null, R.attr.listPopupWindowStyle)
-        popupWindow.width = width
-        popupWindow.height = height
-        popupWindow.elevation = 10.dpF()
-        popupWindow.isOutsideTouchable = true
-
-        fun dismissPopup() {
-            if (popupWindow.isShowing) {
-                popupWindow.dismiss()
-            }
-        }
-
-        val popupView = ScrollView(this)
-        popupView.isFillViewport = true
-        popupView.layoutParams = ViewGroup.LayoutParams(width, height)
-
-        val popupContentView = LinearLayout(this)
-        val layoutParams = LinearLayout.LayoutParams(
-            width, height
-        )
-        popupContentView.orientation = LinearLayout.VERTICAL
-        popupContentView.layoutParams = layoutParams
-
-        boxes.forEach { box ->
-            MenuItemWithTextBinding.inflate(layoutInflater).apply {
-                textView.text = box.boxName
-                textView.setOnClickListener {
-                    viewModel.setBox(box)
-                    dismissPopup()
-                }
-                if (box.passcode?.isNotBlank() == true) {
-                    textView.setDrawableCompat(end = Icons.lockIcon(this@ShareReceiveActivity) {
-                        copy(
-                            sizeDp = 16
-                        )
-                    })
-                }
-                popupContentView.addView(
-                    this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-                )
-            }
-        }
-
-        MenuItemWithTextBinding.inflate(layoutInflater).apply {
-            textView.text = getString(R.string.box_general)
-            textView.setOnClickListener {
-                viewModel.setBox(null)
-                dismissPopup()
-            }
-            popupContentView.addView(
-                this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-            )
-        }
-
-        val hasViewMore = state.boxes.size > AppConsts.NUMBER_VISIBLE_BOX
-        if (hasViewMore) {
-            MenuItemWithTextBinding.inflate(layoutInflater).apply {
-                textView.text = getString(R.string.view_more)
-                textView.setOnClickListener {
-                    shareHelper.showBoxSelectionDialog(supportFragmentManager)
-                    dismissPopup()
-                }
-                popupContentView.addView(
-                    this.root, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-                )
-            }
-        }
-
-        popupView.addView(popupContentView)
-        popupWindow.contentView = popupView
-
-        popupWindow.showAsDropDown(
-            binding.containerShareBox,
-            0,
-            boxes.size.plus(if (hasViewMore) 2 else 1).times(-1).times(60).dp()
         )
     }
 
