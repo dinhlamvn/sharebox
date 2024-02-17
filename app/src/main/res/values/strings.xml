@@ -47,7 +47,7 @@
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
     <string name="shares_success">Archive successfully</string>
-    <string name="realtime_database_service_text">The data is syncing in realtime</string>
+    <string name="realtime_database_service_text">Your and others data is syncing realtime…</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
@@ -103,9 +103,9 @@
     <string name="archives">Archive</string>
     <string name="title_image_download_quality">Image quality save to Gallery</string>
     <string name="require_min_image_quality">Quality must be from %d</string>
-    <string name="title_setting_sync_background">Synchronize data in background</string>
-    <string name="message_enqueue_sync_data">Auto sync data in background every 6 hours.</string>
-    <string name="message_cancel_enqueue_sync_data">Canceled sync data in background</string>
+    <string name="title_setting_sync_background">Auto sync data</string>
+    <string name="message_enqueue_sync_data">Auto sync data to cloud everyday.</string>
+    <string name="message_cancel_enqueue_sync_data">Canceled auto sync data</string>
     <string name="downloading">Downloading</string>
     <string name="downloading_subtext">Waiting for download video</string>
     <string name="can_not_save_video">Can\'t save this video</string>
@@ -154,6 +154,8 @@
     <string name="copied">Copied</string>
     <string name="dialog_confirm_remove_share_from_bookmark">Are you sure to remove this share from this bookmark?</string>
     <string name="app_desc_more">(You must sign in before to archive content)</string>
+    <string name="auto_sync_data_desc">*Your data will be auto sync to cloud to keep it up-to-date</string>
+    <string name="running">Running…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

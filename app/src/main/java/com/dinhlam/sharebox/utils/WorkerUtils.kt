@@ -42,7 +42,7 @@ object WorkerUtils {
 
     fun enqueueJobSyncData(context: Context) {
         val syncDataWorkerRequest =
-            PeriodicWorkRequestBuilder<SyncDataWorker>(6, TimeUnit.HOURS).setId(
+            PeriodicWorkRequestBuilder<SyncDataWorker>(1, TimeUnit.DAYS).setId(
                 getWorkerSyncDataUUID()
             ).setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
@@ -106,24 +106,18 @@ object WorkerUtils {
     }
 
     fun enqueueDownloadShare(
-        context: Context,
-        shareUrl: String?,
-        shareDetail: ShareDetail? = null
+        context: Context, shareUrl: String?, shareDetail: ShareDetail? = null
     ) {
         val shareData = shareDetail?.shareData
         if (shareData is ShareData.ShareImage) {
             return enqueueDownloadImages(
-                context,
-                shareDetail.shareId,
-                listOf(shareData.uri.toString())
+                context, shareDetail.shareId, listOf(shareData.uri.toString())
             )
         }
 
         if (shareData is ShareData.ShareImages) {
             return enqueueDownloadImages(
-                context,
-                shareDetail.shareId,
-                shareData.uris.map(Uri::toString)
+                context, shareDetail.shareId, shareData.uris.map(Uri::toString)
             )
         }
 

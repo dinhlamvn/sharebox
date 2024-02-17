@@ -2,8 +2,8 @@ package com.dinhlam.sharebox.helper
 
 import androidx.annotation.IntRange
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.extensions.coerceMinMax
+import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.AppSharePref
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -58,8 +58,4 @@ class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePre
     fun isSyncDataInBackground(): Boolean {
         return appSharePref.isSyncInBackground()
     }
-
-    fun isFirstInstall(): Boolean = appSharePref.isFirstInstall()
-
-    fun offFirstInstall() = appSharePref.offFirstInstall()
 }

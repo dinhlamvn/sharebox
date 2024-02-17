@@ -120,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/network_condition_wifi_and_cellular"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+                    android:textAppearance="@style/TextBody" />
 
             </RadioGroup>
 
@@ -161,8 +161,19 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/title_setting_sync_background"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textAppearance="@style/TextBody"
                 app:layout_constraintTop_toBottomOf="@id/text_quality" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_auto_sync_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:drawablePadding="8dp"
+                android:textStyle="italic"
+                android:hint="@string/auto_sync_data_desc"
+                android:textAppearance="@style/TextCaption"
+                app:layout_constraintTop_toBottomOf="@id/checkbox_sync_in_background" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/button_sync_to_cloud"
@@ -174,8 +185,8 @@
                 android:drawablePadding="8dp"
                 android:paddingVertical="12dp"
                 android:text="@string/text_sync_to_cloud"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintTop_toBottomOf="@id/checkbox_sync_in_background" />
+                android:textAppearance="@style/TextBody"
+                app:layout_constraintTop_toBottomOf="@id/text_auto_sync_desc" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

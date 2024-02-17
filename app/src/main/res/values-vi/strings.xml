@@ -38,7 +38,7 @@
     <string name="collapsed_text">Xem thêm</string>
     <string name="expanded_text">Thu gọn</string>
     <string name="shares_success">Đã lưu trữ</string>
-    <string name="realtime_database_service_text">Dữ liệu đang được cập nhật trong thời gian thực</string>
+    <string name="realtime_database_service_text">Dữ liệu của bạn và mọi người đang đang cập nhật trong thời gian thực…</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>
@@ -134,18 +134,19 @@
     <string name="download_video">Tải thước phim</string>
     <string name="download_all_images">Tải tất cả ảnh (%d)</string>
     <string name="downloading_all_image">Đang tải về…(%d/%d)</string>
-    <string name="download_image">Download Image</string>
-    <string name="create_box">Create Box</string>
-    <string name="tips_search_box">*Tip: You can type the BoxId to access a Box.</string>
-    <string name="access_box">Access a box</string>
-    <string name="require_choose_box">Choose box to archive</string>
-    <string name="newest_box">Newest Boxes</string>
-    <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook…video link to dowload that content</string>
-    <string name="share_link_guide">* Choose the box to go above\n* Type or select the website\n* Then you can archive website to that box</string>
-    <string name="copied">Copied</string>
-    <string name="dialog_confirm_remove_share_from_bookmark">Are you sure to remove this share from this bookmark?</string>
-    <string name="app_desc_more">(You must sign in before to archive content)</string>
-
+    <string name="download_image">Tải ảnh</string>
+    <string name="create_box">Tạo Box</string>
+    <string name="tips_search_box">*Mẹo: Bạn có thể nhập mã box để truy cập vào Box.</string>
+    <string name="access_box">Truy cập Box</string>
+    <string name="require_choose_box">Chọn box để lưu trữ</string>
+    <string name="newest_box">Box mới nhất</string>
+    <string name="tips_share_link">*Mẹo: Bạn có thể nhập đường dẫn video của Youtube, TikTok, Facebook… để tải các nội dung đó.</string>
+    <string name="share_link_guide">* Chọn một Box phía trên để đi\n* Nhập hoặc chọn trang web\n* Sau đó bạn có thể lưu trữ địa chỉ trang vào Box.</string>
+    <string name="copied">Đã sao chép</string>
+    <string name="dialog_confirm_remove_share_from_bookmark">Bạn có chắc muốn xóa nội dung này khỏi đánh dấu?</string>
+    <string name="app_desc_more">(Bạn cần phải đăng nhập trước để có thể lưu trữ nội dung)</string>
+    <string name="auto_sync_data_desc">Dữ liệu của bạn sẽ được tự động đồng bộ để luôn là mới nhất</string>
+    <string name="running">Đang chạy…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
@@ -154,10 +155,9 @@
     </string-array>
 
     <string-array name="more_menu">
-        <item>Share to other…</item>
-        <item>Download</item>
-        <item>Bookmark</item>
-        <item>Copy box\'s ID</item>
+        <item>Chia sẻ tới…</item>
+        <item>Tải nội dung</item>
+        <item>Đánh dấu</item>
+        <item>Sao chép mã Box</item>
     </string-array>
-
 </resources>
