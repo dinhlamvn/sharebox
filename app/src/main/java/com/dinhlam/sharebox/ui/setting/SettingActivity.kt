@@ -165,7 +165,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             .setMessage(R.string.sign_out_confirm_message)
             .setPositiveButton(R.string.sign_out) { _, _ ->
                 userHelper.signOut(this, {
-                    startActivity(router.home(true))
+                    startActivity(router.signIn())
                 }, {
                     showToast(R.string.logged_out_error)
                 })
