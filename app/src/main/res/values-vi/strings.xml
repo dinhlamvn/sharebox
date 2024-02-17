@@ -125,6 +125,9 @@
     <string name="app_desc_more">(Bạn cần phải đăng nhập trước để có thể lưu trữ nội dung)</string>
     <string name="auto_sync_data_desc">Dữ liệu của bạn sẽ được tự động đồng bộ để luôn là mới nhất</string>
     <string name="running">Đang chạy…</string>
+    <string name="desc">Mô tả</string>
+    <string name="desc_box_hint">Box này là gì? Nó để làm gì?…</string>
+    <string name="passcode_desc">*Bảo vệ nội dung của bạn để hạn chế người khác có thể truy cập chúng.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

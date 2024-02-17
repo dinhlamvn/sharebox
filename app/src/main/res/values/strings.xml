@@ -134,6 +134,9 @@
     <string name="app_desc_more">(You must sign in before to archive content)</string>
     <string name="auto_sync_data_desc">*Your data will be auto sync to cloud to keep it up-to-date</string>
     <string name="running">Running…</string>
+    <string name="desc">Description</string>
+    <string name="desc_box_hint">What is this Box? What does it to do?…</string>
+    <string name="passcode_desc">*Secure your content to restrict other people access those.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
