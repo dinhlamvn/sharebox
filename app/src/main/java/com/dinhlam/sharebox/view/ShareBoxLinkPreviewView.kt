@@ -69,7 +69,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     )
 
     private fun resetUi() {
-        binding.textViewUrl.text = null
+        binding.textViewUrl.hint = null
         binding.textViewTitle.text = null
         binding.imageView.setImageDrawable(null)
         binding.frameLoading.isVisible = true
@@ -104,14 +104,14 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
             ) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
-            binding.textViewUrl.text = openGraphResult.url?.trimToDomain()
+            binding.textViewUrl.hint = openGraphResult.url?.trimToDomain()
             binding.textViewTitle.text = openGraphResult.title
             binding.frameLoading.isVisible = false
         }
 
     private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
         ImageLoader.INSTANCE.load(context, R.drawable.image_no_preview, binding.imageView)
-        binding.textViewUrl.text = url
+        binding.textViewUrl.hint = url
         binding.frameLoading.isVisible = false
     }
 
