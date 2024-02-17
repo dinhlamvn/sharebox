@@ -117,8 +117,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="?colorSurface">
+        android:elevation="10dp"
+        android:layout_gravity="bottom">
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider_bottom"
