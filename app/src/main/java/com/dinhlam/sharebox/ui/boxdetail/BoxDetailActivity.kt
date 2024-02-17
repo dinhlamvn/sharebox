@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
@@ -117,8 +118,27 @@ class BoxDetailActivity :
         shareHelper.viewShareImage(this, shareId, uri)
     }
 
-    private fun onOpen(shareId: String) {
+    private fun onOpen(shareId: String) = getState(viewModel) { state ->
+        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
+            ?: return@getState
+        openShare(share)
+    }
 
+    private fun openShare(share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareText -> {
+                shareHelper.openTextViewerDialog(this, shareData.text)
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                this, share.shareId, shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                this, share.shareId, shareData.uris
+            )
+        }
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

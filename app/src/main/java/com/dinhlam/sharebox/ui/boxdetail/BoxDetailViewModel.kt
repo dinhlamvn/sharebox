@@ -31,10 +31,11 @@ class BoxDetailViewModel @Inject constructor(
 ) : BaseViewModel<BoxDetailState>(BoxDetailState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))) {
 
     init {
-        consume(BoxDetailState::boxId) { boxId ->
-            boxRepository.updateLastSeen(boxId)
-            loadShares(boxId)
-
+        consume(BoxDetailState::boxDetail) { boxDetail ->
+            boxDetail?.let { box ->
+                boxRepository.updateLastSeen(box.boxId)
+                loadShares(box.boxId)
+            }
         }
         loadBoxDetail()
     }
