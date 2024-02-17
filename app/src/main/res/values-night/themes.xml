@@ -39,4 +39,15 @@
     <style name="AppMaterialCardView" parent="Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">@color/md_theme_dark_background</item>
     </style>
+
+    <style name="MaterialCardView.TopLeftRightCorners" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeCardViewTopLeftRightCorners</item>
+    </style>
+
+    <style name="ShapeCardViewTopLeftRightCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">20dp</item>
+        <item name="cornerSizeTopLeft">20dp</item>
+    </style>
+
 </resources>
