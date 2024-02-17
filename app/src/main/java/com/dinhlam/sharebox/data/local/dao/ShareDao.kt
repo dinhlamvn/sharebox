@@ -42,7 +42,7 @@ interface ShareDao {
         SELECT s.* 
         FROM share as s 
         LEFT JOIN box as b ON b.box_id = s.share_box_id
-        WHERE s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL) OR s.share_user_id = :shareUserId
+        WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)) AND s.share_user_id = :shareUserId
         ORDER BY s.share_date DESC 
         LIMIT :limit 
         OFFSET :offset"""

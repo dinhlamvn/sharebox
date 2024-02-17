@@ -9,10 +9,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BoxSelectionDialogViewModel @Inject constructor(
-    private val boxRepository: BoxRepository,
-    private val userHelper: UserHelper
-) :
-    BaseViewModel<BoxSelectionDialogState>(BoxSelectionDialogState()) {
+    private val boxRepository: BoxRepository, private val userHelper: UserHelper
+) : BaseViewModel<BoxSelectionDialogState>(BoxSelectionDialogState()) {
 
     init {
         getListBoxes()
@@ -24,7 +22,8 @@ class BoxSelectionDialogViewModel @Inject constructor(
         suspend {
             boxRepository.findByUser(
                 userHelper.getCurrentUserId(),
-                AppConsts.NUMBER_VISIBLE_BOX, state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
+                AppConsts.NUMBER_VISIBLE_BOX,
+                state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
         }.execute { boxes ->
             copy(boxes = boxes, isLoading = false, currentPage = currentPage + 1)
@@ -47,13 +46,12 @@ class BoxSelectionDialogViewModel @Inject constructor(
         suspend {
             boxRepository.findByUser(
                 userHelper.getCurrentUserId(),
-                AppConsts.NUMBER_VISIBLE_BOX, state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
+                AppConsts.NUMBER_VISIBLE_BOX,
+                state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
-        }.execute {
+        }.execute { list ->
             copy(
-                boxes = this.boxes.plus(boxes),
-                currentPage = currentPage + 1,
-                isLoadingMore = false
+                boxes = this.boxes.plus(list), currentPage = currentPage + 1, isLoadingMore = false
             )
         }
     }
@@ -61,8 +59,7 @@ class BoxSelectionDialogViewModel @Inject constructor(
     fun search(query: String) {
         if (query.isEmpty()) return setState {
             copy(
-                searchBoxes = emptyList(),
-                isSearching = false
+                searchBoxes = emptyList(), isSearching = false
             )
         }
         doInBackground {
