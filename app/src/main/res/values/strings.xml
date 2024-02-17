@@ -3,7 +3,6 @@
     <string name="share_activity_title">Archive</string>
     <string name="share_direct_download_activity_title">Download</string>
     <string name="text_input_note_hint_desc">What\'s this?</string>
-    <string name="view_more">More…</string>
     <string name="confirmation">Confirmation</string>
 
     <!-- Facebook declare -->
@@ -40,7 +39,6 @@
     <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
     <string name="dialog_confirm">Confirmation</string>
-    <string name="dialog_confirm_remove_bookmark">Are you sure to remove this bookmark?</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="bookmark_collection_delete_confirm_message">Are you sure to delete this collection?</string>
@@ -82,19 +80,6 @@
     <string name="require_input_link">Please input the link to archive</string>
     <string name="require_input_text_quote">Please input the text quote to archive</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
-    <string name="title_guideline_other_app">From other apps (Example Youtube)</string>
-    <string name="title_guideline_other_app_step_1">Step 1. Click on Share button from other apps</string>
-    <string name="title_guideline_other_app_step_2">Step 2. Choose Sharebox app from the dialog</string>
-    <string name="title_guideline_in_app">From in app</string>
-    <string name="title_guideline_in_app_step_1">Step 1. Toggle the options menu in Home</string>
-    <string name="title_guideline_in_app_step_2">Step 2. Choose the action to move forward</string>
-    <string name="go_to_general">Go to General</string>
-    <string name="error_save_video_to_gallery">An error occurred when save video to Gallery</string>
-    <string name="success_save_video_to_gallery">Save video to Gallery successfully</string>
-    <string name="title_guideline_other_app_tiktok">From Tiktok</string>
-    <string name="title_other_app_tiktok_step_1">Step 1. Click on Share button in Tiktok</string>
-    <string name="title_other_app_tiktok_step_2">Step 2. Click More button (***) and choose Sharebox app in the dialog</string>
-    <string name="title_other_app_tiktok_step_3">Step 3. Navigate to app. Now, you can preview and save video to Gallery</string>
     <string name="synchronize_data_message">Synchronizing data…</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_message">Sign in to reach more features in app: archive a content, comment, like,…</string>
@@ -107,12 +92,8 @@
     <string name="message_enqueue_sync_data">Auto sync data to cloud everyday.</string>
     <string name="message_cancel_enqueue_sync_data">Canceled auto sync data</string>
     <string name="downloading">Downloading</string>
-    <string name="downloading_subtext">Waiting for download video</string>
-    <string name="can_not_save_video">Can\'t save this video</string>
     <string name="download_preparing">Preparing…</string>
     <string name="cancel">Cancel</string>
-    <string name="success_save_audio_to_gallery">Save audio to gallery success</string>
-    <string name="error_save_audio_to_gallery">An error occurred while download audio</string>
     <string name="limit_share_image">We just allow archive maximum 10 images in time</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
     <string name="sync_data_share_to_cloud">Syncing data to cloud…</string>
@@ -120,10 +101,8 @@
     <string name="alert_notice">Notice</string>
     <string name="alert_request_post_notification_permission_message">App needs POST NOTIFICATION permission to display notifications until do some jobs: sync data, download network contents,…</string>
     <string name="alert_no_thanks">No, thanks</string>
-    <string name="your_boxes">Your Boxes</string>
     <string name="sync_data_done_first_install">Sync data is done…</string>
     <string name="error_save_image_to_gallery">Error save image to gallery</string>
-    <string name="downloading_image">Waiting for download image</string>
     <string name="distribute_images_content">Distributing images to other people</string>
     <string name="distribute_images_title">Distribute images</string>
     <string name="complete_progress">Completed (%s)</string>
@@ -133,7 +112,6 @@
     <string name="web">Web</string>
     <string name="images">Images</string>
     <string name="recently_shares">Recently Shares</string>
-    <string name="general_shares">People\'s shares</string>
     <string name="no_boxes">No boxes</string>
     <string name="desc_image">This is an image</string>
     <string name="go">Go</string>
@@ -146,7 +124,7 @@
     <string name="downloading_all_image">Downloading…(%d/%d)</string>
     <string name="create_box">Create Box</string>
     <string name="tips_search_box">*Tip: You can type the box\'s id to access a Box.</string>
-    <string name="access_box">Access a box</string>
+    <string name="access_box">Access Box</string>
     <string name="require_choose_box">Choose box to archive</string>
     <string name="newest_box">Newest Boxes</string>
     <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook…video link to download that content</string>

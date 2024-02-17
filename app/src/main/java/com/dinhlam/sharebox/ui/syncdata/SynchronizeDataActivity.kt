@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,8 +68,7 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.POST_NOTIFICATIONS
+                    this, android.Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 goNext()
@@ -88,8 +86,6 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
         activityScope.launch(Dispatchers.IO) {
             try {
                 if (appSharePref.isFirstInstall()) {
-                    appSettingHelper.setSyncDataInBackground(true)
-                    WorkerUtils.enqueueJobSyncData(applicationContext)
                     realtimeDatabaseRepository.sync()
                     appSharePref.offFirstInstall()
                     withContext(Dispatchers.Main) {
@@ -124,17 +120,13 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
     private fun showAlertDialog() {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.alert_notice)
+        AlertDialog.Builder(this).setTitle(R.string.alert_notice)
             .setMessage(R.string.alert_request_post_notification_permission_message)
             .setPositiveButton(R.string.dialog_ok) { _, _ ->
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            }
-            .setNegativeButton(R.string.alert_no_thanks) { _, _ ->
+            }.setNegativeButton(R.string.alert_no_thanks) { _, _ ->
                 goNext()
-            }
-            .create()
-            .show()
+            }.create().show()
 
     }
 }
