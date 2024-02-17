@@ -143,6 +143,7 @@
     <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook…video link to dowload that content</string>
     <string name="share_link_guide">* Choose the box to go above\n* Type or select the website\n* Then you can archive website to that box</string>
     <string name="copied">Copied</string>
+    <string name="dialog_confirm_remove_share_from_bookmark">Are you sure to remove this share from this bookmark?</string>
 
 
     <string-array name="bookmark_collection_option_menu_items">

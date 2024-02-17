@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
+import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
@@ -213,5 +214,9 @@ class AppRouter constructor(private val context: Context) : Router {
         ).putParcelableArrayListExtra(
             AppExtras.EXTRA_DOWNLOAD_IMAGES, arrayListOf(*images.toTypedArray())
         ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    }
+
+    override fun bookmark(context: Context): Intent {
+        return Intent(context, BookmarkActivity::class.java)
     }
 }

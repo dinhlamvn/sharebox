@@ -7,9 +7,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -18,6 +20,7 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
+import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.cast
@@ -45,6 +48,25 @@ class ShareHelper @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val userHelper: UserHelper,
 ) {
+
+    fun showMore(activity: FragmentActivity, share: ShareDetail) {
+        val arrayIcons = arrayOf(
+            "faw_share", "faw_download", "faw_bookmark", "faw_copy"
+        )
+        val choiceItems =
+            activity.resources.getStringArray(R.array.more_menu)
+                .mapIndexed { index, text ->
+                    SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                        arrayIcons[index], text
+                    )
+                }.toTypedArray()
+
+        SingleChoiceBottomSheetDialogFragment.showOptionMenu(
+            activity.supportFragmentManager,
+            choiceItems,
+            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
+        )
+    }
 
     fun shareToOther(share: ShareDetail) {
         val intent = Intent(Intent.ACTION_SEND)

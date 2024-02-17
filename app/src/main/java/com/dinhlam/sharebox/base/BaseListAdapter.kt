@@ -227,7 +227,7 @@ abstract class BaseListAdapter constructor(
         }
 
         override fun areContentsTheSame(oldItem: BaseListModel, newItem: BaseListModel): Boolean {
-            return newItem.areContentsTheSame(newItem)
+            return oldItem.areContentsTheSame(newItem)
         }
     }
 }

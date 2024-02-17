@@ -79,9 +79,6 @@ class BoxDetailActivity :
                         boxDetail = shareDetail.boxDetail,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
-                        actionLike = ::onLike,
-                        actionComment = ::onComment,
-                        actionBookmark = ::onBookmark,
                         actionViewImage = ::viewImage,
                         actionViewImages = ::viewImages
                     ).attachTo(this)
@@ -149,15 +146,7 @@ class BoxDetailActivity :
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.shareToOther(share)
-    }
-
-    private fun onLike(shareId: String) {
-        if (!userHelper.isSignedIn()) {
-            startActivity(router.signIn())
-            return
-        }
-        viewModel.like(shareId)
+        shareHelper.showMore(this, share)
     }
 
     private fun onBookmark(shareId: String) {

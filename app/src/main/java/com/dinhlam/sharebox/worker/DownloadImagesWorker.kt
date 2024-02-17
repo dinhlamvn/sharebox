@@ -67,7 +67,13 @@ class DownloadImagesWorker @AssistedInject constructor(
                                 val uri = FileUtils.getUriFromFile(appContext, outputFile)
                                 localStorageHelper.saveImageToGallery(uri, albumName)
                                 localStorageHelper.cleanUp(uri)
-                                setForeground(createForegroundInfo(notificationId, size, ++downloaded))
+                                setForeground(
+                                    createForegroundInfo(
+                                        notificationId,
+                                        size,
+                                        ++downloaded
+                                    )
+                                )
                             }
                         }
                     } else {
@@ -78,7 +84,13 @@ class DownloadImagesWorker @AssistedInject constructor(
                                     val uri = FileUtils.getUriFromFile(appContext, outputFile)
                                     localStorageHelper.saveImageToGallery(uri, albumName)
                                     localStorageHelper.cleanUp(uri)
-                                    setForeground(createForegroundInfo(notificationId, size, ++downloaded))
+                                    setForeground(
+                                        createForegroundInfo(
+                                            notificationId,
+                                            size,
+                                            ++downloaded
+                                        )
+                                    )
                                 }
                             }
                         }

@@ -14,10 +14,13 @@ class BookmarkViewModel @Inject constructor(
         loadBookmarkCollections()
     }
 
-    private fun loadBookmarkCollections() = doInBackground {
+    private fun loadBookmarkCollections() {
         setState { copy(isRefreshing = true) }
-        val bookmarkCollections = bookmarkCollectionRepository.find()
-        setState { copy(bookmarkCollections = bookmarkCollections, isRefreshing = false) }
+        doInBackground {
+            suspend { bookmarkCollectionRepository.find() }.execute { list ->
+                copy(bookmarkCollections = list, isRefreshing = false)
+            }
+        }
     }
 
     fun doOnRefresh() {

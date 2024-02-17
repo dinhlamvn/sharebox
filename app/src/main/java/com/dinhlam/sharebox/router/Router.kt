@@ -47,4 +47,6 @@ interface Router {
 
     fun shareLink(context: Context): Intent
     fun downloadPopup(context: Context, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>): Intent
+
+    fun bookmark(context: Context): Intent
 }

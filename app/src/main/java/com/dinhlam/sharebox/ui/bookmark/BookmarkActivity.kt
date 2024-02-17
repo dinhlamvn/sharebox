@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -137,7 +138,9 @@ class BookmarkActivity :
                 state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
 
             val arrayIcons = arrayOf(
-                "\uf07c", "\uf044", "\uf1f8"
+                FontAwesome.Icon.faw_bookmark.name,
+                FontAwesome.Icon.faw_edit.name,
+                FontAwesome.Icon.faw_trash.name
             )
             val choiceItems =
                 resources.getStringArray(R.array.bookmark_collection_option_menu_items)

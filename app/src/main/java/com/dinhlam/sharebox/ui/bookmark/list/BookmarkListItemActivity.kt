@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.bookmark.list
 
 import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,20 +13,24 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
+import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareListModel
-import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
-import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.listmodel.SizedBoxListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -33,7 +38,8 @@ import kotlin.math.absoluteValue
 
 @AndroidEntryPoint
 class BookmarkListItemActivity :
-    BaseViewModelActivity<BookmarkListItemState, BookmarkListItemViewModel, ActivityBookmarkListItemBinding>() {
+    BaseViewModelActivity<BookmarkListItemState, BookmarkListItemViewModel, ActivityBookmarkListItemBinding>(),
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
     override fun onCreateViewBinding(): ActivityBookmarkListItemBinding {
         return ActivityBookmarkListItemBinding.inflate(layoutInflater)
@@ -49,7 +55,7 @@ class BookmarkListItemActivity :
             if (state.shares.isEmpty()) {
                 TextListModel("text_empty", "No shares").attachTo(this)
             } else {
-                val models = state.shares.map { shareDetail ->
+                state.shares.forEach { shareDetail ->
                     shareDetail.shareData.buildShareListModel(
                         screenHeight(),
                         shareDetail.shareId,
@@ -63,16 +69,8 @@ class BookmarkListItemActivity :
                         boxDetail = shareDetail.boxDetail,
                         actionOpen = ::onOpen,
                         actionShareToOther = ::onShareToOther,
-                        actionLike = ::onLike,
-                        actionComment = ::onComment,
-                        actionBookmark = ::onBookmark
-                    )
-                }
-                models.forEach { model ->
-                    model.attachTo(this)
-                    SizedBoxListModel(
-                        "divider_${model.modelId}",
-                        height = 8.dp(),
+                        actionViewImage = ::viewImage,
+                        actionViewImages = ::viewImages
                     ).attachTo(this)
                 }
             }
@@ -160,29 +158,66 @@ class BookmarkListItemActivity :
         passcodeConfirmResultLauncher.launch(intent)
     }
 
-    private fun onOpen(shareId: String) {
+    private fun onOpen(shareId: String) = getState(viewModel) { state ->
+        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
+            ?: return@getState
+        openShare(share)
+    }
 
+    private fun openShare(share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareText -> {
+                shareHelper.openTextViewerDialog(this, shareData.text)
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                this, share.shareId, shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                this, share.shareId, shareData.uris
+            )
+        }
+    }
+
+    private fun viewImages(shareId: String, uris: List<Uri>) {
+        shareHelper.viewShareImages(this, shareId, uris)
+    }
+
+    private fun viewImage(shareId: String, uri: Uri) {
+        shareHelper.viewShareImage(this, shareId, uri)
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.shareToOther(share)
-    }
-
-    private fun onLike(shareId: String) {
-        viewModel.like(shareId)
+        shareHelper.showMore(this, share)
     }
 
     private fun onBookmark(shareId: String) {
         MaterialAlertDialogBuilder(this).setTitle(R.string.dialog_confirm)
-            .setMessage(R.string.dialog_confirm_remove_bookmark)
+            .setMessage(R.string.dialog_confirm_remove_share_from_bookmark)
             .setPositiveButton(R.string.dialog_ok) { _, _ ->
                 viewModel.removeBookmark(shareId)
             }.setNegativeButton(R.string.dialog_cancel, null).show()
     }
 
-    private fun onComment(shareId: String) {
-        shareHelper.showCommentDialog(supportFragmentManager, shareId)
+    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+        getState(viewModel) { state ->
+            val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
+            val share =
+                state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+
+            when (position) {
+                0 -> shareHelper.shareToOther(share)
+                1 -> WorkerUtils.enqueueDownloadShare(
+                    this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
+                )
+
+                2 -> onBookmark(shareId)
+                3 -> copy(share.boxDetail?.boxId)
+            }
+        }
     }
 }

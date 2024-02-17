@@ -245,22 +245,5 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         startActivity(router.boxDetail(this, boxId))
     }
 
-    fun showMore(share: ShareDetail) {
-        val arrayIcons = arrayOf(
-            "faw_share", "faw_download", "faw_bookmark", "faw_copy"
-        )
-        val choiceItems =
-            resources.getStringArray(R.array.more_menu)
-                .mapIndexed { index, text ->
-                    SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
-                        arrayIcons[index], text
-                    )
-                }.toTypedArray()
 
-        SingleChoiceBottomSheetDialogFragment.showOptionMenu(
-            supportFragmentManager,
-            choiceItems,
-            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
-        )
-    }
 }
