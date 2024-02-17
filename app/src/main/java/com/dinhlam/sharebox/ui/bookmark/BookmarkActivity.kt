@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFra
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.helper.BookmarkHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.bookmark.BookmarkCollectionListModel
@@ -79,7 +78,9 @@ class BookmarkActivity :
             }
 
             if (state.bookmarkCollections.isEmpty() && !state.isRefreshing) {
-                TextListModel("text_empty", getString(R.string.no_bookmark_collections)).attachTo(this)
+                TextListModel("text_empty", getString(R.string.no_bookmark_collections)).attachTo(
+                    this
+                )
             } else if (state.bookmarkCollections.isNotEmpty()) {
                 state.bookmarkCollections.forEachIndexed { idx, bookmarkCollection ->
                     BookmarkCollectionListModel(
@@ -102,9 +103,6 @@ class BookmarkActivity :
 
     @Inject
     lateinit var router: Router
-
-    @Inject
-    lateinit var bookmarkHelper: BookmarkHelper
 
     override val viewModel: BookmarkViewModel by viewModels()
 
@@ -139,7 +137,7 @@ class BookmarkActivity :
                 state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
 
             val arrayIcons = arrayOf(
-                R.drawable.ic_open, R.drawable.ic_edit, R.drawable.ic_delete
+                "\uf07c", "\uf044", "\uf1f8"
             )
             val choiceItems =
                 resources.getStringArray(R.array.bookmark_collection_option_menu_items)
@@ -149,7 +147,7 @@ class BookmarkActivity :
                         )
                     }.toTypedArray()
 
-            bookmarkHelper.showOptionMenu(
+            SingleChoiceBottomSheetDialogFragment.showOptionMenu(
                 supportFragmentManager,
                 choiceItems,
                 bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail)

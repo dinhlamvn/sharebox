@@ -65,7 +65,7 @@ data class ShareImageListModel(
             binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
-            binding.imageShareTo.setImageDrawable(Icons.shareIcon(buildContext))
+            binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
         }
 
         override fun onBind(model: ShareImageListModel, position: Int) {
@@ -80,7 +80,7 @@ data class ShareImageListModel(
                 model.actionBoxClick.prop?.invoke(model.boxDetail)
             }
 
-            binding.imageShareTo.setOnClickListener {
+            binding.imageAction.setOnClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareId)
             }
 

@@ -66,7 +66,7 @@ data class ShareTextListModel(
             })
             binding.imageQuoteLeft.setImageDrawable(Icons.quoteLeftIcon(buildContext))
             binding.imageQuoteRight.setImageDrawable(Icons.quoteRightIcon(buildContext))
-            binding.imageShareTo.setImageDrawable(Icons.shareIcon(buildContext))
+            binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
         }
 
         override fun onBind(model: ShareTextListModel, position: Int) {
@@ -81,7 +81,7 @@ data class ShareTextListModel(
                 model.actionBoxClick.prop?.invoke(model.boxDetail)
             }
 
-            binding.imageShareTo.setOnClickListener {
+            binding.imageAction.setOnClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareId)
             }
 

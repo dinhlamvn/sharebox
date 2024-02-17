@@ -32,6 +32,18 @@ object Icons {
         }
     }
 
+    fun icon(
+        context: Context,
+        code: String,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(
+            context,
+            FontAwesome.getIcon(code),
+            block(IconBuilder(context))
+        )
+    }
+
     fun settingIcon(
         context: Context
     ): IconicsDrawable {

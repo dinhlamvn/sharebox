@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.worker
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -29,14 +30,14 @@ class DownloadImagesWorker @AssistedInject constructor(
     private val localStorageHelper: LocalStorageHelper
 ) : CoroutineWorker(appContext, workerParams) {
 
-    private val notiId = Random.nextInt()
+    private val notificationId = Random.nextInt()
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return createForegroundInfo(notiId, 0, 0)
+        return createForegroundInfo(notificationId, 0, 0)
     }
 
     override suspend fun doWork(): Result {
-        setForeground(createForegroundInfo(notiId, 0, 0))
+        setForeground(createForegroundInfo(notificationId, 0, 0))
         return withContext(Dispatchers.IO) {
             val id = workerParams.inputData.getString(AppExtras.EXTRA_ID)
             val urls = workerParams.inputData.getStringArray(AppExtras.EXTRA_DOWNLOAD_IMAGES)
@@ -52,20 +53,33 @@ class DownloadImagesWorker @AssistedInject constructor(
             var downloaded = 0
 
             urls.forEachIndexed { index, url ->
-                val outputFile = File(outputDir, "image_${id}_$index.jpg")
+                val outputFile =
+                    File(outputDir, "sharebox_image_${id}_${System.currentTimeMillis()}_$index.jpg")
                 if (outputFile.exists()) {
                     outputFile.delete()
                 }
 
                 try {
-                    sssTikServices.downloadFile(url).use { body ->
-                        body.byteStream().use { bs ->
+                    if (url.startsWith("content://")) {
+                        appContext.contentResolver.openInputStream(Uri.parse(url))?.use { ips ->
                             outputFile.outputStream().use { os ->
-                                bs.copyTo(os)
+                                ips.copyTo(os)
                                 val uri = FileUtils.getUriFromFile(appContext, outputFile)
                                 localStorageHelper.saveImageToGallery(uri, albumName)
                                 localStorageHelper.cleanUp(uri)
-                                setForeground(createForegroundInfo(notiId, size, ++downloaded))
+                                setForeground(createForegroundInfo(notificationId, size, ++downloaded))
+                            }
+                        }
+                    } else {
+                        sssTikServices.downloadFile(url).use { body ->
+                            body.byteStream().use { bs ->
+                                outputFile.outputStream().use { os ->
+                                    bs.copyTo(os)
+                                    val uri = FileUtils.getUriFromFile(appContext, outputFile)
+                                    localStorageHelper.saveImageToGallery(uri, albumName)
+                                    localStorageHelper.cleanUp(uri)
+                                    setForeground(createForegroundInfo(notificationId, size, ++downloaded))
+                                }
                             }
                         }
                     }

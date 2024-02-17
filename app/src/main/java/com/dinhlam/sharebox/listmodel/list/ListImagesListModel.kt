@@ -13,9 +13,9 @@ import com.dinhlam.sharebox.databinding.ListModelShareImagesBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.UserDetail
-import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.utils.Icons
 
@@ -85,7 +85,7 @@ data class ListImagesListModel(
         private val models = mutableListOf<ImageListModel>()
 
         init {
-            binding.imageShareTo.setImageDrawable(Icons.shareIcon(buildContext))
+            binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
             binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {
                 copy(sizeDp = 16)
             })
@@ -114,7 +114,7 @@ data class ListImagesListModel(
                 model.actionBoxClick.prop?.invoke(model.boxDetail)
             }
 
-            binding.imageShareTo.setOnClickListener {
+            binding.imageAction.setOnClickListener {
                 model.actionShareToOther.prop?.invoke(model.shareId)
             }
 

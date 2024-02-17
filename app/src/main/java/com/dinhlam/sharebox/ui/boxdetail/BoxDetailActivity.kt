@@ -6,9 +6,13 @@ import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareListModel
+import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -17,17 +21,18 @@ import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>(),
-    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
+    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
+    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
     override fun onCreateViewBinding(): ActivityBoxDetailBinding {
         return ActivityBoxDetailBinding.inflate(layoutInflater)
     }
@@ -171,7 +176,21 @@ class BoxDetailActivity :
         viewModel.bookmark(shareId, bookmarkCollectionId)
     }
 
-    private fun viewInSource(videoSource: VideoSource, shareData: ShareData) {
-        shareHelper.viewInSource(this, videoSource, shareData)
+    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+        getState(viewModel) { state ->
+            val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
+            val share =
+                state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+
+            when (position) {
+                0 -> shareHelper.shareToOther(share)
+                1 -> WorkerUtils.enqueueDownloadShare(
+                    this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
+                )
+
+                2 -> onBookmark(shareId)
+                3 -> copy(share.boxDetail?.boxId)
+            }
+        }
     }
 }

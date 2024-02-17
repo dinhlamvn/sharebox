@@ -36,7 +36,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
 
-    private val notiId = Random.nextInt()
+    private val notificationId = Random.nextInt()
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return createForegroundInfo()
@@ -142,7 +142,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
 
     private fun createForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
-            workerParams.inputData.getInt("id", notiId),
+            workerParams.inputData.getInt("id", notificationId),
             NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
                 .setContentText(appContext.getString(R.string.download_preparing))
                 .setAutoCancel(false)

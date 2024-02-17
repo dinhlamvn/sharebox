@@ -161,7 +161,7 @@ class HomeAdapter @Inject constructor(
     private fun onShareToOther(shareId: String) = activity.getState(viewModel) { state ->
         val share =
             state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.shareToOther(share)
+        activity.showMore(share)
     }
 
     private fun onBoxClicked(boxId: String) {

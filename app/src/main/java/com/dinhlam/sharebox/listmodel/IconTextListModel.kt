@@ -1,10 +1,10 @@
 package com.dinhlam.sharebox.listmodel
 
+import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
 import androidx.annotation.GravityInt
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
@@ -16,7 +16,7 @@ import com.dinhlam.sharebox.extensions.setTextAppearanceCompat
 
 data class IconTextListModel(
     val id: String,
-    @DrawableRes val icon: Int,
+    val icon: Drawable?,
     val text: String,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,

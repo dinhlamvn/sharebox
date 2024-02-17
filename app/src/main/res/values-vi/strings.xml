@@ -140,14 +140,22 @@
     <string name="access_box">Access a box</string>
     <string name="require_choose_box">Choose box to archive</string>
     <string name="newest_box">Newest Boxes</string>
-    <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook...video link to dowload that content</string>
+    <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook…video link to dowload that content</string>
     <string name="share_link_guide">* Choose the box to go above\n* Type or select the website\n* Then you can archive website to that box</string>
+    <string name="copied">Copied</string>
 
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
         <item>Sửa</item>
         <item>Xóa</item>
+    </string-array>
+
+    <string-array name="more_menu">
+        <item>Share to other…</item>
+        <item>Download</item>
+        <item>Bookmark</item>
+        <item>Copy box\'s ID</item>
     </string-array>
 
 </resources>

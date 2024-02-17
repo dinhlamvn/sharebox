@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.extensions
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,9 +11,11 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.os.VibrationEffect
 import android.os.VibratorManager
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import com.dinhlam.sharebox.R
 import java.io.Serializable
 
 inline fun <reified R> Any?.cast(): R? {
@@ -115,4 +119,11 @@ inline fun Context.ifPermissionGranted(permission: String, block: () -> Unit) {
 
 fun Context.getColorCompat(@ColorRes colorRes: Int) = ContextCompat.getColor(this, colorRes)
 
-fun Context.getDrawableCompat(@DrawableRes drawableRes: Int) = ContextCompat.getDrawable(this, drawableRes)
+fun Context.getDrawableCompat(@DrawableRes drawableRes: Int) =
+    ContextCompat.getDrawable(this, drawableRes)
+
+fun Context.copy(text: String?) {
+    val clipboard = getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
+    clipboard.setPrimaryClip(ClipData.newPlainText("sharebox", text))
+    Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show()
+}

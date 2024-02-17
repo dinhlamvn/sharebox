@@ -8,7 +8,9 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
@@ -16,6 +18,7 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -174,20 +177,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
             when (position) {
                 0 -> shareHelper.shareToOther(share)
-                1 -> onBookmark(shareId)
-                2 -> WorkerUtils.enqueueDownloadShare(
-                    this, share.shareData.cast<ShareData.ShareUrl>()?.url
+                1 -> WorkerUtils.enqueueDownloadShare(
+                    this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
                 )
 
-                3 -> onOpen(shareId)
+                2 -> onBookmark(shareId)
+                3 -> copy(share.boxDetail?.boxId)
             }
         }
-    }
-
-    private fun onOpen(shareId: String) = getState(viewModel) { state ->
-        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
-            ?: return@getState
-        openShare(share)
     }
 
     fun openShare(share: ShareDetail) {
@@ -215,7 +212,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
     }
 
-    fun requestCreateBox() {
+    private fun requestCreateBox() {
         createBoxResultLauncher.launch(router.boxIntent(this))
     }
 
@@ -246,5 +243,24 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onBoxSelected(boxId: String) {
         startActivity(router.boxDetail(this, boxId))
+    }
+
+    fun showMore(share: ShareDetail) {
+        val arrayIcons = arrayOf(
+            "faw_share", "faw_download", "faw_bookmark", "faw_copy"
+        )
+        val choiceItems =
+            resources.getStringArray(R.array.more_menu)
+                .mapIndexed { index, text ->
+                    SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                        arrayIcons[index], text
+                    )
+                }.toTypedArray()
+
+        SingleChoiceBottomSheetDialogFragment.showOptionMenu(
+            supportFragmentManager,
+            choiceItems,
+            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
+        )
     }
 }

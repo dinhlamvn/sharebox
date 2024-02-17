@@ -5,7 +5,9 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
@@ -14,6 +16,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayExtraCompat
 import com.dinhlam.sharebox.listmodel.IconTextListModel
+import com.dinhlam.sharebox.utils.Icons
 import kotlinx.parcelize.Parcelize
 
 class SingleChoiceBottomSheetDialogFragment :
@@ -21,9 +24,25 @@ class SingleChoiceBottomSheetDialogFragment :
 
     @Parcelize
     data class SingleChoiceItem(
-        val icon: Int,
+        val icon: String?,
         val text: String,
     ) : Parcelable
+
+    companion object {
+
+        @JvmStatic
+        fun showOptionMenu(
+            fragmentManager: FragmentManager,
+            items: Array<SingleChoiceBottomSheetDialogFragment.SingleChoiceItem>,
+            args: Bundle
+        ) {
+            SingleChoiceBottomSheetDialogFragment().apply {
+                arguments = bundleOf(
+                    AppExtras.EXTRA_CHOICE_ITEMS to items
+                ).apply { putAll(args) }
+            }.show(fragmentManager, "SingleChoiceBottomSheetDialogFragment")
+        }
+    }
 
     fun interface OnOptionItemSelectedListener {
         fun onOptionItemSelected(position: Int, item: String, args: Bundle)
@@ -43,7 +62,7 @@ class SingleChoiceBottomSheetDialogFragment :
         choiceItems.forEachIndexed { index, choiceItem ->
             IconTextListModel(
                 "choice_$index",
-                choiceItem.icon,
+                choiceItem.icon?.let { Icons.icon(requireContext(), it) },
                 choiceItem.text,
                 height = 50.dp(),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
