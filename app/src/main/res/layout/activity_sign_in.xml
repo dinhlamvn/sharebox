@@ -35,6 +35,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_app_name" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_desc_more"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="4dp"
+            android:hint="@string/app_desc_more"
+            android:textAppearance="@style/TextCaption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_desc" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_avatar"
             android:layout_width="0dp"
@@ -44,7 +56,7 @@
             app:layout_constraintDimensionRatio="1,1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_desc"
+            app:layout_constraintTop_toBottomOf="@id/text_desc_more"
             app:layout_constraintWidth_percent="0.5" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -58,7 +70,7 @@
             app:layout_constraintDimensionRatio="1,1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_desc" />
+            app:layout_constraintTop_toBottomOf="@id/text_desc_more" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_edit_avatar"

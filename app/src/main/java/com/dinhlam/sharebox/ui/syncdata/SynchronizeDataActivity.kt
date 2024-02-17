@@ -38,7 +38,7 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                goHome()
+                goNext()
             } else {
                 showAlertDialog()
             }
@@ -73,18 +73,18 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                     android.Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                goHome()
+                goNext()
             } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
                 showAlertDialog()
             } else {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
         } else {
-            goHome()
+            goNext()
         }
     }
 
-    private fun goHome() {
+    private fun goNext() {
         activityScope.launch(Dispatchers.IO) {
             try {
                 if (appSharePref.isFirstInstall()) {
@@ -131,7 +131,7 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
             .setNegativeButton(R.string.alert_no_thanks) { _, _ ->
-                goHome()
+                goNext()
             }
             .create()
             .show()

@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.setting
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -165,7 +166,10 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             .setMessage(R.string.sign_out_confirm_message)
             .setPositiveButton(R.string.sign_out) { _, _ ->
                 userHelper.signOut(this, {
-                    startActivity(router.signIn())
+                    startActivity(
+                        router.signIn()
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    )
                 }, {
                     showToast(R.string.logged_out_error)
                 })
