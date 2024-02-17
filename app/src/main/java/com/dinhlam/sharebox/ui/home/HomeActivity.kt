@@ -79,24 +79,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
-    private val shareLinkResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data ?: return@registerForActivityResult
-                val link =
-                    data.getStringExtra(AppExtras.EXTRA_URL) ?: return@registerForActivityResult
-                val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)
-                val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
-                router.moveToChromeCustomTab(
-                    this,
-                    link,
-                    boxId,
-                    boxName,
-                    shareHelper.isSupportDownloadLink(link)
-                )
-            }
-        }
-
     private val shareTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -242,7 +224,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     fun requestShareLink() {
-        shareLinkResultLauncher.launch(router.shareLink(this))
+        startActivity(router.shareLink(this))
     }
 
     fun requestShareImages() {

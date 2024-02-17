@@ -36,8 +36,10 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppMaterialCardView" parent="Widget.Material3.CardView.Filled">
+    <style name="AppMaterialCardView" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/md_theme_dark_background</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="strokeColor">@android:color/transparent</item>
     </style>
 
     <style name="MaterialCardView.TopLeftRightCorners" parent="@style/Widget.MaterialComponents.CardView">

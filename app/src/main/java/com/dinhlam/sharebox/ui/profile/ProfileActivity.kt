@@ -58,7 +58,7 @@ class ProfileActivity :
                 ButtonListModel(
                     "button_sign_in",
                     getString(R.string.sign_in),
-                    Spacing.All(16.dp(), 16.dp(), 16.dp(), 16.dp()),
+                    Spacing.Only(16.dp(), 16.dp(), 16.dp(), 16.dp()),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
                         signInLauncher.launch(router.signIn(true))
                     })

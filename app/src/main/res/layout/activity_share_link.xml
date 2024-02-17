@@ -127,6 +127,40 @@
         android:textColor="?android:textColorHint"
         app:layout_constraintTop_toBottomOf="@id/divider_edit_link" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/text_hint" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_share_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:lineSpacingExtra="20dp"
+        android:text="@string/share_link_guide"
+        android:textAppearance="@style/TextCaption"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/share_link_guide"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_share_guide"
+        app:layout_constraintVertical_bias="0" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_done"
         android:layout_width="match_parent"

@@ -4,10 +4,14 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.StyleRes
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import com.dinhlam.sharebox.model.Spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -70,4 +74,32 @@ fun TextView.doAfterTextChangedDebounce(
             }
         }
     })
+}
+
+fun View.updateWidth(width: Int) {
+    updateLayoutParams {
+        this.width = width
+    }
+}
+
+fun View.updateHeight(height: Int) {
+    updateLayoutParams {
+        this.height = height
+    }
+}
+
+fun View.updateSize(width: Int, height: Int) {
+    updateLayoutParams {
+        this.width = width
+        this.height = height
+    }
+}
+
+fun View.updateMargin(spacing: Spacing) {
+    updateLayoutParams<MarginLayoutParams> {
+        marginStart = spacing.start
+        topMargin = spacing.top
+        marginEnd = spacing.end
+        bottomMargin = spacing.bottom
+    }
 }

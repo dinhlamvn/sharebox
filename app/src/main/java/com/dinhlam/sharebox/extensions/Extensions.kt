@@ -10,6 +10,7 @@ import android.os.Parcelable
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import java.io.Serializable
 
@@ -113,3 +114,5 @@ inline fun Context.ifPermissionGranted(permission: String, block: () -> Unit) {
 }
 
 fun Context.getColorCompat(@ColorRes colorRes: Int) = ContextCompat.getColor(this, colorRes)
+
+fun Context.getDrawableCompat(@DrawableRes drawableRes: Int) = ContextCompat.getDrawable(this, drawableRes)

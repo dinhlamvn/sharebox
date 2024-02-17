@@ -74,7 +74,7 @@ class HomeAdapter @Inject constructor(
                     boxDetail.boxId,
                     boxDetail.boxName,
                     boxDetail.boxDesc,
-                    Spacing.All(
+                    Spacing.Only(
                         if (idx == 0) 16.dp() else 8.dp(),
                         16.dp(),
                         if (idx == lastIndex) 16.dp() else 8.dp(),
@@ -95,7 +95,7 @@ class HomeAdapter @Inject constructor(
         ButtonListModel(
             "button_choose_box",
             activity.getString(R.string.access_box),
-            margin = Spacing.All(16.dp(), 16.dp(), 16.dp(), 16.dp()),
+            margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 16.dp()),
             onClick = NoHashProp(View.OnClickListener {
                 activity.requestChooseBox()
             })

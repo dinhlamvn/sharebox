@@ -40,8 +40,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppMaterialCardView" parent="Widget.Material3.CardView.Filled">
+    <style name="AppMaterialCardView" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/md_theme_light_onPrimary</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="strokeColor">@android:color/transparent</item>
     </style>
 
     <style name="MaterialCardView.TopLeftRightCorners" parent="@style/Widget.MaterialComponents.CardView">

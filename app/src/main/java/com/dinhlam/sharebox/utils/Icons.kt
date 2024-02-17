@@ -141,14 +141,6 @@ object Icons {
         return createIcon(context, GoogleMaterial.Icon.gmd_close, block(IconBuilder(context)))
     }
 
-    fun googleIcon(context: Context): IconicsDrawable {
-        return createIcon(
-            context,
-            FontAwesome.Icon.faw_google,
-            IconBuilder(context, colorRes = android.R.color.white)
-        )
-    }
-
     fun shareIcon(context: Context): IconicsDrawable {
         return createIcon(context, FontAwesome.Icon.faw_share)
     }
@@ -313,5 +305,19 @@ object Icons {
         block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(context, GoogleMaterial.Icon.gmd_archive, block(IconBuilder(context)))
+    }
+
+    fun googleIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_google, block(IconBuilder(context)))
+    }
+
+    fun youtubeIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_youtube, block(IconBuilder(context)))
     }
 }
