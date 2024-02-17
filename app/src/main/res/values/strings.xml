@@ -149,6 +149,7 @@
     <string name="access_box">Access a box</string>
     <string name="require_choose_box">Choose box to archive</string>
     <string name="newest_box">Newest Boxes</string>
+    <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook...video link to dowload that content</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

@@ -26,6 +26,7 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
+        android:paddingVertical="8dp"
         android:textAppearance="@style/TextBodyMedium"
         android:textColor="@android:color/black"
         tools:text="This is box name" />

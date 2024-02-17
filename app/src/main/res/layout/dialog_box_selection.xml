@@ -50,6 +50,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         android:text="@string/tips_search_box"
+        android:textAppearance="@style/TextCaption"
         android:textColor="?android:textColorHint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recycler_view" />

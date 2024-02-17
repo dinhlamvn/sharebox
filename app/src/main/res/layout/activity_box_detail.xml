@@ -17,8 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textAppearance="@style/TextBodyMedium" />
-
+            android:drawablePadding="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextTitleMedium" />
 
     </androidx.appcompat.widget.Toolbar>
 
