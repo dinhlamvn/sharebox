@@ -159,10 +159,10 @@ class ShareLinkActivity :
         }
     }
 
-    private fun onDone() = getState(viewModel) { state ->
+    private fun onDone() {
         binding.editLink.hideKeyboard()
         val link =
-            binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return@getState showToast(
+            binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return showToast(
                 R.string.require_input_link
             )
 
@@ -173,7 +173,7 @@ class ShareLinkActivity :
         }
 
         if (!correctLink.isWebLink()) {
-            return@getState showToast(R.string.require_input_correct_weblink)
+            return showToast(R.string.require_input_correct_weblink)
         }
 
         gotoLink(correctLink)
