@@ -63,7 +63,7 @@ class AppRouter constructor(private val context: Context) : Router {
             context,
             CustomTabsShareBroadcastReceiver.REQUEST_CODE,
             broadcastReceiverIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val remoteViews = RemoteViews(context.packageName, R.layout.custom_tab_bottom_toolbar)
@@ -92,7 +92,7 @@ class AppRouter constructor(private val context: Context) : Router {
             context,
             CustomTabsDownloadBroadcastReceiver.REQUEST_CODE,
             downloadBroadcastReceiverIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val customTabsIntent =

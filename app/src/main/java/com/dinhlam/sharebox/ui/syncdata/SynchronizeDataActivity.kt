@@ -99,12 +99,18 @@ class SynchronizeDataActivity : BaseActivity<ActivitySynchronizeDataBinding>() {
                     withContext(Dispatchers.Main) {
                         startActivity(router.home(true))
                     }
-                } else startActivity(
-                    router.signIn(false)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                )
+                } else {
+                    withContext(Dispatchers.Main) {
+                        startActivity(
+                            router.signIn(false)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        )
+                    }
+                }
             } catch (e: Exception) {
-                showToast(e.message)
+                withContext(Dispatchers.Main) {
+                    showToast(e.message)
+                }
                 finishAndRemoveTask()
             }
         }
