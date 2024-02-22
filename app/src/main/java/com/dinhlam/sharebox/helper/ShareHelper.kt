@@ -20,7 +20,7 @@ import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
-import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.cast
@@ -56,12 +56,12 @@ class ShareHelper @Inject constructor(
         val choiceItems =
             activity.resources.getStringArray(R.array.more_menu)
                 .mapIndexed { index, text ->
-                    SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                    OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                         arrayIcons[index], text
                     )
                 }.toTypedArray()
 
-        SingleChoiceBottomSheetDialogFragment.showOptionMenu(
+        OptionMenuBottomSheetDialogFragment.show(
             activity.supportFragmentManager,
             choiceItems,
             bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)

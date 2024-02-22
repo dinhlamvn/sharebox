@@ -8,15 +8,13 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
-import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -29,7 +27,6 @@ import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.utils.Icons
-import com.dinhlam.sharebox.utils.LiveEventUtils
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
@@ -39,7 +36,7 @@ import javax.inject.Inject
 @ActivityScoped
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener,
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener,
     BoxSelectionDialogFragment.OnBoxSelectedListener {
 
     override val viewModel: HomeViewModel by viewModels()
@@ -78,7 +75,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     private val shareResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                LiveEventUtils.eventScrollToTopGeneral.postValue(true)
+                viewModel.doOnRefresh()
             }
         }
 
@@ -221,7 +218,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     fun requestShareLink() {
-        startActivity(router.shareLink(this))
+        shareResultLauncher.launch(router.shareLink(this))
     }
 
     fun requestShareImages() {
@@ -238,12 +235,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             component = ComponentName(packageName, ShareReceiveActivity::class.java.name)
             putExtra(Intent.EXTRA_TEXT, text)
         }
-        startActivity(intent)
+        shareResultLauncher.launch(intent)
     }
 
     override fun onBoxSelected(boxId: String) {
         startActivity(router.boxDetail(this, boxId))
     }
-
-
 }

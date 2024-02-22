@@ -9,7 +9,7 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
@@ -32,7 +32,7 @@ import javax.inject.Inject
 class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
     override fun onCreateViewBinding(): ActivityBoxDetailBinding {
         return ActivityBoxDetailBinding.inflate(layoutInflater)
     }

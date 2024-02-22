@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -23,6 +25,7 @@ import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -82,7 +85,10 @@ class HomeAdapter @Inject constructor(
                     ),
                     !boxDetail.passcode.isNullOrBlank(),
                     false,
-                    NoHashProp(::onBoxClicked)
+                    NoHashProp(this::onBoxClick),
+                    NoHashProp(View.OnClickListener {
+                        onBoxOptionClick(boxDetail)
+                    })
                 )
             }
             CarouselListModel("carousel_box", boxModelViews).attachTo(this)
@@ -141,7 +147,7 @@ class HomeAdapter @Inject constructor(
                     actionOpen = ::onOpen,
                     actionViewImage = ::viewImage,
                     actionViewImages = ::viewImages,
-                    actionBoxClick = ::onBoxClick,
+                    actionBoxClick = this::onBoxClick,
                     actionShareToOther = ::onShareToOther
                 ).attachTo(this)
             }
@@ -150,6 +156,23 @@ class HomeAdapter @Inject constructor(
         LoadingListModel("home_loading_more_${state.currentPage}", height = 100.dp()).attachTo(
             this
         ) { state.canLoadMore }
+    }
+
+    private fun onBoxOptionClick(boxDetail: BoxDetail) {
+        val items = arrayOf(
+            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                FontAwesome.Icon.faw_copy.name,
+                activity.getString(R.string.copy_id)
+            )
+        )
+        OptionMenuBottomSheetDialogFragment.show(
+            activity.supportFragmentManager,
+            items
+        ) { position, _, _ ->
+            when (position) {
+                0 -> activity.copy(boxDetail.boxId)
+            }
+        }
     }
 
     private fun onOpen(shareId: String) = activity.getState(viewModel) { state ->
@@ -164,7 +187,7 @@ class HomeAdapter @Inject constructor(
         shareHelper.showMore(activity, share)
     }
 
-    private fun onBoxClicked(boxId: String) {
+    private fun onBoxClick(boxId: String) {
         activity.startActivity(router.boxDetail(activity, boxId))
     }
 

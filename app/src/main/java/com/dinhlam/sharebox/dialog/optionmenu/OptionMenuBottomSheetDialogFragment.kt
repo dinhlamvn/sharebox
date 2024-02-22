@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.dialog.singlechoice
+package com.dinhlam.sharebox.dialog.optionmenu
 
 import android.os.Bundle
 import android.os.Parcelable
@@ -19,7 +19,7 @@ import com.dinhlam.sharebox.listmodel.IconTextListModel
 import com.dinhlam.sharebox.utils.Icons
 import kotlinx.parcelize.Parcelize
 
-class SingleChoiceBottomSheetDialogFragment :
+class OptionMenuBottomSheetDialogFragment :
     BaseBottomSheetDialogFragment<DialogSingleChoiceBinding>() {
 
     @Parcelize
@@ -31,18 +31,22 @@ class SingleChoiceBottomSheetDialogFragment :
     companion object {
 
         @JvmStatic
-        fun showOptionMenu(
+        fun show(
             fragmentManager: FragmentManager,
-            items: Array<SingleChoiceBottomSheetDialogFragment.SingleChoiceItem>,
-            args: Bundle
+            items: Array<OptionMenuBottomSheetDialogFragment.SingleChoiceItem>,
+            args: Bundle = bundleOf(),
+            itemSelectedListener: OnOptionItemSelectedListener? = null
         ) {
-            SingleChoiceBottomSheetDialogFragment().apply {
+            OptionMenuBottomSheetDialogFragment().apply {
                 arguments = bundleOf(
                     AppExtras.EXTRA_CHOICE_ITEMS to items
                 ).apply { putAll(args) }
+                this.itemSelectedListener = itemSelectedListener
             }.show(fragmentManager, "SingleChoiceBottomSheetDialogFragment")
         }
     }
+
+    var itemSelectedListener: OnOptionItemSelectedListener? = null
 
     fun interface OnOptionItemSelectedListener {
         fun onOptionItemSelected(position: Int, item: String, args: Bundle)
@@ -87,11 +91,14 @@ class SingleChoiceBottomSheetDialogFragment :
     }
 
     private fun onItemSelected(position: Int, item: String) {
-        val callback = activity.cast<OnOptionItemSelectedListener>()
-            ?: parentFragment.cast<OnOptionItemSelectedListener>()
+        val callback = getListener()
         callback?.onOptionItemSelected(position, item, Bundle().apply {
             arguments?.let { args -> putAll(args) }
         })
         dismiss()
     }
+
+    private fun getListener() =
+        itemSelectedListener ?: activity.cast<OnOptionItemSelectedListener>()
+        ?: parentFragment.cast<OnOptionItemSelectedListener>()
 }

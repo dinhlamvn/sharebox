@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.helper
 
 import android.app.Application
 import android.content.Context
+import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
@@ -29,6 +31,9 @@ class UserHelper @Inject constructor(
     object CreateUserError : Exception()
 
     fun isSignedIn(): Boolean {
+        if (BuildConfig.DEBUG && AppConsts.IS_FAKE_USER_ID) {
+            return true
+        }
         val currentUserId = userSharePref.getCurrentUserId()
         val firebaseEmail = FirebaseAuth.getInstance().currentUser?.email ?: return false
         val firebaseUserId = UserUtils.createUserId(firebaseEmail)
@@ -36,6 +41,9 @@ class UserHelper @Inject constructor(
     }
 
     fun getCurrentUserId(): String {
+        if (BuildConfig.DEBUG && AppConsts.IS_FAKE_USER_ID) {
+            return UserUtils.createUserId("dinh.lam.jx2@gmail.com")
+        }
         if (!isSignedIn()) {
             return ""
         }

@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.listmodel
 
 import android.view.LayoutInflater
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -18,6 +19,7 @@ data class BoxListModel(
     val hasPasscode: Boolean = false,
     val active: Boolean = false,
     val onClick: BaseListAdapter.NoHashProp<(String) -> Unit> = BaseListAdapter.NoHashProp(null),
+    val onOptionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseListModel(id) {
 
     override fun createViewHolder(
@@ -33,6 +35,7 @@ data class BoxListModel(
                 binding.imageLock.setImageDrawable(Icons.lockIcon(buildContext) {
                     copy(sizeDp = 16)
                 })
+                binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
             }
 
             override fun onBind(model: BoxListModel, position: Int) {
@@ -42,6 +45,8 @@ data class BoxListModel(
                     marginEnd = model.margin.end
                     bottomMargin = model.margin.bottom
                 }
+
+                binding.imageAction.setOnClickListener(model.onOptionClick.prop)
 
                 binding.container.setOnClickListener {
                     model.onClick.prop?.invoke(model.boxId)

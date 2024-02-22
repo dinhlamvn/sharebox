@@ -137,6 +137,7 @@
     <string name="desc">Description</string>
     <string name="desc_box_hint">What is this Box? What does it to do?…</string>
     <string name="passcode_desc">*Secure your content to restrict other people access those.</string>
+    <string name="copy_id">Copy ID</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

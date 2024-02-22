@@ -13,7 +13,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
-import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
@@ -39,7 +39,7 @@ import kotlin.math.absoluteValue
 @AndroidEntryPoint
 class BookmarkListItemActivity :
     BaseViewModelActivity<BookmarkListItemState, BookmarkListItemViewModel, ActivityBookmarkListItemBinding>(),
-    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
     override fun onCreateViewBinding(): ActivityBookmarkListItemBinding {
         return ActivityBookmarkListItemBinding.inflate(layoutInflater)

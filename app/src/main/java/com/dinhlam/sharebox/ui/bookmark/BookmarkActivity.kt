@@ -13,7 +13,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkBinding
-import com.dinhlam.sharebox.dialog.singlechoice.SingleChoiceBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BookmarkActivity :
     BaseViewModelActivity<BookmarkState, BookmarkViewModel, ActivityBookmarkBinding>(),
-    SingleChoiceBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
     private val bookmarkCollectionFormResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -145,12 +145,12 @@ class BookmarkActivity :
             val choiceItems =
                 resources.getStringArray(R.array.bookmark_collection_option_menu_items)
                     .mapIndexed { index, text ->
-                        SingleChoiceBottomSheetDialogFragment.SingleChoiceItem(
+                        OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                             arrayIcons[index], text
                         )
                     }.toTypedArray()
 
-            SingleChoiceBottomSheetDialogFragment.showOptionMenu(
+            OptionMenuBottomSheetDialogFragment.show(
                 supportFragmentManager,
                 choiceItems,
                 bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail)

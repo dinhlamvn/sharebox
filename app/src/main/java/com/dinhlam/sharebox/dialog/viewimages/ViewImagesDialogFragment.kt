@@ -48,7 +48,7 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         val adapter = BaseListAdapter.createAdapter {
             uris.forEach { uri ->
                 ImageListModel(
-                    uri, height = heightPercentage(60)
+                    uri, height = heightPercentage(80)
                 ).attachTo(this)
             }
         }

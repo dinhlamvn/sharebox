@@ -124,6 +124,6 @@ fun Context.getDrawableCompat(@DrawableRes drawableRes: Int) =
 
 fun Context.copy(text: String?) {
     val clipboard = getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
-    clipboard.setPrimaryClip(ClipData.newPlainText("sharebox", text))
+    clipboard.setPrimaryClip(ClipData.newPlainText("sharebox_copied_content", text))
     Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show()
 }
