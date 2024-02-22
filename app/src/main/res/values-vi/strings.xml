@@ -119,7 +119,8 @@
     <string name="require_choose_box">Chọn box để lưu trữ</string>
     <string name="newest_box">Box mới nhất</string>
     <string name="tips_share_link">*Mẹo: Bạn có thể nhập đường dẫn video của Youtube, TikTok, Facebook… để tải các nội dung đó.</string>
-    <string name="share_link_guide">* Chọn một Box phía trên để đi\n* Nhập hoặc chọn trang web\n* Sau đó bạn có thể lưu trữ địa chỉ trang vào Box.</string>
+    <string name="share_link_guide_1">* Bạn có thể lưu trữ địa chỉ trang web vào Box đã chọn.</string>
+    <string name="share_link_guide_2">* Sao chép và gửi mã Box cho bạn bè để cùng truy cập nội dung đã lưu.</string>
     <string name="copied">Đã sao chép</string>
     <string name="dialog_confirm_remove_share_from_bookmark">Bạn có chắc muốn xóa nội dung này khỏi đánh dấu?</string>
     <string name="app_desc_more">(Bạn cần phải đăng nhập trước để có thể lưu trữ nội dung)</string>

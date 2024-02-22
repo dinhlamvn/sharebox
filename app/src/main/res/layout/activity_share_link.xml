@@ -79,7 +79,6 @@
 
         </LinearLayout>
 
-
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider
@@ -88,78 +87,135 @@
         android:layout_height="1dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/edit_link"
-        style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:focusable="true"
-        android:gravity="start|top"
-        android:hint="@string/share_link_hint"
-        android:imeOptions="actionDone"
-        android:inputType="textWebEditText"
-        android:maxLines="1"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:scrollHorizontally="true"
-        android:textAppearance="@style/TextBody"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/button_done"
+        app:layout_constraintTop_toBottomOf="@id/divider">
 
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider_edit_link"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/edit_link" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_hint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/tips_share_link"
-        android:textAppearance="@style/TextCaption"
-        android:textColor="?android:textColorHint"
-        app:layout_constraintTop_toBottomOf="@id/divider_edit_link" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_link"
+                style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:focusable="true"
+                android:gravity="start|top"
+                android:hint="@string/share_link_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textWebEditText"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:scrollHorizontally="true"
+                android:textAppearance="@style/TextBody"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:clipToPadding="false"
-        android:orientation="horizontal"
-        android:overScrollMode="never"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/text_hint" />
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider_edit_link"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/edit_link" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/text_share_guide"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:lineSpacingExtra="20dp"
-        android:text="@string/share_link_guide"
-        android:textAppearance="@style/TextCaption"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/tips_share_link"
+                android:textAppearance="@style/TextCaption"
+                android:textColor="?android:textColorHint"
+                app:layout_constraintTop_toBottomOf="@id/divider_edit_link" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/share_link_guide"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_share_guide"
-        app:layout_constraintVertical_bias="0" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/text_hint" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_share_guide_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="20dp"
+                android:text="@string/share_link_guide_1"
+                android:textAppearance="@style/TextCaption"
+                app:layout_constraintTop_toBottomOf="@id/recycler_view" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_guideline_1"
+                style="@style/AppMaterialCardView"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_share_guide_1">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/share_link_guide_step_1" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_share_guide_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:lineSpacingExtra="20dp"
+                android:text="@string/share_link_guide_2"
+                android:textAppearance="@style/TextCaption"
+                app:layout_constraintTop_toBottomOf="@id/card_guideline_1" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/AppMaterialCardView"
+                android:layout_width="0dp"
+                android:layout_height="170dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_share_guide_2"
+                app:layout_constraintVertical_bias="0">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/share_link_guide_step_2" />
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_done"
@@ -173,9 +229,8 @@
         android:text="@string/go"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_hint"
+        app:layout_constraintTop_toBottomOf="@id/scroll_view"
         app:layout_constraintVertical_bias="1"
         tools:visibility="visible" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

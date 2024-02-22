@@ -128,7 +128,8 @@
     <string name="require_choose_box">Choose box to archive</string>
     <string name="newest_box">Newest Boxes</string>
     <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook…video link to download that content</string>
-    <string name="share_link_guide">* Choose the box to go above\n* Type or select the website\n* Then you can archive website to that box</string>
+    <string name="share_link_guide_1">* You can archive the website\'s link to selected box.</string>
+    <string name="share_link_guide_2">* Copy and send box\'s ID to friends to access archived content.</string>
     <string name="copied">Copied</string>
     <string name="dialog_confirm_remove_share_from_bookmark">Are you sure to remove this share from this bookmark?</string>
     <string name="app_desc_more">(You must sign in before to archive content)</string>
