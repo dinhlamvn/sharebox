@@ -10,7 +10,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +32,11 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
 
     private data class Consumer<V>(
         val value: V
+    )
+
+    private data class Consumer2<V1, V2>(
+        val value1: V1,
+        val value2: V2
     )
 
     private val setStateChannel = Channel<suspend T.() -> T>(Channel.UNLIMITED)
@@ -109,6 +113,15 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             }
     }
 
+    protected fun <V1, V2> consume(
+        property1: KProperty1<T, V1>, property2: KProperty1<T, V2>, block: suspend (V1, V2) -> Unit
+    ) {
+        stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }.distinctUntilChanged()
+            .resolveConsumer { consumer ->
+                block(consumer.value1, consumer.value2)
+            }
+    }
+
     protected fun <V> consume(
         property: KProperty1<T, V>, block: suspend (V) -> Unit
     ) {
@@ -116,12 +129,6 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
             .resolveConsumer { consumer ->
                 block(consumer.value)
             }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
-        stateScope.cancel()
     }
 
     private fun <T> Flow<T>.resolveConsumer(

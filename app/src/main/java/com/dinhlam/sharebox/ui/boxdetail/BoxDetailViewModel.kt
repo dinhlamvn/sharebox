@@ -34,7 +34,6 @@ class BoxDetailViewModel @Inject constructor(
         consume(BoxDetailState::boxDetail) { boxDetail ->
             boxDetail?.let { box ->
                 boxRepository.updateLastSeen(box.boxId)
-                loadShares(box.boxId)
             }
         }
         loadBoxDetail()
@@ -44,13 +43,16 @@ class BoxDetailViewModel @Inject constructor(
         suspend {
             boxRepository.findOne(state.boxId)
         }.execute { boxDetail ->
-            copy(boxDetail = boxDetail)
+            copy(
+                boxDetail = boxDetail,
+                isRefreshing = false
+            )
         }
     }
 
-    private fun loadShares(boxId: String) {
+    fun loadShares() = getState { state ->
         suspend {
-            loadShares(boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+            loadShares(state.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
         }.execute { shares ->
             copy(shares = shares, isRefreshing = false, isLoadingMore = false)
         }
@@ -87,8 +89,8 @@ class BoxDetailViewModel @Inject constructor(
     }
 
     fun doOnRefresh() = getState { state ->
-        setState { BoxDetailState(boxId = state.boxId) }
-        loadBoxDetail()
+        setState { BoxDetailState(boxId = state.boxId, boxDetail = boxDetail) }
+        loadShares()
     }
 
     fun like(shareId: String) = doInBackground {

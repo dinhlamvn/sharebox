@@ -78,8 +78,8 @@ class BoxRepository @Inject constructor(
         convertBoxToBoxDetail(box)
     }.getOrNull()
 
-    suspend fun findFirst(): BoxDetail? = boxDao.runCatching {
-        val box = findFirst() ?: return@runCatching null
+    suspend fun findFirst(userId: String): BoxDetail? = boxDao.runCatching {
+        val box = findFirst(userId) ?: return@runCatching null
         convertBoxToBoxDetail(box)
     }.getOrNull()
 

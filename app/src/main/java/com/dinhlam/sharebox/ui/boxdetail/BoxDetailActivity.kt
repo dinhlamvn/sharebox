@@ -1,7 +1,9 @@
 package com.dinhlam.sharebox.ui.boxdetail
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -15,10 +17,12 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -39,6 +43,16 @@ class BoxDetailActivity :
 
     override val viewModel: BoxDetailViewModel by viewModels()
 
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.loadShares()
+            } else {
+                showToast(R.string.error_require_passcode)
+                finish()
+            }
+        }
+
     override fun onStateChanged(state: BoxDetailState) {
         shareAdapter.requestBuildModelViews()
         binding.textTitle.text = state.boxDetail?.boxName
@@ -56,15 +70,16 @@ class BoxDetailActivity :
 
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            LoadingListModel("top_loading").attachTo(this) {
-                state.isRefreshing
+            if (state.isRefreshing) {
+                LoadingListModel("top_loading").attachTo(this)
+                return@getState
             }
 
-            if (state.shares.isEmpty() && !state.isRefreshing) {
+            if (state.shares.isEmpty()) {
                 TextListModel(
                     "text_empty", getString(R.string.no_result)
                 ).attachTo(this)
-            } else if (state.shares.isNotEmpty()) {
+            } else {
                 state.shares.forEach { shareDetail ->
                     shareDetail.shareData.buildShareListModel(
                         screenHeight(),
@@ -110,6 +125,20 @@ class BoxDetailActivity :
         }
 
         binding.textTitle.setDrawableCompat(Icons.boxIcon(this))
+
+        viewModel.consume(this, BoxDetailState::boxDetail) { boxDetail ->
+            if (!boxDetail?.passcode.isNullOrBlank()) {
+                val takeBox = boxDetail ?: return@consume finish()
+                val intent = router.passcodeIntent(this, takeBox.passcode)
+                intent.putExtra(
+                    AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode,
+                        takeBox.boxName
+                    )
+                )
+                passcodeConfirmResultLauncher.launch(intent)
+            }
+        }
     }
 
     private fun viewImages(shareId: String, uris: List<Uri>) {
@@ -155,10 +184,6 @@ class BoxDetailActivity :
                 supportFragmentManager, shareId, collectionId
             )
         }
-    }
-
-    private fun onComment(shareId: String) {
-        shareHelper.showCommentDialog(supportFragmentManager, shareId)
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
