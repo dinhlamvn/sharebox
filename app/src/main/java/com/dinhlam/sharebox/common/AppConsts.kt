@@ -1,8 +1,10 @@
 package com.dinhlam.sharebox.common
 
+import com.dinhlam.sharebox.BuildConfig
+
 object AppConsts {
 
-    const val IS_FAKE_USER_ID = true
+    const val IS_FAKE_USER_ID = false
 
     const val SSSTIK_SERVICE_BASE_URL: String = "https://ssstik.io/"
 

@@ -31,7 +31,7 @@ class UserHelper @Inject constructor(
     object CreateUserError : Exception()
 
     fun isSignedIn(): Boolean {
-        if (BuildConfig.DEBUG && AppConsts.IS_FAKE_USER_ID) {
+        if (AppConsts.IS_FAKE_USER_ID) {
             return true
         }
         val currentUserId = userSharePref.getCurrentUserId()
@@ -41,7 +41,7 @@ class UserHelper @Inject constructor(
     }
 
     fun getCurrentUserId(): String {
-        if (BuildConfig.DEBUG && AppConsts.IS_FAKE_USER_ID) {
+        if (AppConsts.IS_FAKE_USER_ID) {
             return UserUtils.createUserId("dinh.lam.jx2@gmail.com")
         }
         if (!isSignedIn()) {
