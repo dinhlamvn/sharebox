@@ -168,10 +168,12 @@ class ShareLinkActivity :
         handleUri()
     }
 
-    private fun handleUri() {
-        val uri = intent.data ?: return
+    private fun handleUri() = getState(viewModel) { state ->
+        val uri = intent.data ?: return@getState
         binding.editLink.setText(uri.toString())
-        onDone()
+        state.currentBox?.let {
+            onDone()
+        } ?: viewModel.getFirstBox(::onDone)
     }
 
 

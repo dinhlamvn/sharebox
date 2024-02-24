@@ -15,9 +15,11 @@ class ShareLinkViewModel @Inject constructor(
         getFirstBox()
     }
 
-    private fun getFirstBox() {
+    fun getFirstBox(block: (() -> Unit)? = null) {
         suspend { boxRepository.findFirst(userHelper.getCurrentUserId()) }.execute { boxDetail ->
             copy(currentBox = boxDetail)
+        }.invokeOnCompletion {
+            block?.invoke()
         }
     }
 
