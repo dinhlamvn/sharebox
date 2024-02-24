@@ -130,6 +130,7 @@
     <string name="desc_box_hint">Box này là gì? Nó để làm gì?…</string>
     <string name="passcode_desc">*Bảo vệ nội dung của bạn để hạn chế người khác có thể truy cập chúng.</string>
     <string name="copy_id">Sao chép mã</string>
+    <string name="share_link_label">Browse</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.sharelink
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -41,7 +42,9 @@ class ShareLinkActivity :
 
     private val adapter = BaseListAdapter.createAdapter {
         CircleIconListModel(
-            "google", Icons.googleIcon(this@ShareLinkActivity), size = 32.dp(),
+            "google",
+            Icons.googleIcon(this@ShareLinkActivity),
+            size = 32.dp(),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 gotoLink("https://google.com")
             })
@@ -159,13 +162,25 @@ class ShareLinkActivity :
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleUri()
+    }
+
+    private fun handleUri() {
+        val uri = intent.data ?: return
+        binding.editLink.setText(uri.toString())
+        onDone()
+    }
+
+
     private fun onDone() {
         binding.editLink.hideKeyboard()
         val link =
             binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return showToast(
                 R.string.require_input_link
             )
-
         val correctLink = if (link.startsWith("http://") || link.startsWith("https://")) {
             link
         } else {

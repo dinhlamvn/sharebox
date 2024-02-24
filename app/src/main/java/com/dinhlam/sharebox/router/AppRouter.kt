@@ -96,7 +96,8 @@ class AppRouter constructor(private val context: Context) : Router {
         )
 
         val customTabsIntent =
-            CustomTabsIntent.Builder().setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+            CustomTabsIntent.Builder()
+                .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
                 .setSecondaryToolbarViews(remoteViews, clickableIds, downloadPendingIntent)
                 .setColorScheme(CustomTabsIntent.COLOR_SCHEME_LIGHT)
                 .setActionButton(shareBitmap, shareDesc, pendingIntent).build()
