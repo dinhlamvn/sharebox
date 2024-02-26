@@ -30,3 +30,6 @@ fun Fragment.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT) {
 
 fun <T> SavedStateHandle.getNonNull(key: String): T =
     get<T>(key) ?: error("The value of $key is null.")
+
+fun <T> SavedStateHandle.getNonNullOrElse(key: String, default: T): T =
+    get<T>(key) ?: default

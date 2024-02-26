@@ -7,19 +7,20 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareLinkBinding
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
+import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
@@ -136,6 +137,8 @@ class ShareLinkActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleUri()
+
         binding.buttonDone.setOnClickListener {
             onDone()
         }
@@ -160,6 +163,10 @@ class ShareLinkActivity :
             }
             true
         }
+
+        binding.editLink.doAfterTextChangedDebounce(scope = lifecycleScope) {
+            showLinkError(null)
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -168,20 +175,18 @@ class ShareLinkActivity :
         handleUri()
     }
 
-    private fun handleUri() = getState(viewModel) { state ->
-        val uri = intent.data ?: return@getState
+    private fun handleUri() {
+        val uri = intent.data ?: return viewModel.getDefaultBox(false)
         binding.editLink.setText(uri.toString())
-        state.currentBox?.let {
-            onDone()
-        } ?: viewModel.getFirstBox(::onDone)
+        viewModel.getDefaultBox(true, ::onDone)
     }
 
 
     private fun onDone() {
         binding.editLink.hideKeyboard()
         val link =
-            binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return showToast(
-                R.string.require_input_link
+            binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return showLinkError(
+                getString(R.string.require_input_link)
             )
         val correctLink = if (link.startsWith("http://") || link.startsWith("https://")) {
             link
@@ -190,10 +195,15 @@ class ShareLinkActivity :
         }
 
         if (!correctLink.isWebLink()) {
-            return showToast(R.string.require_input_correct_weblink)
+            showLinkError(getString(R.string.require_input_correct_weblink))
+            return
         }
 
         gotoLink(correctLink)
+    }
+
+    private fun showLinkError(error: String?) {
+        binding.textLayout.error = error
     }
 
     private fun gotoLink(link: String) = getState(viewModel) { state ->

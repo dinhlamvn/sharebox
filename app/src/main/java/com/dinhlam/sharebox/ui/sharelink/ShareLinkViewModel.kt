@@ -2,21 +2,34 @@ package com.dinhlam.sharebox.ui.sharelink
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.utils.BoxUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ShareLinkViewModel @Inject constructor(
-    private val boxRepository: BoxRepository, private val userHelper: UserHelper
+    private val boxRepository: BoxRepository,
+    private val userHelper: UserHelper,
 ) : BaseViewModel<ShareLinkState>(ShareLinkState()) {
 
-    init {
-        getFirstBox()
-    }
+    fun getDefaultBox(hasShareLink: Boolean, block: (() -> Unit)? = null) {
+        suspend {
+            val boxDetail = boxRepository.findFirst(userHelper.getCurrentUserId())
+            if (boxDetail == null && hasShareLink) {
+                val boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-webpage")
+                boxRepository.insert(
+                    boxId,
+                    "Web",
+                    "Archive web page",
+                    userHelper.getCurrentUserId(),
+                    nowUTCTimeInMillis()
+                )
 
-    fun getFirstBox(block: (() -> Unit)? = null) {
-        suspend { boxRepository.findFirst(userHelper.getCurrentUserId()) }.execute { boxDetail ->
+                boxRepository.findOne(boxId)
+            } else boxDetail
+        }.execute { boxDetail ->
             copy(currentBox = boxDetail)
         }.invokeOnCompletion {
             block?.invoke()

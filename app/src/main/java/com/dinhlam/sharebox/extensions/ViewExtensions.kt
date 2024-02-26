@@ -13,9 +13,11 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.model.Spacing
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 fun EditText.getTrimmedText() = text.trimmedString()
 
@@ -68,9 +70,11 @@ fun TextView.doAfterTextChangedDebounce(
 
         override fun afterTextChanged(s: Editable?) {
             debounceJob?.cancel()
-            debounceJob = scope.launch {
+            debounceJob = scope.launch(Dispatchers.IO) {
                 delay(waitMs)
-                action(s)
+                withContext(Dispatchers.Main) {
+                    action(s)
+                }
             }
         }
     })
