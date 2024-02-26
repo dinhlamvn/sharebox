@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.utils.Ids
 import kotlinx.coroutines.CoroutineScope
@@ -21,11 +22,10 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 
-abstract class BaseListAdapter constructor(
-    private val modelViewsBuilder: (BaseListAdapter.() -> Unit)? = null
-) : ListAdapter<BaseListAdapter.BaseListModel, BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseListModel, ViewBinding>>(
-    DiffCallback()
-), DefaultLifecycleObserver {
+abstract class BaseListAdapter :
+    ListAdapter<BaseListAdapter.BaseListModel, BaseListAdapter.BaseViewHolder<BaseListAdapter.BaseListModel, ViewBinding>>(
+        DiffCallback()
+    ), DefaultLifecycleObserver {
 
     abstract fun buildModelViews()
 
@@ -36,7 +36,7 @@ abstract class BaseListAdapter constructor(
 
     private var buildModelViewsJob: Job? = null
 
-    private val modelViewsManager = ModelViewsManager()
+    private val listModelManager = ListModelManager()
 
     private val listModels: MutableList<BaseListModel> = CopyOnWriteArrayList()
 
@@ -59,11 +59,12 @@ abstract class BaseListAdapter constructor(
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
-        modelViewsManager.onClear()
+        listModelManager.onClear()
         listModels.clear()
         super.submitList(null)
     }
 
+    @Synchronized
     protected fun addModel(baseListModel: BaseListModel) {
         listModels.add(baseListModel)
     }
@@ -88,7 +89,7 @@ abstract class BaseListAdapter constructor(
 
     private suspend fun buildModelViewsInternal() {
         listModels.clear()
-        modelViewsBuilder?.invoke(this) ?: buildModelViews()
+        buildModelViews()
         withContext(Dispatchers.Main) {
             super.submitList(listModels.toList())
         }
@@ -98,7 +99,7 @@ abstract class BaseListAdapter constructor(
         super.setHasStableIds(true)
     }
 
-    private class ModelViewsManager {
+    private class ListModelManager {
         private val modelViewTypeMap = mutableMapOf<Int, BaseListModel>()
         private val rememberMap = mutableMapOf<String, Int>()
 
@@ -108,7 +109,10 @@ abstract class BaseListAdapter constructor(
         fun getViewTypeAndRemember(model: BaseListModel): Int {
             val modelClassName = model::class.java.simpleName
             return rememberMap[modelClassName] ?: let {
-                val viewType = generateViewType()
+                val modelViewTypeConfig = model.getViewTypeConfig()
+                val viewType =
+                    modelViewTypeConfig.cast<BaseListModel.BaseListModelViewTypeConfig.Manual>()?.viewType
+                        ?: generateViewType()
                 modelViewTypeMap[viewType] = model
                 rememberMap[modelClassName] = viewType
                 viewType
@@ -128,9 +132,9 @@ abstract class BaseListAdapter constructor(
         fun createAdapter(
             modelViewsBuilder: BaseListAdapter.() -> Unit,
         ): BaseListAdapter {
-            return object : BaseListAdapter(modelViewsBuilder) {
+            return object : BaseListAdapter() {
                 override fun buildModelViews() {
-                    // Do-Nothing
+                    modelViewsBuilder.invoke(this)
                 }
             }
         }
@@ -139,7 +143,7 @@ abstract class BaseListAdapter constructor(
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): BaseViewHolder<BaseListModel, ViewBinding> {
-        val model = modelViewsManager.getModel(viewType)
+        val model = listModelManager.getModel(viewType)
         return model.createViewHolder(LayoutInflater.from(parent.context), parent).castNonNull()
     }
 
@@ -162,7 +166,7 @@ abstract class BaseListAdapter constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return modelViewsManager.getViewTypeAndRemember(getItem(position))
+        return listModelManager.getViewTypeAndRemember(getItem(position))
     }
 
     override fun getItemId(position: Int): Long {
@@ -201,6 +205,10 @@ abstract class BaseListAdapter constructor(
         open fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig =
             BaseSpanSizeLookup.SpanSizeConfig.Normal
 
+        open fun getViewTypeConfig(): BaseListModelViewTypeConfig {
+            return BaseListModelViewTypeConfig.Auto
+        }
+
         fun attachTo(adapter: BaseListAdapter) {
             adapter.addModel(this)
         }
@@ -209,6 +217,11 @@ abstract class BaseListAdapter constructor(
             if (constraint()) {
                 adapter.addModel(this)
             }
+        }
+
+        sealed class BaseListModelViewTypeConfig {
+            data object Auto : BaseListModelViewTypeConfig()
+            data class Manual(val viewType: Int) : BaseListModelViewTypeConfig()
         }
     }
 
@@ -219,6 +232,8 @@ abstract class BaseListAdapter constructor(
 
         abstract fun onBind(model: T, position: Int)
         abstract fun onUnBind()
+
+
     }
 
     class DiffCallback : DiffUtil.ItemCallback<BaseListModel>() {
