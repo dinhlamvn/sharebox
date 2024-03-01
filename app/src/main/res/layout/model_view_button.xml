@@ -9,6 +9,6 @@
     android:backgroundTintMode="src_over"
     android:gravity="center"
     android:textAppearance="@style/TextBodyMedium"
-    app:backgroundTint="@color/colorPrimary"
+    app:backgroundTint="@color/md_theme_primary"
     app:elevation="4dp"
     tools:text="GOGO" />

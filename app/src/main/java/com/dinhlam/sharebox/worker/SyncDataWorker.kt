@@ -84,7 +84,7 @@ class SyncDataWorker @AssistedInject constructor(
                 .setSubText(appContext.getString(R.string.app_name))
                 .setSmallIcon(R.drawable.ic_cloud_upload).setAutoCancel(false).setContentIntent(
                     PendingIntent.getActivity(
-                        appContext, 1122, router.settingIntent(), PendingIntent.FLAG_IMMUTABLE
+                        appContext, 1122, router.setting(), PendingIntent.FLAG_IMMUTABLE
                     )
                 ).build()
         )

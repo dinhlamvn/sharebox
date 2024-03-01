@@ -38,7 +38,9 @@ interface Router {
     fun viewIntent(url: String): Intent
     fun playStoreIntent(packageName: String): Intent
     fun boxIntent(context: Context): Intent
-    fun settingIntent(): Intent
+    fun setting(): Intent
+
+    fun settingCompose(): Intent
 
     fun boxDetail(context: Context, boxId: String): Intent
 

@@ -181,7 +181,7 @@ object Icons {
         return createIcon(
             context,
             GoogleMaterial.Icon.gmd_trending_up,
-            IconBuilder(context, colorRes = R.color.design_default_color_error)
+            IconBuilder(context, colorRes = R.color.md_theme_error)
         )
     }
 

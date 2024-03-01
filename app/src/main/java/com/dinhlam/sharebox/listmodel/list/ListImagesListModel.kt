@@ -95,7 +95,7 @@ data class ListImagesListModel(
             PagerSnapHelper().attachToRecyclerView(binding.recyclerViewImage)
             binding.recyclerViewImage.addItemDecoration(
                 HorizontalCirclePagerItemDecoration(
-                    colorActive = ContextCompat.getColor(buildContext, R.color.colorPrimaryDark)
+                    colorActive = ContextCompat.getColor(buildContext, R.color.md_theme_onPrimary)
                 )
             )
             binding.recyclerViewImage.adapter = adapter

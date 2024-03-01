@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.databinding.DialogViewImagesBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.updateHeight
 import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.utils.Icons
@@ -40,6 +41,8 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.recyclerView.updateHeight(heightPercentage(80))
 
         val args = arguments ?: return dismiss()
         val uris = args.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)

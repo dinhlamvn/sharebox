@@ -51,7 +51,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
                 CHARACTER_CODE_FILLED,
                 width = codeBulletSize,
                 height = codeBulletSize,
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1
+                textAppearance = R.style.TextTitle
             ).attachTo(this)
         }
 
@@ -62,7 +62,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
                 CHARACTER_CODE_EMPTY,
                 width = codeBulletSize,
                 height = codeBulletSize,
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1
+                textAppearance = R.style.TextTitle
             ).attachTo(this)
         }
     }
@@ -73,7 +73,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
                 "text_number_$number",
                 "${number + 1}",
                 height = 70.dp(),
-                textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+                textAppearance = R.style.TextTitle,
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     onNumberClicked(number + 1)
                 })
@@ -84,7 +84,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
             "text_done",
             CHARACTER_CODE_DONE,
             height = 70.dp(),
-            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+            textAppearance = R.style.TextTitle,
             actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 onDone()
             })
@@ -94,7 +94,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
             "text_zero",
             "0",
             height = 70.dp(),
-            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+            textAppearance = R.style.TextTitle,
             actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 onNumberClicked(0)
             })
@@ -104,7 +104,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
             "text_backspace",
             CHARACTER_CODE_BACKSPACE,
             height = 70.dp(),
-            textAppearance = R.style.TextAppearance_MaterialComponents_Subtitle1,
+            textAppearance = R.style.TextTitle,
             actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 onBackspace()
             })

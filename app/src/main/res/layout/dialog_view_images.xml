@@ -12,9 +12,8 @@
         android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:orientation="horizontal"
-        android:paddingHorizontal="8dp"
-        android:paddingTop="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -31,14 +30,12 @@
         android:id="@+id/image_save_to_gallery"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.dinhlam.sharebox.view.ShareBoxLoadingView
         android:id="@+id/view_loading"

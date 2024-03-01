@@ -145,7 +145,7 @@
             android:text="@string/fui_sign_in_with_google"
             android:textAppearance="@style/TextBodyMedium"
             android:visibility="gone"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/md_theme_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:visibility="visible" />
 

@@ -41,7 +41,7 @@ class HomeAdapter @Inject constructor(
 
     override fun buildModelViews() = activity.getState(viewModel) { state ->
         MainActionListModel(
-            ContextCompat.getColor(activity, R.color.colorPrimary),
+            ContextCompat.getColor(activity, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
                 activity.requestShareText()
             }),

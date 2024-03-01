@@ -37,7 +37,7 @@ class ShareBoxReadMoreTextView @JvmOverloads constructor(
 
     private var collapsedText: String = DEFAULT_COLLAPSED_TEXT
     private var expandedText: String = DEFAULT_EXPANDED_TEXT
-    private var readMoreTextColor: Int = ContextCompat.getColor(context, R.color.colorPrimary)
+    private var readMoreTextColor: Int = ContextCompat.getColor(context, R.color.md_theme_onPrimary)
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.ShareBoxReadMoreTextView)
@@ -56,7 +56,7 @@ class ShareBoxReadMoreTextView @JvmOverloads constructor(
 
                 readMoreTextColor = typedArray.getColor(
                     R.styleable.ShareBoxReadMoreTextView_read_more_text_color,
-                    ContextCompat.getColor(context, R.color.colorPrimary)
+                    ContextCompat.getColor(context, R.color.md_theme_onPrimary)
                 )
             }
         movementMethod = LinkMovementMethod.getInstance()

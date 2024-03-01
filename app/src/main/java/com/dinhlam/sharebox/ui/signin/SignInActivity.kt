@@ -136,11 +136,11 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         val response = result.idpResponse
         if (result.resultCode == Activity.RESULT_OK) {
             FirebaseAuth.getInstance().currentUser?.let(::renderUserInfo)
-                ?: return showToast(R.string.fui_error_unknown)
+                ?: return showToast(com.firebase.ui.auth.R.string.fui_error_unknown)
         } else {
             response?.error?.let { error ->
                 showToast(error.message)
-            } ?: showToast(R.string.fui_error_unknown)
+            } ?: showToast(com.firebase.ui.auth.R.string.fui_error_unknown)
         }
     }
 

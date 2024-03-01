@@ -70,23 +70,23 @@ android {
         }
     }
 
-    flavorDimensions "default"
+    flavorDimensions = ["default"]
     productFlavors {
         dev {
-            manifestPlaceholders = [
-                    applicationName: "Sharebox Dev"
-            ]
+            resValue 'string', 'app_name', 'ShareBox Dev'
+
             applicationIdSuffix ".dev"
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
             buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://sharebox-dev-502a2.appspot.com\""
+            buildConfigField 'Boolean', 'DEV', 'true'
         }
 
         prod {
-            manifestPlaceholders = [
-                    applicationName: "Sharebox"
-            ]
+            resValue 'string', 'app_name', 'ShareBox'
+
             buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
             buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://share-box-6c293.appspot.com\""
+            buildConfigField 'Boolean', 'DEV', 'false'
         }
     }
 
@@ -99,12 +99,27 @@ android {
     }
     buildFeatures {
         viewBinding true
+        compose true
+        buildConfig true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.9"
+    }
+
     dynamicFeatures = []
     namespace 'com.dinhlam.sharebox'
 }
 
 dependencies {
+    // Compose
+    def composeBom = platform('androidx.compose:compose-bom:2024.02.01')
+    implementation composeBom
+    androidTestImplementation composeBom
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.activity:activity-compose:1.8.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
+
     // Testing
     def junit_version = "4.13.2"
     testImplementation "junit:junit:$junit_version"
@@ -117,7 +132,7 @@ dependencies {
     def appcompat_version = "1.6.1"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
 
-    def material_version = "1.8.0"
+    def material_version = "1.11.0"
     implementation "com.google.android.material:material:$material_version"
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -154,7 +169,7 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
 
     // Webkit support
-    def webkit_version = "1.7.0"
+    def webkit_version = "1.10.0"
     implementation "androidx.webkit:webkit:$webkit_version"
 
     // Firebase service
@@ -166,12 +181,10 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation "com.firebaseui:firebase-ui-storage:8.0.2"
-
-    // Messaging
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
     // Browser
-    def browser_version = "1.5.0"
+    def browser_version = "1.7.0"
     implementation "androidx.browser:browser:$browser_version"
 
     // Jsoup for link preview
@@ -192,11 +205,11 @@ dependencies {
     implementation "com.mikepenz:fontawesome-typeface:5.9.0.2-kotlin@aar"
 
     // Worker manager
-    def work_version = "2.8.1"
+    def work_version = "2.9.0"
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
     // Cronet
-    implementation "org.chromium.net:cronet-embedded:113.5672.61"
+    implementation "org.chromium.net:cronet-embedded:119.6045.31"
     implementation "com.google.net.cronet:cronet-okhttp:0.1.0"
 
     // Facebook

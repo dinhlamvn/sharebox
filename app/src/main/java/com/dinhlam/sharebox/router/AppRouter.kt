@@ -26,6 +26,7 @@ import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
+import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
 import com.dinhlam.sharebox.ui.sharetext.ShareTextActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
@@ -180,8 +181,12 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, BoxCreateActivity::class.java)
     }
 
-    override fun settingIntent(): Intent {
+    override fun setting(): Intent {
         return Intent(context, SettingActivity::class.java)
+    }
+
+    override fun settingCompose(): Intent {
+        return Intent(context, SettingComposeActivity::class.java)
     }
 
     override fun boxDetail(context: Context, boxId: String): Intent {

@@ -36,7 +36,7 @@
                 android:contentDescription="@string/desc_image_bookmark_list_thumbnail"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                tools:background="@color/colorPrimary" />
+                tools:background="@color/md_theme_primary" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
