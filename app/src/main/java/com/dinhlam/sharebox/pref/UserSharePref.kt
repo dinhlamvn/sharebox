@@ -16,7 +16,7 @@ class UserSharePref @Inject constructor(@ApplicationContext context: Context) :
         private const val KEY_CURRENT_USER_ID = "current-user-id"
     }
 
-    fun getCurrentUserId() = if (BuildConfig.DEV) {
+    fun getCurrentUserId() = if (BuildConfig.DEV && AppConsts.FORCE_LOGIN) {
         UserUtils.createUserId("dinh.lam.jx2@gmail.com")
     } else get(KEY_CURRENT_USER_ID, "")
 

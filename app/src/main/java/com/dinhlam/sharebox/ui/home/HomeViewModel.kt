@@ -32,8 +32,8 @@ class HomeViewModel @Inject constructor(
 
     private fun getListBoxes() = suspend {
         boxRepository.findByUser(userHelper.getCurrentUserId(), 10, 0)
-    }.execute { boxes ->
-        copy(boxes = boxes)
+    }.execute { asyncLoad ->
+        copy(boxes = asyncLoad.data.orEmpty())
     }
 
     private fun getRecentlyShares() {
@@ -43,24 +43,23 @@ class HomeViewModel @Inject constructor(
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 0
             )
-        }.execute { shares ->
-            copy(shares = shares, isRefreshing = false)
+        }.execute { asyncLoad ->
+            copy(shares = asyncLoad.data.orEmpty(), isRefreshing = asyncLoad is AsyncLoad.Loading)
         }
     }
 
     fun loadMores() = getState { state ->
-        setState { copy(isLoadingMore = true) }
         suspend {
             shareRepository.findRecentlyShares(
                 userHelper.getCurrentUserId(),
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-        }.execute { loadShares ->
+        }.execute { asyncLoad ->
+            val shares = asyncLoad.data.orEmpty()
             copy(
-                shares = this.shares.plus(loadShares),
-                isLoadingMore = false,
-                canLoadMore = loadShares.isNotEmpty(),
+                shares = this.shares.plus(shares),
+                canLoadMore = shares.isNotEmpty(),
                 currentPage = currentPage + 1,
             )
         }

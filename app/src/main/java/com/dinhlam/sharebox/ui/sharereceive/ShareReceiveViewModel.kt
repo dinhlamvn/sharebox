@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +38,6 @@ class ShareReceiveViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
-    private val appSharePref: AppSharePref,
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
@@ -48,18 +46,15 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     fun getCurrentUserProfile() {
-        setState { copy(showLoading = true) }
-        doInBackground {
-            val user = userRepository.findOne(userHelper.getCurrentUserId())
-                ?: return@doInBackground setState { copy(showLoading = false) }
-            setState { copy(activeUser = user, showLoading = false) }
-        }
+        suspend { userRepository.findOne(userHelper.getCurrentUserId()) }
+            .execute { asyncLoad ->
+                copy(activeUser = asyncLoad.data)
+            }
     }
 
     fun setShareData(shareData: ShareData) = setState { copy(shareData = shareData) }
 
     fun share(note: String?, context: Context) = getState { state ->
-        setState { copy(showLoading = true) }
         suspend {
             val share = when (val shareData = state.shareData) {
                 is ShareData.ShareUrl -> shareUrl(
@@ -99,8 +94,8 @@ class ShareReceiveViewModel @Inject constructor(
                 }
                 true
             } ?: false
-        }.execute { saveSuccess ->
-            copy(isSaveSuccess = saveSuccess, showLoading = false)
+        }.execute { asyncLoad ->
+            copy(asyncLoadArchive = asyncLoad)
         }
     }
 
@@ -225,12 +220,6 @@ class ShareReceiveViewModel @Inject constructor(
         }
 
         return share
-    }
-
-    fun setBox(box: BoxDetail?) = getState { state ->
-        if (state.currentBox != box) {
-            setState { copy(currentBox = box) }
-        }
     }
 
     fun setBookmarkCollection(pickedId: String?) {

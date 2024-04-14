@@ -16,7 +16,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getCurrentUserProfile() =
-        suspend { userRepository.findOne(userHelper.getCurrentUserId()) }.execute { user ->
-            copy(currentUser = user, isRefreshing = false)
+        suspend { userRepository.findOne(userHelper.getCurrentUserId()) }.execute { asyncLoad ->
+            copy(currentUser = asyncLoad.data, isRefreshing = asyncLoad is AsyncLoad.Loading)
         }
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogBoxSelectionBinding
@@ -57,7 +58,7 @@ class BoxSelectionDialogFragment :
 
     private val boxAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            if (state.isLoading) {
+            if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
                 LoadingListModel("loading_box", height = 100.dp()).attachTo(this)
                 return@getState
             }

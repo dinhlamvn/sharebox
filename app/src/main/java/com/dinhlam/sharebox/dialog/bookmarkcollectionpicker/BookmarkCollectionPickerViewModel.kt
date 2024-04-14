@@ -32,13 +32,8 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
             val collections = bookmarkCollectionRepository.find()
             val collection = state.collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
             Pair(collections, collection)
-        }.execute { pair ->
-            copy(
-                bookmarkCollections = pair.first,
-                isLoading = false,
-                pickedBookmarkCollection = pair.second,
-                originalBookmarkCollection = pair.second,
-            )
+        }.execute { asyncLoad ->
+            copy(asyncLoadBookmark = asyncLoad)
         }
     }
 

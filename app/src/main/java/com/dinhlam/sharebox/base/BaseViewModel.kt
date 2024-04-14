@@ -1,18 +1,21 @@
 package com.dinhlam.sharebox.base
 
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.withStateAtLeast
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,11 +27,22 @@ import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty1
 
-abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewModel() {
+abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewModel() {
 
     interface BaseState
 
-    private val stateScope = CoroutineScope(Executors.newCachedThreadPool().asCoroutineDispatcher())
+    sealed class AsyncLoad<out T>(val data: T?, completed: Boolean, success: Boolean) {
+        data object Initialize : AsyncLoad<Nothing>(null, false, false)
+        data object Loading : AsyncLoad<Nothing>(null, false, false)
+        data class Success<T>(val value: T) : AsyncLoad<T>(value, true, true)
+        data class Failed(val error: Throwable) : AsyncLoad<Nothing>(null, true, false)
+    }
+
+    private val stateScope =
+        CoroutineScope(
+            Executors.newSingleThreadExecutor()
+                .asCoroutineDispatcher() + CoroutineName("state-scope")
+        )
 
     private data class Consumer<V>(
         val value: V
@@ -39,13 +53,17 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         val value2: V2
     )
 
-    private val setStateChannel = Channel<suspend T.() -> T>(Channel.UNLIMITED)
-    private val getStateChannel = Channel<(T) -> Unit>(Channel.UNLIMITED)
+    private val setStateChannel = Channel<suspend S.() -> S>(Channel.UNLIMITED)
+    private val getStateChannel = Channel<(S) -> Unit>(Channel.UNLIMITED)
 
     @Volatile
-    var currentState: T = initState
-    private val _stateFlow = MutableStateFlow(initState)
-    val stateFlow: Flow<T> = _stateFlow.asSharedFlow()
+    var currentState: S = initState
+    private val _stateFlow = MutableSharedFlow<S>(
+        replay = 1,
+        extraBufferCapacity = 63,
+        onBufferOverflow = BufferOverflow.SUSPEND,
+    ).apply { tryEmit(initState) }
+    val stateFlow: Flow<S> = _stateFlow.asSharedFlow()
 
     init {
         stateScope.launch {
@@ -67,31 +85,28 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
         }
     }
 
-    protected fun setState(block: T.() -> T) {
+    protected fun setState(block: S.() -> S) {
         setStateChannel.trySend(block)
     }
 
-    protected fun getState(block: (T) -> Unit) {
+    protected fun getState(block: (S) -> Unit) {
         getStateChannel.trySend(block)
     }
 
-    protected fun <R : Any?> (suspend () -> R).execute(
-        errorCatcher: ((Throwable) -> Unit)? = null, stateReducer: T.(R) -> T
-    ): Job {
-        return stateScope.launch {
+    protected fun <R : Any?> (suspend () -> R).execute(stateReducer: S.(AsyncLoad<R>) -> S): Job {
+        setState { stateReducer(AsyncLoad.Loading) }
+        return stateScope.launch(Dispatchers.IO) {
             try {
                 val result = invoke()
-                setState { stateReducer(result) }
-            } catch (e: Throwable) {
-                errorCatcher?.invoke(e)
+                setState { stateReducer(AsyncLoad.Success(result)) }
+            } catch (error: Throwable) {
+                setState { stateReducer(AsyncLoad.Failed(error)) }
             }
         }
     }
 
-    protected fun <R : Any?> Deferred<R>.execute(
-        errorCatcher: ((Throwable) -> Unit)? = null, stateReducer: T.(R) -> T
-    ): Job {
-        return suspend { await() }.execute(errorCatcher, stateReducer)
+    protected fun <R : Any?> Deferred<R>.execute(stateReducer: S.(AsyncLoad<R>) -> S): Job {
+        return suspend { await() }.execute(stateReducer)
     }
 
     protected fun doInBackground(
@@ -105,16 +120,18 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     fun <V> consume(
-        lifecycleOwner: LifecycleOwner, property: KProperty1<T, V>, block: (V) -> Unit
+        lifecycleOwner: LifecycleOwner, property: KProperty1<S, V>, block: (V) -> Unit
     ) {
-        stateFlow.map { Consumer(property.get(it)) }.distinctUntilChanged()
+        stateFlow.map {
+            Consumer(property.get(it))
+        }.distinctUntilChanged()
             .resolveConsumer(lifecycleOwner) { consumer ->
                 block(consumer.value)
             }
     }
 
     protected fun <V1, V2> consume(
-        property1: KProperty1<T, V1>, property2: KProperty1<T, V2>, block: suspend (V1, V2) -> Unit
+        property1: KProperty1<S, V1>, property2: KProperty1<S, V2>, block: (V1, V2) -> Unit
     ) {
         stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }.distinctUntilChanged()
             .resolveConsumer { consumer ->
@@ -123,7 +140,7 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     protected fun <V> consume(
-        property: KProperty1<T, V>, block: suspend (V) -> Unit
+        property: KProperty1<S, V>, block: (V) -> Unit
     ) {
         stateFlow.map { Consumer(property.get(it)) }.distinctUntilChanged()
             .resolveConsumer { consumer ->
@@ -132,13 +149,13 @@ abstract class BaseViewModel<T : BaseViewModel.BaseState>(initState: T) : ViewMo
     }
 
     private fun <T> Flow<T>.resolveConsumer(
-        lifecycleOwner: LifecycleOwner? = null, block: suspend (T) -> Unit
+        lifecycleOwner: LifecycleOwner? = null, block: (T) -> Unit
     ) {
         lifecycleOwner?.let { owner ->
             owner.lifecycleScope.launch {
                 yield()
                 collectLatest {
-                    owner.whenStarted { block(it) }
+                    owner.withStateAtLeast(Lifecycle.State.STARTED) { block(it) }
                 }
             }
         } ?: stateScope.launch {

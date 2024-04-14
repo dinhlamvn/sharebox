@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.comment
 
 import androidx.lifecycle.SavedStateHandle
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.CommentRepository
@@ -27,17 +26,18 @@ class CommentViewModel @Inject constructor(
         loadComments()
     }
 
-    fun getCurrentUserProfile() = doInBackground {
-        val user = userRepository.findOne(userHelper.getCurrentUserId()) ?: return@doInBackground
-        setState { copy(currentUser = user) }
+    fun getCurrentUserProfile() {
+        suspend { userRepository.findOne(userHelper.getCurrentUserId()) }
+            .execute { asyncLoad ->
+                copy(currentUser = asyncLoad.data)
+            }
     }
 
     private fun loadComments() = getState { state ->
-        setState { copy(isRefreshing = true) }
         suspend {
             commentRepository.find(state.shareId)
-        }.execute { comments ->
-            copy(comments = comments, isRefreshing = false)
+        }.execute { asyncLoad ->
+            copy(comments = asyncLoad.data.orEmpty(), isRefreshing = asyncLoad is AsyncLoad.Loading)
         }
     }
 
@@ -51,8 +51,8 @@ class CommentViewModel @Inject constructor(
             )!!
             realtimeDatabaseRepository.push(cmtEntity)
             commentRepository.findOne(cmtEntity.commentId)
-        }.execute { comment ->
-            comment?.let { cmtEntity ->
+        }.execute { asyncLoad ->
+            asyncLoad.data?.let { cmtEntity ->
                 val newList = comments.toMutableList()
                 newList.add(0, cmtEntity)
                 copy(comments = newList)

@@ -33,7 +33,9 @@ class BoxDetailViewModel @Inject constructor(
     init {
         consume(BoxDetailState::boxDetail) { boxDetail ->
             boxDetail?.let { box ->
-                boxRepository.updateLastSeen(box.boxId)
+                doInBackground {
+                    boxRepository.updateLastSeen(box.boxId)
+                }
             }
         }
         loadBoxDetail()
@@ -42,9 +44,9 @@ class BoxDetailViewModel @Inject constructor(
     private fun loadBoxDetail() = getState { state ->
         suspend {
             boxRepository.findOne(state.boxId)
-        }.execute { boxDetail ->
+        }.execute { asyncLoad ->
             copy(
-                boxDetail = boxDetail,
+                boxDetail = asyncLoad.data,
                 isRefreshing = false
             )
         }
@@ -53,24 +55,24 @@ class BoxDetailViewModel @Inject constructor(
     fun loadShares() = getState { state ->
         suspend {
             loadShares(state.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
-        }.execute { shares ->
-            copy(shares = shares, isRefreshing = false, isLoadingMore = false)
+        }.execute { asyncLoad ->
+            copy(shares = asyncLoad.data.orEmpty(), isRefreshing = asyncLoad is AsyncLoad.Loading)
         }
     }
 
     fun loadMores() = getState { state ->
-        setState { copy(isLoadingMore = true) }
         suspend {
             loadShares(
                 state.boxId,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
-        }.execute { loadedShares ->
+        }.execute { asyncLoad ->
+            val shares = asyncLoad.data.orEmpty()
             copy(
-                shares = this.shares.plus(loadedShares),
-                isLoadingMore = false,
-                canLoadMore = loadedShares.isNotEmpty(),
+                asyncLoadLoadMoreShares = asyncLoad,
+                shares = this.shares.plus(shares),
+                canLoadMore = shares.isNotEmpty(),
                 currentPage = currentPage + 1,
             )
         }

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
@@ -29,7 +30,6 @@ import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
-import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -52,7 +52,6 @@ import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextListModel
 import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlListModel
 import com.dinhlam.sharebox.utils.Icons
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -78,18 +77,6 @@ class ShareReceiveActivity :
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
-
-    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                onBackPressedDispatcher.onBackPressed()
-            }
-        }
-
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-        }
-    }
 
     @Inject
     lateinit var router: Router
@@ -171,23 +158,16 @@ class ShareReceiveActivity :
             }
         }
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.container)
-        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
-        bottomSheetBehavior.halfExpandedRatio = 0.8f
-        bottomSheetBehavior.peekHeight = heightPercentage(80)
+        binding.recyclerView.adapter = shareContentAdapter
 
-        viewModel.consume(this, ShareReceiveState::showLoading) { isShow ->
-            if (isShow) {
+        viewModel.consume(this, ShareReceiveState::asyncLoadArchive) { asyncLoad ->
+            if (asyncLoad is BaseViewModel.AsyncLoad.Loading) {
                 binding.viewLoading.show()
             } else {
                 binding.viewLoading.hide()
             }
-        }
 
-        binding.recyclerView.adapter = shareContentAdapter
-
-        viewModel.consume(this, ShareReceiveState::isSaveSuccess) { isSaveSuccess ->
-            if (isSaveSuccess) {
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 Toast.makeText(this, R.string.shares_success, Toast.LENGTH_SHORT).show()
                 if (isTaskRoot) {
                     finishAndRemoveTask()
@@ -195,6 +175,8 @@ class ShareReceiveActivity :
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
+            } else if (asyncLoad is BaseViewModel.AsyncLoad.Failed) {
+                showToast(asyncLoad.error.message)
             }
         }
 
@@ -239,12 +221,11 @@ class ShareReceiveActivity :
             copy(sizeDp = 16)
         })
         binding.imageClose.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            finishAndRemoveTask()
         }
 
         binding.textInputNote.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 activityScope.launch {
                     delay(700)
                     withContext(Dispatchers.Main) {
@@ -253,8 +234,6 @@ class ShareReceiveActivity :
                 }
             }
         }
-
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
 
         handleShareData()
     }

@@ -30,8 +30,9 @@ class BookmarkListItemViewModel @Inject constructor(
     }
 
     private fun loadBookmarkCollectionDetail() = getState { state ->
-        suspend { bookmarkCollectionRepository.find(state.bookmarkCollectionId) }.execute { bookmarkCollectionDetail ->
-            val passcode = bookmarkCollectionDetail?.passcode ?: ""
+        suspend { bookmarkCollectionRepository.find(state.bookmarkCollectionId) }.execute { asyncLoad ->
+            val bookmarkCollectionDetail = asyncLoad.data ?: return@execute this
+            val passcode = bookmarkCollectionDetail.passcode ?: ""
             copy(
                 bookmarkCollection = bookmarkCollectionDetail,
                 requestVerifyPasscode = passcode.isNotEmpty()

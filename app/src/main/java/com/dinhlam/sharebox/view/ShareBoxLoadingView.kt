@@ -13,7 +13,7 @@ class ShareBoxLoadingView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyle) {
 
     private val binding: ViewLoadingBinding = inflate(context, R.layout.view_loading, this).run {
-        setBackgroundColor(Color.argb(0, 0, 0, 0))
+        setBackgroundColor(Color.argb(255.times(0.3f).toInt(), 0, 0, 0))
         isFocusable = true
         isClickable = true
         ViewLoadingBinding.bind(this).apply {

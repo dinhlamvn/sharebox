@@ -6,8 +6,8 @@ import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 data class BookmarkCollectionPickerState(
     val shareId: String,
     val collectionId: String?,
-    val isLoading: Boolean = true,
     val bookmarkCollections: List<BookmarkCollectionDetail> = emptyList(),
     val pickedBookmarkCollection: BookmarkCollectionDetail? = null,
     val originalBookmarkCollection: BookmarkCollectionDetail? = null,
+    val asyncLoadBookmark: BaseViewModel.AsyncLoad<Pair<List<BookmarkCollectionDetail>, BookmarkCollectionDetail?>> = BaseViewModel.AsyncLoad.Initialize
 ) : BaseViewModel.BaseState

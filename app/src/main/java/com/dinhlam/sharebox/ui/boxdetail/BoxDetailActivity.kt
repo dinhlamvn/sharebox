@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
@@ -22,7 +23,6 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -61,7 +61,7 @@ class BoxDetailActivity :
     private val layoutManager by lazy {
         LoadMoreLinearLayoutManager(this, blockShouldLoadMore = {
             getState(viewModel) { state ->
-                state.canLoadMore && !state.isLoadingMore
+                state.canLoadMore && state.asyncLoadLoadMoreShares is BaseViewModel.AsyncLoad.Loading
             }
         }) {
             viewModel.loadMores()

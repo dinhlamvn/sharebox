@@ -29,16 +29,16 @@ class ShareLinkViewModel @Inject constructor(
 
                 boxRepository.findOne(boxId)
             } else boxDetail
-        }.execute { boxDetail ->
-            copy(currentBox = boxDetail)
+        }.execute { asyncLoad ->
+            copy(currentBox = asyncLoad.data)
         }.invokeOnCompletion {
             block?.invoke()
         }
     }
 
     fun setCurrentBoxId(boxId: String) {
-        suspend { boxRepository.findOne(boxId) }.execute { boxDetail ->
-            copy(currentBox = boxDetail)
+        suspend { boxRepository.findOne(boxId) }.execute { asyncLoad ->
+            copy(currentBox = asyncLoad.data)
         }
     }
 }

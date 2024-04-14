@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.databinding.DialogBookmarkCollectionPickerBinding
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.extensions.takeWithEllipsizeEnd
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.TextPickerListModel
+import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,7 +70,7 @@ class BookmarkCollectionPickerDialogFragment :
 
     private val adapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            if (state.isLoading) {
+            if (state.asyncLoadBookmark is BaseViewModel.AsyncLoad.Loading) {
                 LoadingListModel("loading").attachTo(this)
                 return@getState
             }

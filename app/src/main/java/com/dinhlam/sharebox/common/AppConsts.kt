@@ -1,8 +1,8 @@
 package com.dinhlam.sharebox.common
 
-import com.dinhlam.sharebox.BuildConfig
-
 object AppConsts {
+    const val FORCE_LOGIN = false
+
     const val SSSTIK_SERVICE_BASE_URL: String = "https://ssstik.io/"
 
     const val LIBRE_TUBE_SERVICE_BASE_URL: String = "https://pipedapi.kavin.rocks/"

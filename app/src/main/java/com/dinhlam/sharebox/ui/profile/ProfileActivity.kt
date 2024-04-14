@@ -146,7 +146,7 @@ class ProfileActivity :
     }
 
     private fun openSettingPage() {
-        startActivity(router.settingCompose())
+        startActivity(router.setting())
     }
 
     private fun handleSignInResult(activityResult: ActivityResult?) {

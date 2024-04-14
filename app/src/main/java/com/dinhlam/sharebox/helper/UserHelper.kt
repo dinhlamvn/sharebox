@@ -31,7 +31,7 @@ class UserHelper @Inject constructor(
     object CreateUserError : Exception()
 
     fun isSignedIn(): Boolean {
-        if (BuildConfig.DEV) {
+        if (BuildConfig.DEV && AppConsts.FORCE_LOGIN) {
             return true
         }
         val currentUserId = userSharePref.getCurrentUserId()
@@ -41,7 +41,7 @@ class UserHelper @Inject constructor(
     }
 
     fun getCurrentUserId(): String {
-        if (BuildConfig.DEV) {
+        if (BuildConfig.DEV && AppConsts.FORCE_LOGIN) {
             return UserUtils.createUserId("dinh.lam.jx2@gmail.com")
         }
         if (!isSignedIn()) {
