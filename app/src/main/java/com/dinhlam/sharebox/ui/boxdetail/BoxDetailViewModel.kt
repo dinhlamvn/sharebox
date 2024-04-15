@@ -31,21 +31,15 @@ class BoxDetailViewModel @Inject constructor(
 ) : BaseViewModel<BoxDetailState>(BoxDetailState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))) {
 
     init {
-        consume(BoxDetailState::boxDetail) { boxDetail ->
-            boxDetail?.let { box ->
-                doInBackground {
-                    boxRepository.updateLastSeen(box.boxId)
-                }
-            }
-        }
         loadBoxDetail()
     }
 
     private fun loadBoxDetail() = getState { state ->
         suspend {
-            boxRepository.findOne(state.boxId)
+            boxRepository.findOne(state.boxId)!!
         }.execute { asyncLoad ->
             copy(
+                asyncLoadBoxDetail = asyncLoad,
                 boxDetail = asyncLoad.data,
                 isRefreshing = false
             )

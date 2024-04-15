@@ -93,7 +93,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         getStateChannel.trySend(block)
     }
 
-    protected fun <R : Any?> (suspend () -> R).execute(stateReducer: S.(AsyncLoad<R>) -> S): Job {
+    protected fun <T> (suspend () -> T).execute(stateReducer: S.(AsyncLoad<T>) -> S): Job {
         setState { stateReducer(AsyncLoad.Loading) }
         return stateScope.launch(Dispatchers.IO) {
             try {
@@ -105,7 +105,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         }
     }
 
-    protected fun <R : Any?> Deferred<R>.execute(stateReducer: S.(AsyncLoad<R>) -> S): Job {
+    protected fun <T> Deferred<T>.execute(stateReducer: S.(AsyncLoad<T>) -> S): Job {
         return suspend { await() }.execute(stateReducer)
     }
 

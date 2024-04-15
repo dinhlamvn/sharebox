@@ -129,14 +129,15 @@ class BoxDetailActivity :
         viewModel.consume(this, BoxDetailState::boxDetail) { boxDetail ->
             if (!boxDetail?.passcode.isNullOrBlank()) {
                 val takeBox = boxDetail ?: return@consume finish()
-                val intent = router.passcodeIntent(this, takeBox.passcode)
-                intent.putExtra(
-                    AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
+                val intent = router.passcodeIntent(
+                    this, takeBox.passcode!!, getString(
                         R.string.dialog_bookmark_collection_picker_verify_passcode,
                         takeBox.boxName
                     )
                 )
                 passcodeConfirmResultLauncher.launch(intent)
+            } else {
+                viewModel.loadShares()
             }
         }
     }

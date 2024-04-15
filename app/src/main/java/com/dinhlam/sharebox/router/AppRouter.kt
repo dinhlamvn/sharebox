@@ -143,7 +143,7 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun passcodeIntent(context: Context, desc: String?): Intent {
         return Intent(context, PasscodeActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
+            putExtra(AppExtras.EXTRA_PASSCODE, desc)
         }
     }
 

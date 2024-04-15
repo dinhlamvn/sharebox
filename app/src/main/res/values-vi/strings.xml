@@ -3,7 +3,7 @@
     <string name="share_direct_download_activity_title">Tải về</string>
     <string name="text_input_note_hint_desc">Đây là gì?</string>
     <string name="confirmation">Xác nhận</string>
-    <string name="no_result">Không có chia sẻ nào</string>
+    <string name="no_result">Không có chia sẻ nào.\nKéo để làm mới dữ liệu.</string>
     <string name="search_hint">Tìm kiếm…</string>
     <string name="like">(%d)</string>
     <string name="comment">(%d)</string>
