@@ -1,6 +1,8 @@
 package com.dinhlam.sharebox.worker
 
 import android.content.Context
+import android.content.pm.ServiceInfo
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -35,12 +37,23 @@ class SyncShareToCloudWorker @AssistedInject constructor(
     }
 
     private fun createForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            1912,
-            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
-                .setContentText(appContext.getString(R.string.sync_data_share_to_cloud))
-                .setSubText(appContext.getString(R.string.app_name))
-                .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).build()
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(
+                1912,
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
+                    .setContentText(appContext.getString(R.string.sync_data_share_to_cloud))
+                    .setSubText(appContext.getString(R.string.app_name))
+                    .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                1912,
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
+                    .setContentText(appContext.getString(R.string.sync_data_share_to_cloud))
+                    .setSubText(appContext.getString(R.string.app_name))
+                    .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).build()
+            )
+        }
     }
 }

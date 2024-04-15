@@ -1,7 +1,9 @@
 package com.dinhlam.sharebox.worker
 
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -123,24 +125,49 @@ class DownloadImagesWorker @AssistedInject constructor(
         id: Int,
         size: Int, downloaded: Int
     ): ForegroundInfo {
-        return ForegroundInfo(
-            id,
-            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                .setContentText(
-                    appContext.getString(
-                        R.string.downloading_all_image,
-                        downloaded,
-                        size
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(
+                id,
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
+                    .setContentText(
+                        appContext.getString(
+                            R.string.downloading_all_image,
+                            downloaded,
+                            size
+                        )
                     )
-                )
-                .setAutoCancel(false)
-                .setContentTitle(appContext.getString(R.string.downloading))
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .addAction(
-                    0,
-                    appContext.getString(R.string.cancel),
-                    WorkManager.getInstance(appContext).createCancelPendingIntent(workerParams.id)
-                ).build()
-        )
+                    .setAutoCancel(false)
+                    .setContentTitle(appContext.getString(R.string.downloading))
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .addAction(
+                        0,
+                        appContext.getString(R.string.cancel),
+                        WorkManager.getInstance(appContext)
+                            .createCancelPendingIntent(workerParams.id)
+                    ).build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                id,
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
+                    .setContentText(
+                        appContext.getString(
+                            R.string.downloading_all_image,
+                            downloaded,
+                            size
+                        )
+                    )
+                    .setAutoCancel(false)
+                    .setContentTitle(appContext.getString(R.string.downloading))
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .addAction(
+                        0,
+                        appContext.getString(R.string.cancel),
+                        WorkManager.getInstance(appContext)
+                            .createCancelPendingIntent(workerParams.id)
+                    ).build()
+            )
+        }
     }
 }

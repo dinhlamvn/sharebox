@@ -1,7 +1,9 @@
 package com.dinhlam.sharebox.worker
 
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -126,16 +128,33 @@ class YoutubeDownloadWorker @AssistedInject constructor(
     }
 
     private fun createForegroundInfo(subText: String): ForegroundInfo {
-        return ForegroundInfo(
-            workerParams.inputData.getInt("id", Random.nextInt()),
-            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                .setContentText(subText).setAutoCancel(false)
-                .setContentTitle(appContext.getString(R.string.downloading))
-                .setSmallIcon(R.mipmap.ic_launcher).addAction(
-                    0,
-                    appContext.getString(R.string.cancel),
-                    WorkManager.getInstance(appContext).createCancelPendingIntent(workerParams.id)
-                ).build()
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(
+                workerParams.inputData.getInt("id", Random.nextInt()),
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
+                    .setContentText(subText).setAutoCancel(false)
+                    .setContentTitle(appContext.getString(R.string.downloading))
+                    .setSmallIcon(R.mipmap.ic_launcher).addAction(
+                        0,
+                        appContext.getString(R.string.cancel),
+                        WorkManager.getInstance(appContext)
+                            .createCancelPendingIntent(workerParams.id)
+                    ).build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                workerParams.inputData.getInt("id", Random.nextInt()),
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
+                    .setContentText(subText).setAutoCancel(false)
+                    .setContentTitle(appContext.getString(R.string.downloading))
+                    .setSmallIcon(R.mipmap.ic_launcher).addAction(
+                        0,
+                        appContext.getString(R.string.cancel),
+                        WorkManager.getInstance(appContext)
+                            .createCancelPendingIntent(workerParams.id)
+                    ).build()
+            )
+        }
     }
 }

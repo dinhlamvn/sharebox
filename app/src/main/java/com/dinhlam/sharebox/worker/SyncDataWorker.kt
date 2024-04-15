@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.worker
 
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.ServiceInfo
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -77,16 +79,31 @@ class SyncDataWorker @AssistedInject constructor(
 
 
     private fun createForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            SERVICE_ID,
-            NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
-                .setContentText(appContext.getString(R.string.sync_data_to_cloud))
-                .setSubText(appContext.getString(R.string.app_name))
-                .setSmallIcon(R.drawable.ic_cloud_upload).setAutoCancel(false).setContentIntent(
-                    PendingIntent.getActivity(
-                        appContext, 1122, router.setting(), PendingIntent.FLAG_IMMUTABLE
-                    )
-                ).build()
-        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(
+                SERVICE_ID,
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
+                    .setContentText(appContext.getString(R.string.sync_data_to_cloud))
+                    .setSubText(appContext.getString(R.string.app_name))
+                    .setSmallIcon(R.drawable.ic_cloud_upload).setAutoCancel(false).setContentIntent(
+                        PendingIntent.getActivity(
+                            appContext, 1122, router.setting(), PendingIntent.FLAG_IMMUTABLE
+                        )
+                    ).build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            )
+        } else {
+            ForegroundInfo(
+                SERVICE_ID,
+                NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
+                    .setContentText(appContext.getString(R.string.sync_data_to_cloud))
+                    .setSubText(appContext.getString(R.string.app_name))
+                    .setSmallIcon(R.drawable.ic_cloud_upload).setAutoCancel(false).setContentIntent(
+                        PendingIntent.getActivity(
+                            appContext, 1122, router.setting(), PendingIntent.FLAG_IMMUTABLE
+                        )
+                    ).build()
+            )
+        }
     }
 }
