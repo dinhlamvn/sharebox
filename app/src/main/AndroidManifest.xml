@@ -81,16 +81,21 @@
 
         <activity
             android:name=".ui.signin.SignInActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.dinhlam.sharebox.ui.home.HomeActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
 
             <intent-filter>
@@ -111,7 +116,6 @@
             android:exported="true"
             android:label="@string/share_activity_title"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
@@ -142,7 +146,6 @@
             android:exported="true"
             android:label="@string/share_direct_download_activity_title"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
@@ -161,54 +164,34 @@
         <activity
             android:name=".ui.downloadpopup.DownloadPopupActivity"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Transparent"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.bookmark.form.BookmarkCollectionFormActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.bookmark.list.BookmarkListItemActivity"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.TranslucentStatusBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.boxcreate.BoxCreateActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.passcode.PasscodeActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name=".ui.syncdata.SynchronizeDataActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-        </activity>
-
-        <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -224,31 +207,26 @@
 
         <activity
             android:name=".ui.setting.SettingActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.profile.ProfileActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.bookmark.BookmarkActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.boxdetail.BoxDetailActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name="com.dinhlam.sharebox.ui.sharetext.ShareTextActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
@@ -256,7 +234,6 @@
             android:name="com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity"
             android:exported="true"
             android:label="@string/share_link_label"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity">
 
@@ -273,7 +250,6 @@
 
         <activity
             android:name="com.dinhlam.sharebox.ui.setting.SettingComposeActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 

@@ -106,7 +106,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun setupButtonForSignIn() {
-        binding.buttonSignIn.setDrawableCompat(Icons.googleIcon(this))
+        binding.buttonSignIn.setDrawableCompat(Icons.googleIcon(this) { copy(colorRes = android.R.color.white) })
         binding.buttonSignIn.setOnClickListener {
             requestSignIn()
         }

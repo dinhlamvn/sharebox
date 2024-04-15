@@ -1,14 +1,19 @@
 package com.dinhlam.sharebox.ui.home
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
@@ -18,6 +23,7 @@ import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragmen
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareData
@@ -38,6 +44,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener,
     BoxSelectionDialogFragment.OnBoxSelectedListener {
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                showToast(R.string.permission_granted)
+            } else {
+                showAlertDialog()
+            }
+        }
 
     override val viewModel: HomeViewModel by viewModels()
 
@@ -125,6 +140,17 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this, android.Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                showAlertDialog()
+            }
+        }
+
         registerOnBackPressHandler {
             if (binding.recyclerView.computeVerticalScrollOffset() > 0) {
                 binding.recyclerView.smoothScrollToPosition(0)
@@ -160,6 +186,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onDestroy() {
         super.onDestroy()
         stopService(realtimeDatabaseServiceIntent)
+    }
+
+    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    private fun showAlertDialog() {
+        AlertDialog.Builder(this).setTitle(R.string.alert_notice)
+            .setMessage(R.string.alert_request_post_notification_permission_message)
+            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }.setNegativeButton(R.string.alert_no_thanks) { _, _ ->
+                showToast(R.string.permission_denied)
+            }.create().show()
+
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {

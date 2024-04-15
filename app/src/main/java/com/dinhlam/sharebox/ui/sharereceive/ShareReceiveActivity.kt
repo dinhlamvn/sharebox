@@ -224,18 +224,26 @@ class ShareReceiveActivity :
             finishAndRemoveTask()
         }
 
-        binding.textInputNote.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                activityScope.launch {
-                    delay(700)
-                    withContext(Dispatchers.Main) {
-                        binding.scrollView.fullScroll(View.FOCUS_DOWN)
-                    }
-                }
-            }
+        binding.textInputNote.setOnFocusChangeListener { v, _ ->
+            scrollToBottomEditText(v)
+        }
+
+        binding.textInputNote.setOnClickListener { v ->
+            scrollToBottomEditText(v)
         }
 
         handleShareData()
+    }
+
+    private fun scrollToBottomEditText(v: View) {
+        if (v.hasFocus()) {
+            activityScope.launch {
+                delay(500)
+                withContext(Dispatchers.Main) {
+                    binding.scrollView.fullScroll(View.FOCUS_DOWN)
+                }
+            }
+        }
     }
 
     private fun share() = getState(viewModel) { state ->

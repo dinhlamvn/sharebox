@@ -12,14 +12,10 @@ class AppSharePref @Inject constructor(
 ) : SharePref(context, "share_saver_pref") {
 
     companion object {
-        private const val KEY_CUSTOM_TAB_ENABLED = "setting-custom-tab-enabled"
         private const val KEY_SETTING_MODE_THEME = "setting-theme"
         private const val KEY_SETTING_NETWORK_CONDITION = "setting-network-condition"
-        private const val KEY_LATEST_ACTIVE_BOX_ID = "lasted-active-box-id"
-        private const val KEY_SHOW_GUIDELINE = "show-guideline"
         private const val KEY_SETTING_IMAGE_DOWNLOAD_QUALITY = "setting-download-image-quality"
         private const val KEY_SETTING_SYNC_IN_BACKGROUND = "setting-sync-in-background"
-        private const val KEY_FIRST_INSTALL = "key-first-install"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -40,18 +36,6 @@ class AppSharePref @Inject constructor(
         return get(KEY_SETTING_NETWORK_CONDITION, 1)
     }
 
-    fun isCustomTabEnabled() = get(KEY_CUSTOM_TAB_ENABLED, true)
-
-    fun getLatestActiveBoxId() = get(KEY_LATEST_ACTIVE_BOX_ID, "")
-
-    fun setLatestActiveBoxId(boxId: String) = put(KEY_LATEST_ACTIVE_BOX_ID, boxId)
-
-    fun isShowGuideline(): Boolean = get(KEY_SHOW_GUIDELINE, true)
-
-    fun offShowGuideline() {
-        put(KEY_SHOW_GUIDELINE, value = false, sync = true)
-    }
-
     fun setImageDownloadQuality(quality: Int) {
         put(KEY_SETTING_IMAGE_DOWNLOAD_QUALITY, quality)
     }
@@ -64,8 +48,4 @@ class AppSharePref @Inject constructor(
         put(KEY_SETTING_SYNC_IN_BACKGROUND, syncInBackground, true)
 
     fun isSyncInBackground() = get(KEY_SETTING_SYNC_IN_BACKGROUND, false)
-
-    fun isFirstInstall() = get(KEY_FIRST_INSTALL, true)
-
-    fun offFirstInstall() = put(KEY_FIRST_INSTALL, value = false, sync = true)
 }

@@ -28,6 +28,22 @@ class HomeViewModel @Inject constructor(
     init {
         getListBoxes()
         getRecentlyShares()
+
+        consume(HomeState::asyncLoadShares) { asyncLoad ->
+            if (asyncLoad.completed) {
+                triggerCanLoadMore()
+            }
+        }
+    }
+
+    private fun triggerCanLoadMore() = getState { state ->
+        suspend {
+            shareRepository.findRecentlyShares(
+                userHelper.getCurrentUserId(),
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+            )
+        }.execute { asyncLoad -> copy(canLoadMore = !asyncLoad.data.isNullOrEmpty()) }
     }
 
     private fun getListBoxes() = suspend {

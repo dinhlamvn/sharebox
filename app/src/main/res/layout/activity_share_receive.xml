@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_view"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.Material3.Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true">
+        android:layout_height="?attr/actionBarSize"
+        app:contentInsetEnd="16dp"
+        app:contentInsetStart="16dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -18,10 +20,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_avatar"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1,1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -46,27 +47,36 @@
                 android:id="@+id/image_close"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1,1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_bottom_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:barrierMargin="16dp"
-                app:constraint_referenced_ids="text_view_name,image_avatar" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/divider_name"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                app:layout_constraintTop_toBottomOf="@id/barrier_bottom_name" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
@@ -77,7 +87,7 @@
                 android:overScrollMode="never"
                 android:paddingVertical="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/divider_name" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/text_input_note"
@@ -102,6 +112,7 @@
         android:id="@+id/container_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/md_theme_surface"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
