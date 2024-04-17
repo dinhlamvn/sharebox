@@ -287,7 +287,7 @@ object Icons {
     fun webIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
-        return createIcon(context, GoogleMaterial.Icon.gmd_web, block(IconBuilder(context)))
+        return createIcon(context, GoogleMaterial.Icon.gmd_open_in_browser, block(IconBuilder(context)))
     }
 
     fun imageIcon(

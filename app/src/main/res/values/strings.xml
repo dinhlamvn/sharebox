@@ -126,7 +126,7 @@
     <string name="access_box">Access Box</string>
     <string name="require_choose_box">Please choose box to archive</string>
     <string name="newest_box">Newest Boxes</string>
-    <string name="tips_share_link">Tip*: You can type Youtube, TikTok, Facebook…video link to download that content</string>
+    <string name="tips_share_link">Tip*: You can input Youtube, TikTok, Facebook…video link to download that content</string>
     <string name="share_link_guide_1">* You can archive the website\'s link to selected box.</string>
     <string name="share_link_guide_2">* Copy and send box\'s ID to friends to access archived content.</string>
     <string name="copied">Copied</string>
@@ -141,6 +141,7 @@
     <string name="share_link_label">Browse</string>
     <string name="permission_granted">Permission granted</string>
     <string name="permission_denied">Permission denied</string>
+    <string name="archive_to">Archive to</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>
