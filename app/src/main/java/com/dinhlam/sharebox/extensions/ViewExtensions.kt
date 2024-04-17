@@ -12,6 +12,7 @@ import androidx.annotation.FloatRange
 import androidx.annotation.StyleRes
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePaddingRelative
 import com.dinhlam.sharebox.model.Spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -107,6 +108,10 @@ fun View.updateMargin(spacing: Spacing) {
         marginEnd = spacing.end
         bottomMargin = spacing.bottom
     }
+}
+
+fun View.updatePadding(spacing: Spacing) {
+    updatePaddingRelative(spacing.start, spacing.top, spacing.end, spacing.bottom)
 }
 
 fun View.scaleXY(@FloatRange(0.0, 1.0) scaleX: Float, @FloatRange(0.0, 1.0) scaleY: Float) {

@@ -8,13 +8,16 @@ import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.annotation.GravityInt
 import androidx.core.content.ContextCompat
-import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewTextBinding
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.setTextAppearanceCompat
+import com.dinhlam.sharebox.extensions.updatePadding
+import com.dinhlam.sharebox.extensions.updateSize
+import com.dinhlam.sharebox.model.Spacing
 
 data class TextListModel(
     val id: String,
@@ -28,6 +31,7 @@ data class TextListModel(
     val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
         null
     ),
+    val padding: Spacing = Spacing.Horizontal(16.dp(), 16.dp()),
 ) : BaseListAdapter.BaseListModel("text_$id") {
 
     override fun createViewHolder(
@@ -38,22 +42,22 @@ data class TextListModel(
             ModelViewTextBinding.inflate(inflater, container, false)
         ) {
 
+            private val defaultTextColor = binding.textView.currentTextColor
+
             override fun onBind(model: TextListModel, position: Int) {
-                binding.root.updateLayoutParams {
-                    width = model.width
-                    height = model.height
-                }
+                binding.root.updateSize(model.width, model.height)
+                binding.root.updatePadding(model.padding)
                 binding.textView.gravity = model.gravity
                 binding.textView.setTextAppearanceCompat(model.textAppearance)
                 binding.textView.text = model.text
-                model.actionClick.prop?.let { listener ->
-                    binding.textView.setOnClickListener(listener)
-                }
+                binding.textView.setOnClickListener(model.actionClick.prop)
 
                 binding.textView.setDrawableCompat(end = model.endIcon)
 
                 model.textColor.takeIf { it != 0 }?.let { textColor ->
                     binding.textView.setTextColor(ContextCompat.getColor(buildContext, textColor))
+                } ?: apply {
+                    binding.textView.setTextColor(defaultTextColor)
                 }
             }
 

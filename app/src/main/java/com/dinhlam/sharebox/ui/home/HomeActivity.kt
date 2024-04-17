@@ -214,12 +214,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
 
         binding.recyclerView.addOnScrollListener(object : OnScrollListener() {
-            private var totalScrolledY = 0
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val totalOffsetToVisibleAction = binding.textTitle.width.toFloat()
-                totalScrolledY += dy
+                val totalScrolledY = recyclerView.computeVerticalScrollOffset()
                 binding.textTitle.translationX = totalScrolledY * -1f
                 val alpha = (totalScrolledY / totalOffsetToVisibleAction).coerceAtMost(1f)
                 binding.containerAction.isVisible = alpha >= 0.2f
@@ -324,5 +322,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onBoxSelected(boxId: String) {
         startActivity(router.boxDetail(this, boxId))
+    }
+
+    fun requestViewAllBox() {
+        showToast("view all")
     }
 }

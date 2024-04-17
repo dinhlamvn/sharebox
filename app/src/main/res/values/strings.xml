@@ -76,7 +76,7 @@
     <string name="edit_avatar">Edit avatar</string>
     <string name="share_text_quote_hint">Type here…</string>
     <string name="share_link_hint">Enter or Paste your url…</string>
-    <string name="require_input_link">Please input the link to archive</string>
+    <string name="require_input_link">Please input the link</string>
     <string name="require_input_text_quote">Please input the text quote to archive</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
     <string name="synchronize_data_message">Synchronizing data…</string>
@@ -142,6 +142,7 @@
     <string name="permission_granted">Permission granted</string>
     <string name="permission_denied">Permission denied</string>
     <string name="archive_to">Archive to</string>
+    <string name="view_all">View all</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

@@ -25,9 +25,12 @@ class HomeViewModel @Inject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<HomeState>(HomeState(isRefreshing = true)) {
 
+    companion object {
+        private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 5
+    }
+
     init {
-        getListBoxes()
-        getRecentlyShares()
+        refresh()
 
         consume(HomeState::asyncLoadShares) { asyncLoad ->
             if (asyncLoad.completed) {
@@ -35,6 +38,11 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    private fun getTotalBoxes() = suspend { boxRepository.count(userHelper.getCurrentUserId()) }
+        .execute { asyncLoad ->
+            copy(totalBox = asyncLoad.data.orElse(0))
+        }
 
     private fun triggerCanLoadMore() = getState { state ->
         suspend {
@@ -47,7 +55,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getListBoxes() = suspend {
-        boxRepository.findByUser(userHelper.getCurrentUserId(), 10, 0)
+        boxRepository.findByUser(userHelper.getCurrentUserId(), BOX_LIST_INIT_LOAD_SIZE_DEFAULT, 0)
     }.execute { asyncLoad ->
         copy(boxes = asyncLoad.data.orEmpty())
     }
@@ -143,6 +151,11 @@ class HomeViewModel @Inject constructor(
 
     fun doOnRefresh() {
         setState { HomeState(isRefreshing = true) }
+        refresh()
+    }
+
+    private fun refresh() {
+        getTotalBoxes()
         getListBoxes()
         getRecentlyShares()
     }

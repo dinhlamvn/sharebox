@@ -20,6 +20,7 @@ import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.TextPairListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
@@ -60,13 +61,23 @@ class HomeAdapter @Inject constructor(
             "margin_my_boxes", height = 32.dp(), dividerColor = android.R.color.transparent
         ).attachTo(this)
 
-        TextListModel(
+        TextPairListModel(
             "title_your_boxes",
-            activity.getString(R.string.your_boxes),
-            textAppearance = R.style.TextTitleMedium,
-            height = ViewGroup.LayoutParams.WRAP_CONTENT,
-            gravity = Gravity.START,
-        ).attachTo(this)
+            text1 = activity.getString(R.string.your_boxes),
+            textAppearance1 = R.style.TextTitleMedium,
+        ).run {
+            if (state.boxes.size < state.totalBox) {
+                copy(
+                    text2 = activity.getString(R.string.view_all),
+                    textColor2 = R.color.md_theme_primary,
+                    actionClick2 = NoHashProp(View.OnClickListener {
+                        activity.requestViewAllBox()
+                    })
+                )
+            } else {
+                this
+            }
+        }.attachTo(this)
 
         VerticalDividerListModel(
             "margin_bottom_title_your_boxes",
@@ -102,7 +113,7 @@ class HomeAdapter @Inject constructor(
         }
 
         ButtonListModel(
-            "button_choose_box",
+            "button_access_box",
             activity.getString(R.string.access_box),
             margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 16.dp()),
             onClick = NoHashProp(View.OnClickListener {

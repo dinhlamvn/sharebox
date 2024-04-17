@@ -52,9 +52,7 @@ class AppRouter constructor(private val context: Context) : Router {
         context: Context, url: String, boxId: String?, boxName: String?, supportDownload: Boolean
     ) {
         val shareDesc = context.getString(R.string.archives)
-        val shareBitmap = Icons.archiveIcon(context) {
-            copy(colorRes = android.R.color.black)
-        }.toBitmap()
+        val shareBitmap = Icons.archiveIcon(context).toBitmap()
         val broadcastReceiverIntent = Intent(
             context,
             CustomTabsShareBroadcastReceiver::class.java
@@ -100,7 +98,6 @@ class AppRouter constructor(private val context: Context) : Router {
             CustomTabsIntent.Builder()
                 .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
                 .setSecondaryToolbarViews(remoteViews, clickableIds, downloadPendingIntent)
-                .setColorScheme(CustomTabsIntent.COLOR_SCHEME_LIGHT)
                 .setActionButton(shareBitmap, shareDesc, pendingIntent).build()
 
         customTabsIntent.intent.setPackage("com.android.chrome")

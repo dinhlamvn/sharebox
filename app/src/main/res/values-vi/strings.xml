@@ -68,7 +68,7 @@
     <string name="edit_avatar">Sửa ảnh đại diện</string>
     <string name="share_text_quote_hint">Nhập vào đây…</string>
     <string name="share_link_hint">Nhập địa chỉ vào đây…</string>
-    <string name="require_input_link">Vui lòng nhập địa chỉ để lưu trữ</string>
+    <string name="require_input_link">Vui lòng nhập địa chỉ</string>
     <string name="require_input_text_quote">Vui lòng nhập nội dung trích dẫn</string>
     <string name="require_input_correct_weblink">Vui lòng nhập địa chỉ hợp lệ</string>
     <string name="synchronize_data_message">Đang đồng bộ dữ liệu…</string>
@@ -134,6 +134,7 @@
     <string name="permission_granted">Đã cấp quyền</string>
     <string name="permission_denied">Đã chặn quyền</string>
     <string name="archive_to">Lưu trữ vào</string>
+    <string name="view_all">View all</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

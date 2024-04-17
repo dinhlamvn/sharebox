@@ -12,4 +12,5 @@ data class HomeState(
     val currentPage: Int = 1,
     val canLoadMore: Boolean = true,
     val boxes: List<BoxDetail> = emptyList(),
+    val totalBox: Int = 0,
 ) : BaseViewModel.BaseState
