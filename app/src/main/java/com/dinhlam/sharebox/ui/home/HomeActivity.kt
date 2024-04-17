@@ -25,8 +25,9 @@ import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
+import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
-import com.dinhlam.sharebox.extensions.scaleXY
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -214,15 +215,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         }
 
         binding.recyclerView.addOnScrollListener(object : OnScrollListener() {
+            private var totalScrolledY: Int = 0
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val totalOffsetToVisibleAction = binding.textTitle.width.toFloat()
-                val totalScrolledY = recyclerView.computeVerticalScrollOffset()
-                binding.textTitle.translationX = totalScrolledY * -1f
-                val alpha = (totalScrolledY / totalOffsetToVisibleAction).coerceAtMost(1f)
+                totalScrolledY = totalScrolledY.plus(dy).coerceAtLeast(0).coerceAtMost(100.dp())
+                val alpha = (totalScrolledY / 100.dpF()).coerceAtMost(1f)
                 binding.containerAction.isVisible = alpha >= 0.2f
                 binding.containerAction.alpha = alpha
-                binding.textTitle.scaleXY(1f - alpha, 1f - alpha)
+                binding.textTitle.alpha = 1 - alpha
             }
         })
     }

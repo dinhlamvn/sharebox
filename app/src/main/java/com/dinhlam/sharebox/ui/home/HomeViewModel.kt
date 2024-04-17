@@ -80,11 +80,12 @@ class HomeViewModel @Inject constructor(
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
         }.execute { asyncLoad ->
-            val shares = asyncLoad.data.orEmpty()
+            val loadShares = asyncLoad.data.orEmpty()
             copy(
-                shares = this.shares.plus(shares),
-                canLoadMore = shares.isNotEmpty(),
+                shares = this.shares.plus(loadShares),
+                canLoadMore = loadShares.isNotEmpty(),
                 currentPage = currentPage + 1,
+                isLoadingMore = asyncLoad is AsyncLoad.Loading
             )
         }
     }
