@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.DrawableImageListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.listmodel.SizedBoxListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.profile.ProfileInfoListModel
 import com.dinhlam.sharebox.model.Spacing
@@ -94,7 +94,7 @@ class ProfileActivity :
                 })
             ).attachTo(this)
 
-            SizedBoxListModel(
+            VerticalDividerListModel(
                 "divider_profile", height = 1.dp()
             ).attachTo(this)
 
@@ -109,7 +109,7 @@ class ProfileActivity :
                 })
             ).attachTo(this)
 
-            SizedBoxListModel(
+            VerticalDividerListModel(
                 "divider_bookmark_collection", height = 1.dp()
             ).attachTo(this)
         }

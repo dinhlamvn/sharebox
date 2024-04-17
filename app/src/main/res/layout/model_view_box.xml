@@ -1,69 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/AppMaterialCardView"
-    android:layout_width="150dp"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="6dp">
+    android:background="?attr/selectableItemBackground">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground">
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:drawablePadding="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextBody"
+        app:layout_constraintBottom_toTopOf="@id/text_created_date"
+        app:layout_constraintEnd_toStartOf="@id/image_action"
+        app:layout_constraintStart_toEndOf="@id/image_icon"
+        app:layout_constraintTop_toTopOf="@id/image_icon"
+        tools:text="This is simple box" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_lock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_created_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextCaption"
+        app:layout_constraintBottom_toBottomOf="@id/image_icon"
+        app:layout_constraintEnd_toStartOf="@id/image_action"
+        app:layout_constraintStart_toEndOf="@id/image_icon"
+        app:layout_constraintTop_toBottomOf="@id/text_name"
+        tools:text="Aug 02 1965" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="16dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image_action"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:ellipsize="end"
-            android:gravity="center_horizontal|top"
-            android:lines="2"
-            android:paddingHorizontal="8dp"
-            android:textAppearance="@style/TextBodyMedium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_icon"
-            tools:text="This is simple box" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_action"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_name" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

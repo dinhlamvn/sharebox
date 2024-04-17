@@ -3,10 +3,12 @@ package com.dinhlam.sharebox.listmodel
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBoxBinding
+import com.dinhlam.sharebox.extensions.format
+import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.utils.Icons
 
@@ -14,7 +16,7 @@ data class BoxListModel(
     val id: String,
     val boxId: String,
     val name: String,
-    val desc: String?,
+    val created: Long,
     val margin: Spacing = Spacing.None,
     val hasPasscode: Boolean = false,
     val active: Boolean = false,
@@ -31,9 +33,8 @@ data class BoxListModel(
         ) {
 
             init {
-                binding.imageIcon.setImageDrawable(Icons.boxIcon(buildContext))
-                binding.imageLock.setImageDrawable(Icons.lockIcon(buildContext) {
-                    copy(sizeDp = 16)
+                binding.imageIcon.setImageDrawable(Icons.boxIcon(buildContext) {
+                    copy(sizeDp = 32, colorRes = R.color.md_theme_secondary)
                 })
                 binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
             }
@@ -52,7 +53,11 @@ data class BoxListModel(
                     model.onClick.prop?.invoke(model.boxId)
                 }
                 binding.textName.text = model.name
-                binding.imageLock.isVisible = model.hasPasscode
+                binding.textName.setDrawableCompat(
+                    if (model.hasPasscode) Icons.lockIcon(
+                        buildContext
+                    ) { copy(sizeDp = 12) } else null)
+                binding.textCreatedDate.text = model.created.format("MMM dd yyyy, HH:mm")
             }
 
             override fun onUnBind() {

@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.helper.DownloadHelper
-import com.dinhlam.sharebox.listmodel.SizedBoxListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.DownloadData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -74,15 +74,15 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
                         )
                     })
                 ).attachTo(this)
-                SizedBoxListModel("video_divider_$index", height = 1.dp()).attachTo(this)
+                VerticalDividerListModel("video_divider_$index", height = 1.dp()).attachTo(this)
             }
         }
 
         if (audios.isNotEmpty()) {
-            SizedBoxListModel(
+            VerticalDividerListModel(
                 "audio_spacing",
                 height = 16.dp(),
-                backgroundColor = android.R.color.transparent
+                dividerColor = android.R.color.transparent
             ).attachTo(this)
 
             TextListModel(
@@ -111,17 +111,17 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
                         )
                     })
                 ).attachTo(this)
-                SizedBoxListModel("audio_divider_$index", height = 1.dp()).attachTo(this)
+                VerticalDividerListModel("audio_divider_$index", height = 1.dp()).attachTo(this)
             }
         }
 
         if (images.isNotEmpty()) {
             val downloadData = images.first()
 
-            SizedBoxListModel(
+            VerticalDividerListModel(
                 "image_spacing",
                 height = 16.dp(),
-                backgroundColor = android.R.color.transparent
+                dividerColor = android.R.color.transparent
             ).attachTo(this)
 
             TextListModel(
@@ -147,10 +147,10 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
             ).attachTo(this)
         }
 
-        SizedBoxListModel(
+        VerticalDividerListModel(
             "bottom_spacing",
             height = 50.dp(),
-            backgroundColor = android.R.color.transparent
+            dividerColor = android.R.color.transparent
         ).attachTo(this)
     }
 

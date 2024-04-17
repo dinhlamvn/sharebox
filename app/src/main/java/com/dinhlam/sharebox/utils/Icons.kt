@@ -197,7 +197,7 @@ object Icons {
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): Drawable {
         return createIcon(
-            context, FontAwesome.Icon.faw_box_open, block(IconBuilder(context))
+            context, FontAwesome.Icon.faw_box, block(IconBuilder(context))
         )
     }
 

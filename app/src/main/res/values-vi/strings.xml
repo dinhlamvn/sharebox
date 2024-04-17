@@ -103,7 +103,7 @@
     <string name="recently_shares">Chia sẻ vừa qua</string>
     <string name="web">Trang web</string>
     <string name="images">Một số ảnh</string>
-    <string name="no_boxes">Không có box nào</string>
+    <string name="no_boxes">Hiện tại bạn chưa có Box nào.\nHãy nhấp vào nút (+) để tạo mới 1 box.</string>
     <string name="desc_image">Đây là một hình ảnh</string>
     <string name="go">Đi</string>
     <string name="download_failed">Không thể tải nội dung này, đang thử lại.</string>
@@ -117,7 +117,7 @@
     <string name="tips_search_box">*Mẹo: Bạn có thể nhập mã box để truy cập vào Box.</string>
     <string name="access_box">Truy cập Box</string>
     <string name="require_choose_box">Chọn box để lưu trữ</string>
-    <string name="newest_box">Box mới nhất</string>
+    <string name="your_boxes">Box của bạn</string>
     <string name="tips_share_link">*Mẹo: Bạn có thể nhập đường dẫn video của Youtube, TikTok, Facebook… để tải các nội dung đó.</string>
     <string name="share_link_guide_1">* Bạn có thể lưu trữ địa chỉ trang web vào Box đã chọn.</string>
     <string name="share_link_guide_2">* Sao chép và gửi mã Box cho bạn bè để cùng truy cập nội dung đã lưu.</string>

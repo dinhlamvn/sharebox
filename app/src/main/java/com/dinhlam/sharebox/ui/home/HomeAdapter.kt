@@ -17,11 +17,10 @@ import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
 import com.dinhlam.sharebox.listmodel.ButtonListModel
-import com.dinhlam.sharebox.listmodel.CarouselListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
-import com.dinhlam.sharebox.listmodel.SizedBoxListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
@@ -57,41 +56,45 @@ class HomeAdapter @Inject constructor(
             LoadingListModel("top_loading").attachTo(this)
         }
 
-        SizedBoxListModel(
-            "margin_my_boxes", height = 32.dp(), backgroundColor = android.R.color.transparent
+        VerticalDividerListModel(
+            "margin_my_boxes", height = 32.dp(), dividerColor = android.R.color.transparent
         ).attachTo(this)
 
         TextListModel(
             "title_your_boxes",
-            activity.getString(R.string.newest_box),
+            activity.getString(R.string.your_boxes),
             textAppearance = R.style.TextTitleMedium,
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             gravity = Gravity.START,
         ).attachTo(this)
 
+        VerticalDividerListModel(
+            "margin_bottom_title_your_boxes",
+            height = 16.dp(),
+            dividerColor = android.R.color.transparent
+        ).attachTo(this)
+
         if (state.boxes.isNotEmpty()) {
-            val lastIndex = state.boxes.size - 1
-            val boxModelViews = state.boxes.mapIndexed { idx, boxDetail ->
+            state.boxes.forEachIndexed { idx, boxDetail ->
                 BoxListModel(
                     "box_${boxDetail.boxId}",
                     boxDetail.boxId,
                     boxDetail.boxName,
-                    boxDetail.boxDesc,
-                    Spacing.Only(
-                        if (idx == 0) 16.dp() else 8.dp(),
-                        16.dp(),
-                        if (idx == lastIndex) 16.dp() else 8.dp(),
-                        16.dp()
-                    ),
+                    boxDetail.createdDate,
+                    Spacing.None,
                     !boxDetail.passcode.isNullOrBlank(),
                     false,
                     NoHashProp(this::onBoxClick),
                     NoHashProp(View.OnClickListener {
                         onBoxOptionClick(boxDetail)
                     })
-                )
+                ).attachTo(this)
+
+                VerticalDividerListModel(
+                    "box_divider_$idx",
+                    margin = Spacing.Only(16.dp())
+                ).attachTo(this)
             }
-            CarouselListModel("carousel_box", boxModelViews).attachTo(this)
         } else {
             TextListModel(
                 "text_empty_boxes", activity.getString(R.string.no_boxes), height = 100.dp()
@@ -107,10 +110,10 @@ class HomeAdapter @Inject constructor(
             })
         ).attachTo(this)
 
-        SizedBoxListModel(
+        VerticalDividerListModel(
             "margin_bottom_recently_boxes",
             height = 16.dp(),
-            backgroundColor = android.R.color.transparent
+            dividerColor = android.R.color.transparent
         ).attachTo(this)
 
         TextListModel(
@@ -126,10 +129,10 @@ class HomeAdapter @Inject constructor(
                 "text_empty", activity.getString(R.string.no_result), height = 100.dp()
             ).attachTo(this)
         } else if (state.shares.isNotEmpty()) {
-            SizedBoxListModel(
+            VerticalDividerListModel(
                 "margin_bottom_recently_boxes",
                 height = 16.dp(),
-                backgroundColor = android.R.color.transparent
+                dividerColor = android.R.color.transparent
             ).attachTo(this)
 
             state.shares.forEach { shareDetail ->

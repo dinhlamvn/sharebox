@@ -111,7 +111,7 @@
     <string name="web">Web</string>
     <string name="images">Images</string>
     <string name="recently_shares">Recently Shares</string>
-    <string name="no_boxes">No boxes</string>
+    <string name="no_boxes">You don\'t have any box now.\nLet tap on button (+) to create a new one.</string>
     <string name="desc_image">This is an image</string>
     <string name="go">Go</string>
     <string name="download_failed">Can\'t download this content, trying again!</string>
@@ -125,7 +125,7 @@
     <string name="tips_search_box">*Tip: You can type the box\'s id to access a Box.</string>
     <string name="access_box">Access Box</string>
     <string name="require_choose_box">Please choose box to archive</string>
-    <string name="newest_box">Newest Boxes</string>
+    <string name="your_boxes">Your Boxes</string>
     <string name="tips_share_link">Tip*: You can input Youtube, TikTok, Facebook…video link to download that content</string>
     <string name="share_link_guide_1">* You can archive the website\'s link to selected box.</string>
     <string name="share_link_guide_2">* Copy and send box\'s ID to friends to access archived content.</string>
