@@ -12,7 +12,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
@@ -23,6 +26,7 @@ import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragmen
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.scaleXY
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -140,6 +144,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setupActionBarAction()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this, android.Manifest.permission.POST_NOTIFICATIONS
@@ -181,6 +187,46 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         binding.buttonCreateBox.setOnClickListener {
             requestCreateBox()
         }
+    }
+
+    private fun setupActionBarAction() {
+        binding.containerAction.isVisible = false
+        binding.buttonArchiveText.setIcon(Icons.noteIcon(this) {
+            copy(colorRes = android.R.color.white)
+        })
+        binding.buttonArchiveWeb.setIcon(Icons.webIcon(this) {
+            copy(colorRes = android.R.color.white)
+        })
+        binding.buttonArchiveImages.setIcon(Icons.imageIcon(this) {
+            copy(colorRes = android.R.color.white)
+        })
+
+        binding.buttonArchiveText.setOnClickListener {
+            requestShareText()
+        }
+
+        binding.buttonArchiveWeb.setOnClickListener {
+            requestShareWeb()
+        }
+
+        binding.buttonArchiveImages.setOnClickListener {
+            requestShareImages()
+        }
+
+        binding.recyclerView.addOnScrollListener(object : OnScrollListener() {
+            private var totalScrolledY = 0
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalOffsetToVisibleAction = binding.textTitle.width.toFloat()
+                totalScrolledY += dy
+                binding.textTitle.translationX = totalScrolledY * -1f
+                val alpha = (totalScrolledY / totalOffsetToVisibleAction).coerceAtMost(1f)
+                binding.containerAction.isVisible = alpha >= 0.2f
+                binding.containerAction.alpha = alpha
+                binding.textTitle.scaleXY(1f - alpha, 1f - alpha)
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -255,7 +301,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         shareHelper.showBoxSelectionDialog(supportFragmentManager)
     }
 
-    fun requestShareLink() {
+    fun requestShareWeb() {
         shareResultLauncher.launch(router.shareLink(this))
     }
 

@@ -11,4 +11,8 @@
         <attr name="expanded_text" format="string" />
         <attr name="read_more_text_color" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="CardViewIconView">
+        <attr name="icon_size" format="dimension" />
+    </declare-styleable>
 </resources>

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.FloatRange
 import androidx.annotation.StyleRes
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -106,4 +107,9 @@ fun View.updateMargin(spacing: Spacing) {
         marginEnd = spacing.end
         bottomMargin = spacing.bottom
     }
+}
+
+fun View.scaleXY(@FloatRange(0.0, 1.0) scaleX: Float, @FloatRange(0.0, 1.0) scaleY: Float) {
+    this.scaleX = scaleX
+    this.scaleY = scaleY
 }

@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.appcompat.widget.AppCompatImageView
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
 import com.google.android.material.card.MaterialCardView
 
@@ -14,10 +15,23 @@ class CardViewIconView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : MaterialCardView(context, attrs, defStyle) {
 
+    companion object {
+        private const val DEFAULT_ICON_SIZE = 24
+    }
+
+    private val iconSize: Int
+
     private val imageView = AppCompatImageView(context)
 
     init {
-        addView(imageView, LayoutParams(24.dp(), 24.dp()).apply {
+        context.obtainStyledAttributes(attrs, R.styleable.CardViewIconView).use { typedArray ->
+            iconSize = typedArray.getDimensionPixelSize(
+                R.styleable.CardViewIconView_icon_size,
+                DEFAULT_ICON_SIZE.dp()
+            )
+        }
+
+        addView(imageView, LayoutParams(iconSize, iconSize).apply {
             gravity = Gravity.CENTER
         })
     }

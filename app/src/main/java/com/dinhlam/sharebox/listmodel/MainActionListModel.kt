@@ -27,7 +27,7 @@ data class MainActionListModel(
                 binding.buttonArchiveText.setIcon(Icons.noteIcon(buildContext) {
                     copy(colorRes = android.R.color.white)
                 })
-                binding.buttonArchiveUrl.setIcon(Icons.webIcon(buildContext) {
+                binding.buttonArchiveWeb.setIcon(Icons.webIcon(buildContext) {
                     copy(colorRes = android.R.color.white)
                 })
                 binding.buttonArchiveImages.setIcon(Icons.imageIcon(buildContext) {
@@ -38,12 +38,12 @@ data class MainActionListModel(
             override fun onBind(model: MainActionListModel, position: Int) {
                 buttonColor?.let { color ->
                     binding.buttonArchiveText.setCardBackgroundColor(color)
-                    binding.buttonArchiveUrl.setCardBackgroundColor(color)
+                    binding.buttonArchiveWeb.setCardBackgroundColor(color)
                     binding.buttonArchiveImages.setCardBackgroundColor(color)
                 }
 
                 binding.buttonArchiveText.setOnClickListener(model.onNoteClick.prop)
-                binding.buttonArchiveUrl.setOnClickListener(model.onWebClick.prop)
+                binding.buttonArchiveWeb.setOnClickListener(model.onWebClick.prop)
                 binding.buttonArchiveImages.setOnClickListener(model.onImagesClick.prop)
             }
 

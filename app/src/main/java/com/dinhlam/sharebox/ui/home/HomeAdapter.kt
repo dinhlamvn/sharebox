@@ -46,7 +46,7 @@ class HomeAdapter @Inject constructor(
                 activity.requestShareText()
             }),
             NoHashProp(View.OnClickListener {
-                activity.requestShareLink()
+                activity.requestShareWeb()
             }),
             NoHashProp(View.OnClickListener {
                 activity.requestShareImages()
