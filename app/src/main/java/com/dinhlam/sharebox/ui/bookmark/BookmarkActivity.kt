@@ -108,7 +108,7 @@ class BookmarkActivity :
     override val viewModel: BookmarkViewModel by viewModels()
 
     override fun onStateChanged(state: BookmarkState) {
-        collectionAdapter.requestBuildModelViews()
+        collectionAdapter.requestBuildListModels()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

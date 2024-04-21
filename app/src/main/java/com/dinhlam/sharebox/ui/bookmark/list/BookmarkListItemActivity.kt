@@ -98,7 +98,7 @@ class BookmarkListItemActivity :
     override val viewModel: BookmarkListItemViewModel by viewModels()
 
     override fun onStateChanged(state: BookmarkListItemState) {
-        shareAdapter.requestBuildModelViews()
+        shareAdapter.requestBuildListModels()
     }
 
     private fun updateUi(bookmarkCollection: BookmarkCollectionDetail) {

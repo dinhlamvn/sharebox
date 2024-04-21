@@ -68,7 +68,12 @@ class HomeViewModel @Inject constructor(
                 0
             )
         }.execute { asyncLoad ->
-            copy(shares = asyncLoad.data.orEmpty(), isRefreshing = asyncLoad is AsyncLoad.Loading)
+            val list = asyncLoad.data.orEmpty()
+            copy(
+                shares = list,
+                isRefreshing = asyncLoad is AsyncLoad.Loading,
+                canLoadMore = list.isNotEmpty()
+            )
         }
     }
 
@@ -84,7 +89,7 @@ class HomeViewModel @Inject constructor(
             copy(
                 shares = this.shares.plus(loadShares),
                 canLoadMore = loadShares.isNotEmpty(),
-                currentPage = currentPage + 1,
+                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage,
                 isLoadingMore = asyncLoad is AsyncLoad.Loading
             )
         }

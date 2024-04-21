@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.res.use
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
 import com.google.android.material.card.MaterialCardView
@@ -19,7 +20,7 @@ class CardViewIconView @JvmOverloads constructor(
         private const val DEFAULT_ICON_SIZE = 24
     }
 
-    private val iconSize: Int
+    private var iconSize: Int = 24.dp()
 
     private val imageView = AppCompatImageView(context)
 

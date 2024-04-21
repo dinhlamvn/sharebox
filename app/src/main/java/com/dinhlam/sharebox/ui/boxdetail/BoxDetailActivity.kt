@@ -54,7 +54,7 @@ class BoxDetailActivity :
         }
 
     override fun onStateChanged(state: BoxDetailState) {
-        shareAdapter.requestBuildModelViews()
+        shareAdapter.requestBuildListModels()
         binding.textTitle.text = state.boxDetail?.boxName
     }
 

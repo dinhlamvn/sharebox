@@ -39,7 +39,7 @@ class HomeAdapter @Inject constructor(
     private val activity: HomeActivity = context.castNonNull()
     private val viewModel: HomeViewModel = activity.viewModel
 
-    override fun buildModelViews() = activity.getState(viewModel) { state ->
+    override fun buildListModels() = activity.getState(viewModel) { state ->
         MainActionListModel(
             ContextCompat.getColor(activity, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
@@ -65,19 +65,7 @@ class HomeAdapter @Inject constructor(
             "title_your_boxes",
             text1 = activity.getString(R.string.your_boxes),
             textAppearance1 = R.style.TextTitleMedium,
-        ).run {
-            if (state.boxes.size < state.totalBox) {
-                copy(
-                    text2 = activity.getString(R.string.view_all),
-                    textColor2 = R.color.md_theme_primary,
-                    actionClick2 = NoHashProp(View.OnClickListener {
-                        activity.requestViewAllBox()
-                    })
-                )
-            } else {
-                this
-            }
-        }.attachTo(this)
+        ).attachTo(this)
 
         VerticalDividerListModel(
             "margin_bottom_title_your_boxes",
@@ -113,11 +101,11 @@ class HomeAdapter @Inject constructor(
         }
 
         ButtonListModel(
-            "button_access_box",
-            activity.getString(R.string.access_box),
+            "button_view_all",
+            activity.getString(R.string.view_all),
             margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 16.dp()),
             onClick = NoHashProp(View.OnClickListener {
-                activity.requestChooseBox()
+                activity.openBoxesDialog()
             })
         ).attachTo(this)
 

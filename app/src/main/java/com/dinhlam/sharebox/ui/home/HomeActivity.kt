@@ -68,7 +68,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     lateinit var shareHelper: ShareHelper
 
     override fun onStateChanged(state: HomeState) {
-        homeAdapter.requestBuildModelViews()
+        homeAdapter.requestBuildListModels()
     }
 
     private val layoutManager by lazy {
@@ -296,7 +296,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         createBoxResultLauncher.launch(router.boxIntent(this))
     }
 
-    fun requestChooseBox() {
+    fun openBoxesDialog() {
         shareHelper.showBoxSelectionDialog(supportFragmentManager)
     }
 

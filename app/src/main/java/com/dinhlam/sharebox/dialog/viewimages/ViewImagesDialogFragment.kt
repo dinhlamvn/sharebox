@@ -62,7 +62,7 @@ class ViewImagesDialogFragment : BaseDialogFragment<DialogViewImagesBinding>() {
         val spanHelper = PagerSnapHelper()
         spanHelper.attachToRecyclerView(binding.recyclerView)
         binding.recyclerView.adapter = adapter
-        adapter.requestBuildModelViews()
+        adapter.requestBuildListModels()
         updatePageNumber(1, uris.size)
 
         binding.recyclerView.addOnScrollListener(object : OnScrollListener() {

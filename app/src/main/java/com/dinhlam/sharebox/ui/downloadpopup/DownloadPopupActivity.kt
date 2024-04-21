@@ -216,6 +216,6 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
     }
 
     private fun handleDownloadPopup() {
-        adapter.requestBuildModelViews()
+        adapter.requestBuildListModels()
     }
 }

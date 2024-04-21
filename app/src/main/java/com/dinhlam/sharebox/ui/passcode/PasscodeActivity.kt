@@ -120,10 +120,10 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
         binding.recyclerViewCode.itemAnimator = null
         binding.recyclerViewCode.adapter = passcodeAdapter
-        passcodeAdapter.requestBuildModelViews()
+        passcodeAdapter.requestBuildListModels()
 
         binding.recyclerViewKeypad.adapter = keypadAdapter
-        keypadAdapter.requestBuildModelViews()
+        keypadAdapter.requestBuildListModels()
 
         intent.getStringExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION)?.let { passcodeDescription ->
             binding.textDesc.text = passcodeDescription
@@ -133,14 +133,14 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
     private fun onNumberClicked(number: Int) {
         if (stack.size < PASSCODE_LENGTH) {
             stack.push(number)
-            passcodeAdapter.requestBuildModelViews()
+            passcodeAdapter.requestBuildListModels()
         }
     }
 
     private fun onBackspace() {
         if (stack.isNotEmpty()) {
             stack.pop()
-            passcodeAdapter.requestBuildModelViews()
+            passcodeAdapter.requestBuildListModels()
         }
     }
 
@@ -162,7 +162,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         if (originalPasscode != encryptCode) {
             notifyPasscodeInvalid()
             stack.clear()
-            passcodeAdapter.requestBuildModelViews()
+            passcodeAdapter.requestBuildListModels()
         } else {
             val returnIntent = Intent()
             returnIntent.putExtras(intent)

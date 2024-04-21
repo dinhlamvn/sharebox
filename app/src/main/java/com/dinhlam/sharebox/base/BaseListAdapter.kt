@@ -27,14 +27,14 @@ abstract class BaseListAdapter :
         DiffCallback()
     ), DefaultLifecycleObserver {
 
-    abstract fun buildModelViews()
+    abstract fun buildListModels()
 
-    private val buildModelViewsScope =
+    private val buildListModelsScope =
         CoroutineScope(Executors.newSingleThreadExecutor().asCoroutineDispatcher())
 
     private var recyclerView: RecyclerView? = null
 
-    private var buildModelViewsJob: Job? = null
+    private var buildListModelsJob: Job? = null
 
     private val listModelManager = ListModelManager()
 
@@ -54,7 +54,7 @@ abstract class BaseListAdapter :
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        requestBuildModelViews()
+        requestBuildListModels()
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -77,19 +77,19 @@ abstract class BaseListAdapter :
         error("No support direct call method")
     }
 
-    fun requestBuildModelViews() {
-        if (buildModelViewsJob?.isActive == true && buildModelViewsJob?.isCompleted == false) {
-            buildModelViewsJob?.cancel()
+    fun requestBuildListModels() {
+        if (buildListModelsJob?.isActive == true && buildListModelsJob?.isCompleted == false) {
+            buildListModelsJob?.cancel()
         }
 
-        buildModelViewsJob = buildModelViewsScope.launch {
-            buildModelViewsInternal()
+        buildListModelsJob = buildListModelsScope.launch {
+            buildListModelsInternal()
         }
     }
 
-    private suspend fun buildModelViewsInternal() {
+    private suspend fun buildListModelsInternal() {
         listModels.clear()
-        buildModelViews()
+        buildListModels()
         withContext(Dispatchers.Main) {
             super.submitList(listModels.toList())
         }
@@ -133,7 +133,7 @@ abstract class BaseListAdapter :
             modelViewsBuilder: BaseListAdapter.() -> Unit,
         ): BaseListAdapter {
             return object : BaseListAdapter() {
-                override fun buildModelViews() {
+                override fun buildListModels() {
                     modelViewsBuilder.invoke(this)
                 }
             }

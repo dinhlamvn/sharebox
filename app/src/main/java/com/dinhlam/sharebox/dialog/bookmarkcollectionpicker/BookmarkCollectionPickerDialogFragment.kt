@@ -104,7 +104,7 @@ class BookmarkCollectionPickerDialogFragment :
     override val viewModel: BookmarkCollectionPickerViewModel by viewModels()
 
     override fun onStateChanged(state: BookmarkCollectionPickerState) {
-        adapter.requestBuildModelViews()
+        adapter.requestBuildListModels()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

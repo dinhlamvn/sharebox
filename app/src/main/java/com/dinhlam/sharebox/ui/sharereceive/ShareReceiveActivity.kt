@@ -132,7 +132,7 @@ class ShareReceiveActivity :
     }
 
     override fun onStateChanged(state: ShareReceiveState) {
-        shareContentAdapter.requestBuildModelViews()
+        shareContentAdapter.requestBuildListModels()
         updateUserInfo(state.activeUser)
     }
 

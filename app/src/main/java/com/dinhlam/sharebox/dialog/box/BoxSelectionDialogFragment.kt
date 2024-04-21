@@ -58,11 +58,6 @@ class BoxSelectionDialogFragment :
 
     private val boxAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
-            if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
-                LoadingListModel("loading_box", height = 100.dp()).attachTo(this)
-                return@getState
-            }
-
             if (state.isSearching) {
                 if (state.searchBoxes.isEmpty()) {
                     TextListModel(
@@ -105,7 +100,7 @@ class BoxSelectionDialogFragment :
                     ) { copy(sizeDp = 16) } else null).attachTo(this)
             }
 
-            if (state.isLoadingMore) {
+            if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
                 LoadingListModel("loading_more_${state.currentPage}", height = 50.dp()).attachTo(
                     this
                 )
@@ -131,13 +126,13 @@ class BoxSelectionDialogFragment :
     override val viewModel: BoxSelectionDialogViewModel by viewModels()
 
     override fun onStateChanged(state: BoxSelectionDialogState) {
-        boxAdapter.requestBuildModelViews()
+        boxAdapter.requestBuildListModels()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.adapter = boxAdapter
-        boxAdapter.requestBuildModelViews()
+        boxAdapter.requestBuildListModels()
 
         binding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
             viewModel.search(editable.trimmedString())

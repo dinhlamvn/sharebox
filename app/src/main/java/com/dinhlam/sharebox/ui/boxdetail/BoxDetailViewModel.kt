@@ -67,7 +67,7 @@ class BoxDetailViewModel @Inject constructor(
                 asyncLoadLoadMoreShares = asyncLoad,
                 shares = this.shares.plus(shares),
                 canLoadMore = shares.isNotEmpty(),
-                currentPage = currentPage + 1,
+                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage,
             )
         }
     }

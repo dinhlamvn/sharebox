@@ -81,7 +81,7 @@ class CommentFragment :
     override fun onStateChanged(state: CommentState) {
         binding.textTitle.text = getString(R.string.comment_title, state.comments.size)
         invalidateUserInfo(state.currentUser)
-        adapter.requestBuildModelViews()
+        adapter.requestBuildListModels()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,7 +96,7 @@ class CommentFragment :
         }
 
         binding.recyclerView.adapter = adapter
-        adapter.requestBuildModelViews()
+        adapter.requestBuildListModels()
 
         binding.imageClose.setOnClickListener {
             dismissAllowingStateLoss()

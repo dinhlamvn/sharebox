@@ -29,16 +29,14 @@ class BoxSelectionDialogViewModel @Inject constructor(
             copy(
                 asyncLoadBoxes = asyncLoad,
                 boxes = asyncLoad.data.orEmpty(),
-                currentPage = currentPage + 1
+                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage
             )
         }
     }
 
     private fun fetchTotalBox() {
-        doInBackground {
-            suspend { boxRepository.count(userHelper.getCurrentUserId()) }.execute { asyncLoad ->
-                copy(totalBox = asyncLoad.data.orElse(0))
-            }
+        suspend { boxRepository.count(userHelper.getCurrentUserId()) }.execute { asyncLoad ->
+            copy(totalBox = asyncLoad.data.orElse(0))
         }
     }
 
@@ -53,10 +51,12 @@ class BoxSelectionDialogViewModel @Inject constructor(
                 state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
         }.execute { asyncLoad ->
+            val list = asyncLoad.data.orEmpty()
+
             copy(
                 asyncLoadBoxes = asyncLoad,
-                boxes = this.boxes.plus(asyncLoad.data.orEmpty()),
-                currentPage = currentPage + 1
+                boxes = state.boxes.plus(list),
+                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage
             )
         }
     }
@@ -67,9 +67,10 @@ class BoxSelectionDialogViewModel @Inject constructor(
                 searchBoxes = emptyList(), isSearching = false
             )
         }
-        doInBackground {
-            val searchBoxes = boxRepository.search(query, userHelper.getCurrentUserId())
-            setState { copy(searchBoxes = searchBoxes, isSearching = true) }
+        suspend {
+            boxRepository.search(query, userHelper.getCurrentUserId())
+        }.execute { asyncLoad ->
+            copy(searchBoxes = asyncLoad.data.orEmpty(), isSearching = true)
         }
     }
 }
