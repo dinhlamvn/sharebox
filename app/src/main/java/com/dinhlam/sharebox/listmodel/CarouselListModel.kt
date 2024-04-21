@@ -5,8 +5,13 @@ import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewCarouselBinding
+import com.dinhlam.sharebox.extensions.updateHeight
 
-data class CarouselListModel(val id: String, val modelViews: List<BaseListAdapter.BaseListModel>) :
+data class CarouselListModel(
+    val id: String,
+    val listModels: List<BaseListAdapter.BaseListModel>,
+    val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT
+) :
     BaseListAdapter.BaseListModel(id) {
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
@@ -28,17 +33,17 @@ data class CarouselListModel(val id: String, val modelViews: List<BaseListAdapte
 
             init {
                 binding.recyclerView.adapter = carouselAdapter
-                carouselAdapter.requestBuildModelViews()
+                carouselAdapter.requestBuildListModels()
             }
 
             override fun onBind(model: CarouselListModel, position: Int) {
+                binding.root.updateHeight(model.height)
                 models.clear()
-                models.addAll(model.modelViews)
-                carouselAdapter.requestBuildModelViews()
+                models.addAll(model.listModels)
+                carouselAdapter.requestBuildListModels()
             }
 
             override fun onUnBind() {
-
             }
         }
     }

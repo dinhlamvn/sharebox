@@ -130,7 +130,7 @@ class ProfileActivity :
     override val viewModel: ProfileViewModel by viewModels()
 
     override fun onStateChanged(state: ProfileState) {
-        adapter.requestBuildModelViews()
+        adapter.requestBuildListModels()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

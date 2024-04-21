@@ -12,6 +12,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.drawable.toBitmap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver
@@ -67,16 +68,20 @@ class AppRouter constructor(private val context: Context) : Router {
 
         val remoteViews = RemoteViews(context.packageName, R.layout.custom_tab_bottom_toolbar)
         remoteViews.setImageViewBitmap(R.id.image_box, Icons.boxIcon(context) {
-            copy(colorRes = android.R.color.black)
+            copy(colorRes = R.color.md_theme_primary)
         }.toBitmap())
 
         remoteViews.setTextViewText(
-            R.id.text_box_name, boxName ?: context.getString(R.string.box_general)
+            R.id.text_box_name, boxName
+        )
+
+        remoteViews.setTextColor(
+            R.id.text_box_name, context.getColorCompat(R.color.md_theme_primary)
         )
 
         if (supportDownload) {
             remoteViews.setImageViewBitmap(R.id.image_download, Icons.downloadIcon(context) {
-                copy(colorRes = android.R.color.black, sizeDp = 24)
+                copy(colorRes = R.color.md_theme_primary, sizeDp = 24)
             }.toBitmap())
         } else {
             remoteViews.setViewVisibility(R.id.image_download, View.GONE)

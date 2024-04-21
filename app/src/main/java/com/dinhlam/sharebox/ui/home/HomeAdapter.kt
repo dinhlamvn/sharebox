@@ -2,21 +2,16 @@ package com.dinhlam.sharebox.ui.home
 
 import android.content.Context
 import android.net.Uri
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
-import com.dinhlam.sharebox.extensions.buildShareListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
-import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
@@ -65,7 +60,13 @@ class HomeAdapter @Inject constructor(
             "title_your_boxes",
             text1 = activity.getString(R.string.your_boxes),
             textAppearance1 = R.style.TextTitleMedium,
+            text2 = activity.getString(R.string.view_all),
+            textColor2 = R.color.md_theme_primary,
+            actionClick2 = NoHashProp(View.OnClickListener {
+                activity.requestViewAllBox()
+            })
         ).attachTo(this)
+
 
         VerticalDividerListModel(
             "margin_bottom_title_your_boxes",
@@ -100,64 +101,11 @@ class HomeAdapter @Inject constructor(
             ).attachTo(this)
         }
 
-        ButtonListModel(
-            "button_view_all",
-            activity.getString(R.string.view_all),
-            margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 16.dp()),
-            onClick = NoHashProp(View.OnClickListener {
-                activity.openBoxesDialog()
-            })
-        ).attachTo(this)
-
         VerticalDividerListModel(
-            "margin_bottom_recently_boxes",
+            "margin_bottom",
             height = 16.dp(),
             dividerColor = android.R.color.transparent
         ).attachTo(this)
-
-        TextListModel(
-            "recently_shares_title",
-            activity.getString(R.string.recently_shares),
-            textAppearance = R.style.TextTitleMedium,
-            height = ViewGroup.LayoutParams.WRAP_CONTENT,
-            gravity = Gravity.START,
-        ).attachTo(this)
-
-        if (state.shares.isEmpty() && !state.isRefreshing) {
-            TextListModel(
-                "text_empty", activity.getString(R.string.no_result), height = 100.dp()
-            ).attachTo(this)
-        } else if (state.shares.isNotEmpty()) {
-            VerticalDividerListModel(
-                "margin_bottom_recently_boxes",
-                height = 16.dp(),
-                dividerColor = android.R.color.transparent
-            ).attachTo(this)
-
-            state.shares.forEach { shareDetail ->
-                shareDetail.shareData.buildShareListModel(
-                    activity.screenHeight(),
-                    shareDetail.shareId,
-                    shareDetail.shareDate,
-                    shareDetail.shareNote,
-                    shareDetail.user,
-                    shareDetail.likeNumber,
-                    commentNumber = shareDetail.commentNumber,
-                    bookmarked = shareDetail.bookmarked,
-                    liked = shareDetail.liked,
-                    boxDetail = shareDetail.boxDetail,
-                    actionOpen = ::onOpen,
-                    actionViewImage = ::viewImage,
-                    actionViewImages = ::viewImages,
-                    actionBoxClick = this::onBoxClick,
-                    actionShareToOther = ::onShareToOther
-                ).attachTo(this)
-            }
-        }
-
-        LoadingListModel("home_loading_more_${state.currentPage}", height = 100.dp()).attachTo(
-            this
-        ) { state.canLoadMore }
     }
 
     private fun onBoxOptionClick(boxDetail: BoxDetail) {

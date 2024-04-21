@@ -10,7 +10,7 @@
     <string name="fb_login_protocol_scheme" translatable="false">fb647232403661006</string>
     <!-- End of facebook -->
 
-    <string name="no_result">No shares.\nPull to refresh data.</string>
+    <string name="no_result">No results.\nPull to refresh data.</string>
     <string name="default_notification_channel_id" translatable="false">Share Box Notification</string>
     <string name="search_hint">Search…</string>
     <string name="like">(%d)</string>
@@ -110,7 +110,7 @@
     <string name="note">Note</string>
     <string name="web">Web</string>
     <string name="images">Images</string>
-    <string name="recently_shares">Recently Shares</string>
+    <string name="recently_shares">Recently</string>
     <string name="no_boxes">You don\'t have any box now.\nLet tap on button (+) to create a new one.</string>
     <string name="desc_image">This is an image</string>
     <string name="go">Go</string>

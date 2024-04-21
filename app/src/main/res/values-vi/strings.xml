@@ -100,7 +100,7 @@
     <string name="nothing_to_download">Không có gì để tải xuống</string>
     <string name="text_sync_to_cloud">Đồng bộ dữ liệu lên đám mây</string>
     <string name="note">Chú thích</string>
-    <string name="recently_shares">Chia sẻ vừa qua</string>
+    <string name="recently_shares">Gần đây</string>
     <string name="web">Trang web</string>
     <string name="images">Một số ảnh</string>
     <string name="no_boxes">Hiện tại bạn chưa có Box nào.\nHãy nhấp vào nút (+) để tạo mới 1 box.</string>

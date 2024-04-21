@@ -99,7 +99,7 @@ data class ListImagesListModel(
                 )
             )
             binding.recyclerViewImage.adapter = adapter
-            adapter.requestBuildModelViews()
+            adapter.requestBuildListModels()
         }
 
         override fun onBind(model: ListImagesListModel, position: Int) {
@@ -120,7 +120,7 @@ data class ListImagesListModel(
 
             models.clear()
             models.addAll(model.modelViews)
-            adapter.requestBuildModelViews()
+            adapter.requestBuildListModels()
 
             binding.textBoxName.text =
                 model.boxDetail?.boxName ?: buildContext.getText(R.string.box_general)
@@ -130,7 +130,7 @@ data class ListImagesListModel(
 
         override fun onUnBind() {
             models.clear()
-            adapter.requestBuildModelViews()
+            adapter.requestBuildListModels()
             binding.textBoxName.text = null
             binding.textShareDate.text = null
         }

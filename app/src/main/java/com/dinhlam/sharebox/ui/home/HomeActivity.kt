@@ -13,7 +13,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dinhlam.sharebox.R
@@ -33,7 +32,6 @@ import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
@@ -69,14 +67,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onStateChanged(state: HomeState) {
         homeAdapter.requestBuildListModels()
-    }
-
-    private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(this, LinearLayoutManager.VERTICAL, blockShouldLoadMore = {
-            return@LoadMoreLinearLayoutManager getState(viewModel) { state -> state.canLoadMore && !state.isLoadingMore }
-        }) {
-            viewModel.loadMores()
-        }
     }
 
     private val createBoxResultLauncher =
@@ -173,12 +163,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
 
-        binding.recyclerView.layoutManager = layoutManager
         homeAdapter.attachTo(binding.recyclerView, this)
-
-        viewModel.consume(this, HomeState::isLoadingMore) { isLoadMore ->
-            layoutManager.hadTriggerLoadMore = isLoadMore
-        }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
@@ -296,10 +281,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         createBoxResultLauncher.launch(router.boxIntent(this))
     }
 
-    fun openBoxesDialog() {
-        shareHelper.showBoxSelectionDialog(supportFragmentManager)
-    }
-
     fun requestShareWeb() {
         shareResultLauncher.launch(router.shareLink(this))
     }
@@ -326,6 +307,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     fun requestViewAllBox() {
-        showToast("view all")
+        shareHelper.showBoxSelectionDialog(supportFragmentManager)
     }
 }
