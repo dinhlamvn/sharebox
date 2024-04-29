@@ -15,10 +15,8 @@ class BookmarkViewModel @Inject constructor(
     }
 
     private fun loadBookmarkCollections() {
-        doInBackground {
-            suspend { bookmarkCollectionRepository.find() }.execute { asyncLoad ->
-                copy(bookmarkCollections = asyncLoad.data.orEmpty(), isRefreshing = asyncLoad is AsyncLoad.Loading)
-            }
+        suspend { bookmarkCollectionRepository.find() }.execute { asyncLoad ->
+            copy(bookmarkCollections = asyncLoad.data.orEmpty(), isRefreshing = asyncLoad is AsyncLoad.Loading)
         }
     }
 

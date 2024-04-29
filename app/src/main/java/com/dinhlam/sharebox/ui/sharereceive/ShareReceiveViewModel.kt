@@ -45,7 +45,7 @@ class ShareReceiveViewModel @Inject constructor(
         getCurrentUserProfile()
     }
 
-    fun getCurrentUserProfile() {
+    private fun getCurrentUserProfile() {
         suspend { userRepository.findOne(userHelper.getCurrentUserId()) }
             .execute { asyncLoad ->
                 copy(activeUser = asyncLoad.data)
@@ -150,7 +150,9 @@ class ShareReceiveViewModel @Inject constructor(
         )
 
         share?.let { insertedShare ->
-            firebaseStorageHelper.uploadShareImageFile(context, insertedShare.shareId, newUri)
+            if (userHelper.isSignedIn()) {
+                firebaseStorageHelper.uploadShareImageFile(context, insertedShare.shareId, newUri)
+            }
         }
 
         share
@@ -185,38 +187,40 @@ class ShareReceiveViewModel @Inject constructor(
             shareUserId = userHelper.getCurrentUserId()
         )
 
-        share?.let { insertedShare ->
-            val notificationManagerCompat = NotificationManagerCompat.from(context)
+        if (userHelper.isSignedIn()) {
+            share?.let { insertedShare ->
+                val notificationManagerCompat = NotificationManagerCompat.from(context)
 
-            val notificationBuilder = NotificationCompat.Builder(
-                context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID
-            ).setContentText(context.getString(R.string.distribute_images_content))
-                .setSubText(context.getString(R.string.distribute_images_title))
-                .setAutoCancel(false).setProgress(100, 0, false)
-                .setSmallIcon(R.drawable.ic_file_upload_white)
+                val notificationBuilder = NotificationCompat.Builder(
+                    context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID
+                ).setContentText(context.getString(R.string.distribute_images_content))
+                    .setSubText(context.getString(R.string.distribute_images_title))
+                    .setAutoCancel(false).setProgress(100, 0, false)
+                    .setSmallIcon(R.drawable.ic_file_upload_white)
 
-            val uploadId = 456789
+                val uploadId = 456789
 
-            uris.forEachIndexed { index, uri ->
-                val progress = index.plus(1f).div(uris.size).times(100).toInt()
-                notificationBuilder.setProgress(100, progress, false).setContentTitle(
-                    context.getString(
-                        R.string.complete_progress, "${index.plus(1)}/${uris.size}"
+                uris.forEachIndexed { index, uri ->
+                    val progress = index.plus(1f).div(uris.size).times(100).toInt()
+                    notificationBuilder.setProgress(100, progress, false).setContentTitle(
+                        context.getString(
+                            R.string.complete_progress, "${index.plus(1)}/${uris.size}"
+                        )
                     )
-                )
-                if (ContextCompat.checkSelfPermission(
-                        context, android.Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    notificationManagerCompat.notify(
-                        uploadId, notificationBuilder.build()
+                    if (ContextCompat.checkSelfPermission(
+                            context, android.Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        notificationManagerCompat.notify(
+                            uploadId, notificationBuilder.build()
+                        )
+                    }
+                    firebaseStorageHelper.uploadShareImageFileWithoutNotification(
+                        insertedShare.shareId, uri
                     )
                 }
-                firebaseStorageHelper.uploadShareImageFileWithoutNotification(
-                    insertedShare.shareId, uri
-                )
+                notificationManagerCompat.cancel(uploadId)
             }
-            notificationManagerCompat.cancel(uploadId)
         }
 
         return share
@@ -232,13 +236,9 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     fun setBox(boxId: String) {
-        doInBackground {
-            val boxDetail = boxRepository.findOne(boxId) ?: return@doInBackground setState {
-                copy(
-                    currentBox = null
-                )
+        suspend { boxRepository.findOne(boxId) }
+            .execute { asyncLoad ->
+                copy(currentBox = asyncLoad.data)
             }
-            setState { copy(currentBox = boxDetail) }
-        }
     }
 }

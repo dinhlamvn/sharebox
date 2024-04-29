@@ -172,21 +172,21 @@ class BookmarkListItemActivity :
             }
 
             is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, share.shareId, shareData.uri
+                this, shareData.uri
             )
 
             is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, share.shareId, shareData.uris
+                this, shareData.uris
             )
         }
     }
 
     private fun viewImages(shareId: String, uris: List<Uri>) {
-        shareHelper.viewShareImages(this, shareId, uris)
+        shareHelper.viewShareImages(this, uris)
     }
 
     private fun viewImage(shareId: String, uri: Uri) {
-        shareHelper.viewShareImage(this, shareId, uri)
+        shareHelper.viewShareImage(this, uri)
     }
 
     private fun onShareToOther(shareId: String) = getState(viewModel) { state ->

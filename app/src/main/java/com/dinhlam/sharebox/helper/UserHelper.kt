@@ -1,13 +1,7 @@
 package com.dinhlam.sharebox.helper
 
-import android.app.Application
 import android.content.Context
-import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.User
-import com.dinhlam.sharebox.data.repository.CommentRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
-import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.UserUtils
@@ -20,20 +14,10 @@ import javax.inject.Singleton
 
 @Singleton
 class UserHelper @Inject constructor(
-    private val application: Application,
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository,
-    private val commentRepository: CommentRepository,
-    private val likeRepository: LikeRepository,
-    private val shareRepository: ShareRepository,
 ) {
-
-    object CreateUserError : Exception()
-
     fun isSignedIn(): Boolean {
-        if (BuildConfig.DEV && AppConsts.FORCE_LOGIN) {
-            return true
-        }
         val currentUserId = userSharePref.getCurrentUserId()
         val firebaseEmail = FirebaseAuth.getInstance().currentUser?.email ?: return false
         val firebaseUserId = UserUtils.createUserId(firebaseEmail)
@@ -41,11 +25,8 @@ class UserHelper @Inject constructor(
     }
 
     fun getCurrentUserId(): String {
-        if (BuildConfig.DEV && AppConsts.FORCE_LOGIN) {
-            return UserUtils.createUserId("dinh.lam.jx2@gmail.com")
-        }
         if (!isSignedIn()) {
-            return ""
+            return userSharePref.getAnonymousUserId()
         }
         return userSharePref.getCurrentUserId()
     }
@@ -74,7 +55,7 @@ class UserHelper @Inject constructor(
             shareBoxUser?.let { createdUser ->
                 userSharePref.setCurrentUserId(createdUser.userId)
                 onSuccess(createdUser)
-            } ?: throw CreateUserError
+            } ?: error("Create user error")
         } catch (e: Exception) {
             onError(e)
         }
@@ -91,33 +72,5 @@ class UserHelper @Inject constructor(
             userSharePref.clearCurrentUserId()
             onSuccess()
         }.addOnFailureListener(onError)
-    }
-
-    suspend fun syncUserInfo(): User? = withContext(Dispatchers.IO) {
-        if (!isSignedIn()) {
-            return@withContext null
-        }
-
-        val currentUserId = getCurrentUserId()
-        val user = userRepository.findOneRaw(currentUserId) ?: return@withContext null
-
-        val commentCount = commentRepository.countByUser(currentUserId)
-        val likeCount = likeRepository.countByUserShare(currentUserId)
-        val shareCount = shareRepository.countByUser(currentUserId)
-
-        val drama = commentCount + likeCount * 10 + shareCount * 10
-        val level = getLevelByDrama(drama)
-
-        val newUser = user.copy(drama = drama, level = level)
-        userRepository.update(newUser)
-    }
-
-    private fun getLevelByDrama(drama: Int): Int {
-        return when (drama) {
-            in 0..1000 -> 0
-            in 1001..3000 -> 1
-            in 3001..10000 -> 2
-            else -> 3
-        }
     }
 }

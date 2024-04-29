@@ -1,9 +1,6 @@
 package com.dinhlam.sharebox.pref
 
 import android.content.Context
-import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.utils.UserUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,11 +11,14 @@ class UserSharePref @Inject constructor(@ApplicationContext context: Context) :
 
     companion object {
         private const val KEY_CURRENT_USER_ID = "current-user-id"
+        private const val KEY_DEFAULT_USER_ID = "anonymous-user-id"
     }
 
-    fun getCurrentUserId() = if (BuildConfig.DEV && AppConsts.FORCE_LOGIN) {
-        UserUtils.createUserId("dinh.lam.jx2@gmail.com")
-    } else get(KEY_CURRENT_USER_ID, "")
+    fun getAnonymousUserId() = get(KEY_DEFAULT_USER_ID, "")
+
+    fun setAnonymousUserId(userId: String) = put(KEY_DEFAULT_USER_ID, userId, true)
+
+    fun getCurrentUserId() = get(KEY_CURRENT_USER_ID, "")
 
     fun setCurrentUserId(userId: String) = put(KEY_CURRENT_USER_ID, userId, true)
 

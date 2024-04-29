@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayExtraCompat
 import com.dinhlam.sharebox.listmodel.IconTextListModel
 import com.dinhlam.sharebox.utils.Icons
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import kotlinx.parcelize.Parcelize
 
 class OptionMenuBottomSheetDialogFragment :
@@ -66,7 +67,7 @@ class OptionMenuBottomSheetDialogFragment :
         choiceItems.forEachIndexed { index, choiceItem ->
             IconTextListModel(
                 "choice_$index",
-                choiceItem.icon?.let { Icons.icon(requireContext(), it) },
+                choiceItem.icon?.let { Icons.icon(requireContext(), FontAwesome.getIcon(it)) },
                 choiceItem.text,
                 height = 50.dp(),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {

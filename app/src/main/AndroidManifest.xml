@@ -27,23 +27,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29" />
 
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
-
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
@@ -81,9 +70,14 @@
 
         <activity
             android:name=".ui.signin.SignInActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity">
+
+        </activity>
+
+        <activity
+            android:name="com.dinhlam.sharebox.ui.home.HomeActivity"
+            android:exported="true"
             tools:ignore="LockedOrientationActivity">
 
             <intent-filter>
@@ -91,12 +85,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.dinhlam.sharebox.ui.home.HomeActivity"
-            android:exported="true"
-            tools:ignore="LockedOrientationActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -252,6 +240,11 @@
             android:name="com.dinhlam.sharebox.ui.setting.SettingComposeActivity"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
+
+        <activity
+            android:name="com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity"
+            android:exported="false"
+            android:label="@string/view_image_activity_title" />
 
         <provider
             android:name=".provider.ShareBoxFileProvider"

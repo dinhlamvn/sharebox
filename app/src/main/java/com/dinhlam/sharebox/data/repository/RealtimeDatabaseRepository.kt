@@ -8,6 +8,7 @@ import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareType
@@ -21,6 +22,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineName
@@ -45,6 +48,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val gson: Gson,
     private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
+    private val userHelper: UserHelper,
 ) {
 
     private val realtimeDatabaseScope = CoroutineScope(
@@ -73,6 +77,9 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val boxRef: DatabaseReference by lazyOf(database.getReference("boxes"))
 
     suspend fun push(share: Share) {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
         try {
             shareRef.child(share.shareId).setValue(RealtimeShareObj.from(gson, share)).await()
             shareRepository.update(share.copy(synced = true))
@@ -82,6 +89,9 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun push(user: User) {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
         try {
             userRef.child(user.userId).setValue(RealtimeUserObj.from(user)).await()
             userRepository.update(user.copy(synced = true))
@@ -91,6 +101,9 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun push(comment: Comment) {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
         try {
             commentRef.child(comment.commentId).setValue(RealtimeCommentObj.from(comment)).await()
             commentRepository.update(comment.copy(synced = true))
@@ -100,6 +113,9 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun push(like: Like) {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
         try {
             likeRef.child(like.likeId).setValue(RealtimeLikeObj.from(like)).await()
             likeRepository.update(like.copy(synced = true))
@@ -109,6 +125,9 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun push(box: Box) {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
         try {
             boxRef.child(box.boxId).setValue(RealtimeBoxObj.from(box)).await()
             boxRepository.update(box.copy(synced = true))
@@ -118,9 +137,16 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     suspend fun sync() {
+        if (!userHelper.isSignedIn()) {
+            return
+        }
+
+        val userShareRef = shareRef.orderByChild("share_user_id")
+            .equalTo(userHelper.getCurrentUserId())
         syncDataInRef(
-            shareRef, ::onShareAdded
+            userShareRef, ::onShareAdded
         )
+
         syncDataInRef(
             userRef, ::onUserAdded
         )
@@ -144,21 +170,29 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun syncDataInRef(
-        ref: DatabaseReference, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
+        ref: Query, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
     ) {
-        val query = ref.limitToLast(50)
-        val dataSnapshot = query.get().await()
-        if (!dataSnapshot.hasChildren()) {
-            return
-        }
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.hasChildren()) {
+                    return
+                }
 
-        val iterator = dataSnapshot.children.iterator()
-        while (iterator.hasNext()) {
-            val data = iterator.next()
-            val key = data.key ?: continue
-            val value = data.value?.cast<Map<String, Any>>() ?: continue
-            childAddedHandler.invoke(key, value)
-        }
+                realtimeDatabaseScope.launch {
+                    val iterator = snapshot.children.iterator()
+                    while (iterator.hasNext()) {
+                        val data = iterator.next()
+                        val key = data.key ?: continue
+                        val value = data.value?.cast<Map<String, Any>>() ?: continue
+                        childAddedHandler.invoke(key, value)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Logger.error(error.message)
+            }
+        })
     }
 
     private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {

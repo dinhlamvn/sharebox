@@ -30,8 +30,8 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
@@ -50,9 +50,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                showToast(R.string.permission_granted)
-            } else {
+            if (!isGranted) {
                 showAlertDialog()
             }
         }
@@ -64,6 +62,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     @Inject
     lateinit var shareHelper: ShareHelper
+
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     override fun onStateChanged(state: HomeState) {
         homeAdapter.requestBuildListModels()
@@ -161,8 +163,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             startActivity(router.profile(this))
         }
 
-        ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
-
         homeAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -213,9 +213,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        stopService(realtimeDatabaseServiceIntent)
+    override fun onStart() {
+        super.onStart()
+        if (userHelper.isSignedIn()) {
+            ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (userHelper.isSignedIn()) {
+            stopService(realtimeDatabaseServiceIntent)
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
@@ -249,23 +258,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 2 -> onBookmark(shareId)
                 3 -> copy(share.boxDetail?.boxId)
             }
-        }
-    }
-
-    fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(this, shareData.text)
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, share.shareId, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, share.shareId, shareData.uris
-            )
         }
     }
 

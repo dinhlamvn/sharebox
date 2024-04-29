@@ -1,12 +1,14 @@
 package com.dinhlam.sharebox.ui.home
 
 import android.content.Context
-import android.net.Uri
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
@@ -101,6 +103,35 @@ class HomeAdapter @Inject constructor(
             ).attachTo(this)
         }
 
+        TextListModel(
+            "title_recently",
+            text = activity.getString(R.string.recently_shares),
+            height = ViewGroup.LayoutParams.WRAP_CONTENT,
+            gravity = Gravity.START,
+            textAppearance = R.style.TextTitleMedium,
+            padding = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0)
+        ).attachTo(this)
+
+        VerticalDividerListModel(
+            "margin_bottom_title_recently",
+            height = 16.dp(),
+            dividerColor = android.R.color.transparent
+        ).attachTo(this)
+
+        if (state.shares.isEmpty()) {
+            TextListModel(
+                "text_empty_shares", activity.getString(R.string.no_result), height = 100.dp()
+            ).attachTo(this)
+        } else {
+            state.shares.forEachIndexed { idx, share ->
+                share.buildListItemListModel(activity, shareHelper, router).attachTo(this)
+                VerticalDividerListModel(
+                    "share_divider_$idx",
+                    margin = Spacing.Only(16.dp())
+                ).attachTo(this)
+            }
+        }
+
         VerticalDividerListModel(
             "margin_bottom",
             height = 16.dp(),
@@ -125,31 +156,7 @@ class HomeAdapter @Inject constructor(
         }
     }
 
-    private fun onOpen(shareId: String) = activity.getState(viewModel) { state ->
-        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
-            ?: return@getState
-        activity.openShare(share)
-    }
-
-    private fun onShareToOther(shareId: String) = activity.getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.showMore(activity, share)
-    }
-
     private fun onBoxClick(boxId: String) {
         activity.startActivity(router.boxDetail(activity, boxId))
-    }
-
-    private fun onBoxClick(boxDetail: BoxDetail?) {
-        boxDetail?.boxId?.let { boxId -> activity.startActivity(router.boxDetail(activity, boxId)) }
-    }
-
-    private fun viewImages(shareId: String, uris: List<Uri>) {
-        shareHelper.viewShareImages(activity, shareId, uris)
-    }
-
-    private fun viewImage(shareId: String, uri: Uri) {
-        shareHelper.viewShareImage(activity, shareId, uri)
     }
 }

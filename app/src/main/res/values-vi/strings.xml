@@ -135,6 +135,13 @@
     <string name="permission_denied">Đã chặn quyền</string>
     <string name="archive_to">Lưu trữ vào</string>
     <string name="view_all">View all</string>
+    <string name="created_date">Created: %s</string>
+    <string name="archive_text">Archive a paragraph</string>
+    <string name="archive_web">Archive a link</string>
+    <string name="archive_image">Archive an image</string>
+    <string name="archive_images">Archive some images</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_note">No note</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

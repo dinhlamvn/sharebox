@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty1
@@ -152,13 +153,15 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         lifecycleOwner: LifecycleOwner? = null, block: (T) -> Unit
     ) {
         lifecycleOwner?.let { owner ->
-            owner.lifecycleScope.launch {
+            owner.lifecycleScope.launch(Dispatchers.Main) {
                 yield()
                 collectLatest {
-                    owner.withStateAtLeast(Lifecycle.State.STARTED) { block(it) }
+                    owner.withStateAtLeast(Lifecycle.State.STARTED) {
+                        block(it)
+                    }
                 }
             }
-        } ?: stateScope.launch {
+        } ?: stateScope.launch(Dispatchers.Main) {
             yield()
             collectLatest(block)
         }

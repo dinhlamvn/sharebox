@@ -11,6 +11,7 @@ import androidx.core.app.ServiceCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +42,7 @@ class RealtimeDatabaseService : Service() {
         Logger.debug("$this is start command")
         startService()
         realtimeDatabaseRepository.consume()
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     private fun startService() {

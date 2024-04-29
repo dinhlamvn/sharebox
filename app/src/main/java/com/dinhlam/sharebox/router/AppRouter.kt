@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
+import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
@@ -226,5 +227,10 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun bookmark(context: Context): Intent {
         return Intent(context, BookmarkActivity::class.java)
+    }
+
+    override fun imageViewer(context: Context, uris: List<Uri>): Intent {
+        return Intent(context, ImageViewerActivity::class.java)
+            .putExtra(AppExtras.EXTRA_IMAGE_URIS, arrayListOf(*uris.toTypedArray()))
     }
 }

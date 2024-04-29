@@ -34,7 +34,7 @@ data class BoxListModel(
 
             init {
                 binding.imageIcon.setImageDrawable(Icons.boxIcon(buildContext) {
-                    copy(sizeDp = 32, colorRes = R.color.md_theme_secondary)
+                    copy(sizeDp = 32, colorRes = R.color.md_theme_primary)
                 })
                 binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
             }
@@ -57,7 +57,7 @@ data class BoxListModel(
                     if (model.hasPasscode) Icons.lockIcon(
                         buildContext
                     ) { copy(sizeDp = 12) } else null)
-                binding.textCreatedDate.text = model.created.format("MMM dd yyyy, HH:mm")
+                binding.textCreatedDate.text = model.created.format("yyyy MMM d HH:mm")
             }
 
             override fun onUnBind() {

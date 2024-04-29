@@ -8,8 +8,12 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.utils.UserUtils
+import com.google.firebase.installations.FirebaseInstallations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

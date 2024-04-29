@@ -9,7 +9,6 @@ import android.os.Parcelable
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -73,10 +72,6 @@ class ShareReceiveActivity :
                 }
             }
         }
-
-    private val signInLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
-    )
 
     @Inject
     lateinit var router: Router
@@ -206,10 +201,6 @@ class ShareReceiveActivity :
 
         binding.textShareBox.setOnClickListener {
             shareHelper.showBoxSelectionDialog(supportFragmentManager)
-        }
-
-        if (!userHelper.isSignedIn()) {
-            signInLauncher.launch(router.signIn(true))
         }
 
         binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
@@ -344,20 +335,6 @@ class ShareReceiveActivity :
         shareHelper.showBookmarkCollectionPickerDialog(
             supportFragmentManager, "", state.bookmarkCollection?.id
         )
-    }
-
-    private fun handleSignInResult(activityResult: ActivityResult) {
-        if (activityResult.resultCode == Activity.RESULT_OK) {
-            viewModel.getCurrentUserProfile()
-        } else {
-            showToast(R.string.sign_in_error)
-            if (isTaskRoot) {
-                finishAndRemoveTask()
-            } else {
-                setResult(Activity.RESULT_CANCELED)
-                finish()
-            }
-        }
     }
 
     override fun onBoxSelected(boxId: String) {

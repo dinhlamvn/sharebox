@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.boxdetail
 
 import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -13,21 +12,20 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
-import com.dinhlam.sharebox.extensions.buildShareListModel
+import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
-import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -80,22 +78,12 @@ class BoxDetailActivity :
                     "text_empty", getString(R.string.no_result)
                 ).attachTo(this)
             } else {
-                state.shares.forEach { shareDetail ->
-                    shareDetail.shareData.buildShareListModel(
-                        screenHeight(),
-                        shareDetail.shareId,
-                        shareDetail.shareDate,
-                        shareDetail.shareNote,
-                        shareDetail.user,
-                        shareDetail.likeNumber,
-                        commentNumber = shareDetail.commentNumber,
-                        bookmarked = shareDetail.bookmarked,
-                        liked = shareDetail.liked,
-                        boxDetail = shareDetail.boxDetail,
-                        actionOpen = ::onOpen,
-                        actionShareToOther = ::onShareToOther,
-                        actionViewImage = ::viewImage,
-                        actionViewImages = ::viewImages
+                state.shares.forEachIndexed { idx, shareDetail ->
+                    shareDetail.buildListItemListModel(this@BoxDetailActivity, shareHelper, router)
+                        .attachTo(this)
+                    VerticalDividerListModel(
+                        "share_divider_$idx",
+                        margin = Spacing.Horizontal(16.dp(), 16.dp())
                     ).attachTo(this)
                 }
 
@@ -124,8 +112,6 @@ class BoxDetailActivity :
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        binding.textTitle.setDrawableCompat(Icons.boxIcon(this))
-
         viewModel.consume(this, BoxDetailState::boxDetail) { boxDetail ->
             if (!boxDetail?.passcode.isNullOrBlank()) {
                 val takeBox = boxDetail ?: return@consume finish()
@@ -140,43 +126,6 @@ class BoxDetailActivity :
                 viewModel.loadShares()
             }
         }
-    }
-
-    private fun viewImages(shareId: String, uris: List<Uri>) {
-        shareHelper.viewShareImages(this, shareId, uris)
-    }
-
-    private fun viewImage(shareId: String, uri: Uri) {
-        shareHelper.viewShareImage(this, shareId, uri)
-    }
-
-    private fun onOpen(shareId: String) = getState(viewModel) { state ->
-        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
-            ?: return@getState
-        openShare(share)
-    }
-
-    private fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(this, shareData.text)
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, share.shareId, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, share.shareId, shareData.uris
-            )
-        }
-    }
-
-    private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.showMore(this, share)
     }
 
     private fun onBookmark(shareId: String) {

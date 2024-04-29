@@ -143,6 +143,14 @@
     <string name="permission_denied">Permission denied</string>
     <string name="archive_to">Archive to</string>
     <string name="view_all">View all</string>
+    <string name="created_date">Created: %s</string>
+    <string name="archive_text">Archive a paragraph</string>
+    <string name="archive_web">Archive a link</string>
+    <string name="archive_image">You archived an image</string>
+    <string name="archive_images">You archived some images</string>
+    <string name="unknown">Unknown</string>
+    <string name="no_note">No note</string>
+    <string name="view_image_activity_title">View Images</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

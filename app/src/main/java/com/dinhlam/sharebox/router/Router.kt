@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.router
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.model.DownloadData
@@ -51,4 +52,6 @@ interface Router {
     fun downloadPopup(context: Context, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>): Intent
 
     fun bookmark(context: Context): Intent
+
+    fun imageViewer(context: Context, uris: List<Uri>): Intent
 }

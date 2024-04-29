@@ -5,6 +5,8 @@ import java.util.UUID
 
 object UserUtils {
 
+    const val ANONYMOUS_AVATAR_URL = "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png"
+
     fun createUserId(uniqueId: String) =
         UUID.nameUUIDFromBytes(uniqueId.toByteArray()).toString()
 

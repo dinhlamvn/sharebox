@@ -4,10 +4,10 @@ import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.TrendingShare
-import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.utils.ShareUtils
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -23,7 +23,7 @@ class ShareRepository @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
     private val mapper: ShareToShareDetailMapper,
-    private val userSharePref: UserSharePref,
+    private val userHelper: UserHelper,
     private val boxRepository: BoxRepository,
 ) {
     suspend fun insert(
@@ -125,7 +125,7 @@ class ShareRepository @Inject constructor(
         val commentNumber = commentRepository.count(share.shareId)
         val likeNumber = likeRepository.count(share.shareId)
         val bookmarked = bookmarkRepository.bookmarked(share.shareId)
-        val liked = likeRepository.liked(share.shareId, userSharePref.getCurrentUserId())
+        val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
         val boxDetail = share.shareBoxId?.let { id -> boxRepository.findOne(id) }
         mapper.map(

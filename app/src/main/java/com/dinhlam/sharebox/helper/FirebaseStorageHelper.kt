@@ -21,7 +21,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FirebaseStorageHelper @Inject constructor(
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
 ) {
 
     private val shareImagesRef by lazy { storage.getReference("shareImages") }
@@ -47,7 +47,6 @@ class FirebaseStorageHelper @Inject constructor(
     suspend fun uploadShareImageFile(
         context: Context, shareId: String, uri: Uri
     ): UploadTask.TaskSnapshot = withContext(Dispatchers.IO) {
-
         val notificationManagerCompat = NotificationManagerCompat.from(context)
 
         val notificationBuilder = NotificationCompat.Builder(

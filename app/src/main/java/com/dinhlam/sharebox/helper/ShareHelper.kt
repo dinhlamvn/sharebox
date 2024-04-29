@@ -22,7 +22,6 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
-import com.dinhlam.sharebox.dialog.viewimages.ViewImagesDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
@@ -143,26 +142,12 @@ class ShareHelper @Inject constructor(
         }.show(activity.supportFragmentManager, "TextViewerDialogFragment")
     }
 
-    fun viewShareImage(activity: FragmentActivity, shareId: String, uri: Uri) {
-        ViewImagesDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString(AppExtras.EXTRA_SHARE_ID, shareId)
-                putParcelableArrayList(
-                    AppExtras.EXTRA_IMAGE_URIS, arrayListOf(uri)
-                )
-            }
-        }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
+    fun viewShareImage(context: Context, uri: Uri) {
+        context.startActivity(router.imageViewer(context, listOf(uri)))
     }
 
-    fun viewShareImages(activity: FragmentActivity, shareId: String, uris: List<Uri>) {
-        ViewImagesDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString(AppExtras.EXTRA_SHARE_ID, shareId)
-                putParcelableArrayList(
-                    AppExtras.EXTRA_IMAGE_URIS, arrayListOf(*uris.toTypedArray())
-                )
-            }
-        }.show(activity.supportFragmentManager, "ViewImagesDialogFragment")
+    fun viewShareImages(context: Context, uris: List<Uri>) {
+        context.startActivity(router.imageViewer(context, uris))
     }
 
     fun showBookmarkCollectionPickerDialog(
