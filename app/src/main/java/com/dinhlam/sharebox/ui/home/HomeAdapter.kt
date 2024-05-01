@@ -124,7 +124,10 @@ class HomeAdapter @Inject constructor(
             ).attachTo(this)
         } else {
             state.shares.forEachIndexed { idx, share ->
-                share.buildListItemListModel(activity, shareHelper, router).attachTo(this)
+                share.buildListItemListModel(
+                    activity::showMore,
+                    activity::openShare
+                ).attachTo(this)
                 VerticalDividerListModel(
                     "share_divider_$idx",
                     margin = Spacing.Only(16.dp())

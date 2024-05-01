@@ -202,8 +202,9 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, ProfileActivity::class.java)
     }
 
-    override fun shareText(context: Context): Intent {
+    override fun shareText(context: Context, shareId: String?): Intent {
         return Intent(context, ShareTextActivity::class.java)
+            .putExtra(AppExtras.EXTRA_SHARE_ID, shareId)
     }
 
     override fun shareLink(context: Context): Intent {

@@ -1,5 +1,9 @@
 package com.dinhlam.sharebox.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class ShareDetail(
     val id: Int,
     val shareId: String,
@@ -15,4 +19,4 @@ data class ShareDetail(
     val commentDetail: CommentDetail?,
     val boxDetail: BoxDetail?,
     val isVideoShare: Boolean,
-)
+) : Parcelable

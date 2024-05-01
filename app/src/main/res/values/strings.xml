@@ -152,6 +152,7 @@
     <string name="no_note">No note</string>
     <string name="view_image_activity_title">View Images</string>
     <string name="create_box_2">Create Box...</string>
+    <string name="confirm_save_message">Are you sure to save this?</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

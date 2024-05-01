@@ -32,6 +32,7 @@ import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
@@ -47,6 +48,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener,
     BoxSelectionDialogFragment.OnBoxSelectedListener {
+
+    private val openShareTextResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.doOnRefresh()
+            }
+        }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -282,7 +290,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     fun requestShareText() {
-        shareTextResultLauncher.launch(router.shareText(this))
+        shareTextResultLauncher.launch(router.shareText(this, null))
     }
 
     private fun onShareText(text: String) {
@@ -300,5 +308,26 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     fun requestViewAllBox() {
         shareHelper.showBoxSelectionDialog(supportFragmentManager)
+    }
+
+    fun showMore(share: ShareDetail) {
+        shareHelper.showMore(this, share)
+    }
+
+    fun openShare(share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareText -> {
+                openShareTextResultLauncher.launch(router.shareText(this, share.shareId))
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                this, shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                this, shareData.uris
+            )
+        }
     }
 }

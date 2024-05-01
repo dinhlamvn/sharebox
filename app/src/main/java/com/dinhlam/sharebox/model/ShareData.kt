@@ -1,10 +1,17 @@
 package com.dinhlam.sharebox.model
 
 import android.net.Uri
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-sealed interface ShareData {
+sealed interface ShareData : Parcelable {
+
+    @Parcelize
     data class ShareText(val text: String) : ShareData
+    @Parcelize
     data class ShareUrl(val url: String) : ShareData
+    @Parcelize
     data class ShareImage(val uri: Uri) : ShareData
+    @Parcelize
     data class ShareImages(val uris: List<Uri>) : ShareData
 }

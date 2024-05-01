@@ -46,7 +46,7 @@ interface Router {
     fun boxDetail(context: Context, boxId: String): Intent
 
     fun profile(context: Context): Intent
-    fun shareText(context: Context): Intent
+    fun shareText(context: Context, shareId: String?): Intent
 
     fun shareLink(context: Context): Intent
     fun downloadPopup(context: Context, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>): Intent

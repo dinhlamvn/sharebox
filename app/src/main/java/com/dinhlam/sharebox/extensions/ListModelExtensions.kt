@@ -1,23 +1,18 @@
 package com.dinhlam.sharebox.extensions
 
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.ListItemListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.router.Router
 import com.mikepenz.iconics.typeface.IIcon
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 
 fun ShareDetail.buildListItemListModel(
-    activity: AppCompatActivity,
-    shareHelper: ShareHelper,
-    router: Router
+    onShowMore: (ShareDetail) -> Unit,
+    onOpenShare: (ShareDetail) -> Unit
 ): BaseListAdapter.BaseListModel {
-
 
     fun getRecentlyIcon(shareData: ShareData): IIcon {
         return when (shareData) {
@@ -46,23 +41,6 @@ fun ShareDetail.buildListItemListModel(
         }
     }
 
-    fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(activity, shareData.text)
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                activity, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                activity, shareData.uris
-            )
-        }
-    }
-
 
     return ListItemListModel(
         "share_${this.shareId}",
@@ -70,10 +48,10 @@ fun ShareDetail.buildListItemListModel(
         getRecentlyTitle(this),
         getRecentlySubtitle(this),
         BaseListAdapter.NoHashProp(View.OnClickListener {
-            shareHelper.showMore(activity, this)
+            onShowMore(this)
         }),
         BaseListAdapter.NoHashProp(View.OnClickListener {
-            openShare(this)
+            onOpenShare(this)
         })
     )
 }

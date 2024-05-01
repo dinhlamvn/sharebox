@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
@@ -41,6 +42,13 @@ class BoxDetailActivity :
     }
 
     override val viewModel: BoxDetailViewModel by viewModels()
+
+    private val openShareTextResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.doOnRefresh()
+            }
+        }
 
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -80,7 +88,7 @@ class BoxDetailActivity :
                 ).attachTo(this)
             } else {
                 state.shares.forEachIndexed { idx, shareDetail ->
-                    shareDetail.buildListItemListModel(this@BoxDetailActivity, shareHelper, router)
+                    shareDetail.buildListItemListModel(::showMore, ::openShare)
                         .attachTo(this)
                     VerticalDividerListModel(
                         "share_divider_$idx",
@@ -167,5 +175,26 @@ class BoxDetailActivity :
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showMore(share: ShareDetail) {
+        shareHelper.showMore(this, share)
+    }
+
+    private fun openShare(share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareText -> {
+                openShareTextResultLauncher.launch(router.shareText(this, share.shareId))
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                this, shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                this, shareData.uris
+            )
+        }
     }
 }
