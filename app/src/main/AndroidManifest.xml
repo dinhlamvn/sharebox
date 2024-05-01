@@ -162,7 +162,7 @@
 
         <activity
             android:name=".ui.bookmark.list.BookmarkListItemActivity"
-
+            android:label="@string/title_bookmark_collection"
             android:theme="@style/AppTheme.TranslucentStatusBar"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />

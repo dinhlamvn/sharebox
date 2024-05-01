@@ -5,8 +5,9 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareDetail
 
 data class HomeState(
+    val currentUserId: String,
     val asyncLoadShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.Initialize,
-    val isRefreshing: Boolean = false,
+    val isRefreshing: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val isLoadingMore: Boolean = false,
     val currentPage: Int = 1,

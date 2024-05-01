@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.bookmark.list
 
 import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,10 +13,9 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
-import com.dinhlam.sharebox.extensions.buildShareListModel
+import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
-import com.dinhlam.sharebox.extensions.screenHeight
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -30,6 +28,7 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +44,13 @@ class BookmarkListItemActivity :
         return ActivityBookmarkListItemBinding.inflate(layoutInflater)
     }
 
+    private val openShareTextResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.refresh()
+            }
+        }
+
     private val shareAdapter = BaseListAdapter.createAdapter {
         getState(viewModel) { state ->
             if (state.isSharesLoading) {
@@ -53,25 +59,11 @@ class BookmarkListItemActivity :
             }
 
             if (state.shares.isEmpty()) {
-                TextListModel("text_empty", "No shares").attachTo(this)
+                TextListModel("text_empty", getString(R.string.no_result)).attachTo(this)
             } else {
                 state.shares.forEach { shareDetail ->
-                    shareDetail.shareData.buildShareListModel(
-                        screenHeight(),
-                        shareDetail.shareId,
-                        shareDetail.shareDate,
-                        shareDetail.shareNote,
-                        shareDetail.user,
-                        shareDetail.likeNumber,
-                        commentNumber = shareDetail.commentNumber,
-                        bookmarked = shareDetail.bookmarked,
-                        liked = shareDetail.liked,
-                        boxDetail = shareDetail.boxDetail,
-                        actionOpen = ::onOpen,
-                        actionShareToOther = ::onShareToOther,
-                        actionViewImage = ::viewImage,
-                        actionViewImages = ::viewImages
-                    ).attachTo(this)
+                    shareDetail.buildListItemListModel(::showMore, ::openShare)
+                        .attachTo(this)
                 }
             }
         }
@@ -113,6 +105,10 @@ class BookmarkListItemActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.toolbar.navigationIcon = Icons.leftArrowIcon(this)
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
 
         viewModel.consume(
             this, BookmarkListItemState::bookmarkCollection
@@ -134,6 +130,7 @@ class BookmarkListItemActivity :
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.refresh()
         }
 
         binding.recyclerView.adapter = shareAdapter
@@ -156,43 +153,6 @@ class BookmarkListItemActivity :
             getString(R.string.dialog_bookmark_collection_picker_verify_passcode, name)
         )
         passcodeConfirmResultLauncher.launch(intent)
-    }
-
-    private fun onOpen(shareId: String) = getState(viewModel) { state ->
-        val share = state.shares.firstOrNull { shareDetail -> shareDetail.shareId == shareId }
-            ?: return@getState
-        openShare(share)
-    }
-
-    private fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
-            is ShareData.ShareText -> {
-                shareHelper.openTextViewerDialog(this, shareData.text)
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, shareData.uris
-            )
-        }
-    }
-
-    private fun viewImages(shareId: String, uris: List<Uri>) {
-        shareHelper.viewShareImages(this, uris)
-    }
-
-    private fun viewImage(shareId: String, uri: Uri) {
-        shareHelper.viewShareImage(this, uri)
-    }
-
-    private fun onShareToOther(shareId: String) = getState(viewModel) { state ->
-        val share =
-            state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-        shareHelper.showMore(this, share)
     }
 
     private fun onBookmark(shareId: String) {
@@ -218,6 +178,27 @@ class BookmarkListItemActivity :
                 2 -> onBookmark(shareId)
                 3 -> copy(share.boxDetail?.boxId)
             }
+        }
+    }
+
+    private fun showMore(share: ShareDetail) {
+        shareHelper.showMore(this, share)
+    }
+
+    private fun openShare(share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareText -> {
+                openShareTextResultLauncher.launch(router.shareText(this, share.shareId))
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                this, shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                this, shareData.uris
+            )
         }
     }
 }

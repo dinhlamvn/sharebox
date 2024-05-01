@@ -223,6 +223,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     override fun onStart() {
         super.onStart()
+        if (userHelper.getCurrentUserId() != getState(viewModel, HomeState::currentUserId)) {
+            viewModel.doOnRefresh()
+        }
         if (userHelper.isSignedIn()) {
             ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
         }

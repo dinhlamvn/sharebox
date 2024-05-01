@@ -41,13 +41,16 @@ class BookmarkListItemViewModel @Inject constructor(
     }
 
     private fun loadShares() = getState { state ->
-        setState { copy(isSharesLoading = true) }
-        val collectionId = state.bookmarkCollectionId
-        doInBackground {
+        suspend {
+            val collectionId = state.bookmarkCollectionId
             val bookmarks = bookmarkRepository.find(collectionId)
             val ids = bookmarks.map { bookmarkDetail -> bookmarkDetail.shareId }
-            val shares = shareRepository.find(ids)
-            setState { copy(shares = shares, isSharesLoading = false) }
+            shareRepository.find(ids)
+        }.execute { asyncLoad ->
+            copy(
+                shares = asyncLoad.data.orEmpty(),
+                isSharesLoading = asyncLoad is AsyncLoad.Loading
+            )
         }
     }
 
@@ -76,5 +79,9 @@ class BookmarkListItemViewModel @Inject constructor(
             }
             copy(shares = shareList)
         }
+    }
+
+    fun refresh() {
+        loadShares()
     }
 }

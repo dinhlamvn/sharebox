@@ -144,11 +144,15 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                     finish()
                 }
             } else {
-                goHome()
+                withContext(Dispatchers.Main) {
+                    goHome()
+                }
             }
         }, {
-            showToast(R.string.create_user_error)
-            signOut()
+            activityScope.launch(Dispatchers.Main) {
+                showToast(R.string.create_user_error)
+                signOut()
+            }
         })
     }
 

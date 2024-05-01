@@ -8,12 +8,8 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.utils.UserUtils
-import com.google.firebase.installations.FirebaseInstallations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,7 +23,7 @@ class HomeViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
-) : BaseViewModel<HomeState>(HomeState(isRefreshing = true)) {
+) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {
         private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 5
@@ -160,7 +156,7 @@ class HomeViewModel @Inject constructor(
         }
 
     fun doOnRefresh() {
-        setState { HomeState(isRefreshing = true) }
+        setState { HomeState(userHelper.getCurrentUserId()) }
         refresh()
     }
 
