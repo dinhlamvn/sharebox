@@ -8,21 +8,9 @@
         android:id="@+id/toolbar"
         style="@style/Widget.Material3.Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="12dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:drawablePadding="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextTitleMedium" />
-
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_height="?actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextAppearance="@style/TextTitleMedium" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"

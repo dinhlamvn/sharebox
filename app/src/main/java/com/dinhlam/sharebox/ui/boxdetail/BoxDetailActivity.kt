@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.boxdetail
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
@@ -53,7 +54,7 @@ class BoxDetailActivity :
 
     override fun onStateChanged(state: BoxDetailState) {
         shareAdapter.requestBuildListModels()
-        binding.textTitle.text = state.boxDetail?.boxName
+        supportActionBar?.title = state.boxDetail?.boxName
     }
 
     private val layoutManager by lazy {
@@ -103,6 +104,8 @@ class BoxDetailActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = shareAdapter
@@ -156,5 +159,13 @@ class BoxDetailActivity :
                 3 -> copy(share.boxDetail?.boxId)
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

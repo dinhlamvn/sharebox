@@ -18,6 +18,12 @@ class BoxSelectionDialogViewModel @Inject constructor(
         fetchTotalBox()
     }
 
+    fun reload() {
+        setState { BoxSelectionDialogState() }
+        getListBoxes()
+        fetchTotalBox()
+    }
+
     private fun getListBoxes() = getState { state ->
         suspend {
             boxRepository.findByUser(

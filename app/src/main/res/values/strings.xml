@@ -151,6 +151,7 @@
     <string name="unknown">Unknown</string>
     <string name="no_note">No note</string>
     <string name="view_image_activity_title">View Images</string>
+    <string name="create_box_2">Create Box...</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

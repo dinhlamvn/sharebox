@@ -35,6 +35,13 @@ class BoxSelectionDialogFragment :
         fun onBoxSelected(boxId: String)
     }
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.reload()
+            }
+        }
+
     @Inject
     lateinit var router: Router
 
@@ -84,6 +91,18 @@ class BoxSelectionDialogFragment :
 
                 return@getState
             }
+
+            TextListModel(
+                "text_new_box",
+                getString(R.string.create_box_2),
+                textAppearance = R.style.TextBodyMedium,
+                height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                actionClick = BaseListAdapter.NoHashProp(
+                    View.OnClickListener {
+                        createBoxResultLauncher.launch(router.boxIntent(requireContext()))
+                    },
+                ),
+            ).attachTo(this)
 
             state.boxes.forEach { box ->
                 TextListModel("text_${box.boxId}",

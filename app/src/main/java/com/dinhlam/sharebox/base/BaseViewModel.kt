@@ -1,11 +1,10 @@
 package com.dinhlam.sharebox.base
 
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.withStateAtLeast
+import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
 import kotlin.reflect.KProperty1
@@ -155,9 +153,9 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         lifecycleOwner?.let { owner ->
             owner.lifecycleScope.launch(Dispatchers.Main) {
                 yield()
-                collectLatest {
-                    owner.withStateAtLeast(Lifecycle.State.STARTED) {
-                        block(it)
+                collectLatest { consumerValue ->
+                    owner.whenStarted {
+                        block(consumerValue)
                     }
                 }
             }

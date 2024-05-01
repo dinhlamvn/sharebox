@@ -155,48 +155,12 @@ class ShareReceiveActivity :
 
         binding.recyclerView.adapter = shareContentAdapter
 
-        viewModel.consume(this, ShareReceiveState::asyncLoadArchive) { asyncLoad ->
-            if (asyncLoad is BaseViewModel.AsyncLoad.Loading) {
-                binding.viewLoading.show()
-            } else {
-                binding.viewLoading.hide()
-            }
-
-            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
-                Toast.makeText(this, R.string.shares_success, Toast.LENGTH_SHORT).show()
-                if (isTaskRoot) {
-                    finishAndRemoveTask()
-                } else {
-                    setResult(Activity.RESULT_OK)
-                    finish()
-                }
-            } else if (asyncLoad is BaseViewModel.AsyncLoad.Failed) {
-                showToast(asyncLoad.error.message)
-            }
-        }
-
         binding.containerButtonShare.setOnClickListener {
             share()
         }
 
         binding.imageShareBookmark.setOnClickListener {
             showBookmarkCollectionPicker()
-        }
-
-        viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
-            val boxName = currentBox?.boxName
-            val isLock = currentBox?.passcode?.isNotBlank() ?: false
-            binding.textShareBox.text = boxName
-            binding.textShareBox.setDrawableCompat(
-                start = Icons.boxIcon(this),
-                end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
-            )
-        }
-
-        viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
-            collectionDetail?.let {
-                binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
-            } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
         }
 
         binding.textShareBox.setOnClickListener {
@@ -221,6 +185,42 @@ class ShareReceiveActivity :
 
         binding.textInputNote.setOnClickListener { v ->
             scrollToBottomEditText(v)
+        }
+
+        viewModel.consume(this, ShareReceiveState::asyncLoadArchive) { asyncLoad ->
+            if (asyncLoad is BaseViewModel.AsyncLoad.Loading) {
+                binding.viewLoading.show()
+            } else {
+                binding.viewLoading.hide()
+            }
+
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
+                Toast.makeText(this, R.string.shares_success, Toast.LENGTH_SHORT).show()
+                if (isTaskRoot) {
+                    finishAndRemoveTask()
+                } else {
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
+            } else if (asyncLoad is BaseViewModel.AsyncLoad.Failed) {
+                showToast(asyncLoad.error.message)
+            }
+        }
+
+        viewModel.consume(this, ShareReceiveState::currentBox) { currentBox ->
+            val boxName = currentBox?.boxName
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            binding.textShareBox.text = boxName
+            binding.textShareBox.setDrawableCompat(
+                start = Icons.boxIcon(this),
+                end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
+            )
+        }
+
+        viewModel.consume(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
+            collectionDetail?.let {
+                binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
+            } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
         }
 
         handleShareData()

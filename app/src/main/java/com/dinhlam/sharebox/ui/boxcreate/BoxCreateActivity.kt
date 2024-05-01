@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.UiThread
 import androidx.core.view.isVisible
@@ -65,6 +66,8 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.imageClear.setImageDrawable(Icons.clearIcon(this) {
             copy(sizeDp = 16)
@@ -157,5 +160,13 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
                 }
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

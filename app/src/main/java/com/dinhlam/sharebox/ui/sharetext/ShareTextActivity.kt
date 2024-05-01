@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.sharetext
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
@@ -24,6 +25,8 @@ class ShareTextActivity : BaseActivity<ActivityShareTextBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.imageDone.setImageDrawable(Icons.doneIcon(this))
 
@@ -54,5 +57,13 @@ class ShareTextActivity : BaseActivity<ActivityShareTextBinding>() {
             ?: return showToast(R.string.require_input_text_quote)
         setResult(RESULT_OK, Intent().putExtra(Intent.EXTRA_TEXT, text))
         finish()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
