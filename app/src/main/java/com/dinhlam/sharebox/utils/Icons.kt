@@ -215,6 +215,12 @@ object Icons {
         )
     }
 
+    fun signInIcon(context: Context): Drawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_sign_in_alt
+        )
+    }
+
     @ColorRes
     private fun getIconColor(context: Context): Int {
         return if (isNightMode(context)) android.R.color.white else android.R.color.black

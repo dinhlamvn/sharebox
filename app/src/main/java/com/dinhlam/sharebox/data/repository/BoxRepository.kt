@@ -111,4 +111,8 @@ class BoxRepository @Inject constructor(
     suspend fun findForSyncToCloud(): List<Box> = boxDao.runCatching {
         findForSyncToCloud()
     }.getOrDefault(emptyList())
+
+    suspend fun transferData(anonymousUserId: String, userId: String) {
+        boxDao.transferData(anonymousUserId, userId)
+    }
 }

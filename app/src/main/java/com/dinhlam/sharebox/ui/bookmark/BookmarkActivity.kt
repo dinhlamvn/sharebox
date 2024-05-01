@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.bookmark
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -113,6 +114,8 @@ class BookmarkActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.recyclerView.layoutManager =
             GridLayoutManager(this, COLLECTION_SPAN_COUNT).apply {
@@ -203,5 +206,13 @@ class BookmarkActivity :
                     .show()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

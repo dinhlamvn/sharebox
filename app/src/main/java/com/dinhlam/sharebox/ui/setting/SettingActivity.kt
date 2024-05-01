@@ -8,6 +8,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.BuildConfig
@@ -68,7 +69,18 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
         binding.buttonSyncToCloud.setDrawableCompat(Icons.syncIcon(this))
         binding.buttonSyncToCloud.setOnClickListener {
-            WorkerUtils.enqueueJobSyncDataOneTime(this)
+            if (!userHelper.isSignedIn()) {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.title_alert)
+                    .setMessage(R.string.require_sign_to_sync_cloud)
+                    .setPositiveButton(R.string.sign_in) { _, _ ->
+                        signInLauncher.launch(router.signIn(true))
+                    }
+                    .setNegativeButton(R.string.alert_no_thanks, null)
+                    .show()
+            } else {
+                WorkerUtils.enqueueJobSyncDataOneTime(this)
+            }
         }
 
         when (appSettingHelper.getTheme()) {
@@ -100,8 +112,13 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
-        binding.imageAction.isVisible = userHelper.isSignedIn()
-        binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
+        binding.imageAction.setImageDrawable(
+            if (userHelper.isSignedIn()) {
+                Icons.signOutIcon(this)
+            } else {
+                Icons.signInIcon(this)
+            }
+        )
         binding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
             copy(sizeDp = 16)
         }
@@ -112,7 +129,6 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         binding.seekbarImageDownloadQuality.progress =
             appSettingHelper.getImageDownloadQuality()
         binding.textQuality.text = "${binding.seekbarImageDownloadQuality.progress}"
-
 
         binding.seekbarImageDownloadQuality.setOnSeekBarChangeListener(object :
             OnSeekBarChangeListener {
@@ -143,9 +159,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         })
 
-        binding.checkboxSyncInBackground.isChecked = appSettingHelper.isSyncDataInBackground()
+        binding.switchAutoSync.isChecked = appSettingHelper.isSyncDataInBackground()
 
-        binding.checkboxSyncInBackground.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchAutoSync.setOnCheckedChangeListener { _, isChecked ->
             appSettingHelper.setSyncDataInBackground(isChecked)
             if (isChecked) {
                 WorkerUtils.enqueueJobSyncData(applicationContext)
@@ -156,6 +172,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
+        binding.switchAutoSync.isVisible = userHelper.isSignedIn()
         binding.textAbout.text = getString(
             R.string.setting_about, getString(R.string.app_name), BuildConfig.VERSION_NAME
         )

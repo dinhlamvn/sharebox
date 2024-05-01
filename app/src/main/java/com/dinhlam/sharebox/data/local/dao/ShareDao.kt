@@ -96,4 +96,7 @@ interface ShareDao {
 
     @Query("SELECT * FROM share WHERE synced = 0")
     suspend fun findForSyncToCloud(): List<Share>
+
+    @Query("UPDATE share SET share_user_id = :userId, synced = 0 WHERE share_user_id = :fromUserId")
+    suspend fun transferData(fromUserId: String, userId: String)
 }

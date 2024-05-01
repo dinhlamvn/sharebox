@@ -140,4 +140,8 @@ class ShareRepository @Inject constructor(
             share.isVideoShare
         )
     }.getOrNull()
+
+    suspend fun transferData(anonymousUserId: String, userId: String) {
+        shareDao.transferData(anonymousUserId, userId)
+    }
 }

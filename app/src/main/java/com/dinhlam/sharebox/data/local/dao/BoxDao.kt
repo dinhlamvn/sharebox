@@ -44,4 +44,7 @@ interface BoxDao {
 
     @Query("SELECT * FROM box WHERE synced = 0")
     suspend fun findForSyncToCloud(): List<Box>
+
+    @Query("UPDATE box SET created_by = :userId, synced = 0  WHERE created_by = :fromUserId")
+    suspend fun transferData(fromUserId: String, userId: String)
 }

@@ -2,17 +2,13 @@ package com.dinhlam.sharebox.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 
 @Entity(
     tableName = "box",
-    indices = [Index(value = ["box_id"], unique = true), Index(
-        value = ["box_name"],
-        unique = true
-    ), Index(value = ["created_by"])]
+    indices = [Index(value = ["box_id"], unique = true), Index(value = ["created_by"])]
 )
 data class Box(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

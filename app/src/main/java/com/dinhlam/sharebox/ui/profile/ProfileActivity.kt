@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.ui.profile
 import android.app.Activity
 import android.os.Bundle
 import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import androidx.activity.result.ActivityResult
@@ -21,8 +22,8 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.DrawableImageListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.profile.ProfileInfoListModel
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.pref.AppSharePref
@@ -135,6 +136,9 @@ class ProfileActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         binding.recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.adapter = adapter
@@ -153,6 +157,19 @@ class ProfileActivity :
         if (activityResult?.resultCode == Activity.RESULT_OK) {
             viewModel.getCurrentUserProfile()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getCurrentUserProfile()
     }
 }
 
