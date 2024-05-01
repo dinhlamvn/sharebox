@@ -3,9 +3,16 @@ package com.dinhlam.sharebox.ui.signin
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.view.View
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
+import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.BoxRepository
@@ -34,10 +41,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SignInActivity : BaseActivity<ActivitySignInBinding>() {
-
-    companion object {
-        private const val KEY_CUSTOM_AVATAR_URI = "custom-avatar-uri"
-    }
 
     private val signInLauncher =
         registerForActivityResult(FirebaseAuthUIActivityResultContract(), ::handleSignInResult)
@@ -80,6 +83,23 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding.textPrivacyPolicy.movementMethod = LinkMovementMethod.getInstance()
+        binding.textPrivacyPolicy.text = buildSpannedString {
+            append(getString(R.string.app_policy_desc))
+            append(" ")
+            inSpans(object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    router.moveToBrowser(AppConsts.PRIVACY_POLICY_URL)
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    ds.isUnderlineText = true
+                }
+            }) {
+                append("Privacy Policy")
+            }
+        }
 
         binding.viewLoading.show()
 

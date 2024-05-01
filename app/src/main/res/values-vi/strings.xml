@@ -134,19 +134,21 @@
     <string name="permission_granted">Đã cấp quyền</string>
     <string name="permission_denied">Đã chặn quyền</string>
     <string name="archive_to">Lưu trữ vào</string>
-    <string name="view_all">View all</string>
-    <string name="created_date">Created: %s</string>
-    <string name="archive_text">Archive a paragraph</string>
-    <string name="archive_web">Archive a link</string>
-    <string name="archive_image">Archive an image</string>
-    <string name="archive_images">Archive some images</string>
-    <string name="unknown">Unknown</string>
-    <string name="no_note">No note</string>
-    <string name="create_box_2">Create Box...</string>
-    <string name="confirm_save_message">Are you sure to save this?</string>
-    <string name="title_alert">Alert!</string>
-    <string name="require_sign_to_sync_cloud">You need sign in to sync the data to cloud!</string>
-    <string name="title_profile">Your Profile</string>
+    <string name="view_all">Xem tất cả</string>
+    <string name="created_date">Đã tạo: %s</string>
+    <string name="archive_text">Lưu trữ văn bản</string>
+    <string name="archive_web">Lưu trữ địa chỉ web</string>
+    <string name="archive_image">Lưu trữ một ảnh</string>
+    <string name="archive_images">Lưu trữ vài ảnh</string>
+    <string name="unknown">Chưa rõ</string>
+    <string name="no_note">Không có chú thích</string>
+    <string name="create_box_2">Tạo một Box…</string>
+    <string name="confirm_save_message">Bạn có chắc muốn lưu?</string>
+    <string name="title_alert">Thông báo</string>
+    <string name="require_sign_to_sync_cloud">Bạn cần đăng nhập để lưu trữ dữ liệu lên Cloud.</string>
+    <string name="title_profile">Hồ sơ của bạn</string>
+    <string name="app_policy_desc">Bằng việc đăng nhập, bạn đã đồng ý với</string>
+    <string name="view_image_activity_title">Xem ảnh</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

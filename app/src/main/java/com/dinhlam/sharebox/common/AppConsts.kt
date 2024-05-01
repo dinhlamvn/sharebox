@@ -1,6 +1,8 @@
 package com.dinhlam.sharebox.common
 
 object AppConsts {
+    const val PRIVACY_POLICY_URL = "https://dinh96.github.io/sharebox/privacy_policy"
+
     const val SSSTIK_SERVICE_BASE_URL: String = "https://ssstik.io/"
 
     const val LIBRE_TUBE_SERVICE_BASE_URL: String = "https://pipedapi.kavin.rocks/"

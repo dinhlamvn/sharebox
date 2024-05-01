@@ -24,8 +24,8 @@ android {
         applicationId "com.dinhlam.sharebox"
         minSdk 21
         targetSdk 34
-        versionCode 202404150
-        versionName "3.8.3"
+        versionCode 202405011
+        versionName "3.8.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
