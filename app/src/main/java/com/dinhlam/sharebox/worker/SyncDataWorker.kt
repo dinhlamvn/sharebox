@@ -44,6 +44,7 @@ class SyncDataWorker @AssistedInject constructor(
         return try {
             syncBoxes()
             syncShares()
+            realtimeDatabaseRepository.consume()
             delay(3_000)
             Result.success()
         } catch (e: Exception) {

@@ -66,8 +66,8 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
-        binding.buttonSyncToCloud.setDrawableCompat(Icons.syncIcon(this))
-        binding.buttonSyncToCloud.setOnClickListener {
+        binding.buttonSyncData.setDrawableCompat(Icons.syncIcon(this))
+        binding.buttonSyncData.setOnClickListener {
             if (!userHelper.isSignedIn()) {
                 AlertDialog.Builder(this)
                     .setTitle(R.string.title_alert)

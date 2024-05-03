@@ -98,7 +98,7 @@
     <string name="distribute_images_title">Phân phối ảnh</string>
     <string name="complete_progress">Hoàn thành (%s)</string>
     <string name="nothing_to_download">Không có gì để tải xuống</string>
-    <string name="text_sync_to_cloud">Đồng bộ dữ liệu lên đám mây</string>
+    <string name="text_sync_data">Đồng bộ dữ liệu</string>
     <string name="note">Chú thích</string>
     <string name="recently_shares">Gần đây</string>
     <string name="web">Trang web</string>

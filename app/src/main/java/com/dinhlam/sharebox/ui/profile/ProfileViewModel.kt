@@ -12,6 +12,10 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : BaseViewModel<ProfileState>(ProfileState()) {
 
+    init {
+        getCurrentUserProfile()
+    }
+
     fun getCurrentUserProfile() =
         suspend { userRepository.findOne(userHelper.getCurrentUserId()) }.execute { asyncLoad ->
             copy(currentUser = asyncLoad.data, isRefreshing = asyncLoad is AsyncLoad.Loading)

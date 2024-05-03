@@ -106,7 +106,7 @@
     <string name="distribute_images_title">Distribute images</string>
     <string name="complete_progress">Completed (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
-    <string name="text_sync_to_cloud">Sync data to cloud</string>
+    <string name="text_sync_data">Sync data</string>
     <string name="note">Note</string>
     <string name="web">Web</string>
     <string name="images">Images</string>

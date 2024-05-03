@@ -34,7 +34,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.services.RealtimeDatabaseService
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
@@ -87,10 +86,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 }
             }
         }
-
-    private val realtimeDatabaseServiceIntent by lazy(LazyThreadSafetyMode.NONE) {
-        Intent(this, RealtimeDatabaseService::class.java)
-    }
 
     private val shareResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -225,16 +220,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         super.onStart()
         if (userHelper.getCurrentUserId() != getState(viewModel, HomeState::currentUserId)) {
             viewModel.doOnRefresh()
-        }
-        if (userHelper.isSignedIn()) {
-            ContextCompat.startForegroundService(this, realtimeDatabaseServiceIntent)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (userHelper.isSignedIn()) {
-            stopService(realtimeDatabaseServiceIntent)
         }
     }
 

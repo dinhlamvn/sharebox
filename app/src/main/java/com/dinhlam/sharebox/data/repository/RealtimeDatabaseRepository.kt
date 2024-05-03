@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeUserObj
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -56,15 +55,15 @@ class RealtimeDatabaseRepository @Inject constructor(
             .asCoroutineDispatcher() + CoroutineName("realtime-database-scope")
     )
 
-    private var shareChildEventListener: SimpleRealtimeChildEventListener? = null
+    private var shareChildEventListener: SimpleRealtimeEventListener? = null
 
-    private var userChildEventListener: SimpleRealtimeChildEventListener? = null
+    private var userChildEventListener: SimpleRealtimeEventListener? = null
 
-    private var commentChildEventListener: SimpleRealtimeChildEventListener? = null
+    private var commentChildEventListener: SimpleRealtimeEventListener? = null
 
-    private var likeChildEventListener: SimpleRealtimeChildEventListener? = null
+    private var likeChildEventListener: SimpleRealtimeEventListener? = null
 
-    private var boxChildEventListener: SimpleRealtimeChildEventListener? = null
+    private var boxChildEventListener: SimpleRealtimeEventListener? = null
 
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
@@ -162,11 +161,11 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     fun consume() {
-        consumeShares(::onShareAdded)
-        consumeUsers(::onUserAdded)
-        consumeComments(::onCommentAdded)
-        consumeLikes(::onLikeAdded)
-        consumeBoxes(::onBoxAdded)
+        consume(shareRef, ::onShareAdded)
+        consume(userRef, ::onUserAdded)
+        consume(commentRef, ::onCommentAdded)
+        consume(likeRef, ::onLikeAdded)
+        consume(boxRef, ::onBoxAdded)
     }
 
     private suspend fun syncDataInRef(
@@ -195,43 +194,14 @@ class RealtimeDatabaseRepository @Inject constructor(
         })
     }
 
-    private fun consumeShares(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        shareChildEventListener = SimpleRealtimeChildEventListener(
+    private fun consume(
+        databaseRef: DatabaseReference,
+        childAddedHandler: suspend (String, Map<String, Any>) -> Unit
+    ) {
+        shareChildEventListener = SimpleRealtimeEventListener(
             realtimeDatabaseScope, childAddedHandler
         ).also { listener ->
-            shareRef.addChildEventListener(listener)
-        }
-    }
-
-    private fun consumeUsers(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        userChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler
-        ).also { listener ->
-            userRef.addChildEventListener(listener)
-        }
-    }
-
-    private fun consumeComments(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        commentChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler
-        ).also { listener ->
-            commentRef.addChildEventListener(listener)
-        }
-    }
-
-    private fun consumeLikes(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        likeChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler
-        ).also { listener ->
-            likeRef.addChildEventListener(listener)
-        }
-    }
-
-    private fun consumeBoxes(childAddedHandler: suspend (String, Map<String, Any>) -> Unit) {
-        boxChildEventListener = SimpleRealtimeChildEventListener(
-            realtimeDatabaseScope, childAddedHandler
-        ).also { listener ->
-            boxRef.addChildEventListener(listener)
+            databaseRef.addListenerForSingleValueEvent(listener)
         }
     }
 
@@ -358,33 +328,20 @@ class RealtimeDatabaseRepository @Inject constructor(
         boxChildEventListener?.let { listener -> boxRef.removeEventListener(listener) }
     }
 
-    private class SimpleRealtimeChildEventListener(
+    private class SimpleRealtimeEventListener(
         private val scope: CoroutineScope,
         private val block: suspend (String, Map<String, Any>) -> Unit
-    ) : ChildEventListener {
+    ) : ValueEventListener {
 
-        override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            val dataKey = snapshot.key ?: return
-            Logger.debug("Data with key $dataKey added")
-            val value = snapshot.value.cast<Map<String, Any>>() ?: return
-            scope.launch {
-                block.invoke(dataKey, value)
+        override fun onDataChange(snapshot: DataSnapshot) {
+            snapshot.children.forEach { dataSnapshot ->
+                val dataKey = dataSnapshot.key ?: return
+                Logger.debug("Data with key $dataKey added")
+                val value = dataSnapshot.value.cast<Map<String, Any>>() ?: return
+                scope.launch {
+                    block.invoke(dataKey, value)
+                }
             }
-        }
-
-        override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            val dataKey = snapshot.key ?: return
-            Logger.debug("Data with key $dataKey changed")
-        }
-
-        override fun onChildRemoved(snapshot: DataSnapshot) {
-            val dataKey = snapshot.key ?: return
-            Logger.debug("Data with key $dataKey removed")
-        }
-
-        override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            val dataKey = snapshot.key ?: return
-            Logger.debug("Data with key $dataKey moved - previous: $previousChildName")
         }
 
         override fun onCancelled(error: DatabaseError) {
