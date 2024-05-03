@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.View
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -32,7 +33,6 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,7 +83,6 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding.textPrivacyPolicy.movementMethod = LinkMovementMethod.getInstance()
         binding.textPrivacyPolicy.text = buildSpannedString {
             append(getString(R.string.app_policy_desc))
@@ -131,38 +130,36 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     private fun handleSignInResult(result: FirebaseAuthUIAuthenticationResult) {
         val response = result.idpResponse
         if (result.resultCode == Activity.RESULT_OK) {
-            FirebaseAuth.getInstance().currentUser?.let(::createUserInfo)
-                ?: return showToast(com.firebase.ui.auth.R.string.fui_error_unknown)
+            Log.d("DinhLam", "this here")
+            val user = FirebaseAuth.getInstance().currentUser
+            createUserInfo(user?.email, user?.displayName, user?.photoUrl?.toString())
         } else {
             response?.error?.let { error ->
+                Log.e("DinhLam", error.message, error)
                 showToast(error.message)
             } ?: showToast(com.firebase.ui.auth.R.string.fui_error_unknown)
         }
     }
 
-    private fun createUserInfo(user: FirebaseUser) {
-        val email = user.email ?: return signOut()
+    private fun createUserInfo(email: String?, displayName: String?, photoUrl: String?) {
+        binding.viewLoading.show()
+        val userEmail = email ?: return signOut()
         activityScope.launch(Dispatchers.IO) {
-            val name = user.displayName ?: "User-$email"
-            val photoUrl = user.photoUrl?.toString() ?: UserUtils.ANONYMOUS_AVATAR_URL
-            createUser(email, name, photoUrl)
+            val userName = displayName ?: "User-$email"
+            val userPhotoUrl = photoUrl ?: UserUtils.ANONYMOUS_AVATAR_URL
+            createUser(userEmail, userName, userPhotoUrl)
         }
     }
 
     private suspend fun createUser(email: String, name: String, photoUrl: String) {
-        withContext(Dispatchers.Main) {
-            binding.viewLoading.show()
-        }
         val userId = UserUtils.createUserId(email)
         userHelper.createUser(userId, name, photoUrl, { user ->
             realtimeDatabaseRepository.push(user)
             transferData(user)
             if (signInForResult) {
-                withContext(Dispatchers.Main) {
-                    binding.viewLoading.hide()
-                    setResult(Activity.RESULT_OK)
-                    finish()
-                }
+                binding.viewLoading.hide()
+                setResult(Activity.RESULT_OK)
+                finish()
             } else {
                 withContext(Dispatchers.Main) {
                     goHome()

@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "64151986643-u4qn6spabkvtk5590j42m3eotq5nj620.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dinhlam.sharebox",
+            "certificate_hash": "591943d38357d8feffca78df203e4c1f7f723d83"
+          }
+        },
+        {
           "client_id": "64151986643-mr9t88vsdk8l2r53iu025fab95djaui0.apps.googleusercontent.com",
           "client_type": 3
         }

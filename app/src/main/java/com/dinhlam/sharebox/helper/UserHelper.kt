@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.helper
 
 import android.content.Context
+import android.util.Log
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.pref.UserSharePref
@@ -52,10 +53,15 @@ class UserHelper @Inject constructor(
 
             shareBoxUser?.let { createdUser ->
                 userSharePref.setCurrentUserId(createdUser.userId)
-                onSuccess(createdUser)
+                withContext(Dispatchers.Main) {
+                    onSuccess(createdUser)
+                }
             } ?: error("Create user error")
         } catch (e: Exception) {
-            onError(e)
+            Log.e("DinhLam", e.message, e)
+            withContext(Dispatchers.Main) {
+                onError(e)
+            }
         }
     }
 
