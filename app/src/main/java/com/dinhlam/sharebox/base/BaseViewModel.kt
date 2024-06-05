@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
@@ -149,17 +151,16 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
 
     private fun <T> Flow<T>.resolveConsumer(
         lifecycleOwner: LifecycleOwner? = null, block: (T) -> Unit
-    ) {
-        lifecycleOwner?.let { owner ->
-            owner.lifecycleScope.launch(Dispatchers.Main) {
+    ): Job {
+        return if (lifecycleOwner != null) {
+            val score = lifecycleOwner.lifecycleScope + stateScope.coroutineContext
+            score.launch(start = CoroutineStart.UNDISPATCHED) {
                 yield()
-                collectLatest { consumerValue ->
-                    owner.whenStarted {
-                        block(consumerValue)
-                    }
+                collectLatest {
+                    lifecycleOwner.whenStarted { block(it)  }
                 }
             }
-        } ?: stateScope.launch(Dispatchers.Main) {
+        } else stateScope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
             yield()
             collectLatest(block)
         }
