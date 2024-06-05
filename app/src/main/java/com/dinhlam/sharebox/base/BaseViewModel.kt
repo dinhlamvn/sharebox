@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.base
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
@@ -7,22 +9,26 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
+import kotlinx.coroutines.selects.SelectBuilder
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.yield
 import java.util.concurrent.Executors
@@ -71,7 +77,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
             while (isActive) {
                 select {
                     setStateChannel.onReceive { reducer ->
-                        val newState = reducer.invoke(currentState)
+                        val newState = currentState.reducer()
                         if (newState != currentState) {
                             currentState = newState
                             _stateFlow.emit(newState)
@@ -125,8 +131,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     ) {
         stateFlow.map {
             Consumer(property.get(it))
-        }.distinctUntilChanged()
-            .resolveConsumer(lifecycleOwner) { consumer ->
+        }.resolveConsumer(lifecycleOwner) { consumer ->
                 block(consumer.value)
             }
     }
@@ -134,7 +139,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     protected fun <V1, V2> consume(
         property1: KProperty1<S, V1>, property2: KProperty1<S, V2>, block: (V1, V2) -> Unit
     ) {
-        stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }.distinctUntilChanged()
+        stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
             .resolveConsumer { consumer ->
                 block(consumer.value1, consumer.value2)
             }
@@ -143,7 +148,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     protected fun <V> consume(
         property: KProperty1<S, V>, block: (V) -> Unit
     ) {
-        stateFlow.map { Consumer(property.get(it)) }.distinctUntilChanged()
+        stateFlow.map { Consumer(property.get(it)) }
             .resolveConsumer { consumer ->
                 block(consumer.value)
             }
@@ -153,16 +158,94 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         lifecycleOwner: LifecycleOwner? = null, block: (T) -> Unit
     ): Job {
         return if (lifecycleOwner != null) {
-            val score = lifecycleOwner.lifecycleScope + stateScope.coroutineContext
-            score.launch(start = CoroutineStart.UNDISPATCHED) {
+            val flow = flowWhenStarted(lifecycleOwner).distinctUntilChanged()
+            lifecycleOwner.lifecycleScope.launch {
                 yield()
-                collectLatest {
-                    lifecycleOwner.whenStarted { block(it)  }
+                flow.collectLatest {
+                    lifecycleOwner.whenStarted { block(it) }
                 }
             }
-        } else stateScope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
+        } else stateScope.launch {
             yield()
-            collectLatest(block)
+            collectLatest {
+                block(it)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun <T : Any?> Flow<T>.flowWhenStarted(owner: LifecycleOwner): Flow<T> = flow {
+        coroutineScope {
+            val startedChannel = startedChannel(owner.lifecycle)
+            val flowChannel = produce { collect { send(it) } }
+
+            val nullValue = Any()
+            var started: Boolean? = null
+            var flowResult: Any? = nullValue
+            var isClosed = false
+
+            while (!isClosed) {
+                val result = select {
+                    onReceive(
+                        startedChannel,
+                        { flowChannel.cancel(); isClosed = true; nullValue }) { value ->
+                        started = value
+                        if (flowResult != nullValue && value) {
+                            flowResult
+                        } else {
+                            nullValue
+                        }
+                    }
+                    onReceive(flowChannel, { isClosed = true; nullValue }) { value ->
+                        flowResult = value
+                        if (started == true) {
+                            value
+                        } else {
+                            nullValue
+                        }
+                    }
+                }
+                if (result != nullValue) {
+                    @Suppress("UNCHECKED_CAST")
+                    emit(result as T)
+                }
+            }
+        }
+    }
+
+    private fun startedChannel(owner: Lifecycle): Channel<Boolean> {
+        val channel = Channel<Boolean>(Channel.CONFLATED)
+        val observer = object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                channel.trySend(true)
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                channel.trySend(false)
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                channel.close()
+            }
+        }
+        owner.addObserver(observer)
+        channel.invokeOnClose {
+            owner.removeObserver(observer)
+        }
+        return channel
+    }
+
+    private inline fun <T : Any?, R : Any?> SelectBuilder<R>.onReceive(
+        channel: ReceiveChannel<T>,
+        crossinline onClosed: () -> R,
+        noinline onReceive: suspend (value: T) -> R
+    ) {
+        channel.onReceiveCatching { result ->
+            if (result.isClosed) {
+                onClosed()
+            } else {
+                onReceive(result.getOrThrow())
+            }
         }
     }
 }
