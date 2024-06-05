@@ -23,8 +23,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType
-import okhttp3.RequestBody
+import okhttp3.MultipartBody
 import org.jsoup.Jsoup
 import java.net.URLEncoder
 import kotlin.random.Random
@@ -55,9 +54,13 @@ class TiktokDownloadWorker @AssistedInject constructor(
             var retryTimes = 3
             var html = ""
             do {
-                val encodeUrl = URLEncoder.encode(tiktokUrl, "utf-8")
-                val sssTikId = "$encodeUrl&locale=en&tt=azhwU005"
-                val requestBody = RequestBody.create(MediaType.parse("text/plain"), "id=$sssTikId")
+                val requestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("id", tiktokUrl)
+                    .addFormDataPart("locale", "en")
+                    .addFormDataPart("tt", "a1kxcWUy")
+                    .build()
+
                 val sssTikResponse = sssTikServices.getDownloadLink(
                     UserAgentUtils.pickRandomUserAgent(), requestBody
                 )
