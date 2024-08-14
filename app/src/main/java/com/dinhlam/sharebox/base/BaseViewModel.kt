@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineName
@@ -101,10 +102,10 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     }
 
     protected fun <T> (suspend () -> T).execute(stateReducer: S.(AsyncLoad<T>) -> S): Job {
-        setState { stateReducer(AsyncLoad.Loading) }
-        return stateScope.launch(Dispatchers.IO) {
+        return viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = invoke()
+                setState { stateReducer(AsyncLoad.Loading) }
+                val result = this@execute.invoke()
                 setState { stateReducer(AsyncLoad.Success(result)) }
             } catch (error: Throwable) {
                 setState { stateReducer(AsyncLoad.Failed(error)) }
@@ -132,8 +133,8 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         stateFlow.map {
             Consumer(property.get(it))
         }.resolveConsumer(lifecycleOwner) { consumer ->
-                block(consumer.value)
-            }
+            block(consumer.value)
+        }
     }
 
     protected fun <V1, V2> consume(
@@ -157,15 +158,15 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     private fun <T> Flow<T>.resolveConsumer(
         lifecycleOwner: LifecycleOwner? = null, block: (T) -> Unit
     ): Job {
-        return if (lifecycleOwner != null) {
-            val flow = flowWhenStarted(lifecycleOwner).distinctUntilChanged()
-            lifecycleOwner.lifecycleScope.launch {
+        return lifecycleOwner?.let { owner ->
+            val flow = flowWhenStarted(owner).distinctUntilChanged()
+            owner.lifecycleScope.launch {
                 yield()
-                flow.collectLatest {
-                    lifecycleOwner.whenStarted { block(it) }
+                owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    flow.collectLatest(block)
                 }
             }
-        } else stateScope.launch {
+        } ?: viewModelScope.launch {
             yield()
             collectLatest {
                 block(it)

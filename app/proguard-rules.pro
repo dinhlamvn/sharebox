@@ -91,3 +91,6 @@
 }
 
 -keepattributes Signature
+
+-keep class retrofit2.** { *; }
+-keep interface retrofit2.** { *; }

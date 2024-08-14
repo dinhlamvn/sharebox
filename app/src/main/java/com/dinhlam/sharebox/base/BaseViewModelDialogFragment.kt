@@ -2,8 +2,11 @@ package com.dinhlam.sharebox.base
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
@@ -17,8 +20,10 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.stateFlow.collect(::onStateChanged)
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.stateFlow.collect(::onStateChanged)
+            }
         }
     }
 }
