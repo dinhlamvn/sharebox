@@ -123,9 +123,9 @@ class BoxDetailActivity :
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.consume(this, BoxDetailState::boxDetail) { boxDetail ->
+        viewModel.onChange(this, BoxDetailState::boxDetail) { boxDetail ->
             if (!boxDetail?.passcode.isNullOrBlank()) {
-                val takeBox = boxDetail ?: return@consume finish()
+                val takeBox = boxDetail ?: return@onChange finish()
                 val intent = router.passcodeIntent(
                     this, takeBox.passcode!!, getString(
                         R.string.dialog_bookmark_collection_picker_verify_passcode,

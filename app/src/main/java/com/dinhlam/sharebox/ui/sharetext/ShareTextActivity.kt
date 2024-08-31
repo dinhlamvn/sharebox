@@ -66,11 +66,11 @@ class ShareTextActivity :
             binding.editTextQuote.showKeyboard()
         }
 
-        viewModel.consume(this, ShareTextState::shareDetail) { shareDetail ->
+        viewModel.onChange(this, ShareTextState::shareDetail) { shareDetail ->
             binding.editTextQuote.setText(shareDetail?.shareData?.cast<ShareData.ShareText>()?.text)
         }
 
-        viewModel.consume(this, ShareTextState::asyncLoadSave) { asyncLoad ->
+        viewModel.onChange(this, ShareTextState::asyncLoadSave) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 setResult(Activity.RESULT_OK)

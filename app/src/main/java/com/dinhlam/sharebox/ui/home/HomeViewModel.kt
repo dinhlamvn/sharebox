@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
     init {
         refresh()
 
-        consume(HomeState::asyncLoadShares) { asyncLoad ->
+        onChange(HomeState::asyncLoadShares) { asyncLoad ->
             if (asyncLoad.completed) {
                 triggerCanLoadMore()
             }

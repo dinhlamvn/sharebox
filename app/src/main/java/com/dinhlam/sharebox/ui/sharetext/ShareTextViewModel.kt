@@ -15,7 +15,7 @@ class ShareTextViewModel @Inject constructor(
 ) : BaseViewModel<ShareTextState>(ShareTextState(savedState[AppExtras.EXTRA_SHARE_ID])) {
 
     init {
-        consume(ShareTextState::shareId) { shareId ->
+        onChange(ShareTextState::shareId) { shareId ->
             shareId?.let { id ->
                 suspend {
                     shareRepository.findOne(id)

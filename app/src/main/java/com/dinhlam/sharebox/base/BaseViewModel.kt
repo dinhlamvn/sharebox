@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.whenStarted
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -71,7 +70,8 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         extraBufferCapacity = 63,
         onBufferOverflow = BufferOverflow.SUSPEND,
     ).apply { tryEmit(initState) }
-    val stateFlow: Flow<S> = _stateFlow.asSharedFlow()
+    val stateFlow: Flow<S>
+        get() = _stateFlow.asSharedFlow()
 
     init {
         stateScope.launch {
@@ -127,29 +127,32 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         }
     }
 
-    fun <V> consume(
+    fun <V> onChange(
         lifecycleOwner: LifecycleOwner, property: KProperty1<S, V>, block: (V) -> Unit
     ) {
         stateFlow.map {
             Consumer(property.get(it))
-        }.resolveConsumer(lifecycleOwner) { consumer ->
-            block(consumer.value)
-        }
+        }.distinctUntilChanged()
+            .resolveConsumer(lifecycleOwner) { consumer ->
+                block(consumer.value)
+            }
     }
 
-    protected fun <V1, V2> consume(
+    protected fun <V1, V2> onChange(
         property1: KProperty1<S, V1>, property2: KProperty1<S, V2>, block: (V1, V2) -> Unit
     ) {
         stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
+            .distinctUntilChanged()
             .resolveConsumer { consumer ->
                 block(consumer.value1, consumer.value2)
             }
     }
 
-    protected fun <V> consume(
+    protected fun <V> onChange(
         property: KProperty1<S, V>, block: (V) -> Unit
     ) {
         stateFlow.map { Consumer(property.get(it)) }
+            .distinctUntilChanged()
             .resolveConsumer { consumer ->
                 block(consumer.value)
             }
