@@ -44,7 +44,7 @@ class ProfileActivity :
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
 
-    private val adapter = BaseListAdapter.createAdapter {
+    private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 LoadingListModel("loading").attachTo(this)

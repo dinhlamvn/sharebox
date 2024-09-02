@@ -73,7 +73,7 @@ class BookmarkActivity :
         return ActivityBookmarkBinding.inflate(layoutInflater)
     }
 
-    private val collectionAdapter = BaseListAdapter.createAdapter {
+    private val collectionAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 LoadingListModel("loading_collections").attachTo(this)

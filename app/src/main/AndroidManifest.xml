@@ -237,6 +237,11 @@
         </activity>
 
         <activity
+            android:name="com.dinhlam.sharebox.ui.boxlist.BoxListActivity"
+            android:exported="false"
+            android:label="@string/choose_box" />
+
+        <activity
             android:name="com.dinhlam.sharebox.ui.setting.SettingComposeActivity"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />

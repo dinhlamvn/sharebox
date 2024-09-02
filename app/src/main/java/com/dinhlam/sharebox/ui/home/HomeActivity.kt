@@ -20,7 +20,6 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
@@ -45,8 +44,19 @@ import javax.inject.Inject
 @ActivityScoped
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener,
-    BoxSelectionDialogFragment.OnBoxSelectedListener {
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+
+    private val chooseBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
+                    ?: return@registerForActivityResult
+                onBoxSelected(boxId, boxName)
+            }
+        }
 
     private val openShareTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -166,6 +176,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             startActivity(router.profile(this))
         }
 
+        binding.imageAdd.setImageDrawable(Icons.plusIcon(this))
+
+        binding.recyclerView.itemAnimator = null
         homeAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -173,7 +186,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             viewModel.doOnRefresh()
         }
 
-        binding.buttonCreateBox.setOnClickListener {
+        binding.imageAdd.setOnClickListener {
             requestCreateBox()
         }
     }
@@ -290,12 +303,26 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         shareResultLauncher.launch(intent)
     }
 
-    override fun onBoxSelected(boxId: String) {
-        startActivity(router.boxDetail(this, boxId))
+    private fun onBoxSelected(boxId: String, boxName: String) {
+        val chooseBoxFor = getState(viewModel, HomeState::chooseBoxFor) ?: return
+        viewModel.setChooseBoxFor(null)
+
+        if (chooseBoxFor is HomeState.ChooseBoxFor.Detail) {
+            startActivity(router.boxDetail(this, boxId))
+        } else if (chooseBoxFor is HomeState.ChooseBoxFor.Web) {
+            router.moveToChromeCustomTab(
+                this,
+                chooseBoxFor.link,
+                boxId,
+                boxName,
+                shareHelper.isSupportDownloadLink(chooseBoxFor.link)
+            )
+        }
     }
 
     fun requestViewAllBox() {
-        shareHelper.showBoxSelectionDialog(supportFragmentManager)
+        viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Detail)
+        showBoxList()
     }
 
     fun showMore(share: ShareDetail) {
@@ -317,5 +344,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 this, shareData.uris
             )
         }
+    }
+
+    fun gotoLink(link: String) {
+        viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Web(link))
+        showBoxList(getString(R.string.choose_box_for_web))
+    }
+
+    private fun showBoxList(title: String? = null) {
+        chooseBoxLauncher.launch(router.boxList(this, title))
     }
 }

@@ -54,4 +54,5 @@ interface Router {
     fun bookmark(context: Context): Intent
 
     fun imageViewer(context: Context, uris: List<Uri>): Intent
+    fun boxList(context: Context, title: String?): Intent
 }

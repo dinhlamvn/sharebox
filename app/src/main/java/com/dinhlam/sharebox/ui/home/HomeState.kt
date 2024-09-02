@@ -14,4 +14,11 @@ data class HomeState(
     val canLoadMore: Boolean = true,
     val boxes: List<BoxDetail> = emptyList(),
     val totalBox: Int = 0,
-) : BaseViewModel.BaseState
+    val chooseBoxFor: ChooseBoxFor? = null,
+) : BaseViewModel.BaseState {
+
+    sealed interface ChooseBoxFor {
+        data object Detail : ChooseBoxFor
+        data class Web(val link: String) : ChooseBoxFor
+    }
+}

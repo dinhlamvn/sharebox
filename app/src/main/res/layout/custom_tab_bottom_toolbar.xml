@@ -31,7 +31,7 @@
         tools:text="This is box name" />
 
     <ImageView
-        android:id="@+id/image_download"
+        android:id="@+id/image_archive"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"

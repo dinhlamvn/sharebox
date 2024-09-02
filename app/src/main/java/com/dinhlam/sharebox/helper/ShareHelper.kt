@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
@@ -169,10 +168,6 @@ class ShareHelper @Inject constructor(
                 putString(AppExtras.EXTRA_SHARE_ID, shareId)
             }
         }.show(fragmentManager, "CommentFragment")
-    }
-
-    fun showBoxSelectionDialog(fragmentManager: FragmentManager) {
-        BoxSelectionDialogFragment().show(fragmentManager, "BoxSelectionDialogFragment")
     }
 
     suspend fun calcTrendingScore(shareId: String): Int {

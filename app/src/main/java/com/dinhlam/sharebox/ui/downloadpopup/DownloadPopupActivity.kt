@@ -27,7 +27,7 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
     @Inject
     lateinit var downloadHelper: DownloadHelper
 
-    private val adapter = BaseListAdapter.createAdapter {
+    private val adapter = BaseListAdapter.create {
         val videos =
             intent.getParcelableArrayListExtraCompat<DownloadData>(AppExtras.EXTRA_DOWNLOAD_VIDEOS)
                 ?: emptyList()
@@ -39,7 +39,7 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
                 ?: emptyList()
 
         if (videos.isEmpty() && audios.isEmpty() && images.isEmpty()) {
-            return@createAdapter TextListModel(
+            return@create TextListModel(
                 "empty",
                 getString(R.string.nothing_to_download),
                 textAppearance = R.style.TextBodyMedium,

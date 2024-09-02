@@ -16,4 +16,5 @@ object AppExtras {
     const val EXTRA_DOWNLOAD_AUDIOS = "extra-download-audios"
     const val EXTRA_DOWNLOAD_IMAGES = "extra-download-images"
     const val EXTRA_ID = "extra-id"
+    const val EXTRA_TITLE = "extra-title"
 }

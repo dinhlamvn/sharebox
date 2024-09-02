@@ -25,7 +25,7 @@ data class CarouselListModel(
             ModelViewCarouselBinding.inflate(inflater, container, false)
         ) {
 
-            private val carouselAdapter = BaseListAdapter.createAdapter {
+            private val carouselAdapter = BaseListAdapter.create {
                 models.forEach { it.attachTo(this) }
             }
 

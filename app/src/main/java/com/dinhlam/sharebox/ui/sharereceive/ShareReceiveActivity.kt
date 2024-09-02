@@ -23,7 +23,6 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
@@ -61,8 +60,17 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ShareReceiveActivity :
     BaseViewModelActivity<ShareReceiveState, ShareReceiveViewModel, ActivityShareReceiveBinding>(),
-    BoxSelectionDialogFragment.OnBoxSelectedListener,
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
+
+    private val chooseBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.setBox(boxId)
+            }
+        }
 
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -97,7 +105,7 @@ class ShareReceiveActivity :
         handleShareData()
     }
 
-    private val shareContentAdapter = BaseListAdapter.createAdapter {
+    private val shareContentAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             when (val shareData = state.shareData) {
                 is ShareData.ShareText -> ShareReceiveTextListModel(
@@ -164,7 +172,7 @@ class ShareReceiveActivity :
         }
 
         binding.textShareBox.setOnClickListener {
-            shareHelper.showBoxSelectionDialog(supportFragmentManager)
+            chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
         binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
@@ -335,10 +343,6 @@ class ShareReceiveActivity :
         shareHelper.showBookmarkCollectionPickerDialog(
             supportFragmentManager, "", state.bookmarkCollection?.id
         )
-    }
-
-    override fun onBoxSelected(boxId: String) {
-        viewModel.setBox(boxId)
     }
 
     override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {

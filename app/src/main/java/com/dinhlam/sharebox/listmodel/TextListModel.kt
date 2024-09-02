@@ -27,6 +27,7 @@ data class TextListModel(
     val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextBody,
     @GravityInt val gravity: Int = Gravity.CENTER,
+    val startIcon: Drawable? = null,
     val endIcon: Drawable? = null,
     val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
         null
@@ -52,7 +53,7 @@ data class TextListModel(
                 binding.textView.text = model.text
                 binding.textView.setOnClickListener(model.actionClick.prop)
 
-                binding.textView.setDrawableCompat(end = model.endIcon)
+                binding.textView.setDrawableCompat(start = model.startIcon, end = model.endIcon)
 
                 model.textColor.takeIf { it != 0 }?.let { textColor ->
                     binding.textView.setTextColor(ContextCompat.getColor(buildContext, textColor))

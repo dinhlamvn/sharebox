@@ -1,38 +1,38 @@
-package com.dinhlam.sharebox.dialog.box
+package com.dinhlam.sharebox.ui.boxlist
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.viewModels
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
+import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.DialogBoxSelectionBinding
-import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.databinding.ActivityBoxListBinding
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoxSelectionDialogFragment :
-    BaseViewModelDialogFragment<BoxSelectionDialogState, BoxSelectionDialogViewModel, DialogBoxSelectionBinding>() {
+class BoxListActivity :
+    BaseViewModelActivity<BoxListState, BoxListViewModel, ActivityBoxListBinding>() {
 
     fun interface OnBoxSelectedListener {
-        fun onBoxSelected(boxId: String)
+        fun onBoxSelected(boxId: String, boxName: String)
     }
 
     private val createBoxResultLauncher =
@@ -45,25 +45,22 @@ class BoxSelectionDialogFragment :
     @Inject
     lateinit var router: Router
 
-    private var blockVerifyPasscodeBlock: Function0<Unit>? = null
-
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                blockVerifyPasscodeBlock?.invoke()
+                val selectedBox = getState(viewModel, BoxListState::selectedBox)
+                    ?: return@registerForActivityResult showToast(R.string.please_choose_box)
+                returnSelectedBox(selectedBox)
             } else {
                 showToast(R.string.error_require_passcode)
             }
-            blockVerifyPasscodeBlock = null
         }
 
-    override fun onCreateViewBinding(
-        inflater: LayoutInflater, container: ViewGroup?
-    ): DialogBoxSelectionBinding {
-        return DialogBoxSelectionBinding.inflate(inflater, container, false)
+    override fun onCreateViewBinding(): ActivityBoxListBinding {
+        return ActivityBoxListBinding.inflate(layoutInflater)
     }
 
-    private val boxAdapter = BaseListAdapter.createAdapter {
+    private val boxAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isSearching) {
                 if (state.searchBoxes.isEmpty()) {
@@ -80,12 +77,19 @@ class BoxSelectionDialogFragment :
                             gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
                             actionClick = BaseListAdapter.NoHashProp(
                                 View.OnClickListener {
-                                    onBoxSelected(box.boxId, box.boxName, box.passcode)
+                                    viewModel.setSelectedBox(box)
                                 },
                             ),
-                            endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(
-                                requireContext()
-                            ) { copy(sizeDp = 16) } else null).attachTo(this)
+                            startIcon = if (box.boxId == state.selectedBox?.boxId) Icons.doneCircleIcon(
+                                this@BoxListActivity
+                            ) {
+                                copy(sizeDp = 16)
+                            } else null,
+                            endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(this@BoxListActivity) {
+                                copy(
+                                    sizeDp = 16
+                                )
+                            } else null).attachTo(this)
                     }
                 }
 
@@ -99,7 +103,7 @@ class BoxSelectionDialogFragment :
                 height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
                 actionClick = BaseListAdapter.NoHashProp(
                     View.OnClickListener {
-                        createBoxResultLauncher.launch(router.boxIntent(requireContext()))
+                        createBoxResultLauncher.launch(router.boxIntent(this@BoxListActivity))
                     },
                 ),
             ).attachTo(this)
@@ -111,12 +115,19 @@ class BoxSelectionDialogFragment :
                     gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
                     actionClick = BaseListAdapter.NoHashProp(
                         View.OnClickListener {
-                            onBoxSelected(box.boxId, box.boxName, box.passcode)
+                            viewModel.setSelectedBox(box)
                         },
                     ),
-                    endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(
-                        requireContext()
-                    ) { copy(sizeDp = 16) } else null).attachTo(this)
+                    startIcon = if (box.boxId == state.selectedBox?.boxId) Icons.doneCircleIcon(
+                        this@BoxListActivity
+                    ) {
+                        copy(sizeDp = 16)
+                    } else null,
+                    endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(this@BoxListActivity) {
+                        copy(
+                            sizeDp = 16
+                        )
+                    } else null).attachTo(this)
             }
 
             if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
@@ -142,47 +153,63 @@ class BoxSelectionDialogFragment :
         }
     }
 
-    override val viewModel: BoxSelectionDialogViewModel by viewModels()
+    override val viewModel: BoxListViewModel by viewModels()
 
-    override fun onStateChanged(state: BoxSelectionDialogState) {
+    override fun onStateChanged(state: BoxListState) {
         boxAdapter.requestBuildListModels()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.adapter = boxAdapter
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.title =
+            intent.getStringExtra(AppExtras.EXTRA_TITLE) ?: getString(R.string.choose_box)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        boxAdapter.attachTo(binding.recyclerView, this)
         boxAdapter.requestBuildListModels()
 
         binding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
             viewModel.search(editable.trimmedString())
         }
+
+        binding.imageDone.setImageDrawable(Icons.doneIcon(this))
+
+        binding.imageDone.setOnClickListener {
+            onDone()
+        }
     }
 
-    override fun getSpacing(): Int {
-        return 16
-    }
-
-    private fun onBoxSelected(boxId: String, boxName: String, passcode: String?) {
-        passcode?.let { boxPasscode ->
-            blockVerifyPasscodeBlock = { returnSelectedBox(boxId) }
-            val intent = router.passcodeIntent(requireContext(), boxPasscode)
-            intent.putExtra(
-                AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
-                    R.string.dialog_bookmark_collection_picker_verify_passcode, boxName
+    private fun onDone() = getState(viewModel) { state ->
+        val selectedBox = state.selectedBox ?: return@getState showToast(R.string.please_choose_box)
+        if (selectedBox.passcode != null) {
+            passcodeConfirmResultLauncher.launch(
+                router.passcodeIntent(this, selectedBox.passcode).putExtra(
+                    AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode,
+                        selectedBox.boxName
+                    )
                 )
             )
-            passcodeConfirmResultLauncher.launch(intent)
-        } ?: returnSelectedBox(boxId)
+        } else {
+            returnSelectedBox(selectedBox)
+        }
     }
 
-    private fun returnSelectedBox(boxId: String) {
-        parentFragment?.cast<OnBoxSelectedListener>()?.onBoxSelected(boxId)
-            ?: activity.cast<OnBoxSelectedListener>()?.onBoxSelected(boxId)
-        dismiss()
+    private fun returnSelectedBox(boxDetail: BoxDetail) {
+        setResult(
+            Activity.RESULT_OK, Intent()
+                .putExtra(AppExtras.EXTRA_BOX_ID, boxDetail.boxId)
+                .putExtra(AppExtras.EXTRA_BOX_NAME, boxDetail.boxName)
+        )
+        finish()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        blockVerifyPasscodeBlock = null
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

@@ -38,11 +38,11 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
 
     interface BaseState
 
-    sealed class AsyncLoad<out T>(val data: T?, val completed: Boolean, val success: Boolean) {
-        data object Initialize : AsyncLoad<Nothing>(null, false, false)
-        data object Loading : AsyncLoad<Nothing>(null, false, false)
-        data class Success<T>(val value: T) : AsyncLoad<T>(value, true, true)
-        data class Failed(val error: Throwable) : AsyncLoad<Nothing>(null, true, false)
+    sealed class AsyncLoad<out T>(val data: T?, val loading: Boolean, val completed: Boolean, val success: Boolean) {
+        data object Initialize : AsyncLoad<Nothing>(null, false, false, false)
+        data object Loading : AsyncLoad<Nothing>(null, true, false, false)
+        data class Success<T>(val value: T) : AsyncLoad<T>(value, false, true, true)
+        data class Failed(val error: Throwable) : AsyncLoad<Nothing>(null, false, true, false)
     }
 
     private val stateScope =

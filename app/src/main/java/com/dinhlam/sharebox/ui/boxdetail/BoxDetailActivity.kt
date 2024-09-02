@@ -75,7 +75,7 @@ class BoxDetailActivity :
         }
     }
 
-    private val shareAdapter = BaseListAdapter.createAdapter {
+    private val shareAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 LoadingListModel("top_loading").attachTo(this)

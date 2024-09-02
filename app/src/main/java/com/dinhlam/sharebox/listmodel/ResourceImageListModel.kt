@@ -4,16 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
-import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
+import com.dinhlam.sharebox.extensions.updateSize
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 
 data class ResourceImageListModel(
     @DrawableRes val drawableRes: Int,
+    val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     val actionClick: BaseListAdapter.NoHashProp<(() -> Unit)?>? = null,
     val scaleType: ImageLoadScaleType = ImageLoadScaleType.CenterCrop,
@@ -28,9 +29,7 @@ data class ResourceImageListModel(
             ) {
 
             override fun onBind(model: ResourceImageListModel, position: Int) {
-                binding.image.updateLayoutParams {
-                    height = model.height
-                }
+                binding.image.updateSize(model.width, model.height)
 
                 binding.image.setOnClickListener {
                     actionClick?.prop?.invoke()

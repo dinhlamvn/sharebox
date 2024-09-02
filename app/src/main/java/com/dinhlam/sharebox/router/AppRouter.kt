@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
 import android.widget.RemoteViews
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.drawable.toBitmap
@@ -22,6 +21,7 @@ import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
+import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
@@ -53,8 +53,7 @@ class AppRouter constructor(private val context: Context) : Router {
     override fun moveToChromeCustomTab(
         context: Context, url: String, boxId: String?, boxName: String?, supportDownload: Boolean
     ) {
-        val shareDesc = context.getString(R.string.archives)
-        val shareBitmap = Icons.archiveIcon(context).toBitmap()
+        val downloadDesc = context.getString(R.string.download_content)
         val broadcastReceiverIntent = Intent(
             context,
             CustomTabsShareBroadcastReceiver::class.java
@@ -80,15 +79,11 @@ class AppRouter constructor(private val context: Context) : Router {
             R.id.text_box_name, context.getColorCompat(R.color.md_theme_primary)
         )
 
-        if (supportDownload) {
-            remoteViews.setImageViewBitmap(R.id.image_download, Icons.downloadIcon(context) {
-                copy(colorRes = R.color.md_theme_primary, sizeDp = 24)
-            }.toBitmap())
-        } else {
-            remoteViews.setViewVisibility(R.id.image_download, View.GONE)
-        }
+        remoteViews.setImageViewBitmap(R.id.image_archive, Icons.archiveIcon(context) {
+            copy(colorRes = R.color.md_theme_primary, sizeDp = 24)
+        }.toBitmap())
 
-        val clickableIds = intArrayOf(R.id.image_download)
+        val clickableIds = intArrayOf(R.id.image_archive)
 
         val downloadBroadcastReceiverIntent =
             Intent(context, CustomTabsDownloadBroadcastReceiver::class.java)
@@ -103,10 +98,20 @@ class AppRouter constructor(private val context: Context) : Router {
         val customTabsIntent =
             CustomTabsIntent.Builder()
                 .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
-                .setSecondaryToolbarViews(remoteViews, clickableIds, downloadPendingIntent)
-                .setActionButton(shareBitmap, shareDesc, pendingIntent).build()
+                .setSecondaryToolbarViews(remoteViews, clickableIds, pendingIntent)
+                .apply {
+                    if (supportDownload) {
+                        setActionButton(
+                            Icons.downloadIcon(context).toBitmap(),
+                            downloadDesc,
+                            downloadPendingIntent
+                        )
+                    }
+                }
+                .build()
 
         customTabsIntent.intent.setPackage("com.android.chrome")
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         customTabsIntent.launchUrl(context, Uri.parse(url))
     }
 
@@ -233,5 +238,10 @@ class AppRouter constructor(private val context: Context) : Router {
     override fun imageViewer(context: Context, uris: List<Uri>): Intent {
         return Intent(context, ImageViewerActivity::class.java)
             .putExtra(AppExtras.EXTRA_IMAGE_URIS, arrayListOf(*uris.toTypedArray()))
+    }
+
+    override fun boxList(context: Context, title: String?): Intent {
+        return Intent(context, BoxListActivity::class.java)
+            .putExtra(AppExtras.EXTRA_TITLE, title)
     }
 }

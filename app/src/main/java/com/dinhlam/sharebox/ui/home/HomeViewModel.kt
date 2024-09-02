@@ -30,13 +30,12 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
-        refresh()
-
         onChange(HomeState::asyncLoadShares) { asyncLoad ->
             if (asyncLoad.completed) {
                 triggerCanLoadMore()
             }
         }
+        refresh()
     }
 
     private fun getTotalBoxes() = suspend { boxRepository.count(userHelper.getCurrentUserId()) }
@@ -164,5 +163,9 @@ class HomeViewModel @Inject constructor(
         getTotalBoxes()
         getListBoxes()
         getRecentlyShares()
+    }
+
+    fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
+        copy(chooseBoxFor = chooseBoxFor)
     }
 }

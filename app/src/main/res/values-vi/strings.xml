@@ -149,6 +149,11 @@
     <string name="title_profile">Hồ sơ của bạn</string>
     <string name="app_policy_desc">Bằng việc đăng nhập, bạn đã đồng ý với</string>
     <string name="view_image_activity_title">Xem ảnh</string>
+    <string name="discover">Discover</string>
+    <string name="discover_subtitle">Discover interesting videos, images and musics</string>
+    <string name="choose_box_for_web">Choose Box To Archive WebLink</string>
+    <string name="download_content">Download this content</string>
+    <string name="please_choose_box">Please choose a box</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>

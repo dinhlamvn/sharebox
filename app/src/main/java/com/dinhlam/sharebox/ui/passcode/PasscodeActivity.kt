@@ -44,7 +44,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         space.times(0.8f).div(PASSCODE_LENGTH).toInt()
     }
 
-    private val passcodeAdapter = BaseListAdapter.createAdapter {
+    private val passcodeAdapter = BaseListAdapter.create {
         repeat(stack.size) { number ->
             TextListModel(
                 "code_filled_$number",
@@ -67,7 +67,7 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
         }
     }
 
-    private val keypadAdapter = BaseListAdapter.createAdapter {
+    private val keypadAdapter = BaseListAdapter.create {
         repeat(9) { number ->
             TextListModel(
                 "text_number_$number",

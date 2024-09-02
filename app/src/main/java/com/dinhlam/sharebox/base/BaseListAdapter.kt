@@ -77,13 +77,28 @@ abstract class BaseListAdapter :
         error("No support direct call method")
     }
 
-    fun requestBuildListModels() {
-        if (buildListModelsJob?.isActive == true && buildListModelsJob?.isCompleted == false) {
-            buildListModelsJob?.cancel()
+    fun requestBuildListModels(lists: List<BaseListModel>) {
+        cancelCurrentBuild()
+        buildListModelsJob = buildListModelsScope.launch {
+            listModels.clear()
+            listModels.addAll(lists)
+            withContext(Dispatchers.Main) {
+                super.submitList(listModels.toList())
+            }
         }
+    }
+
+    fun requestBuildListModels() {
+        cancelCurrentBuild()
 
         buildListModelsJob = buildListModelsScope.launch {
             buildListModelsInternal()
+        }
+    }
+
+    private fun cancelCurrentBuild() {
+        if (buildListModelsJob?.isActive == true && buildListModelsJob?.isCompleted == false) {
+            buildListModelsJob?.cancel()
         }
     }
 
@@ -129,12 +144,22 @@ abstract class BaseListAdapter :
 
     companion object {
         @JvmStatic
-        fun createAdapter(
+        fun create(
             modelViewsBuilder: BaseListAdapter.() -> Unit,
         ): BaseListAdapter {
             return object : BaseListAdapter() {
                 override fun buildListModels() {
                     modelViewsBuilder.invoke(this)
+                }
+            }
+        }
+
+        @JvmStatic
+        fun create(): BaseListAdapter {
+            return object : BaseListAdapter() {
+                override fun buildListModels() {
+                    // do-nothing
+                    // just build with requestBuildListModels(List<BaseModel>)
                 }
             }
         }

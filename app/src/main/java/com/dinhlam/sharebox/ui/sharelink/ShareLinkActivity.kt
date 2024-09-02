@@ -14,7 +14,6 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareLinkBinding
-import com.dinhlam.sharebox.dialog.box.BoxSelectionDialogFragment
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getDrawableCompat
@@ -33,8 +32,17 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareLinkActivity :
-    BaseViewModelActivity<ShareLinkState, ShareLinkViewModel, ActivityShareLinkBinding>(),
-    BoxSelectionDialogFragment.OnBoxSelectedListener {
+    BaseViewModelActivity<ShareLinkState, ShareLinkViewModel, ActivityShareLinkBinding>() {
+
+    private val chooseBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.setCurrentBoxId(boxId)
+            }
+        }
 
     @Inject
     lateinit var shareHelper: ShareHelper
@@ -42,7 +50,7 @@ class ShareLinkActivity :
     @Inject
     lateinit var router: Router
 
-    private val adapter = BaseListAdapter.createAdapter {
+    private val adapter = BaseListAdapter.create {
         CircleIconListModel(
             "google",
             Icons.googleIcon(this@ShareLinkActivity),
@@ -156,7 +164,7 @@ class ShareLinkActivity :
         }
 
         binding.containerShareBox.setOnClickListener {
-            shareHelper.showBoxSelectionDialog(supportFragmentManager)
+            chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
         binding.editLink.setHorizontallyScrolling(false)
@@ -219,10 +227,6 @@ class ShareLinkActivity :
             state.currentBox?.boxName,
             shareHelper.isSupportDownloadLink(link)
         )
-    }
-
-    override fun onBoxSelected(boxId: String) {
-        viewModel.setCurrentBoxId(boxId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

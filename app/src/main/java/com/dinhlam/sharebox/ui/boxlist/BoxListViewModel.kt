@@ -1,17 +1,18 @@
-package com.dinhlam.sharebox.dialog.box
+package com.dinhlam.sharebox.ui.boxlist
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.BoxDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class BoxSelectionDialogViewModel @Inject constructor(
+class BoxListViewModel @Inject constructor(
     private val boxRepository: BoxRepository, private val userHelper: UserHelper
-) : BaseViewModel<BoxSelectionDialogState>(BoxSelectionDialogState()) {
+) : BaseViewModel<BoxListState>(BoxListState()) {
 
     init {
         getListBoxes()
@@ -19,7 +20,7 @@ class BoxSelectionDialogViewModel @Inject constructor(
     }
 
     fun reload() {
-        setState { BoxSelectionDialogState() }
+        setState { BoxListState() }
         getListBoxes()
         fetchTotalBox()
     }
@@ -77,6 +78,14 @@ class BoxSelectionDialogViewModel @Inject constructor(
             boxRepository.search(query, userHelper.getCurrentUserId())
         }.execute { asyncLoad ->
             copy(searchBoxes = asyncLoad.data.orEmpty(), isSearching = true)
+        }
+    }
+
+    fun setSelectedBox(box: BoxDetail?) = getState { state ->
+        if (state.selectedBox?.boxId == box?.boxId) {
+            setState { copy(selectedBox = null) }
+        } else {
+            setState { copy(selectedBox = box) }
         }
     }
 }

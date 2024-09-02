@@ -63,7 +63,7 @@ class OptionMenuBottomSheetDialogFragment :
         arguments?.getParcelableArrayExtraCompat(AppExtras.EXTRA_CHOICE_ITEMS) ?: arrayOf()
     }
 
-    private val choiceAdapter = BaseListAdapter.createAdapter {
+    private val choiceAdapter = BaseListAdapter.create {
         choiceItems.forEachIndexed { index, choiceItem ->
             IconTextListModel(
                 "choice_$index",

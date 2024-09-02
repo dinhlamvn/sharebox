@@ -4,16 +4,17 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
+import com.dinhlam.sharebox.extensions.updateSize
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 
 data class ImageListModel(
     val uri: Uri,
+    val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     val actionClick: BaseListAdapter.NoHashProp<View.OnClickListener?>? = BaseListAdapter.NoHashProp(
         null
@@ -28,10 +29,7 @@ data class ImageListModel(
         ) {
 
             override fun onBind(model: ImageListModel, position: Int) {
-                binding.image.updateLayoutParams {
-                    height = model.height
-                }
-
+                binding.image.updateSize(model.width, model.height)
                 binding.image.setOnClickListener(model.actionClick?.prop)
 
                 ImageLoader.INSTANCE.load(buildContext, model.uri, binding.image) {

@@ -51,7 +51,7 @@ class BookmarkListItemActivity :
             }
         }
 
-    private val shareAdapter = BaseListAdapter.createAdapter {
+    private val shareAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isSharesLoading) {
                 LoadingListModel("loading_share").attachTo(this)

@@ -12,8 +12,11 @@ import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.CircleIconListModel
+import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
@@ -22,6 +25,7 @@ import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
@@ -49,6 +53,43 @@ class HomeAdapter @Inject constructor(
                 activity.requestShareImages()
             }),
         ).attachTo(this)
+
+        DiscoverListModel(buildList {
+            add(
+                CircleIconListModel(
+                    "tiktok",
+                    activity.getDrawableCompat(R.drawable.ic_tiktok),
+                    size = 32.dp(),
+                    onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        activity.gotoLink("https://tiktok.com")
+                    })
+                )
+            )
+
+            add(
+                CircleIconListModel(
+                    "youtube",
+                    Icons.youtubeIcon(activity),
+                    size = 32.dp(),
+                    margin = Spacing.Only(start = 16.dp()),
+                    onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        activity.gotoLink("https://youtube.com")
+                    })
+                )
+            )
+
+            add(
+                CircleIconListModel(
+                    "zing_news",
+                    activity.getDrawableCompat(R.drawable.ic_zing_news),
+                    size = 32.dp(),
+                    margin = Spacing.Only(start = 16.dp()),
+                    onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        activity.gotoLink("https://zingnews.vn")
+                    })
+                )
+            )
+        }, Spacing.All(16.dp())).attachTo(this)
 
         if (state.isRefreshing) {
             LoadingListModel("top_loading").attachTo(this)

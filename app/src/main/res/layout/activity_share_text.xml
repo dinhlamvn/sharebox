@@ -39,7 +39,7 @@
         android:gravity="start|top"
         android:hint="@string/share_text_quote_hint"
         android:imeOptions="actionDone"
-        android:inputType="textCapSentences"
+        android:inputType="textMultiLine"
         android:textAppearance="@style/TextBody"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider" />

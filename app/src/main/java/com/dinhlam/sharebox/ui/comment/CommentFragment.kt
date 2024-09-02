@@ -53,7 +53,7 @@ class CommentFragment :
 
     override val viewModel: CommentViewModel by viewModels()
 
-    private val adapter = BaseListAdapter.createAdapter {
+    private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isRefreshing) {
                 LoadingListModel("loading_comment").attachTo(this)

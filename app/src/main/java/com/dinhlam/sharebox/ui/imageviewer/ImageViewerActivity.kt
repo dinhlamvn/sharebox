@@ -35,7 +35,7 @@ class ImageViewerActivity : BaseActivity<ActivityImageViewerBinding>() {
             ?: emptyList()
     }
 
-    val adapter = BaseListAdapter.createAdapter {
+    val adapter = BaseListAdapter.create {
         uris.forEach { uri ->
             ImageListModel(
                 uri, height = heightPercentage(80)

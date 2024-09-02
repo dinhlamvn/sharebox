@@ -68,7 +68,7 @@ class BookmarkCollectionPickerDialogFragment :
         return DialogBookmarkCollectionPickerBinding.inflate(inflater, container, false)
     }
 
-    private val adapter = BaseListAdapter.createAdapter {
+    private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.asyncLoadBookmark is BaseViewModel.AsyncLoad.Loading) {
                 LoadingListModel("loading").attachTo(this)

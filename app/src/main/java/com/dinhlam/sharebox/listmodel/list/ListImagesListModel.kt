@@ -78,7 +78,7 @@ data class ListImagesListModel(
         binding
     ) {
 
-        private val adapter = BaseListAdapter.createAdapter {
+        private val adapter = BaseListAdapter.create {
             models.forEach { it.attachTo(this) }
         }
 
