@@ -5,7 +5,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +37,12 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
 
     interface BaseState
 
-    sealed class AsyncLoad<out T>(val data: T?, val loading: Boolean, val completed: Boolean, val success: Boolean) {
+    sealed class AsyncLoad<out T>(
+        val data: T?,
+        val loading: Boolean,
+        val completed: Boolean,
+        val success: Boolean
+    ) {
         data object Initialize : AsyncLoad<Nothing>(null, false, false, false)
         data object Loading : AsyncLoad<Nothing>(null, true, false, false)
         data class Success<T>(val value: T) : AsyncLoad<T>(value, false, true, true)
@@ -163,9 +167,9 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     ): Job {
         return lifecycleOwner?.let { owner ->
             val flow = flowWhenStarted(owner).distinctUntilChanged()
-            owner.lifecycleScope.launch {
+            owner.lifecycleScope.launch(Dispatchers.Main) {
                 yield()
-                owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                if (owner.lifecycle.currentState == Lifecycle.State.RESUMED) {
                     flow.collectLatest(block)
                 }
             }
