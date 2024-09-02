@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -169,7 +170,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
             val flow = flowWhenStarted(owner).distinctUntilChanged()
             owner.lifecycleScope.launch(Dispatchers.Main) {
                 yield()
-                if (owner.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     flow.collectLatest(block)
                 }
             }
