@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 abstract class BaseBottomSheetViewModelDialogFragment<T : BaseViewModel.BaseState, VM : BaseViewModel<T>, VB : ViewBinding> :
@@ -23,7 +22,7 @@ abstract class BaseBottomSheetViewModelDialogFragment<T : BaseViewModel.BaseStat
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stateFlow.distinctUntilChanged().collect(::onStateChanged)
+                viewModel.stateFlow.collect(::onStateChanged)
             }
         }
     }

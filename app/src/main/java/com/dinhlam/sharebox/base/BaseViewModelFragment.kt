@@ -23,7 +23,7 @@ abstract class BaseViewModelFragment<T : BaseViewModel.BaseState, VM : BaseViewM
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch(Dispatchers.Main) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stateFlow.distinctUntilChanged().collect(::onStateChanged)
+                viewModel.stateFlow.collect(::onStateChanged)
             }
         }
     }

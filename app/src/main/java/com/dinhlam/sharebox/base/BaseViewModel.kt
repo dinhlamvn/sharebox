@@ -5,10 +5,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
+import com.dinhlam.sharebox.extensions.launchWhenAtLeast
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,8 +76,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         extraBufferCapacity = 63,
         onBufferOverflow = BufferOverflow.SUSPEND,
     ).apply { tryEmit(initState) }
-    val stateFlow: Flow<S>
-        get() = _stateFlow.asSharedFlow()
+    val stateFlow: Flow<S> = _stateFlow.asSharedFlow()
 
     init {
         stateScope.launch {
@@ -168,13 +168,15 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     ): Job {
         return lifecycleOwner?.let { owner ->
             val flow = flowWhenStarted(owner).distinctUntilChanged()
-            owner.lifecycleScope.launch(Dispatchers.Main) {
-                yield()
-                owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    flow.collectLatest(block)
+            val scope = owner.lifecycleScope
+            scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
+                flow.collectLatest {
+                    owner.launchWhenAtLeast(Lifecycle.State.STARTED) {
+                        block(it)
+                    }
                 }
             }
-        } ?: viewModelScope.launch {
+        } ?: viewModelScope.launch(Dispatchers.Main) {
             yield()
             collectLatest {
                 block(it)

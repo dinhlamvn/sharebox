@@ -22,7 +22,7 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
         super.onCreate(savedInstanceState)
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stateFlow.distinctUntilChanged().collect(::onStateChanged)
+                viewModel.stateFlow.collect(::onStateChanged)
             }
         }
     }
