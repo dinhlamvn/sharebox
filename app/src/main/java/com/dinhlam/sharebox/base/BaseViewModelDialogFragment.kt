@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -23,7 +24,7 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stateFlow.collect(::onStateChanged)
+                viewModel.stateFlow.collectLatest(::onStateChanged)
             }
         }
     }

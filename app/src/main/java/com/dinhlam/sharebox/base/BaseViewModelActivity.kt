@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -22,7 +23,7 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
         super.onCreate(savedInstanceState)
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.stateFlow.collect(::onStateChanged)
+                viewModel.stateFlow.collectLatest(::onStateChanged)
             }
         }
     }
