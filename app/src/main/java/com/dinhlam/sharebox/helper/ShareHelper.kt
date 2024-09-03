@@ -49,7 +49,7 @@ class ShareHelper @Inject constructor(
 
     fun showMore(activity: FragmentActivity, share: ShareDetail) {
         val arrayIcons = arrayOf(
-            "faw_share", "faw_download", "faw_bookmark", "faw_copy"
+            "faw_share", "faw_edit", "faw_download", "faw_bookmark", "faw_copy"
         )
         val choiceItems =
             activity.resources.getStringArray(R.array.more_menu)

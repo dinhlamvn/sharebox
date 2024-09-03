@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityHomeBinding
@@ -61,7 +62,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     private val openShareTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.doOnRefresh()
+                viewModel.saveShareText(result.data?.getStringExtra(Intent.EXTRA_TEXT))
+            }
+        }
+
+    private val changeShareNoteResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.saveShareNote(result.data?.getStringExtra(Intent.EXTRA_TEXT))
             }
         }
 
@@ -85,7 +93,10 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     lateinit var userHelper: UserHelper
 
     override fun onStateChanged(state: HomeState) {
-        homeAdapter.requestBuildListModels()
+        val recyclerViewState = binding.recyclerView.layoutManager?.onSaveInstanceState()
+        homeAdapter.requestBuildListModels {
+            binding.recyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
+        }
     }
 
     private val createBoxResultLauncher =
@@ -97,17 +108,17 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
-    private val shareResultLauncher =
+    private val archiveResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.doOnRefresh()
             }
         }
 
-    private val shareTextResultLauncher =
+    private val archiveTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getStringExtra(Intent.EXTRA_TEXT)?.let(::onShareText)
+                result.data?.getStringExtra(Intent.EXTRA_TEXT)?.let(::onArchiveNote)
             }
         }
 
@@ -136,7 +147,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                         putParcelableArrayListExtra(Intent.EXTRA_STREAM, list)
                     }
                 }
-                shareResultLauncher.launch(intent)
+                archiveResultLauncher.launch(intent)
             }
         }
 
@@ -178,7 +189,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         binding.imageAdd.setImageDrawable(Icons.plusIcon(this))
 
-        binding.recyclerView.itemAnimator = null
         homeAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -188,6 +198,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
         binding.imageAdd.setOnClickListener {
             requestCreateBox()
+        }
+
+        viewModel.onChange(this, HomeState::asyncLoadSave) { asyncLoad ->
+            binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
+                viewModel.updateShare(asyncLoad.value)
+            }
         }
     }
 
@@ -204,15 +221,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         })
 
         binding.buttonArchiveText.setOnClickListener {
-            requestShareText()
+            requestArchiveNote()
         }
 
         binding.buttonArchiveWeb.setOnClickListener {
-            requestShareWeb()
+            requestArchiveWeb()
         }
 
         binding.buttonArchiveImages.setOnClickListener {
-            requestShareImages()
+            requestArchiveImages()
         }
 
         binding.recyclerView.addOnScrollListener(object : OnScrollListener() {
@@ -260,14 +277,26 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
             when (position) {
                 0 -> shareHelper.shareToOther(share)
-                1 -> WorkerUtils.enqueueDownloadShare(
+                1 -> onRequestChangeNote(share)
+                2 -> WorkerUtils.enqueueDownloadShare(
                     this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
                 )
 
-                2 -> onBookmark(shareId)
-                3 -> copy(share.boxDetail?.boxId)
+                3 -> onBookmark(shareId)
+                4 -> copy(share.boxDetail?.boxId)
             }
         }
+    }
+
+    private fun onRequestChangeNote(share: ShareDetail) {
+        viewModel.setCurrentShare(share)
+        changeShareNoteResultLauncher.launch(
+            router.textInput(
+                this,
+                getString(R.string.note),
+                share.shareNote
+            )
+        )
     }
 
     private fun onBookmark(shareId: String) {
@@ -282,25 +311,25 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         createBoxResultLauncher.launch(router.boxIntent(this))
     }
 
-    fun requestShareWeb() {
-        shareResultLauncher.launch(router.shareLink(this))
+    fun requestArchiveWeb() {
+        archiveResultLauncher.launch(router.shareLink(this))
     }
 
-    fun requestShareImages() {
+    fun requestArchiveImages() {
         pickImagesResultLauncher.launch(router.pickImageIntent(true))
     }
 
-    fun requestShareText() {
-        shareTextResultLauncher.launch(router.shareText(this, null))
+    fun requestArchiveNote() {
+        archiveTextResultLauncher.launch(router.textInput(this, null, null))
     }
 
-    private fun onShareText(text: String) {
+    private fun onArchiveNote(text: String) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/*"
             component = ComponentName(packageName, ShareReceiveActivity::class.java.name)
             putExtra(Intent.EXTRA_TEXT, text)
         }
-        shareResultLauncher.launch(intent)
+        archiveResultLauncher.launch(intent)
     }
 
     private fun onBoxSelected(boxId: String, boxName: String) {
@@ -333,7 +362,8 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
             is ShareData.ShareText -> {
-                openShareTextResultLauncher.launch(router.shareText(this, share.shareId))
+                viewModel.setCurrentShare(share)
+                openShareTextResultLauncher.launch(router.textInput(this, null, shareData.text))
             }
 
             is ShareData.ShareImage -> shareHelper.viewShareImage(

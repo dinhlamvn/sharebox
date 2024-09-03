@@ -77,22 +77,22 @@ abstract class BaseListAdapter :
         error("No support direct call method")
     }
 
-    fun requestBuildListModels(lists: List<BaseListModel>) {
+    fun requestBuildListModels(lists: List<BaseListModel>, callback: Runnable? = null) {
         cancelCurrentBuild()
         buildListModelsJob = buildListModelsScope.launch {
             listModels.clear()
             listModels.addAll(lists)
             withContext(Dispatchers.Main) {
-                super.submitList(listModels.toList())
+                super.submitList(listModels.toList(), callback)
             }
         }
     }
 
-    fun requestBuildListModels() {
+    fun requestBuildListModels(callback: Runnable? = null) {
         cancelCurrentBuild()
 
         buildListModelsJob = buildListModelsScope.launch {
-            buildListModelsInternal()
+            buildListModelsInternal(callback)
         }
     }
 
@@ -102,11 +102,11 @@ abstract class BaseListAdapter :
         }
     }
 
-    private suspend fun buildListModelsInternal() {
+    private suspend fun buildListModelsInternal(callback: Runnable?) {
         listModels.clear()
         buildListModels()
         withContext(Dispatchers.Main) {
-            super.submitList(listModels.toList())
+            super.submitList(listModels.toList(), callback)
         }
     }
 

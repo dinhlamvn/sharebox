@@ -163,6 +163,7 @@
 
     <string-array name="more_menu">
         <item>Chia sẻ tới…</item>
+        <item>Sửa ghi chú…</item>
         <item>Tải nội dung</item>
         <item>Đánh dấu</item>
         <item>Sao chép mã Box</item>

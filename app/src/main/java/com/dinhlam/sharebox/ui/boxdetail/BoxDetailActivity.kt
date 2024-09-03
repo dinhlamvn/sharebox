@@ -185,7 +185,7 @@ class BoxDetailActivity :
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
             is ShareData.ShareText -> {
-                openShareTextResultLauncher.launch(router.shareText(this, share.shareId))
+                //openShareTextResultLauncher.launch(router.textInput(this, share.shareId,))
             }
 
             is ShareData.ShareImage -> shareHelper.viewShareImage(

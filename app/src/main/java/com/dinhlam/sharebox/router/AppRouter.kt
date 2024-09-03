@@ -30,8 +30,8 @@ import com.dinhlam.sharebox.ui.profile.ProfileActivity
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
-import com.dinhlam.sharebox.ui.sharetext.ShareTextActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
+import com.dinhlam.sharebox.ui.textinput.TextInputActivity
 import com.dinhlam.sharebox.utils.Icons
 
 class AppRouter constructor(private val context: Context) : Router {
@@ -207,9 +207,10 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, ProfileActivity::class.java)
     }
 
-    override fun shareText(context: Context, shareId: String?): Intent {
-        return Intent(context, ShareTextActivity::class.java)
-            .putExtra(AppExtras.EXTRA_SHARE_ID, shareId)
+    override fun textInput(context: Context, title: String?, text: String?): Intent {
+        return Intent(context, TextInputActivity::class.java)
+            .putExtra(AppExtras.EXTRA_TITLE, title)
+            .putExtra(Intent.EXTRA_TEXT, text)
     }
 
     override fun shareLink(context: Context): Intent {

@@ -10,6 +10,8 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -167,5 +169,42 @@ class HomeViewModel @Inject constructor(
 
     fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
         copy(chooseBoxFor = chooseBoxFor)
+    }
+
+    fun setCurrentShare(shareDetail: ShareDetail?) = setState { copy(currentShare = shareDetail) }
+
+    fun saveShareText(text: String?) = getState { state ->
+        val currentShare = state.currentShare ?: return@getState
+        val shareId = currentShare.shareId
+        suspend {
+            val share = shareRepository.findOneRaw(shareId)
+            share?.let { updateShare ->
+                shareRepository.update(updateShare.copy(shareData = ShareData.ShareText(text.orEmpty())))
+                shareRepository.findOne(shareId)
+            } ?: currentShare
+        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
+    }
+
+    fun saveShareNote(text: String?) = getState { state ->
+        val currentShare = state.currentShare ?: return@getState
+        val shareId = currentShare.shareId
+        suspend {
+            val share = shareRepository.findOneRaw(shareId)
+            share?.let { updateShare ->
+                shareRepository.update(updateShare.copy(shareNote = text))
+                shareRepository.findOne(shareId)
+            } ?: currentShare
+        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
+    }
+
+    fun updateShare(data: ShareDetail) = getState { state ->
+        val newShares = state.shares.map { shareDetail ->
+            if (shareDetail.shareId == data.shareId) {
+                data
+            } else {
+                shareDetail
+            }
+        }
+        setState { copy(shares = newShares) }
     }
 }

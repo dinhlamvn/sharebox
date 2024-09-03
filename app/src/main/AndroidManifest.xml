@@ -214,7 +214,7 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name="com.dinhlam.sharebox.ui.sharetext.ShareTextActivity"
+            android:name="com.dinhlam.sharebox.ui.textinput.TextInputActivity"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 

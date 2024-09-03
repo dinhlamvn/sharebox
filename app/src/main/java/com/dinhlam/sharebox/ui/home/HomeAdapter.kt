@@ -44,13 +44,13 @@ class HomeAdapter @Inject constructor(
         MainActionListModel(
             ContextCompat.getColor(activity, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
-                activity.requestShareText()
+                activity.requestArchiveNote()
             }),
             NoHashProp(View.OnClickListener {
-                activity.requestShareWeb()
+                activity.requestArchiveWeb()
             }),
             NoHashProp(View.OnClickListener {
-                activity.requestShareImages()
+                activity.requestArchiveImages()
             }),
         ).attachTo(this)
 

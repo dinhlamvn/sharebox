@@ -171,6 +171,7 @@
 
     <string-array name="more_menu">
         <item>Share to other…</item>
+        <item>Edit note…</item>
         <item>Download</item>
         <item>Bookmark</item>
         <item>Copy box\'s ID</item>
