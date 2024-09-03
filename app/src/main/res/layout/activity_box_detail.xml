@@ -6,11 +6,19 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/Widget.Material3.Toolbar"
+        style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
-        app:titleTextAppearance="@style/TextTitleMedium" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_edit"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside" />
+    </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"

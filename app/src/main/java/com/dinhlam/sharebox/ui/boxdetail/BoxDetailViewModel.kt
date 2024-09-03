@@ -41,7 +41,8 @@ class BoxDetailViewModel @Inject constructor(
             copy(
                 asyncLoadBoxDetail = asyncLoad,
                 boxDetail = asyncLoad.data,
-                isRefreshing = false
+                isRefreshing = false,
+                mustInputPasscode = true
             )
         }
     }
@@ -146,6 +147,18 @@ class BoxDetailViewModel @Inject constructor(
                     copy(shares = shareList)
                 }
             }
+        }
+    }
+
+    fun reloadBoxDetail(id: String) {
+        suspend {
+            boxRepository.findOne(id)!!
+        }.execute { asyncLoad ->
+            copy(
+                asyncLoadBoxDetail = asyncLoad,
+                boxDetail = asyncLoad.data,
+                mustInputPasscode = false
+            )
         }
     }
 }

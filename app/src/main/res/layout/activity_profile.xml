@@ -7,13 +7,12 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/Widget.Material3.Toolbar"
+        style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:textAppearance="@style/TextTitleMedium"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/title_profile"
-        app:titleTextAppearance="@style/TextTitle" />
+        app:title="@string/title_profile" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"

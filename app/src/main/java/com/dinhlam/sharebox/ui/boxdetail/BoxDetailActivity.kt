@@ -28,6 +28,7 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,6 +38,16 @@ class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+
+    private val editBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { id ->
+                    viewModel.reloadBoxDetail(id)
+                }
+            }
+        }
+
     override fun onCreateViewBinding(): ActivityBoxDetailBinding {
         return ActivityBoxDetailBinding.inflate(layoutInflater)
     }
@@ -62,7 +73,8 @@ class BoxDetailActivity :
 
     override fun onStateChanged(state: BoxDetailState) {
         shareAdapter.requestBuildListModels()
-        supportActionBar?.title = state.boxDetail?.boxName
+        binding.toolbar.title = state.boxDetail?.boxName
+        binding.toolbar.subtitle = state.boxDetail?.boxDesc
     }
 
     private val layoutManager by lazy {
@@ -115,16 +127,23 @@ class BoxDetailActivity :
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        binding.imageEdit.setImageDrawable(Icons.editIcon2(this))
+        binding.imageEdit.setOnClickListener {
+            val boxDetail =
+                getState(viewModel, BoxDetailState::boxDetail) ?: return@setOnClickListener
+            editBoxResultLauncher.launch(router.boxForm(this, boxDetail.boxId))
+        }
+
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = shareAdapter
+        shareAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.doOnRefresh()
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.onChange(this, BoxDetailState::boxDetail) { boxDetail ->
-            if (!boxDetail?.passcode.isNullOrBlank()) {
+        viewModel.onChange(this, BoxDetailState::boxDetail, BoxDetailState::mustInputPasscode) { boxDetail, mustInputPasscode ->
+            if (!boxDetail?.passcode.isNullOrBlank() && mustInputPasscode) {
                 val takeBox = boxDetail ?: return@onChange finish()
                 val intent = router.passcodeIntent(
                     this, takeBox.passcode!!, getString(

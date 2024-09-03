@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.boxcreate
+package com.dinhlam.sharebox.ui.boxform
 
 import android.app.Activity
 import android.content.Intent
@@ -7,34 +7,30 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.UiThread
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.base.BaseActivity
+import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
-import com.dinhlam.sharebox.databinding.ActivityBoxCreateBinding
+import com.dinhlam.sharebox.databinding.ActivityBoxFormBinding
+import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.getTrimmedText
-import com.dinhlam.sharebox.extensions.md5
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
+class BoxFormActivity :
+    BaseViewModelActivity<BoxFormState, BoxFormViewModel, ActivityBoxFormBinding>() {
 
     @Inject
     lateinit var boxRepository: BoxRepository
@@ -60,8 +56,22 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
 
     private var isVisiblePasscode: Boolean = false
 
-    override fun onCreateViewBinding(): ActivityBoxCreateBinding {
-        return ActivityBoxCreateBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(): ActivityBoxFormBinding {
+        return ActivityBoxFormBinding.inflate(layoutInflater)
+    }
+
+    override val viewModel: BoxFormViewModel by viewModels()
+
+    override fun onStateChanged(state: BoxFormState) {
+        if (state.boxDetail != null) {
+            binding.checkboxChangePasscode.isVisible = true
+            binding.toolbar.title = getString(R.string.title_edit_box)
+            binding.textLayoutPasscode.isVisible = state.isChangePasscode
+        } else {
+            binding.checkboxChangePasscode.isVisible = false
+            binding.toolbar.title = getString(R.string.title_create_box)
+            binding.textLayoutPasscode.isVisible = true
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +87,11 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
             binding.textEditPasscode.text?.clear()
         }
 
-        binding.textEditPasscode.doAfterTextChanged { text ->
+        binding.checkboxChangePasscode.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setChangePasscodeChecked(isChecked)
+        }
+
+        binding.textEditPasscode.doAfterTextChangedDebounce(200, lifecycleScope) { text ->
             val takenText = text.trimmedString()
 
             if (takenText.isBlank()) {
@@ -104,8 +118,25 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
             passcodeResultLauncher.launch(router.passcodeIntent(this))
         }
 
-        binding.buttonCreate.setOnClickListener {
-            createNewBox()
+        binding.buttonSave.setOnClickListener {
+            onSave()
+        }
+
+        viewModel.onChange(this, BoxFormState::boxDetail) { boxDetail ->
+            binding.textEditName.setText(boxDetail?.boxName)
+            binding.textEditDesc.setText(boxDetail?.boxDesc)
+        }
+
+        viewModel.onChange(this, BoxFormState::asyncLoadSave) { asyncLoad ->
+            binding.viewLoading.isVisible = asyncLoad.loading
+            val box = asyncLoad.data
+            box?.let { createdBox ->
+                setResult(
+                    Activity.RESULT_OK,
+                    Intent().putExtra(AppExtras.EXTRA_BOX_ID, createdBox.boxId)
+                )
+                finish()
+            }
         }
     }
 
@@ -122,7 +153,7 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
         }
     }
 
-    private fun createNewBox() {
+    private fun onSave() {
         val name = binding.textEditName.getTrimmedText()
         val desc = binding.textEditDesc.getTrimmedText()
         val passcode = binding.textEditPasscode.getTrimmedText()
@@ -132,34 +163,7 @@ class BoxCreateActivity : BaseActivity<ActivityBoxCreateBinding>() {
             return
         }
 
-        activityScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                binding.viewLoading.show()
-            }
-
-            val box = boxRepository.insert(
-                BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$name"),
-                name,
-                desc,
-                userHelper.getCurrentUserId(),
-                nowUTCTimeInMillis(),
-                passcode.takeIfNotNullOrBlank()?.md5()
-            )
-
-            box?.let { createdBox ->
-                realtimeDatabaseRepository.push(createdBox)
-                setResult(
-                    Activity.RESULT_OK,
-                    Intent().putExtra(AppExtras.EXTRA_BOX_ID, createdBox.boxId)
-                )
-                finish()
-            } ?: run {
-                withContext(Dispatchers.Main) {
-                    showToast(R.string.error_create_box)
-                    binding.viewLoading.hide()
-                }
-            }
-        }
+        viewModel.saveBox(name, desc, passcode)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

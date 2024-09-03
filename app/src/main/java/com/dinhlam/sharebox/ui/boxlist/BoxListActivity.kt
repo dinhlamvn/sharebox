@@ -103,7 +103,7 @@ class BoxListActivity :
                 height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
                 actionClick = BaseListAdapter.NoHashProp(
                     View.OnClickListener {
-                        createBoxResultLauncher.launch(router.boxIntent(this@BoxListActivity))
+                        createBoxResultLauncher.launch(router.boxForm(this@BoxListActivity, null))
                     },
                 ),
             ).attachTo(this)

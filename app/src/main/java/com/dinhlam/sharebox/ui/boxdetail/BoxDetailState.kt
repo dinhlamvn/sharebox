@@ -8,6 +8,7 @@ data class BoxDetailState(
     val boxId: String,
     val asyncLoadBoxDetail: BaseViewModel.AsyncLoad<BoxDetail> = BaseViewModel.AsyncLoad.Initialize,
     val boxDetail: BoxDetail? = null,
+    val mustInputPasscode: Boolean = true,
     val isRefreshing: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val currentPage: Int = 1,

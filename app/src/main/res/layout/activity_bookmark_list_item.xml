@@ -42,9 +42,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="0dp"
                 app:layout_collapseMode="pin"
-                app:subtitleTextAppearance="@style/TextCaption"
                 app:titleMarginStart="8dp"
-                app:titleTextAppearance="@style/TextBody"
                 tools:subtitle="Hello World"
                 tools:title="Hello">
 

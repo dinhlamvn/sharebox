@@ -19,8 +19,8 @@ import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
-import com.dinhlam.sharebox.ui.boxcreate.BoxCreateActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
+import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
@@ -185,8 +185,9 @@ class AppRouter constructor(private val context: Context) : Router {
         }
     }
 
-    override fun boxIntent(context: Context): Intent {
-        return Intent(context, BoxCreateActivity::class.java)
+    override fun boxForm(context: Context, boxId: String?): Intent {
+        return Intent(context, BoxFormActivity::class.java)
+            .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
     }
 
     override fun setting(): Intent {

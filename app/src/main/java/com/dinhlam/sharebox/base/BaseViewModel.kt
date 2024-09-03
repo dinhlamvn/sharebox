@@ -143,6 +143,17 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
             }
     }
 
+    fun <V1, V2> onChange(
+        lifecycleOwner: LifecycleOwner, property1: KProperty1<S, V1>, property2: KProperty1<S, V2>, block: (V1, V2) -> Unit
+    ) {
+        stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
+            .distinctUntilChanged()
+            .resolveConsumer(lifecycleOwner) { consumer ->
+                block(consumer.value1, consumer.value2)
+            }
+    }
+
+
     protected fun <V1, V2> onChange(
         property1: KProperty1<S, V1>, property2: KProperty1<S, V2>, block: (V1, V2) -> Unit
     ) {

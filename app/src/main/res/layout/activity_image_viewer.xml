@@ -7,14 +7,13 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/Widget.Material3.Toolbar"
+        style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="16dp"
         app:contentInsetStart="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:titleTextAppearance="@style/TextTitleMedium">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_save_to_gallery"

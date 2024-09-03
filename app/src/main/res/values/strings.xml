@@ -163,6 +163,10 @@
     <string name="download_content">Download this content</string>
     <string name="please_choose_box">Please choose a box</string>
     <string name="move_share_to">Move share to…</string>
+    <string name="save">Save</string>
+    <string name="title_edit_box">Edit Box</string>
+    <string name="title_create_box">Create Box</string>
+    <string name="change_passcode">Change passcode</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Open</item>

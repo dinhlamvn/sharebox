@@ -160,7 +160,7 @@ class ShareLinkActivity :
 
         binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
         binding.imageAddBox.setOnClickListener {
-            createBoxResultLauncher.launch(router.boxIntent(this))
+            createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 
         binding.containerShareBox.setOnClickListener {

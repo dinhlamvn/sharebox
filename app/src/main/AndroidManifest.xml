@@ -168,7 +168,7 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name=".ui.boxcreate.BoxCreateActivity"
+            android:name=".ui.boxform.BoxFormActivity"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 

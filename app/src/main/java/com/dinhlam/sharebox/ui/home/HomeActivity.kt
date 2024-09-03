@@ -324,7 +324,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     private fun requestCreateBox() {
-        createBoxResultLauncher.launch(router.boxIntent(this))
+        createBoxResultLauncher.launch(router.boxForm(this, null))
     }
 
     fun requestArchiveWeb() {

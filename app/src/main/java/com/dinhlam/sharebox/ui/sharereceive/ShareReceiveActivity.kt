@@ -177,7 +177,7 @@ class ShareReceiveActivity :
 
         binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
         binding.imageAddBox.setOnClickListener {
-            createBoxResultLauncher.launch(router.boxIntent(this))
+            createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 
         binding.imageClose.setImageDrawable(Icons.closeIcon(this) {

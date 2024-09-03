@@ -89,6 +89,14 @@ object Icons {
         )
     }
 
+    fun editIcon2(
+        context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(
+            context, FontAwesome.Icon.faw_edit, block(IconBuilder(context))
+        )
+    }
+
     fun openIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {

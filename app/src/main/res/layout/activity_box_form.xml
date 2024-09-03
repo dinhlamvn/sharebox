@@ -6,15 +6,13 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/Widget.Material3.Toolbar"
+        style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:minHeight="?attr/actionBarSize"
         app:contentInsetEnd="2dp"
         app:contentInsetStart="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/title_box_create"
-        app:titleTextAppearance="@style/TextTitleMedium" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
@@ -68,6 +66,18 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/checkbox_change_passcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/change_passcode"
+        android:textAppearance="@style/TextBody"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_layout_desc" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_layout_passcode"
         android:layout_width="0dp"
@@ -79,7 +89,7 @@
         app:hintTextAppearance="@style/TextBody"
         app:layout_constraintEnd_toStartOf="@id/image_clear"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_layout_desc"
+        app:layout_constraintTop_toBottomOf="@id/checkbox_change_passcode"
         app:placeholderTextAppearance="@style/TextBody">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -121,7 +131,7 @@
         app:layout_constraintTop_toTopOf="@id/text_layout_passcode" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_create"
+        android:id="@+id/button_save"
         style="@style/Widget.Material3.Button"
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -129,7 +139,7 @@
         android:layout_marginBottom="16dp"
         android:backgroundTintMode="src_over"
         android:gravity="center"
-        android:text="@string/create"
+        android:text="@string/save"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         app:layout_constraintBottom_toBottomOf="parent" />
 
