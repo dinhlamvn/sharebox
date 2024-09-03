@@ -93,7 +93,7 @@
     <string name="downloading">Downloading</string>
     <string name="download_preparing">Preparing…</string>
     <string name="cancel">Cancel</string>
-    <string name="limit_share_image">We just allow archive maximum 10 images in time</string>
+    <string name="limit_share_image">We just allow archive maximum 10 images</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
     <string name="sync_data_share_to_cloud">Syncing data to cloud…</string>
     <string name="network_wifi_only_warning">Wifi isn\'t connected. Try download later or change setting to using cellular data.</string>
