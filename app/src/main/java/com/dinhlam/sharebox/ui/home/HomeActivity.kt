@@ -59,6 +59,16 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
+    private val moveShareToBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.moveShareToBox(boxId)
+            }
+        }
+
     private val openShareTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -278,14 +288,20 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             when (position) {
                 0 -> shareHelper.shareToOther(share)
                 1 -> onRequestChangeNote(share)
-                2 -> WorkerUtils.enqueueDownloadShare(
+                2 -> onRequestMoveShare(share)
+                3 -> WorkerUtils.enqueueDownloadShare(
                     this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
                 )
 
-                3 -> onBookmark(shareId)
-                4 -> copy(share.boxDetail?.boxId)
+                4 -> onBookmark(shareId)
+                5 -> copy(share.boxDetail?.boxId)
             }
         }
+    }
+
+    private fun onRequestMoveShare(share: ShareDetail) {
+        viewModel.setCurrentShare(share)
+        moveShareToBoxLauncher.launch(router.boxList(this, getString(R.string.move_share_to)))
     }
 
     private fun onRequestChangeNote(share: ShareDetail) {

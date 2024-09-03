@@ -207,4 +207,16 @@ class HomeViewModel @Inject constructor(
         }
         setState { copy(shares = newShares) }
     }
+
+    fun moveShareToBox(boxId: String) = getState { state ->
+        val currentShare = state.currentShare ?: return@getState
+        val shareId = currentShare.shareId
+        suspend {
+            val share = shareRepository.findOneRaw(shareId)
+            share?.let { updateShare ->
+                shareRepository.update(updateShare.copy(shareBoxId = boxId))
+                shareRepository.findOne(shareId)
+            } ?: currentShare
+        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
+    }
 }

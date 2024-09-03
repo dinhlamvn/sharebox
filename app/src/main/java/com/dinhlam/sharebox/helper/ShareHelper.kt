@@ -32,6 +32,8 @@ import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
+import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,7 +51,7 @@ class ShareHelper @Inject constructor(
 
     fun showMore(activity: FragmentActivity, share: ShareDetail) {
         val arrayIcons = arrayOf(
-            "faw_share", "faw_edit", "faw_download", "faw_bookmark", "faw_copy"
+            "faw_share", "faw_edit", "faw_arrow_right", "faw_download", "faw_bookmark", "faw_copy"
         )
         val choiceItems =
             activity.resources.getStringArray(R.array.more_menu)

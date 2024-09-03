@@ -154,6 +154,7 @@
     <string name="choose_box_for_web">Choose Box To Archive WebLink</string>
     <string name="download_content">Download this content</string>
     <string name="please_choose_box">Please choose a box</string>
+    <string name="move_share_to">Move share to…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Mở</item>
@@ -163,7 +164,8 @@
 
     <string-array name="more_menu">
         <item>Chia sẻ tới…</item>
-        <item>Sửa ghi chú…</item>
+        <item>Sửa ghi chú</item>
+        <item>Chuyển tới…</item>
         <item>Tải nội dung</item>
         <item>Đánh dấu</item>
         <item>Sao chép mã Box</item>
