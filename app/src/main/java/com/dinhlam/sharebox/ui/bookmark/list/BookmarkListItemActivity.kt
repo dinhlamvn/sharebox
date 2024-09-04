@@ -2,20 +2,25 @@ package com.dinhlam.sharebox.ui.bookmark.list
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
-import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.copy
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
@@ -24,13 +29,9 @@ import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
-import com.dinhlam.sharebox.utils.WorkerUtils
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.absoluteValue
@@ -44,13 +45,6 @@ class BookmarkListItemActivity :
         return ActivityBookmarkListItemBinding.inflate(layoutInflater)
     }
 
-    private val openShareTextResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.refresh()
-            }
-        }
-
     private val shareAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.isSharesLoading) {
@@ -62,7 +56,7 @@ class BookmarkListItemActivity :
                 TextListModel("text_empty", getString(R.string.no_result)).attachTo(this)
             } else {
                 state.shares.forEach { shareDetail ->
-                    shareDetail.buildListItemListModel(::showMore, ::openShare)
+                    shareDetail.buildListItemListModel(::showMore)
                         .attachTo(this)
                 }
             }
@@ -105,8 +99,12 @@ class BookmarkListItemActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.toolbar.navigationIcon = Icons.leftArrowIcon(this)
-        binding.toolbar.setNavigationOnClickListener {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        onBackPressedDispatcher.addCallback {
+            val asyncLoadRemove = getState(viewModel, BookmarkListItemState::asyncLoadRemoveShare)
+            setResult(if (asyncLoadRemove.success) Activity.RESULT_OK else Activity.RESULT_CANCELED)
             finish()
         }
 
@@ -124,8 +122,9 @@ class BookmarkListItemActivity :
 
         binding.appbar.addOnOffsetChangedListener { appBar, verticalOffset ->
             val eightyPercent = appBar.totalScrollRange * 0.8
-            binding.imageThumbnailSmall.alpha =
-                verticalOffset.absoluteValue / eightyPercent.toFloat()
+            val alpha = verticalOffset.absoluteValue / eightyPercent.toFloat()
+            binding.imageThumbnailSmall.alpha = alpha
+            binding.imageTopBar.alpha = 1f.minus(alpha)
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -142,6 +141,13 @@ class BookmarkListItemActivity :
                 requestVerifyPasscode()
             }
         }
+
+        viewModel.onChange(this, BookmarkListItemState::asyncLoadRemoveShare) { asyncLoad ->
+            binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
+                showToast(getString(R.string.removed_item, asyncLoad.value.shareNote))
+            }
+        }
     }
 
     private fun requestVerifyPasscode() = getState(viewModel) { state ->
@@ -155,50 +161,39 @@ class BookmarkListItemActivity :
         passcodeConfirmResultLauncher.launch(intent)
     }
 
-    private fun onBookmark(shareId: String) {
-        MaterialAlertDialogBuilder(this).setTitle(R.string.dialog_confirm)
-            .setMessage(R.string.dialog_confirm_remove_share_from_bookmark)
-            .setPositiveButton(R.string.dialog_ok) { _, _ ->
-                viewModel.removeBookmark(shareId)
-            }.setNegativeButton(R.string.dialog_cancel, null).show()
-    }
-
     override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
-        getState(viewModel) { state ->
-            val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
-            val share =
-                state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
+        val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return
 
-            when (position) {
-                0 -> shareHelper.shareToOther(share)
-                1 -> WorkerUtils.enqueueDownloadShare(
-                    this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
-                )
-
-                2 -> onBookmark(shareId)
-                3 -> copy(share.boxDetail?.boxId)
-            }
+        when (position) {
+            0 -> viewModel.removeBookmark(shareId)
         }
     }
 
     private fun showMore(share: ShareDetail) {
-        shareHelper.showMore(this, share)
+        val arrayIcons = arrayOf(
+            "faw_trash"
+        )
+        val choiceItems =
+            resources.getStringArray(R.array.bookmark_collection_list_option_menu_items)
+                .mapIndexed { index, text ->
+                    OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                        arrayIcons[index], text
+                    )
+                }.toTypedArray()
+
+        OptionMenuBottomSheetDialogFragment.show(
+            supportFragmentManager,
+            choiceItems,
+            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId),
+            this
+        )
     }
 
-    private fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
-            is ShareData.ShareText -> {
-                //openShareTextResultLauncher.launch(router.textInput(this, share.shareId,))
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, shareData.uris
-            )
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
 }

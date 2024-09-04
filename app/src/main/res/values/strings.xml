@@ -111,7 +111,7 @@
     <string name="web">Web</string>
     <string name="images">Images</string>
     <string name="recently_shares">Recently</string>
-    <string name="no_boxes">You don\'t have any box now.\nLet tap on button (+) to create a new one.</string>
+    <string name="no_boxes">You don\'t have any box now.\nTap on button (+) to create a new one.</string>
     <string name="desc_image">This is an image</string>
     <string name="go">Go</string>
     <string name="download_failed">Can\'t download this content, trying again!</string>
@@ -167,11 +167,15 @@
     <string name="title_edit_box">Edit Box</string>
     <string name="title_create_box">Create Box</string>
     <string name="change_passcode">Change passcode</string>
+    <string name="removed_item">Removed %s</string>
 
     <string-array name="bookmark_collection_option_menu_items">
-        <item>Open</item>
         <item>Edit</item>
         <item>Delete</item>
+    </string-array>
+
+    <string-array name="bookmark_collection_list_option_menu_items">
+        <item>Remove</item>
     </string-array>
 
     <string-array name="more_menu">

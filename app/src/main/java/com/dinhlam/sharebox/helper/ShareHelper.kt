@@ -49,7 +49,7 @@ class ShareHelper @Inject constructor(
     private val userHelper: UserHelper,
 ) {
 
-    fun showMore(activity: FragmentActivity, share: ShareDetail) {
+    fun showMore(activity: FragmentActivity, share: ShareDetail, callback: OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener) {
         val arrayIcons = arrayOf(
             "faw_share", "faw_edit", "faw_arrow_right", "faw_download", "faw_bookmark", "faw_copy"
         )
@@ -64,7 +64,8 @@ class ShareHelper @Inject constructor(
         OptionMenuBottomSheetDialogFragment.show(
             activity.supportFragmentManager,
             choiceItems,
-            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
+            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId),
+            callback
         )
     }
 

@@ -13,5 +13,7 @@ data class BoxDetailState(
     val shares: List<ShareDetail> = emptyList(),
     val currentPage: Int = 1,
     val canLoadMore: Boolean = false,
-    val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.Initialize
+    val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.Initialize,
+    val currentShare: ShareDetail? = null,
+    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.Initialize
 ) : BaseViewModel.BaseState

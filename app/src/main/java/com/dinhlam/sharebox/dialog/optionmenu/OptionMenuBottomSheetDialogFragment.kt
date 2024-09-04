@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogSingleChoiceBinding
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayExtraCompat
 import com.dinhlam.sharebox.listmodel.IconTextListModel
@@ -92,14 +91,9 @@ class OptionMenuBottomSheetDialogFragment :
     }
 
     private fun onItemSelected(position: Int, item: String) {
-        val callback = getListener()
-        callback?.onOptionItemSelected(position, item, Bundle().apply {
+        itemSelectedListener?.onOptionItemSelected(position, item, Bundle().apply {
             arguments?.let { args -> putAll(args) }
         })
         dismiss()
     }
-
-    private fun getListener() =
-        itemSelectedListener ?: activity.cast<OnOptionItemSelectedListener>()
-        ?: parentFragment.cast<OnOptionItemSelectedListener>()
 }

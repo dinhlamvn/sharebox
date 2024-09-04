@@ -22,7 +22,6 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
     )
 ) {
 
-
     init {
         loadBookmarkCollections()
     }
@@ -33,13 +32,20 @@ class BookmarkCollectionPickerViewModel @Inject constructor(
             val collection = state.collectionId?.let { id -> bookmarkCollectionRepository.find(id) }
             Pair(collections, collection)
         }.execute { asyncLoad ->
-            copy(asyncLoadBookmark = asyncLoad)
+            val data = asyncLoad.data
+            copy(
+                asyncLoadBookmark = asyncLoad,
+                bookmarkCollections = data?.first.orEmpty(),
+                pickedBookmarkCollection = data?.second,
+                originalBookmarkCollection = data?.second
+            )
         }
     }
 
-    fun reloadAfterCreateNewBookmarkCollection() = doInBackground {
-        val collections = bookmarkCollectionRepository.find()
-        setState { copy(bookmarkCollections = collections) }
+    fun reloadAfterCreateNewBookmarkCollection() = suspend {
+        bookmarkCollectionRepository.find()
+    }.execute { asyncLoad ->
+        copy(bookmarkCollections = asyncLoad.data.orEmpty())
     }
 
     fun onPickBookmarkCollection(collection: BookmarkCollectionDetail) = getState { state ->

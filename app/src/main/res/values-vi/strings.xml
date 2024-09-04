@@ -158,10 +158,15 @@
     <string name="save">Save</string>
     <string name="title_edit_box">Edit Box</string>
     <string name="title_create_box">Create Box</string>
+    <string name="change_passcode">Change passcode</string>
+    <string name="removed_item">Removed %s</string>
 
     <string-array name="bookmark_collection_option_menu_items">
-        <item>Mở</item>
         <item>Sửa</item>
+        <item>Xóa</item>
+    </string-array>
+
+    <string-array name="bookmark_collection_list_option_menu_items">
         <item>Xóa</item>
     </string-array>
 

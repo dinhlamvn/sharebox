@@ -58,10 +58,17 @@ class BookmarkListItemViewModel @Inject constructor(
         copy(requestVerifyPasscode = false)
     }
 
-    fun removeBookmark(shareId: String) = doInBackground {
-        val deleted = bookmarkRepository.delete(shareId)
-        if (deleted) {
-            setState { copy(shares = shares.filterNot { shareDetail -> shareDetail.shareId == shareId }) }
+    fun removeBookmark(shareId: String) = suspend {
+        val share = shareRepository.findOne(shareId)!!
+        bookmarkRepository.delete(share.shareId)
+        share
+    }.execute { asyncLoad ->
+        if (asyncLoad.success) {
+            copy(
+                asyncLoadRemoveShare = asyncLoad,
+                shares = shares.filterNot { shareDetail -> shareDetail.shareId == shareId })
+        } else {
+            copy(asyncLoadRemoveShare = asyncLoad)
         }
     }
 

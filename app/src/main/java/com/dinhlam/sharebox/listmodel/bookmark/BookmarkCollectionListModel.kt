@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.listmodel.bookmark
 
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.view.isVisible
@@ -22,6 +23,9 @@ data class BookmarkCollectionListModel(
     val marginStart: Int = 0,
     val marginTop: Int = 0,
     val onClickListener: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
+        null
+    ),
+    val onLongClickListener: BaseListAdapter.NoHashProp<OnLongClickListener> = BaseListAdapter.NoHashProp(
         null
     )
 ) : BaseListAdapter.BaseListModel("bookmark_collection_$id") {
@@ -49,6 +53,7 @@ data class BookmarkCollectionListModel(
                 marginStart = model.marginStart
                 topMargin = model.marginTop
             }
+            binding.container.setOnLongClickListener(model.onLongClickListener.prop)
             binding.container.setOnClickListener(model.onClickListener.prop)
             ImageLoader.INSTANCE.load(buildContext, model.thumbnail, binding.imageThumbnail)
             binding.textName.text = model.name

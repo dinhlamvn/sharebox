@@ -1,10 +1,12 @@
 package com.dinhlam.sharebox.ui.boxdetail
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -39,6 +41,23 @@ class BoxDetailActivity :
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
+    private val moveShareToBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.moveShareToBox(boxId)
+            }
+        }
+
+    private val changeShareNoteResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.saveShareNote(result.data?.getStringExtra(Intent.EXTRA_TEXT))
+            }
+        }
+
     private val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -57,7 +76,7 @@ class BoxDetailActivity :
     private val openShareTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.doOnRefresh()
+                viewModel.saveShareText(result.data?.getStringExtra(Intent.EXTRA_TEXT))
             }
         }
 
@@ -142,7 +161,11 @@ class BoxDetailActivity :
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.onChange(this, BoxDetailState::boxDetail, BoxDetailState::mustInputPasscode) { boxDetail, mustInputPasscode ->
+        viewModel.onChange(
+            this,
+            BoxDetailState::boxDetail,
+            BoxDetailState::mustInputPasscode
+        ) { boxDetail, mustInputPasscode ->
             if (!boxDetail?.passcode.isNullOrBlank() && mustInputPasscode) {
                 val takeBox = boxDetail ?: return@onChange finish()
                 val intent = router.passcodeIntent(
@@ -154,6 +177,13 @@ class BoxDetailActivity :
                 passcodeConfirmResultLauncher.launch(intent)
             } else {
                 viewModel.loadShares()
+            }
+        }
+
+        viewModel.onChange(this, BoxDetailState::asyncLoadSave) { asyncLoad ->
+            binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
+                viewModel.updateShare(asyncLoad.value)
             }
         }
     }
@@ -178,14 +208,31 @@ class BoxDetailActivity :
 
             when (position) {
                 0 -> shareHelper.shareToOther(share)
-                1 -> WorkerUtils.enqueueDownloadShare(
+                1 -> onRequestChangeNote(share)
+                2 -> onRequestMoveShare(share)
+                3 -> WorkerUtils.enqueueDownloadShare(
                     this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
                 )
-
-                2 -> onBookmark(shareId)
-                3 -> copy(share.boxDetail?.boxId)
+                4 -> onBookmark(shareId)
+                5 -> copy(share.boxDetail?.boxId)
             }
         }
+    }
+
+    private fun onRequestMoveShare(share: ShareDetail) {
+        viewModel.setCurrentShare(share)
+        moveShareToBoxLauncher.launch(router.boxList(this, getString(R.string.move_share_to)))
+    }
+
+    private fun onRequestChangeNote(share: ShareDetail) {
+        viewModel.setCurrentShare(share)
+        changeShareNoteResultLauncher.launch(
+            router.textInput(
+                this,
+                getString(R.string.note),
+                share.shareNote
+            )
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -197,14 +244,15 @@ class BoxDetailActivity :
     }
 
     private fun showMore(share: ShareDetail) {
-        shareHelper.showMore(this, share)
+        shareHelper.showMore(this, share, this)
     }
 
     private fun openShare(share: ShareDetail) {
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
             is ShareData.ShareText -> {
-                //openShareTextResultLauncher.launch(router.textInput(this, share.shareId,))
+                viewModel.setCurrentShare(share)
+                openShareTextResultLauncher.launch(router.textInput(this, null, shareData.text))
             }
 
             is ShareData.ShareImage -> shareHelper.viewShareImage(

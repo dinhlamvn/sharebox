@@ -371,7 +371,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     fun showMore(share: ShareDetail) {
-        shareHelper.showMore(this, share)
+        shareHelper.showMore(this, share, this)
     }
 
     fun openShare(share: ShareDetail) {

@@ -10,8 +10,8 @@ import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 
 fun ShareDetail.buildListItemListModel(
-    onShowMore: (ShareDetail) -> Unit,
-    onOpenShare: (ShareDetail) -> Unit
+    onShowMore: (ShareDetail) -> Unit = { },
+    onOpenShare: (ShareDetail) -> Unit = { }
 ): BaseListAdapter.BaseListModel {
 
     fun getRecentlyIcon(shareData: ShareData): IIcon {

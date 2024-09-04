@@ -25,7 +25,6 @@ import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -34,7 +33,7 @@ class BookmarkActivity :
     BaseViewModelActivity<BookmarkState, BookmarkViewModel, ActivityBookmarkBinding>(),
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
-    private val bookmarkCollectionFormResultLauncher =
+    private val bookmarkCollectionResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.doOnRefresh()
@@ -47,7 +46,7 @@ class BookmarkActivity :
                 val bookmarkCollection =
                     result.data?.getParcelableExtraCompat<BookmarkCollectionDetail>(AppExtras.EXTRA_BOOKMARK_COLLECTION)
                         ?: return@registerForActivityResult
-                bookmarkCollectionFormResultLauncher.launch(
+                bookmarkCollectionResultLauncher.launch(
                     router.bookmarkCollectionFormIntent(
                         this, bookmarkCollection
                     )
@@ -95,7 +94,15 @@ class BookmarkActivity :
                         if (idx % COLLECTION_SPAN_COUNT == 0) 0 else 8.dp(),
                         if (idx >= COLLECTION_SPAN_COUNT) 8.dp() else 0,
                         BaseListAdapter.NoHashProp(View.OnClickListener {
+                            bookmarkCollectionResultLauncher.launch(
+                                router.bookmarkListItemIntent(
+                                    this@BookmarkActivity, bookmarkCollection.id
+                                )
+                            )
+                        }),
+                        BaseListAdapter.NoHashProp(View.OnLongClickListener {
                             showOptionMenu(bookmarkCollection.id)
+                            true
                         })
                     ).attachTo(this)
                 }
@@ -129,7 +136,7 @@ class BookmarkActivity :
         }
 
         binding.buttonAdd.setOnClickListener {
-            bookmarkCollectionFormResultLauncher.launch(
+            bookmarkCollectionResultLauncher.launch(
                 router.bookmarkCollectionFormIntent(this)
             )
         }
@@ -141,9 +148,8 @@ class BookmarkActivity :
                 state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
 
             val arrayIcons = arrayOf(
-                FontAwesome.Icon.faw_bookmark.name,
-                FontAwesome.Icon.faw_edit.name,
-                FontAwesome.Icon.faw_trash.name
+                "faw_edit",
+                "faw_trash"
             )
             val choiceItems =
                 resources.getStringArray(R.array.bookmark_collection_option_menu_items)
@@ -156,7 +162,8 @@ class BookmarkActivity :
             OptionMenuBottomSheetDialogFragment.show(
                 supportFragmentManager,
                 choiceItems,
-                bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail)
+                bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail),
+                this
             )
         }
     }
@@ -167,15 +174,9 @@ class BookmarkActivity :
                 ?: return
         Logger.debug("Hello $position --- $bookmarkCollection")
         when (position) {
-            0 -> startActivity(
-                router.bookmarkListItemIntent(
-                    this, bookmarkCollection.id
-                )
-            )
-
-            1 -> {
+            0 -> {
                 val passcode = bookmarkCollection.passcode.takeIfNotNullOrBlank()
-                    ?: return bookmarkCollectionFormResultLauncher.launch(
+                    ?: return bookmarkCollectionResultLauncher.launch(
                         router.bookmarkCollectionFormIntent(
                             this, bookmarkCollection
                         )
@@ -187,7 +188,7 @@ class BookmarkActivity :
                 })
             }
 
-            2 -> {
+            1 -> {
                 MaterialAlertDialogBuilder(this).setTitle(R.string.confirmation)
                     .setMessage(R.string.bookmark_collection_delete_confirm_message)
                     .setPositiveButton(R.string.dialog_ok) { _, _ ->

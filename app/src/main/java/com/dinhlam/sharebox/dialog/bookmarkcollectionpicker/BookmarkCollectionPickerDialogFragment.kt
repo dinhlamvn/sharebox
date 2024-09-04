@@ -118,7 +118,7 @@ class BookmarkCollectionPickerDialogFragment :
             copy(sizeDp = 20)
         })
 
-        binding.recyclerView.adapter = adapter
+        adapter.attachTo(binding.recyclerView, this)
 
         binding.buttonDone.setOnClickListener {
             getState(viewModel) { state ->
