@@ -30,7 +30,7 @@ interface ShareDao {
         SELECT s.* 
         FROM share as s 
         LEFT JOIN box as b ON b.box_id = s.share_box_id
-        WHERE s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)
+        WHERE s.share_box_id NOT NULL AND b.passcode IS NULL
         ORDER BY s.share_date DESC 
         LIMIT :limit 
         OFFSET :offset"""
@@ -42,7 +42,7 @@ interface ShareDao {
         SELECT s.* 
         FROM share as s 
         LEFT JOIN box as b ON b.box_id = s.share_box_id
-        WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL)) AND s.share_user_id = :shareUserId
+        WHERE (s.share_box_id NOT NULL AND b.passcode IS NULL) AND s.share_user_id = :shareUserId
         ORDER BY s.share_date DESC 
         LIMIT :limit 
         OFFSET :offset"""
@@ -55,7 +55,7 @@ interface ShareDao {
         FROM share as s 
         LEFT JOIN box as b ON b.box_id = s.share_box_id 
         JOIN `like` as l on l.share_id = s.share_id
-        WHERE (s.share_box_id IS NULL OR (s.share_box_id NOT NULL AND b.passcode IS NULL))
+        WHERE s.share_box_id NOT NULL AND b.passcode IS NULL
         GROUP BY l.share_id
         ORDER BY score DESC 
         LIMIT :limit 
@@ -99,4 +99,17 @@ interface ShareDao {
 
     @Query("UPDATE share SET share_user_id = :userId, synced = 0 WHERE share_user_id = :fromUserId")
     suspend fun transferData(fromUserId: String, userId: String)
+
+    @Query(
+        """
+        SELECT s.* 
+        FROM share as s
+        WHERE s.share_box_id IS NULL
+        AND share_user_id = :shareUserId
+        ORDER BY s.share_date DESC
+        LIMIT :limit
+        OFFSET :offset
+    """
+    )
+    suspend fun findShareInTrash(shareUserId: String, limit: Int, offset: Int): List<Share>
 }

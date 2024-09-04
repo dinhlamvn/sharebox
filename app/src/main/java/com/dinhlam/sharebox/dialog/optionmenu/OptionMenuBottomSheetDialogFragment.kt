@@ -84,7 +84,7 @@ class OptionMenuBottomSheetDialogFragment :
         }
 
         binding.root.updateLayoutParams {
-            height = choiceItems.size.coerceAtMost(6) * 50.dp()
+            height = choiceItems.size.coerceAtMost(10) * 50.dp()
         }
         binding.recyclerView.adapter = choiceAdapter
         choiceAdapter.requestBuildListModels()

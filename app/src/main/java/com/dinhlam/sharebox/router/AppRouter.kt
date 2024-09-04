@@ -32,6 +32,7 @@ import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity
+import com.dinhlam.sharebox.ui.trash.TrashActivity
 import com.dinhlam.sharebox.utils.Icons
 
 class AppRouter constructor(private val context: Context) : Router {
@@ -245,5 +246,9 @@ class AppRouter constructor(private val context: Context) : Router {
     override fun boxList(context: Context, title: String?): Intent {
         return Intent(context, BoxListActivity::class.java)
             .putExtra(AppExtras.EXTRA_TITLE, title)
+    }
+
+    override fun trash(context: Context): Intent {
+        return Intent(context, TrashActivity::class.java)
     }
 }

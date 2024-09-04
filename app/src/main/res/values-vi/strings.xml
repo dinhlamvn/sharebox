@@ -160,6 +160,9 @@
     <string name="title_create_box">Create Box</string>
     <string name="change_passcode">Change passcode</string>
     <string name="removed_item">Removed %s</string>
+    <string name="confirm_move_to_trash">Are you sure to move this share to trash?</string>
+    <string name="title_trash">Trash</string>
+    <string name="restore_share_to">Restore to…</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>
@@ -177,5 +180,10 @@
         <item>Tải nội dung</item>
         <item>Đánh dấu</item>
         <item>Sao chép mã Box</item>
+        <item>Chuyển vào thùng rác</item>
+    </string-array>
+
+    <string-array name="trash_more_menu">
+        <item>Khôi phục vào…</item>
     </string-array>
 </resources>

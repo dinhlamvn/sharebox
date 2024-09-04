@@ -54,42 +54,7 @@ class HomeAdapter @Inject constructor(
             }),
         ).attachTo(this)
 
-        DiscoverListModel(buildList {
-            add(
-                CircleIconListModel(
-                    "tiktok",
-                    activity.getDrawableCompat(R.drawable.ic_tiktok),
-                    size = 32.dp(),
-                    onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        activity.gotoLink("https://tiktok.com")
-                    })
-                )
-            )
-
-            add(
-                CircleIconListModel(
-                    "youtube",
-                    Icons.youtubeIcon(activity),
-                    size = 32.dp(),
-                    margin = Spacing.Only(start = 16.dp()),
-                    onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        activity.gotoLink("https://youtube.com")
-                    })
-                )
-            )
-
-            add(
-                CircleIconListModel(
-                    "zing_news",
-                    activity.getDrawableCompat(R.drawable.ic_zing_news),
-                    size = 32.dp(),
-                    margin = Spacing.Only(start = 16.dp()),
-                    onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        activity.gotoLink("https://zingnews.vn")
-                    })
-                )
-            )
-        }, Spacing.All(16.dp())).attachTo(this)
+        DiscoverListModel(getDiscoverList(), Spacing.All(16.dp())).attachTo(this)
 
         if (state.isRefreshing) {
             LoadingListModel("top_loading").attachTo(this)
@@ -202,5 +167,54 @@ class HomeAdapter @Inject constructor(
 
     private fun onBoxClick(boxId: String) {
         activity.startActivity(router.boxDetail(activity, boxId))
+    }
+
+    private fun getDiscoverList() = buildList {
+        add(
+            CircleIconListModel(
+                "tiktok",
+                activity.getDrawableCompat(R.drawable.ic_tiktok),
+                size = 32.dp(),
+                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    activity.gotoLink("https://tiktok.com")
+                })
+            )
+        )
+
+        add(
+            CircleIconListModel(
+                "youtube",
+                Icons.youtubeIcon(activity),
+                size = 32.dp(),
+                margin = Spacing.Only(start = 16.dp()),
+                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    activity.gotoLink("https://m.youtube.com")
+                })
+            )
+        )
+
+        add(
+            CircleIconListModel(
+                "zing_news",
+                activity.getDrawableCompat(R.drawable.ic_zing_news),
+                size = 32.dp(),
+                margin = Spacing.Only(start = 16.dp()),
+                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    activity.gotoLink("https://zingnews.vn")
+                })
+            )
+        )
+
+        add(
+            CircleIconListModel(
+                "cand",
+                activity.getDrawableCompat(R.drawable.ic_cand),
+                size = 32.dp(),
+                margin = Spacing.Only(start = 16.dp()),
+                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    activity.gotoLink("https://cand.com.vn")
+                })
+            )
+        )
     }
 }

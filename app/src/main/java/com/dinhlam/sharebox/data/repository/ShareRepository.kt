@@ -120,6 +120,12 @@ class ShareRepository @Inject constructor(
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
+    suspend fun findShareInTrash(limit: Int, offset: Int) =
+        shareDao.runCatching {
+            val shares = findShareInTrash(userHelper.getCurrentUserId(), limit, offset)
+            shares.asFlow().mapNotNull(::buildShareDetail).toList()
+        }.getOrDefault(emptyList())
+
     private suspend fun buildShareDetail(share: Share): ShareDetail? = share.runCatching {
         val user = userRepository.findOne(share.shareUserId) ?: return null
         val commentNumber = commentRepository.count(share.shareId)

@@ -51,7 +51,7 @@ class ShareHelper @Inject constructor(
 
     fun showMore(activity: FragmentActivity, share: ShareDetail, callback: OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener) {
         val arrayIcons = arrayOf(
-            "faw_share", "faw_edit", "faw_arrow_right", "faw_download", "faw_bookmark", "faw_copy"
+            "faw_share", "faw_edit", "faw_arrow_right", "faw_download", "faw_bookmark", "faw_copy", "faw_trash"
         )
         val choiceItems =
             activity.resources.getStringArray(R.array.more_menu)

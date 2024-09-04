@@ -37,6 +37,7 @@ import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -295,8 +296,19 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
                 4 -> onBookmark(shareId)
                 5 -> copy(share.boxDetail?.boxId)
+                6 -> moveToTrash(share)
             }
         }
+    }
+
+    private fun moveToTrash(share: ShareDetail) {
+        MaterialAlertDialogBuilder(this)
+            .setMessage(R.string.confirm_move_to_trash)
+            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                viewModel.moveShareToTrash(share.shareId)
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun onRequestMoveShare(share: ShareDetail) {

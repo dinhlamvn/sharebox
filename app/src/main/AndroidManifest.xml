@@ -251,6 +251,11 @@
             android:exported="false"
             android:label="@string/view_image_activity_title" />
 
+        <activity
+            android:name=".ui.trash.TrashActivity"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name=".provider.ShareBoxFileProvider"
             android:authorities="${applicationId}.file_provider"

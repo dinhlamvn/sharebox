@@ -211,4 +211,18 @@ class BoxDetailViewModel @Inject constructor(
             } ?: currentShare
         }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
     }
+
+    fun moveShareToTrash(shareId: String) {
+        suspend {
+            val share = shareRepository.findOneRaw(shareId)!!
+            shareRepository.update(share.copy(shareBoxId = null))
+            shareRepository.findOne(shareId)!!
+        }.execute { asyncLoad ->
+            if (asyncLoad.success) {
+                copy(shares = shares.filterNot { share -> share.shareId == shareId })
+            } else {
+                this
+            }
+        }
+    }
 }

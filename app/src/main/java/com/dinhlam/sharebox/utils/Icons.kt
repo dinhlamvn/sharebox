@@ -203,6 +203,10 @@ object Icons {
         return createIcon(context, FontAwesome.Icon.faw_bookmark)
     }
 
+    fun trashIcon(context: Context): Drawable {
+        return createIcon(context, FontAwesome.Icon.faw_trash_alt)
+    }
+
     fun bookmarkedIcon(context: Context): Drawable {
         return createIcon(context, FontAwesome.Icon.faw_bookmark1)
     }

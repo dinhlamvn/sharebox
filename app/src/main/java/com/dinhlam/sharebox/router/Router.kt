@@ -55,4 +55,6 @@ interface Router {
 
     fun imageViewer(context: Context, uris: List<Uri>): Intent
     fun boxList(context: Context, title: String?): Intent
+
+    fun trash(context: Context): Intent
 }

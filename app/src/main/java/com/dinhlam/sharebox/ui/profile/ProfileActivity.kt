@@ -105,6 +105,7 @@ class ProfileActivity :
                 textAppearance = R.style.TextBodyMedium,
                 height = 50.dp(),
                 gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                startIcon = Icons.bookmarkIcon(this@ProfileActivity),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     startActivity(router.bookmark(this@ProfileActivity))
                 })
@@ -112,6 +113,22 @@ class ProfileActivity :
 
             VerticalDividerListModel(
                 "divider_bookmark_collection", height = 1.dp()
+            ).attachTo(this)
+
+            TextListModel(
+                "title_trash",
+                getString(R.string.title_trash),
+                textAppearance = R.style.TextBodyMedium,
+                height = 50.dp(),
+                gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                startIcon = Icons.trashIcon(this@ProfileActivity),
+                actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    startActivity(router.trash(this@ProfileActivity))
+                })
+            ).attachTo(this)
+
+            VerticalDividerListModel(
+                "divider_trash", height = 1.dp()
             ).attachTo(this)
         }
     }
