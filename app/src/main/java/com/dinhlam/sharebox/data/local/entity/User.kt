@@ -14,8 +14,6 @@ data class User(
     @ColumnInfo("user_id") val userId: String,
     @ColumnInfo("name") val name: String,
     @ColumnInfo("avatar") val avatar: String,
-    @ColumnInfo("level") val level: Int = 0,
-    @ColumnInfo("drama") val drama: Int = 0,
     @ColumnInfo("join_date") val joinDate: Long,
     @ColumnInfo(name = "synced", defaultValue = "0") val synced: Boolean,
     @ColumnInfo("created_at") val createdAt: Long = nowUTCTimeInMillis(),

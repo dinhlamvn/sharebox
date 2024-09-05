@@ -8,4 +8,5 @@ data class ProfileState(
     val isRefreshing: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val currentUser: UserDetail? = null,
+    val shareCount: Int = 0
 ) : BaseViewModel.BaseState

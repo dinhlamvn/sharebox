@@ -15,8 +15,6 @@ class UserToUserDetailMapper @Inject constructor(
             user.userId,
             user.name,
             user.avatar,
-            user.level,
-            user.drama,
             user.createdAt,
             user.joinDate
         )

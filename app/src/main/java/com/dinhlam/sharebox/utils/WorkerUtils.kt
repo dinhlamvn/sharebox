@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.worker.DirectDownloadShareWorker
 import com.dinhlam.sharebox.worker.DownloadImagesWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
-import com.dinhlam.sharebox.worker.SyncUserDataWorker
 import com.dinhlam.sharebox.worker.TiktokDownloadWorker
 import com.dinhlam.sharebox.worker.YoutubeDownloadWorker
 import java.util.UUID
@@ -24,21 +23,9 @@ import java.util.concurrent.TimeUnit
 object WorkerUtils {
 
     private const val TAG_WORKER_SYNC_DATA = "sharebox-worker-sync-data"
-    private const val TAG_WORKER_SYNC_DATA_ONE_TIME = "sharebox-worker-sync-data-one-time"
 
     private fun getWorkerSyncDataUUID(): UUID =
         UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
-
-    private fun getWorkerSyncDataOneTimeUUID(): UUID =
-        UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
-
-    fun enqueueSyncUserData(context: Context) {
-        val syncUserDataWorkerRequest =
-            OneTimeWorkRequestBuilder<SyncUserDataWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            ).build()
-        WorkManager.getInstance(context).enqueue(syncUserDataWorkerRequest)
-    }
 
     fun enqueueJobSyncData(context: Context) {
         val syncDataWorkerRequest =

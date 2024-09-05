@@ -24,10 +24,11 @@ import com.dinhlam.sharebox.data.local.entity.User
 
 @Database(
     entities = [Share::class, User::class, Like::class, Comment::class, BookmarkCollection::class, Bookmark::class, Box::class],
-    version = 5,
+    version = 6,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class),
+        AutoMigration(from = 5, to = 6, spec = AppDatabase.Migration5To6::class),
     ]
 )
 @TypeConverters(ShareDataConverter::class)
@@ -49,4 +50,14 @@ abstract class AppDatabase : RoomDatabase() {
         columnName = "trending_score"
     )
     class Migration2To3 : AutoMigrationSpec
+
+    @DeleteColumn(
+        tableName = "User",
+        columnName = "drama"
+    )
+    @DeleteColumn(
+        tableName = "User",
+        columnName = "level"
+    )
+    class Migration5To6 : AutoMigrationSpec
 }

@@ -15,7 +15,7 @@
     <string name="search_hint">Search…</string>
     <string name="like">(%d)</string>
     <string name="comment">(%d)</string>
-    <string name="drama_point">Drama</string>
+    <string name="share_count">Shares</string>
     <string name="page_number">%d/%d</string>
     <string name="comment_title">Comments (%d)</string>
     <string name="comment_hint">What\'s on your mind?</string>

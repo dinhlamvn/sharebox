@@ -61,7 +61,7 @@ class ProfileActivity :
                 ButtonListModel(
                     "button_sign_in",
                     getString(R.string.sign_in),
-                    Spacing.Only(16.dp(), 16.dp(), 16.dp(), 16.dp()),
+                    Spacing.All(16.dp()),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
                         signInLauncher.launch(router.signIn(true))
                     })
@@ -85,10 +85,10 @@ class ProfileActivity :
                 nonNullUser.id,
                 nonNullUser.avatar,
                 nonNullUser.name,
-                nonNullUser.drama,
-                nonNullUser.level,
+                state.shareCount,
+                getLevel(state.shareCount),
                 nonNullUser.joinDate,
-                Icons.dramaIcon(this@ProfileActivity),
+                Icons.shareIcon(this@ProfileActivity),
                 Icons.levelIcon(this@ProfileActivity),
                 BaseListAdapter.NoHashProp(View.OnClickListener {
                     openSettingPage()
@@ -188,6 +188,16 @@ class ProfileActivity :
         super.onStart()
         viewModel.getCurrentUserProfile()
     }
+
+    private fun getLevel(shareCount: Int): Int {
+        return when (shareCount) {
+            in 0..1000 -> 0
+            in 1001..3000 -> 1
+            in 3001..10000 -> 2
+            else -> 3
+        }
+    }
+
 }
 
 

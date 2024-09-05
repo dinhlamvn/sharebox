@@ -274,8 +274,6 @@ class RealtimeDatabaseRepository @Inject constructor(
         val newUser = user.copy(
             name = realtimeUserObj.name,
             avatar = realtimeUserObj.avatar,
-            level = realtimeUserObj.level,
-            drama = realtimeUserObj.drama,
             joinDate = realtimeUserObj.joinDate,
             synced = true
         )

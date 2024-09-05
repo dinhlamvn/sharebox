@@ -34,7 +34,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/text_about"
         app:layout_constraintTop_toBottomOf="@id/divider">
 
@@ -169,9 +171,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:drawablePadding="8dp"
-                android:textStyle="italic"
                 android:hint="@string/auto_sync_data_desc"
                 android:textAppearance="@style/TextCaption"
+                android:textStyle="italic"
                 app:layout_constraintTop_toBottomOf="@id/switch_auto_sync" />
 
             <androidx.appcompat.widget.AppCompatTextView

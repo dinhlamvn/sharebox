@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.ui.setting
 
 import android.app.Activity
+import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -9,6 +12,9 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.text.underline
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
@@ -172,9 +178,27 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         }
 
         binding.switchAutoSync.isVisible = userHelper.isSignedIn()
-        binding.textAbout.text = getString(
-            R.string.setting_about, getString(R.string.app_name), BuildConfig.VERSION_NAME
-        )
+        binding.textAbout.text = buildSpannedString {
+            underline {
+                color(Color.BLUE) {
+                    append(
+                        getString(
+                            R.string.setting_about,
+                            getString(R.string.app_name),
+                            BuildConfig.VERSION_NAME
+                        )
+                    )
+                }
+            }
+        }
+        binding.textAbout.setOnClickListener {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=com.dinhlam.sharebox")
+            )
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
     }
 
     private fun requestSignOut() {

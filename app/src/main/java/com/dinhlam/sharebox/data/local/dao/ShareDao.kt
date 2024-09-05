@@ -91,7 +91,7 @@ interface ShareDao {
     )
     suspend fun findWhereInBox(userId: String, boxId: String, limit: Int, offset: Int): List<Share>
 
-    @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
+    @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId AND share_box_id IS NOT NULL")
     suspend fun countByUser(userId: String): Int
 
     @Query("SELECT * FROM share WHERE synced = 0")
