@@ -161,7 +161,7 @@ class ShareReceiveActivity :
             }
         }
 
-        binding.recyclerView.adapter = shareContentAdapter
+        shareContentAdapter.attachTo(binding.recyclerView, this)
 
         binding.containerButtonShare.setOnClickListener {
             share()
@@ -195,6 +195,22 @@ class ShareReceiveActivity :
             scrollToBottomEditText(v)
         }
 
+        viewModel.onChange(this, ShareReceiveState::currentBox) { currentBox ->
+            val boxName = currentBox?.boxName
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            binding.textShareBox.text = boxName
+            binding.textShareBox.setDrawableCompat(
+                start = Icons.boxIcon(this),
+                end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
+            )
+        }
+
+        viewModel.onChange(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
+            collectionDetail?.let {
+                binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
+            } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
+        }
+
         viewModel.onChange(this, ShareReceiveState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad is BaseViewModel.AsyncLoad.Loading) {
                 binding.viewLoading.show()
@@ -213,22 +229,6 @@ class ShareReceiveActivity :
             } else if (asyncLoad is BaseViewModel.AsyncLoad.Failed) {
                 showToast(asyncLoad.error.message)
             }
-        }
-
-        viewModel.onChange(this, ShareReceiveState::currentBox) { currentBox ->
-            val boxName = currentBox?.boxName
-            val isLock = currentBox?.passcode?.isNotBlank() ?: false
-            binding.textShareBox.text = boxName
-            binding.textShareBox.setDrawableCompat(
-                start = Icons.boxIcon(this),
-                end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
-            )
-        }
-
-        viewModel.onChange(this, ShareReceiveState::bookmarkCollection) { collectionDetail ->
-            collectionDetail?.let {
-                binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
-            } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
         }
 
         handleShareData()
