@@ -7,7 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class ShareDetail(
     val id: Int,
     val shareId: String,
-    val user: UserDetail,
     val shareNote: String?,
     val shareDate: Long,
     val createdAt: Long,

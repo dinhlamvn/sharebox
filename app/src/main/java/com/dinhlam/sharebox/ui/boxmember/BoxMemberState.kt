@@ -5,5 +5,6 @@ import com.dinhlam.sharebox.model.BoxMember
 
 data class BoxMemberState(
     val boxId: String,
-    val members: List<BoxMember> = emptyList()
+    val members: List<BoxMember> = emptyList(),
+    val loading: Boolean = true,
 ) : BaseViewModel.BaseState

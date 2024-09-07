@@ -207,6 +207,10 @@ object Icons {
         return createIcon(context, FontAwesome.Icon.faw_trash_alt)
     }
 
+    fun linkIcon(context: Context): Drawable {
+        return createIcon(context, FontAwesome.Icon.faw_link)
+    }
+
     fun bookmarkedIcon(context: Context): Drawable {
         return createIcon(context, FontAwesome.Icon.faw_bookmark1)
     }

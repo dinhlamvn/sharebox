@@ -92,6 +92,8 @@ class BoxDetailActivity :
         }
 
     override fun onStateChanged(state: BoxDetailState) {
+        binding.imageEdit.isVisible =
+            userHelper.getCurrentUserId() == state.boxDetail?.createdBy
         shareAdapter.requestBuildListModels()
         binding.toolbar.title = state.boxDetail?.boxName
         binding.toolbar.subtitle = state.boxDetail?.boxDesc
@@ -214,6 +216,7 @@ class BoxDetailActivity :
                 3 -> WorkerUtils.enqueueDownloadShare(
                     this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
                 )
+
                 4 -> onBookmark(shareId)
                 5 -> copy(share.boxDetail?.boxId)
                 6 -> moveToTrash(share)

@@ -8,7 +8,7 @@ data class BoxDetail(
     val boxId: String,
     val boxName: String,
     val boxDesc: String?,
-    val createdUser: UserDetail,
+    val createdBy: String,
     val createdDate: Long,
     val passcode: String?,
     val lastSeen: Long

@@ -62,6 +62,10 @@ class BoxRepository @Inject constructor(
         find(limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
 
+    suspend fun find(boxIdList: List<String>): List<BoxDetail> = boxDao.runCatching {
+        find(boxIdList).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+    }.getOrDefault(emptyList())
+
     suspend fun findByUser(userId: String, limit: Int, offset: Int): List<BoxDetail> =
         boxDao.runCatching {
             find(userId, limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
@@ -95,13 +99,12 @@ class BoxRepository @Inject constructor(
         findLatestBoxesWithoutPasscode().asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
     }.getOrDefault(emptyList())
 
-    private suspend fun convertBoxToBoxDetail(box: Box): BoxDetail? {
-        val userDetail = userRepository.findOne(box.createdBy) ?: return null
+    private fun convertBoxToBoxDetail(box: Box): BoxDetail {
         return BoxDetail(
             box.boxId,
             box.boxName,
             box.boxDesc,
-            userDetail,
+            box.createdBy,
             box.createdDate,
             box.passcode,
             box.lastSeen

@@ -26,12 +26,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
@@ -59,16 +62,6 @@ class RealtimeDatabaseRepository @Inject constructor(
             .asCoroutineDispatcher() + CoroutineName("realtime-database-scope")
     )
 
-    private var shareChildEventListener: SimpleRealtimeEventListener? = null
-
-    private var userChildEventListener: SimpleRealtimeEventListener? = null
-
-    private var commentChildEventListener: SimpleRealtimeEventListener? = null
-
-    private var likeChildEventListener: SimpleRealtimeEventListener? = null
-
-    private var boxChildEventListener: SimpleRealtimeEventListener? = null
-
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
     private val userRef: DatabaseReference by lazyOf(database.getReference("users"))
@@ -79,7 +72,10 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     private val boxRef: DatabaseReference by lazyOf(database.getReference("boxes"))
 
-    private val boxMemberRef: DatabaseReference by lazyOf(database.getReference("box-members"))
+    private val boxMemberRef: DatabaseReference by lazyOf(
+        database.getReference("box-members").child(userHelper.getCurrentUserId())
+    )
+    private val boxMemberInvitedRef: DatabaseReference by lazyOf(database.getReference("box-members-invited"))
 
     suspend fun push(share: Share) {
         if (!userHelper.isSignedIn()) {
@@ -141,73 +137,15 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    suspend fun sync() {
-        if (!userHelper.isSignedIn()) {
-            return
-        }
-
-        val userShareRef = shareRef.orderByChild("share_user_id")
-            .equalTo(userHelper.getCurrentUserId())
-        syncDataInRef(
-            userShareRef, ::onShareAdded
-        )
-
-        syncDataInRef(
-            userRef, ::onUserAdded
-        )
-        syncDataInRef(
-            commentRef, ::onCommentAdded
-        )
-        syncDataInRef(
-            likeRef, ::onLikeAdded
-        )
-        syncDataInRef(
-            boxRef, ::onBoxAdded
-        )
-    }
-
-    fun consume() {
-        consume(shareRef, ::onShareAdded)
-        consume(userRef, ::onUserAdded)
-        consume(commentRef, ::onCommentAdded)
-        consume(likeRef, ::onLikeAdded)
-        consume(boxRef, ::onBoxAdded)
-    }
-
-    private suspend fun syncDataInRef(
-        ref: Query, childAddedHandler: suspend (String, Map<String, Any>) -> Unit
-    ) {
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!snapshot.hasChildren()) {
-                    return
-                }
-
-                realtimeDatabaseScope.launch {
-                    val iterator = snapshot.children.iterator()
-                    while (iterator.hasNext()) {
-                        val data = iterator.next()
-                        val key = data.key ?: continue
-                        val value = data.value?.cast<Map<String, Any>>() ?: continue
-                        childAddedHandler.invoke(key, value)
-                    }
-                }
+    fun sync() {
+        realtimeDatabaseScope.launch(Dispatchers.IO) {
+            if (!userHelper.isSignedIn()) {
+                return@launch
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Logger.error(error.message)
-            }
-        })
-    }
-
-    private fun consume(
-        databaseRef: DatabaseReference,
-        childAddedHandler: suspend (String, Map<String, Any>) -> Unit
-    ) {
-        shareChildEventListener = SimpleRealtimeEventListener(
-            realtimeDatabaseScope, childAddedHandler
-        ).also { listener ->
-            databaseRef.addListenerForSingleValueEvent(listener)
+            val shareListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onShareAdded)
+            val boxListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onBoxAdded)
+            shareRef.addListenerForSingleValueEvent(shareListener)
+            boxRef.addListenerForSingleValueEvent(boxListener)
         }
     }
 
@@ -267,100 +205,48 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    private suspend fun onUserAdded(userId: String, jsonMap: Map<String, Any>) {
-        val realtimeUserObj = RealtimeUserObj.from(jsonMap)
-        val user = userRepository.findOneRaw(userId) ?: User(
-            userId = realtimeUserObj.userId,
-            name = realtimeUserObj.name,
-            avatar = realtimeUserObj.avatar,
-            joinDate = realtimeUserObj.joinDate,
-            synced = true
-        )
-
-        val newUser = user.copy(
-            name = realtimeUserObj.name,
-            avatar = realtimeUserObj.avatar,
-            joinDate = realtimeUserObj.joinDate,
-            synced = true
-        )
-
-        if (!userRepository.upsert(newUser)) {
-            Logger.error("Upsert new user to database failed.")
-        }
-    }
-
-    private suspend fun onCommentAdded(commentId: String, jsonMap: Map<String, Any>) {
-        val realtimeCommentObj = RealtimeCommentObj.from(jsonMap)
-        commentRepository.findOneRaw(commentId) ?: run {
-            val commentEntity = commentRepository.insert(
-                commentId,
-                realtimeCommentObj.shareId,
-                realtimeCommentObj.userId,
-                realtimeCommentObj.content,
-                realtimeCommentObj.commentDate,
-                true
-            )
-
-            if (commentEntity == null) {
-                Logger.error("Insert comment from cloud to database failed.")
-            }
-        }
-    }
-
-    private suspend fun onLikeAdded(likeId: String, jsonMap: Map<String, Any>) {
-        val realtimeLikeObj = RealtimeLikeObj.from(jsonMap)
-        likeRepository.findOneRaw(likeId) ?: run {
-            val like = likeRepository.like(
-                realtimeLikeObj.shareId,
-                realtimeLikeObj.userId,
-                realtimeLikeObj.likeId,
-                realtimeLikeObj.likeDate,
-                true
-            )
-
-            if (like == null) {
-                Logger.error("Insert like from cloud to database failed.")
-            }
-        }
-    }
-
-    fun onDestroy() {
-        shareChildEventListener?.let { listener -> shareRef.removeEventListener(listener) }
-        userChildEventListener?.let { listener -> userRef.removeEventListener(listener) }
-        commentChildEventListener?.let { listener -> commentRef.removeEventListener(listener) }
-        likeChildEventListener?.let { listener -> likeRef.removeEventListener(listener) }
-        boxChildEventListener?.let { listener -> boxRef.removeEventListener(listener) }
-    }
-
     private class SimpleRealtimeEventListener(
         private val scope: CoroutineScope,
         private val block: suspend (String, Map<String, Any>) -> Unit
     ) : ValueEventListener {
+        var completed: Boolean = false
 
         override fun onDataChange(snapshot: DataSnapshot) {
-            snapshot.children.forEach { dataSnapshot ->
-                val dataKey = dataSnapshot.key ?: return
-                Logger.debug("Data with key $dataKey added")
-                val value = dataSnapshot.value.cast<Map<String, Any>>() ?: return
-                scope.launch {
+            scope.launch {
+                val iterator = snapshot.children.iterator()
+                while (iterator.hasNext()) {
+                    val dataSnapshot = iterator.next()
+                    val dataKey = dataSnapshot.key ?: continue
+                    val value = dataSnapshot.value.cast<Map<String, Any>>() ?: continue
                     block.invoke(dataKey, value)
                 }
+            }.invokeOnCompletion {
+                completed = true
             }
         }
 
         override fun onCancelled(error: DatabaseError) {
             Logger.error("consume data share error")
             Logger.error(error.message)
+            completed = true
         }
     }
 
-    suspend fun pushBoxMember(boxId: String, memberId: String, memberEmail: String) {
-        val realtimeBoxMember = RealtimeBoxMemberObj(memberId, memberEmail, nowUTCTimeInMillis())
+    suspend fun pushBoxMember(
+        boxId: String,
+        memberId: String,
+        memberEmail: String
+    ) {
+        val createdTime = nowUTCTimeInMillis()
+        val realtimeBoxMember = RealtimeBoxMemberObj(memberId, memberEmail, createdTime)
         boxMemberRef.child(boxId).push().setValue(realtimeBoxMember).await()
+        boxMemberInvitedRef.child(memberId).child(boxId).push()
+            .setValue(ServerValue.TIMESTAMP)
     }
 
-    suspend fun removeBoxMember(boxId: String, dataKey: String) {
+    suspend fun removeBoxMember(boxId: String, dataKey: String, memberId: String) {
         boxMemberRef.child(boxId).child(dataKey).removeValue().await()
+        boxMemberInvitedRef.child(memberId).child(boxId).removeValue()
     }
 
     fun onBoxMembersChange(boxId: String, block: (List<BoxMember>) -> Unit): ValueEventListener {
@@ -378,5 +264,29 @@ class RealtimeDatabaseRepository @Inject constructor(
                 Logger.error("box member error")
             }
         })
+    }
+
+    fun removeBoxMembersChangeEvent(boxId: String, listener: ValueEventListener) {
+        boxMemberRef.child(boxId).removeEventListener(listener)
+    }
+
+    fun onBoxMemberInvitedChange(block: (List<String>) -> Unit): ValueEventListener {
+        return boxMemberInvitedRef.child(userHelper.getCurrentUserId())
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val boxIdList = snapshot.children.mapNotNull { dataSnapshot ->
+                        dataSnapshot.key
+                    }
+                    block.invoke(boxIdList)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Logger.error("box member error")
+                }
+            })
+    }
+
+    fun removeBoxMembersInvitedChangeEvent(listener: ValueEventListener) {
+        boxMemberInvitedRef.child(userHelper.getCurrentUserId()).removeEventListener(listener)
     }
 }

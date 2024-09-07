@@ -18,7 +18,6 @@ import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.delay
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
@@ -44,13 +43,9 @@ class SyncDataWorker @AssistedInject constructor(
         return try {
             syncBoxes()
             syncShares()
-            realtimeDatabaseRepository.consume()
-            delay(3_000)
             Result.success()
         } catch (e: Exception) {
-            Result.success()
-        } finally {
-            realtimeDatabaseRepository.onDestroy()
+            Result.retry()
         }
     }
 

@@ -58,4 +58,5 @@ interface Router {
 
     fun trash(context: Context): Intent
     fun boxMembers(context: Context, boxId: String): Intent
+    fun boxInvited(context: Context): Intent
 }

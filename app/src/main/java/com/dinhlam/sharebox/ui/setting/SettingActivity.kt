@@ -20,6 +20,7 @@ import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -51,6 +52,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     @Inject
     lateinit var router: Router
 
+    @Inject
+    lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
+
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
@@ -58,6 +62,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     private fun handleSignInResult(activityResult: ActivityResult) {
         if (activityResult.resultCode == Activity.RESULT_OK) {
             binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
+            realtimeDatabaseRepository.sync()
         }
     }
 

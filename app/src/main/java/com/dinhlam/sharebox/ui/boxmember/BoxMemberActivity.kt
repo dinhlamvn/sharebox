@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.databinding.ActivityBoxMemberBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.listmodel.BoxMemberListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +23,11 @@ class BoxMemberActivity :
 
     private val memberAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
+            if (state.loading) {
+                LoadingListModel("loading").attachTo(this)
+                return@getState
+            }
+
             state.members.forEach { member ->
                 BoxMemberListModel(
                     "member_${member.memberId}",

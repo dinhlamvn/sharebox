@@ -21,6 +21,7 @@ import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
 import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
+import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
@@ -258,5 +259,9 @@ class AppRouter constructor(private val context: Context) : Router {
             AppExtras.EXTRA_BOX_ID,
             boxId
         )
+    }
+
+    override fun boxInvited(context: Context): Intent {
+        return Intent(context, BoxInvitedActivity::class.java)
     }
 }

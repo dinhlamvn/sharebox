@@ -130,6 +130,24 @@ class ProfileActivity :
             VerticalDividerListModel(
                 "divider_trash", height = 1.dp()
             ).attachTo(this)
+
+            if (userHelper.isSignedIn()) {
+                TextListModel(
+                    "title_box_invited",
+                    getString(R.string.title_box_invited),
+                    textAppearance = R.style.TextBodyMedium,
+                    height = 50.dp(),
+                    gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                    startIcon = Icons.linkIcon(this@ProfileActivity),
+                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        startActivity(router.boxInvited(this@ProfileActivity))
+                    })
+                ).attachTo(this)
+
+                VerticalDividerListModel(
+                    "divider_box_invited", height = 1.dp()
+                ).attachTo(this)
+            }
         }
     }
 

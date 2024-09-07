@@ -20,6 +20,7 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivityBoxFormBinding
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.getTrimmedText
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -43,6 +44,10 @@ class BoxFormActivity :
 
     @Inject
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
+
+    private val signInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
+    )
 
     private val passcodeResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -139,10 +144,21 @@ class BoxFormActivity :
             }
         }
 
+        binding.cardContainerMember.isVisible = getState(viewModel, BoxFormState::boxId) != null
         binding.containerMembers.setOnClickListener {
-            val boxId = getState(viewModel, BoxFormState::boxId)!!
-            startActivity(router.boxMembers(this, boxId))
+            if (userHelper.isSignedIn()) {
+                val boxId = getState(viewModel, BoxFormState::boxId)!!
+                startActivity(router.boxMembers(this, boxId))
+            } else {
+                showToast(R.string.require_sign_in_to_manage_member)
+                signInLauncher.launch(router.signIn(true))
+            }
         }
+    }
+
+    private fun handleSignInResult() {
+        val boxId = getState(viewModel, BoxFormState::boxId)!!
+        startActivity(router.boxMembers(this, boxId))
     }
 
     @UiThread

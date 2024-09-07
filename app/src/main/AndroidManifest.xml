@@ -261,6 +261,11 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.boxinvited.BoxInvitedActivity"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name=".provider.ShareBoxFileProvider"
             android:authorities="${applicationId}.file_provider"
@@ -279,13 +284,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".services.RealtimeDatabaseService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="dataSync"
-            android:stopWithTask="true" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
