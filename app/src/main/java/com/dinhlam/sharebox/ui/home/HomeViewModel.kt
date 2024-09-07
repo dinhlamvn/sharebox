@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,11 +40,6 @@ class HomeViewModel @Inject constructor(
         }
         refresh()
     }
-
-    private fun getTotalBoxes() = suspend { boxRepository.count(userHelper.getCurrentUserId()) }
-        .execute { asyncLoad ->
-            copy(totalBox = asyncLoad.data.orElse(0))
-        }
 
     private fun triggerCanLoadMore() = getState { state ->
         suspend {
@@ -162,7 +158,6 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        getTotalBoxes()
         getListBoxes()
         getRecentlyShares()
     }
@@ -232,5 +227,16 @@ class HomeViewModel @Inject constructor(
                 this
             }
         }
+    }
+
+    fun refreshBoxDetail(boxDetail: BoxDetail) = getState { state ->
+        val boxes = state.boxes.map { box ->
+            if (box.boxId == boxDetail.boxId) {
+                boxDetail
+            } else {
+                box
+            }
+        }
+        setState { copy(boxes = boxes) }
     }
 }

@@ -26,11 +26,13 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
+import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
@@ -47,6 +49,17 @@ import javax.inject.Inject
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+
+    private val viewBoxDetailLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxDetail =
+                    data.getParcelableExtraCompat<BoxDetail>(AppExtras.EXTRA_BOX_DETAIL)
+                        ?: return@registerForActivityResult
+                viewModel.refreshBoxDetail(boxDetail)
+            }
+        }
 
     private val chooseBoxLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -365,7 +378,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewModel.setChooseBoxFor(null)
 
         if (chooseBoxFor is HomeState.ChooseBoxFor.Detail) {
-            startActivity(router.boxDetail(this, boxId))
+            openBox(boxId)
         } else if (chooseBoxFor is HomeState.ChooseBoxFor.Web) {
             router.moveToChromeCustomTab(
                 this,
@@ -411,5 +424,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun showBoxList(title: String? = null) {
         chooseBoxLauncher.launch(router.boxList(this, title))
+    }
+
+    fun openBox(boxId: String) {
+        viewBoxDetailLauncher.launch(router.boxDetail(this, boxId))
     }
 }

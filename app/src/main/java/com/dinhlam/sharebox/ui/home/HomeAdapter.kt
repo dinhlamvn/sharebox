@@ -166,7 +166,7 @@ class HomeAdapter @Inject constructor(
     }
 
     private fun onBoxClick(boxId: String) {
-        activity.startActivity(router.boxDetail(activity, boxId))
+        activity.openBox(boxId)
     }
 
     private fun getDiscoverList() = buildList {

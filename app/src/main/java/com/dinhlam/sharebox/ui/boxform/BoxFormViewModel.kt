@@ -52,7 +52,7 @@ class BoxFormViewModel @Inject constructor(
                     )
                 }
                 boxRepository.update(newBox)
-                box
+                newBox
             } ?: boxRepository.insert(
                 BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$name"),
                 name,

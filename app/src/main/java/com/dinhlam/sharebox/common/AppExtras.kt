@@ -11,6 +11,7 @@ object AppExtras {
     const val EXTRA_SIGN_IN_FOR_RESULT = "extra-sign-in-for-result"
     const val EXTRA_BOX_ID = "extra-box-id"
     const val EXTRA_BOX_NAME = "extra-box-name"
+    const val EXTRA_BOX_DETAIL = "extra-box-detail"
     const val EXTRA_URL = "extra-url"
     const val EXTRA_DOWNLOAD_VIDEOS = "extra-download-videos"
     const val EXTRA_DOWNLOAD_AUDIOS = "extra-download-audios"
