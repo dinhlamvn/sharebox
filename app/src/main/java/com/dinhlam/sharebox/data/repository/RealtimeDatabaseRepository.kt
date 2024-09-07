@@ -6,12 +6,16 @@ import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.model.BoxMember
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareType
+import com.dinhlam.sharebox.model.realtimedb.RealtimeBoxMemberObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeBoxObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeLikeObj
@@ -74,6 +78,8 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val likeRef: DatabaseReference by lazyOf(database.getReference("likes"))
 
     private val boxRef: DatabaseReference by lazyOf(database.getReference("boxes"))
+
+    private val boxMemberRef: DatabaseReference by lazyOf(database.getReference("box-members"))
 
     suspend fun push(share: Share) {
         if (!userHelper.isSignedIn()) {
@@ -346,5 +352,31 @@ class RealtimeDatabaseRepository @Inject constructor(
             Logger.error("consume data share error")
             Logger.error(error.message)
         }
+    }
+
+    suspend fun pushBoxMember(boxId: String, memberId: String, memberEmail: String) {
+        val realtimeBoxMember = RealtimeBoxMemberObj(memberId, memberEmail, nowUTCTimeInMillis())
+        boxMemberRef.child(boxId).push().setValue(realtimeBoxMember).await()
+    }
+
+    suspend fun removeBoxMember(boxId: String, dataKey: String) {
+        boxMemberRef.child(boxId).child(dataKey).removeValue().await()
+    }
+
+    fun onBoxMembersChange(boxId: String, block: (List<BoxMember>) -> Unit): ValueEventListener {
+        return boxMemberRef.child(boxId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val members = snapshot.children.mapNotNull { dataSnapshot ->
+                    val key = dataSnapshot.key ?: return@mapNotNull null
+                    val value = dataSnapshot.value.castNonNull<Map<String, Any>>()
+                    BoxMember(key, value["member_id"].toString(), value["member_email"].toString())
+                }
+                block.invoke(members)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Logger.error("box member error")
+            }
+        })
     }
 }

@@ -171,6 +171,12 @@
     <string name="confirm_move_to_trash">Are you sure to move this share to trash?</string>
     <string name="title_trash">Trash</string>
     <string name="restore_share_to">Restore to…</string>
+    <string name="basic_info">Basic Info</string>
+    <string name="members">Members</string>
+    <string name="title_add_member">Add member</string>
+    <string name="add">Add</string>
+    <string name="duplicate_member">Duplicate member</string>
+    <string name="hint_input_email">Email</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

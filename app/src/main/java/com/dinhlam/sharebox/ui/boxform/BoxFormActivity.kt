@@ -138,6 +138,11 @@ class BoxFormActivity :
                 finish()
             }
         }
+
+        binding.containerMembers.setOnClickListener {
+            val boxId = getState(viewModel, BoxFormState::boxId)!!
+            startActivity(router.boxMembers(this, boxId))
+        }
     }
 
     @UiThread

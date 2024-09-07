@@ -356,4 +356,16 @@ object Icons {
     ): IconicsDrawable {
         return createIcon(context, FontAwesome.Icon.faw_youtube, block(IconBuilder(context)))
     }
+
+    fun getFontAwesomeIcon(context: Context, iconCode: String): IconicsDrawable {
+        return createIcon(
+            context, FontAwesome.getIcon(iconCode)
+        )
+    }
+
+    fun getGoogleMaterialIcon(context: Context, iconCode: String): IconicsDrawable {
+        return createIcon(
+            context, GoogleMaterial.getIcon(iconCode)
+        )
+    }
 }

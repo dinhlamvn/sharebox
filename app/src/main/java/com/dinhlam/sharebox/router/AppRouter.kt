@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
+import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
@@ -250,5 +251,12 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun trash(context: Context): Intent {
         return Intent(context, TrashActivity::class.java)
+    }
+
+    override fun boxMembers(context: Context, boxId: String): Intent {
+        return Intent(context, BoxMemberActivity::class.java).putExtra(
+            AppExtras.EXTRA_BOX_ID,
+            boxId
+        )
     }
 }

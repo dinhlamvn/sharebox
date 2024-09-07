@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.databinding.DialogTextViewerBinding
+import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.updateHeight
 
 class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
 
@@ -20,6 +22,8 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.scrollView.updateHeight(screenHeight().times(0.7f).toInt())
+
         val textContent = arguments?.getString(Intent.EXTRA_TEXT) ?: ""
         val htmlText = textContent.replace("\n", "<br>")
         binding.textContent.text =
