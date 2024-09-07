@@ -87,7 +87,13 @@ class BoxDetailViewModel @Inject constructor(
     }
 
     fun doOnRefresh() = getState { state ->
-        setState { BoxDetailState(boxId = state.boxId, boxDetail = boxDetail) }
+        setState {
+            BoxDetailState(
+                boxId = state.boxId,
+                boxDetail = boxDetail,
+                mustInputPasscode = mustInputPasscode
+            )
+        }
         loadShares()
     }
 
