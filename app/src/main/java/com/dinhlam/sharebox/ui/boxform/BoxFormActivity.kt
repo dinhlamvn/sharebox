@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.MenuItem
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.UiThread
@@ -156,9 +157,11 @@ class BoxFormActivity :
         }
     }
 
-    private fun handleSignInResult() {
-        val boxId = getState(viewModel, BoxFormState::boxId)!!
-        startActivity(router.boxMembers(this, boxId))
+    private fun handleSignInResult(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            val boxId = getState(viewModel, BoxFormState::boxId)!!
+            startActivity(router.boxMembers(this, boxId))
+        }
     }
 
     @UiThread

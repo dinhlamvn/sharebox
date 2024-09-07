@@ -16,6 +16,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.underline
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
@@ -27,13 +28,17 @@ import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.AppSettingHelper
+import com.dinhlam.sharebox.helper.TransferDataHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.AppSettings
+import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -55,6 +60,12 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     @Inject
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
 
+    @Inject
+    lateinit var userSharePref: UserSharePref
+
+    @Inject
+    lateinit var transferDataHelper: TransferDataHelper
+
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
     )
@@ -62,7 +73,6 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     private fun handleSignInResult(activityResult: ActivityResult) {
         if (activityResult.resultCode == Activity.RESULT_OK) {
             binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
-            realtimeDatabaseRepository.sync()
         }
     }
 
@@ -210,12 +220,19 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         MaterialAlertDialogBuilder(this).setTitle(R.string.dialog_confirm)
             .setMessage(R.string.sign_out_confirm_message)
             .setPositiveButton(R.string.sign_out) { _, _ ->
-                userHelper.signOut(this, {
-                    binding.imageAction.setImageDrawable(Icons.signInIcon(this))
-                    showToast(R.string.logged_out)
-                }, {
-                    showToast(R.string.logged_out_error)
-                })
+                val currentUserId = userHelper.getCurrentUserId()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    transferDataHelper.transferData(
+                        currentUserId,
+                        userSharePref.getAnonymousUserId()
+                    )
+                    userHelper.signOut(this@SettingActivity, this, {
+                        binding.imageAction.setImageDrawable(Icons.signInIcon(this@SettingActivity))
+                        showToast(R.string.logged_out)
+                    }, {
+                        showToast(R.string.logged_out_error)
+                    })
+                }
             }.setNegativeButton(R.string.dialog_cancel, null).show()
     }
 

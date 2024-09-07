@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
@@ -24,6 +23,7 @@ import com.dinhlam.sharebox.databinding.ActivitySignInBinding
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.FirebaseStorageHelper
+import com.dinhlam.sharebox.helper.TransferDataHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
@@ -70,6 +70,9 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     @Inject
     lateinit var userSharePref: UserSharePref
+
+    @Inject
+    lateinit var transferDataHelper: TransferDataHelper
 
     private val signInForResult by lazy {
         intent.getBooleanExtra(
@@ -155,7 +158,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         val userId = UserUtils.createUserId(email)
         userHelper.createUser(userId, name, photoUrl, { user ->
             realtimeDatabaseRepository.push(user)
-            transferData(user)
+            transferDataHelper.transferData(userSharePref.getAnonymousUserId(), user.userId)
             if (signInForResult) {
                 binding.viewLoading.hide()
                 setResult(Activity.RESULT_OK)
@@ -171,11 +174,6 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                 signOut()
             }
         })
-    }
-
-    private suspend fun transferData(user: User) {
-        shareRepository.transferData(userSharePref.getAnonymousUserId(), user.userId)
-        boxRepository.transferData(userSharePref.getAnonymousUserId(), user.userId)
     }
 
     private fun signOut() {
