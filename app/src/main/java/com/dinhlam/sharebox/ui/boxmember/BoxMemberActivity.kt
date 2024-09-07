@@ -11,15 +11,21 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.databinding.ActivityBoxMemberBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.BoxMemberListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.utils.UserUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoxMemberActivity :
     BaseViewModelActivity<BoxMemberState, BoxMemberViewModel, ActivityBoxMemberBinding>() {
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     private val memberAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
@@ -84,6 +90,11 @@ class BoxMemberActivity :
         val members = getState(viewModel, BoxMemberState::members)
         if (members.any { boxMember -> boxMember.memberEmail == email }) {
             showToast(R.string.duplicate_member)
+            return false
+        }
+        val memberId = UserUtils.createUserId(email)
+        if (memberId == userHelper.getCurrentUserId()) {
+            showToast(R.string.error_add_yourself)
             return false
         }
         return true

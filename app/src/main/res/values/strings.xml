@@ -181,6 +181,7 @@
     <string name="title_box_invited">Invited Boxes</string>
     <string name="invited_boxes">Invited Boxes</string>
     <string name="require_sign_in_to_manage_member">You need sign in to manage box member</string>
+    <string name="error_add_yourself">You can\'t add yourself</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

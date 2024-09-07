@@ -43,6 +43,7 @@ class SyncDataWorker @AssistedInject constructor(
         return try {
             syncBoxes()
             syncShares()
+            realtimeDatabaseRepository.sync()
             Result.success()
         } catch (e: Exception) {
             Result.retry()
