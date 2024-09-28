@@ -207,8 +207,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
                 property4.get(it),
                 property5.get(it)
             )
-        }
-            .distinctUntilChanged()
+        }.distinctUntilChanged()
             .resolveConsumer(lifecycleOwner) { consumer ->
                 block(
                     consumer.value1,

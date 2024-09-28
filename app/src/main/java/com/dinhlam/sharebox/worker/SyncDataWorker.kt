@@ -11,6 +11,7 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
@@ -74,16 +75,50 @@ class SyncDataWorker @AssistedInject constructor(
                 break
             }
             shares.forEach { share ->
-                realtimeDatabaseRepository.push(share)
-                val uris = share.shareData.cast<ShareData.ShareImage>()
-                    ?.let { shareImage -> listOf(shareImage.uri) }
-                    ?: share.shareData.cast<ShareData.ShareImages>()?.uris ?: emptyList()
-                // Do not need upload for network file
-                uris.filterNot(FileUtils::isNetworkFile).forEach { uri ->
-                    firebaseStorageHelper.uploadShareImageFile(appContext, share.shareId, uri)
-                }
+                val shareImage = share.shareData.cast<ShareData.ShareImage>()
+                val shareImages = share.shareData.cast<ShareData.ShareImages>()
+                val newShare = shareImage?.let { shareData -> handleShareImage(share, shareData) }
+                    ?: shareImages?.let { shareData -> handleShareImages(share, shareData) }
+                    ?: share
+                realtimeDatabaseRepository.push(newShare)
             }
         }
+    }
+
+    private suspend fun handleShareImage(share: Share, shareImage: ShareData.ShareImage): Share {
+        val shareUri = shareImage.uri
+        if (FileUtils.isNetworkFile(shareUri)) {
+            return share
+        }
+        val task = firebaseStorageHelper.uploadShareImageFile(appContext, share.shareId, shareUri)
+        if (task.task.isSuccessful) {
+            val uri =
+                firebaseStorageHelper.getImageDownloadUri(share.shareId, shareUri)
+            return share.copy(shareData = shareImage.copy(uri = uri))
+        }
+        return share
+    }
+
+    private suspend fun handleShareImages(share: Share, shareImages: ShareData.ShareImages): Share {
+        val shareUris = shareImages.uris.filter(FileUtils::isNetworkFile).toMutableList()
+        val uploadUris = shareImages.uris.filterNot(FileUtils::isNetworkFile)
+        if (uploadUris.isEmpty()) {
+            return share
+        }
+
+        repeat(uploadUris.size) { i ->
+            val task =
+                firebaseStorageHelper.uploadShareImageFile(appContext, share.shareId, uploadUris[i])
+            if (task.task.isSuccessful) {
+                val uri =
+                    firebaseStorageHelper.getImageDownloadUri(share.shareId, uploadUris[i])
+                shareUris.add(uri)
+            } else {
+                shareUris.add(uploadUris[i])
+            }
+        }
+
+        return share.copy(shareData = shareImages.copy(uris = shareUris))
     }
 
 
