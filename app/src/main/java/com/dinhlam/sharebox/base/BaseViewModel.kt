@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.model.Consumer2
 import com.dinhlam.sharebox.model.Consumer3
 import com.dinhlam.sharebox.model.Consumer4
 import com.dinhlam.sharebox.model.Consumer5
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.SelectBuilder
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.yield
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KProperty1
 
 abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewModel() {
@@ -97,10 +99,13 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         getStateChannel.trySend(block)
     }
 
-    protected fun <T> (suspend () -> T).execute(stateReducer: S.(AsyncLoad<T>) -> S): Job {
-        return viewModelScope.launch(Dispatchers.IO) {
+    protected fun <T> (suspend () -> T).execute(
+        dispatcher: CoroutineDispatcher? = null,
+        stateReducer: S.(AsyncLoad<T>) -> S
+    ): Job {
+        setState { stateReducer(AsyncLoad.Loading) }
+        return stateScope.launch(dispatcher ?: EmptyCoroutineContext) {
             try {
-                setState { stateReducer(AsyncLoad.Loading) }
                 val result = this@execute.invoke()
                 setState { stateReducer(AsyncLoad.Success(result)) }
             } catch (error: Throwable) {
@@ -109,8 +114,11 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         }
     }
 
-    protected fun <T> Deferred<T>.execute(stateReducer: S.(AsyncLoad<T>) -> S): Job {
-        return suspend { await() }.execute(stateReducer)
+    protected fun <T> Deferred<T>.execute(
+        dispatcher: CoroutineDispatcher? = null,
+        stateReducer: S.(AsyncLoad<T>) -> S
+    ): Job {
+        return suspend { await() }.execute(dispatcher, stateReducer)
     }
 
     protected fun doInBackground(
@@ -176,8 +184,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
                 property3.get(it),
                 property4.get(it)
             )
-        }
-            .distinctUntilChanged()
+        }.distinctUntilChanged()
             .resolveConsumer(lifecycleOwner) { consumer ->
                 block(consumer.value1, consumer.value2, consumer.value3, consumer.value4)
             }
