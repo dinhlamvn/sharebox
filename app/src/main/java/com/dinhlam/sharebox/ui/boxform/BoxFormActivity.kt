@@ -128,12 +128,12 @@ class BoxFormActivity :
             onSave()
         }
 
-        viewModel.onChange(this, BoxFormState::boxDetail) { boxDetail ->
+        viewModel.onChange(BoxFormState::boxDetail, this) { boxDetail ->
             binding.textEditName.setText(boxDetail?.boxName)
             binding.textEditDesc.setText(boxDetail?.boxDesc)
         }
 
-        viewModel.onChange(this, BoxFormState::asyncLoadSave) { asyncLoad ->
+        viewModel.onChange(BoxFormState::asyncLoadSave, this) { asyncLoad ->
             binding.viewLoading.isVisible = asyncLoad.loading
             val box = asyncLoad.data
             box?.let { createdBox ->

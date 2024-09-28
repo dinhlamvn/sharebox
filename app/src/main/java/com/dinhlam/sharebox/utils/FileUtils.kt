@@ -9,6 +9,12 @@ import java.util.UUID
 
 object FileUtils {
 
+    fun isNetworkFile(uri: Uri): Boolean {
+        return uri.toString().run {
+            startsWith("http") || startsWith("ftp")
+        }
+    }
+
     fun createShareImagesDir(context: Context): File? {
         val imageFileDir =
             context.getExternalFilesDir("share_images") ?: return null

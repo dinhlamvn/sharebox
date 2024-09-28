@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
-import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -109,7 +108,7 @@ class BookmarkListItemActivity :
         }
 
         viewModel.onChange(
-            this, BookmarkListItemState::bookmarkCollection
+            BookmarkListItemState::bookmarkCollection, this
         ) { bookmarkCollection ->
             bookmarkCollection?.let(::updateUi)
         }
@@ -135,14 +134,14 @@ class BookmarkListItemActivity :
         binding.recyclerView.adapter = shareAdapter
 
         viewModel.onChange(
-            this, BookmarkListItemState::requestVerifyPasscode
+            BookmarkListItemState::requestVerifyPasscode, this
         ) { shouldRequest ->
             if (shouldRequest) {
                 requestVerifyPasscode()
             }
         }
 
-        viewModel.onChange(this, BookmarkListItemState::asyncLoadRemoveShare) { asyncLoad ->
+        viewModel.onChange(BookmarkListItemState::asyncLoadRemoveShare, this) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 showToast(getString(R.string.removed_item, asyncLoad.value.shareNote))

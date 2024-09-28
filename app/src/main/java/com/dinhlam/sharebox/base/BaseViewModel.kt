@@ -7,14 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharebox.extensions.launchWhenAtLeast
-import kotlinx.coroutines.CoroutineName
+import com.dinhlam.sharebox.model.Consumer1
+import com.dinhlam.sharebox.model.Consumer2
+import com.dinhlam.sharebox.model.Consumer3
+import com.dinhlam.sharebox.model.Consumer4
+import com.dinhlam.sharebox.model.Consumer5
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -32,7 +36,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.SelectBuilder
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.yield
-import java.util.concurrent.Executors
 import kotlin.reflect.KProperty1
 
 abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewModel() {
@@ -52,19 +55,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     }
 
     private val stateScope =
-        CoroutineScope(
-            Executors.newCachedThreadPool()
-                .asCoroutineDispatcher() + CoroutineName("state-scope")
-        )
-
-    private data class Consumer<V>(
-        val value: V
-    )
-
-    private data class Consumer2<V1, V2>(
-        val value1: V1,
-        val value2: V2
-    )
+        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val setStateChannel = Channel<suspend S.() -> S>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(S) -> Unit>(Channel.UNLIMITED)
@@ -132,31 +123,11 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         }
     }
 
-    protected fun <V1, V2> onChange(
-        property1: KProperty1<S, V1>, property2: KProperty1<S, V2>, block: (V1, V2) -> Unit
-    ) {
-        stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
-            .distinctUntilChanged()
-            .resolveConsumer { consumer ->
-                block(consumer.value1, consumer.value2)
-            }
-    }
-
-    protected fun <V> onChange(
-        property: KProperty1<S, V>, block: (V) -> Unit
-    ) {
-        stateFlow.map { Consumer(property.get(it)) }
-            .distinctUntilChanged()
-            .resolveConsumer { consumer ->
-                block(consumer.value)
-            }
-    }
-
     fun <V> onChange(
-        lifecycleOwner: LifecycleOwner, property: KProperty1<S, V>, block: (V) -> Unit
+        property: KProperty1<S, V>, lifecycleOwner: LifecycleOwner? = null, block: (V) -> Unit
     ) {
         stateFlow.map {
-            Consumer(property.get(it))
+            Consumer1(property.get(it))
         }.distinctUntilChanged()
             .resolveConsumer(lifecycleOwner) { consumer ->
                 block(consumer.value)
@@ -164,15 +135,81 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     }
 
     fun <V1, V2> onChange(
-        lifecycleOwner: LifecycleOwner,
         property1: KProperty1<S, V1>,
         property2: KProperty1<S, V2>,
+        lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2) -> Unit
     ) {
         stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
             .distinctUntilChanged()
             .resolveConsumer(lifecycleOwner) { consumer ->
                 block(consumer.value1, consumer.value2)
+            }
+    }
+
+    fun <V1, V2, V3> onChange(
+        property1: KProperty1<S, V1>,
+        property2: KProperty1<S, V2>,
+        property3: KProperty1<S, V3>,
+        lifecycleOwner: LifecycleOwner? = null,
+        block: (V1, V2, V3) -> Unit
+    ) {
+        stateFlow.map { Consumer3(property1.get(it), property2.get(it), property3.get(it)) }
+            .distinctUntilChanged()
+            .resolveConsumer(lifecycleOwner) { consumer ->
+                block(consumer.value1, consumer.value2, consumer.value3)
+            }
+    }
+
+    fun <V1, V2, V3, V4> onChange(
+        property1: KProperty1<S, V1>,
+        property2: KProperty1<S, V2>,
+        property3: KProperty1<S, V3>,
+        property4: KProperty1<S, V4>,
+        lifecycleOwner: LifecycleOwner? = null,
+        block: (V1, V2, V3, V4) -> Unit
+    ) {
+        stateFlow.map {
+            Consumer4(
+                property1.get(it),
+                property2.get(it),
+                property3.get(it),
+                property4.get(it)
+            )
+        }
+            .distinctUntilChanged()
+            .resolveConsumer(lifecycleOwner) { consumer ->
+                block(consumer.value1, consumer.value2, consumer.value3, consumer.value4)
+            }
+    }
+
+    fun <V1, V2, V3, V4, V5> onChange(
+        property1: KProperty1<S, V1>,
+        property2: KProperty1<S, V2>,
+        property3: KProperty1<S, V3>,
+        property4: KProperty1<S, V4>,
+        property5: KProperty1<S, V5>,
+        lifecycleOwner: LifecycleOwner? = null,
+        block: (V1, V2, V3, V4, V5) -> Unit
+    ) {
+        stateFlow.map {
+            Consumer5(
+                property1.get(it),
+                property2.get(it),
+                property3.get(it),
+                property4.get(it),
+                property5.get(it)
+            )
+        }
+            .distinctUntilChanged()
+            .resolveConsumer(lifecycleOwner) { consumer ->
+                block(
+                    consumer.value1,
+                    consumer.value2,
+                    consumer.value3,
+                    consumer.value4,
+                    consumer.value5
+                )
             }
     }
 

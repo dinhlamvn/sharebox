@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.helper.UserHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

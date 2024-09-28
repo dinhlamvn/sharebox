@@ -41,11 +41,7 @@ class ShareReceiveViewModel @Inject constructor(
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
-    init {
-        getCurrentUserProfile()
-    }
-
-    private fun getCurrentUserProfile() {
+    fun getCurrentUserProfile() {
         suspend { userRepository.findOne(userHelper.getCurrentUserId()) }
             .execute { asyncLoad ->
                 copy(activeUser = asyncLoad.data)

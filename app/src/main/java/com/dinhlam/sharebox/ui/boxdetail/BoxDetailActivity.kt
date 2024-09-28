@@ -178,9 +178,9 @@ class BoxDetailActivity :
         }
 
         viewModel.onChange(
-            this,
             BoxDetailState::boxDetail,
-            BoxDetailState::mustInputPasscode
+            BoxDetailState::mustInputPasscode,
+            this,
         ) { boxDetail, mustInputPasscode ->
             if (!boxDetail?.passcode.isNullOrBlank() && mustInputPasscode) {
                 val takeBox = boxDetail ?: return@onChange finish()
@@ -196,7 +196,7 @@ class BoxDetailActivity :
             }
         }
 
-        viewModel.onChange(this, BoxDetailState::asyncLoadSave) { asyncLoad ->
+        viewModel.onChange(BoxDetailState::asyncLoadSave, this) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 viewModel.updateShare(asyncLoad.value)

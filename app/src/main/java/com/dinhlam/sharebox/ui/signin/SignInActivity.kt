@@ -29,6 +29,7 @@ import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -159,6 +160,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         userHelper.createUser(userId, name, photoUrl, { user ->
             realtimeDatabaseRepository.push(user)
             transferDataHelper.transferData(userSharePref.getAnonymousUserId(), user.userId)
+            WorkerUtils.enqueueJobSyncDataOneTime(applicationContext)
             if (signInForResult) {
                 binding.viewLoading.hide()
                 setResult(Activity.RESULT_OK)

@@ -14,8 +14,12 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -27,6 +31,7 @@ class SyncDataWorker @AssistedInject constructor(
     private val boxRepository: BoxRepository,
     private val shareRepository: ShareRepository,
     private val router: Router,
+    private val firebaseStorageHelper: FirebaseStorageHelper,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -70,6 +75,13 @@ class SyncDataWorker @AssistedInject constructor(
             }
             shares.forEach { share ->
                 realtimeDatabaseRepository.push(share)
+                val uris = share.shareData.cast<ShareData.ShareImage>()
+                    ?.let { shareImage -> listOf(shareImage.uri) }
+                    ?: share.shareData.cast<ShareData.ShareImages>()?.uris ?: emptyList()
+                // Do not need upload for network file
+                uris.filterNot(FileUtils::isNetworkFile).forEach { uri ->
+                    firebaseStorageHelper.uploadShareImageFile(appContext, share.shareId, uri)
+                }
             }
         }
     }

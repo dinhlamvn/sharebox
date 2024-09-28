@@ -21,11 +21,11 @@ import com.dinhlam.sharebox.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeUserObj
+import com.dinhlam.sharebox.utils.FileUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
@@ -34,7 +34,6 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
@@ -160,7 +159,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     private suspend fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) = runCatching {
-        shareRepository.findOneRaw(shareId) ?: run {
+        val share = shareRepository.findOneRaw(shareId) ?: run {
             val realtimeShareObj = RealtimeShareObj.from(jsonMap)
 
             val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
@@ -172,29 +171,9 @@ class RealtimeDatabaseRepository @Inject constructor(
                     ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
                     else -> return@run null
                 }
-
-            val newShareData = shareData.cast<ShareData.ShareImage>()?.let { shareImage ->
-                firebaseStorageHelper.runCatching {
-                    getImageDownloadUri(
-                        shareId, shareImage.uri
-                    )
-                }.getOrNull()?.let { downloadUri ->
-                    shareImage.copy(uri = downloadUri)
-                }
-            } ?: shareData.cast<ShareData.ShareImages>()?.let { shareImages ->
-                val downloadUris = shareImages.uris.asFlow().mapNotNull { uri ->
-                    firebaseStorageHelper.runCatching {
-                        getImageDownloadUri(
-                            shareId, uri
-                        )
-                    }.getOrNull()
-                }.toList()
-                shareImages.copy(uris = downloadUris)
-            } ?: shareData
-
             shareRepository.insert(
                 shareId,
-                newShareData,
+                shareData,
                 realtimeShareObj.shareNote,
                 realtimeShareObj.shareBoxId,
                 realtimeShareObj.shareUserId,
@@ -202,7 +181,35 @@ class RealtimeDatabaseRepository @Inject constructor(
                 synced = true,
                 isVideoShare = realtimeShareObj.isVideoShare
             )
-        }
+        }!!
+
+        val newShareData = share.shareData.cast<ShareData.ShareImage>()?.let { shareImage ->
+            if (FileUtils.isNetworkFile(shareImage.uri)) {
+                shareImage
+            } else {
+                firebaseStorageHelper.runCatching {
+                    getImageDownloadUri(
+                        shareId, shareImage.uri
+                    )
+                }.getOrNull()?.let { downloadUri ->
+                    shareImage.copy(uri = downloadUri)
+                }
+            }
+        } ?: share.shareData.cast<ShareData.ShareImages>()?.let { shareImages ->
+            val downloadUris = shareImages.uris.asFlow().mapNotNull { uri ->
+                if (FileUtils.isNetworkFile(uri)) {
+                    uri
+                } else {
+                    firebaseStorageHelper.runCatching {
+                        getImageDownloadUri(
+                            shareId, uri
+                        )
+                    }.getOrNull()
+                }
+            }.toList()
+            shareImages.copy(uris = downloadUris)
+        } ?: share.shareData
+        shareRepository.update(share.copy(shareData = newShareData))
     }
 
     private class SimpleRealtimeEventListener(
