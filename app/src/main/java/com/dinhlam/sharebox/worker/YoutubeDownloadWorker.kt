@@ -1,6 +1,9 @@
 package com.dinhlam.sharebox.worker
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
@@ -14,7 +17,7 @@ import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.network.LibreTubeServices
-import com.dinhlam.sharebox.helper.LocalStorageHelper
+import com.dinhlam.sharebox.extensions.pushNotification
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.UserAgentUtils
@@ -31,9 +34,10 @@ class YoutubeDownloadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
     private val libreTubeServices: LibreTubeServices,
-    private val localStorageHelper: LocalStorageHelper,
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
+
+    private val notificationId = Random.nextInt()
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return createForegroundInfo(appContext.getString(R.string.download_preparing))
@@ -112,11 +116,26 @@ class YoutubeDownloadWorker @AssistedInject constructor(
             }
 
             val intent = router.downloadPopup(appContext, videos, audios, emptyList())
-            appContext.startActivity(intent)
+            val notification = createDownloadNotification(intent)
+            appContext.pushNotification(notificationId, notification)
             Result.success()
         } catch (e: Exception) {
             Result.failure()
         }
+    }
+
+    private fun createDownloadNotification(intent: Intent): Notification {
+        return NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
+            .setContentTitle(appContext.getString(R.string.download))
+            .setContentText(appContext.getString(R.string.download_ready))
+            .addAction(
+                NotificationCompat.Action(
+                    null,
+                    appContext.getString(R.string.download),
+                    PendingIntent.getActivity(appContext, notificationId, intent, PendingIntent.FLAG_IMMUTABLE)
+                )
+            )
+            .build()
     }
 
     private fun getVideoId(sourceUrl: String): String? {

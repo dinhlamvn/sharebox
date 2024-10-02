@@ -37,8 +37,8 @@ class VideoHelper @Inject constructor(
         }
     }
 
-    suspend fun getTiktokFullUrl(url: String): String {
-        val fullUrl = getFullTiktokUrl(url)
+    suspend fun getTiktokUrl(url: String): String {
+        val fullUrl = getTiktokFullUrl(url)
         val uri = Uri.parse(fullUrl)
         return Uri.decode(
             Uri.Builder().scheme(uri.scheme).authority(uri.authority).path(uri.path)
@@ -46,7 +46,7 @@ class VideoHelper @Inject constructor(
         )
     }
 
-    private suspend fun getFullTiktokUrl(s: String): String = withContext(Dispatchers.IO) {
+    private suspend fun getTiktokFullUrl(s: String): String = withContext(Dispatchers.IO) {
         val call = okHttpClient.newCall(Request.Builder().url(s).build())
         val body = call.execute()
 
@@ -67,7 +67,7 @@ class VideoHelper @Inject constructor(
     }
 
     private suspend fun getTiktokVideoSourceId(url: String): String {
-        val tiktokUrl = getTiktokFullUrl(url)
+        val tiktokUrl = getTiktokUrl(url)
         return Uri.parse(tiktokUrl).lastPathSegment!!
     }
 
@@ -81,6 +81,15 @@ class VideoHelper @Inject constructor(
             error("Facebook $url isn't contain videos in path")
         }
         return Uri.parse(fullUrl).lastPathSegment!!
+    }
+
+    suspend fun getFacebookUrl(url: String): String {
+        val fullUrl = getFullFacebookUrl(url)
+        val uri = Uri.parse(fullUrl)
+        return Uri.decode(
+            Uri.Builder().scheme(uri.scheme).authority(uri.authority).path(uri.path)
+                .fragment(uri.fragment).build().toString()
+        )
     }
 
     private suspend fun getFullFacebookUrl(s: String): String = withContext(Dispatchers.IO) {
@@ -117,7 +126,7 @@ class VideoHelper @Inject constructor(
     suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String? {
         return try {
             when (videoSource) {
-                VideoSource.Tiktok -> getTiktokFullUrl(url)
+                VideoSource.Tiktok -> getTiktokUrl(url)
                 VideoSource.Facebook -> getFullFacebookUrl(url)
                 VideoSource.Youtube -> url
             }
@@ -143,9 +152,11 @@ class VideoHelper @Inject constructor(
         when (videoSource) {
             VideoSource.Tiktok -> WorkerUtils.enqueueJobDownloadTiktokVideo(context, id, videoUri)
             VideoSource.Youtube -> WorkerUtils.enqueueJobDownloadYoutube(context, id, videoUri)
-            else -> withContext(Dispatchers.Main) {
-                Toast.makeText(context, R.string.nothing_to_download, Toast.LENGTH_SHORT).show()
-            }
+            VideoSource.Facebook -> WorkerUtils.enqueueJobDownloadFacebookVideo(
+                context,
+                id,
+                videoUri
+            )
         }
     }
 }

@@ -1,9 +1,14 @@
 package com.dinhlam.sharebox.extensions
 
 import android.app.Activity
+import android.app.Notification
+import android.content.Context
 import android.content.DialogInterface.OnClickListener
+import android.content.pm.PackageManager
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 
 fun Activity.showAlert(
     title: CharSequence? = null,
@@ -49,4 +54,15 @@ fun Activity.showAlert(
     }
 
     builder.create().show()
+}
+
+
+fun Context.pushNotification(id: Int, notification: Notification) {
+    if (ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    ) {
+        NotificationManagerCompat.from(this).notify(id, notification)
+    }
 }

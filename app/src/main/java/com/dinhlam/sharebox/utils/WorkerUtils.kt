@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.worker.DirectDownloadShareWorker
 import com.dinhlam.sharebox.worker.DownloadImagesWorker
+import com.dinhlam.sharebox.worker.FacebookDownloadWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
 import com.dinhlam.sharebox.worker.TiktokDownloadWorker
@@ -69,6 +70,17 @@ object WorkerUtils {
                 Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
             ).setId(UUID.randomUUID()).build()
         WorkManager.getInstance(context).enqueue(youtubeDownloadRequest)
+    }
+
+    fun enqueueJobDownloadFacebookVideo(context: Context, entityId: Int, videoUrl: String) {
+        val downloadRequest =
+            OneTimeWorkRequestBuilder<FacebookDownloadWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
+            ).setInputData(
+                Data.Builder().putInt("id", entityId).putString("url", videoUrl).build()
+            ).setId(UUID.randomUUID()).build()
+        WorkManager.getInstance(context).enqueue(downloadRequest)
     }
 
     fun enqueueSyncShareToCloud(context: Context, shareId: String) {

@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.data.network.FDownServices
+import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.data.network.LibreTubeServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.helper.CronetHelper
@@ -58,6 +60,24 @@ object NetworkModule {
             .callFactory(cronetHelper.callFactory)
             .baseUrl(AppConsts.LIBRE_TUBE_SERVICE_BASE_URL)
             .build().create(LibreTubeServices::class.java)
+    }
+
+    @Provides
+    fun provideDownloadServices(
+        gson: Gson, httpClient: OkHttpClient
+    ): DownloadServices {
+        return getRetrofitBuilder(gson, httpClient)
+            .baseUrl("https://google.com")
+            .build().create(DownloadServices::class.java)
+    }
+
+    @Provides
+    fun provideFDownServices(
+        gson: Gson, httpClient: OkHttpClient
+    ): FDownServices {
+        return getRetrofitBuilder(gson, httpClient)
+            .baseUrl("https://fdown.net/")
+            .build().create(FDownServices::class.java)
     }
 
     private fun getRetrofitBuilder(gson: Gson, httpClient: OkHttpClient): Retrofit.Builder {

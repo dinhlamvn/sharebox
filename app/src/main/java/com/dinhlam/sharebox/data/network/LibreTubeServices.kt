@@ -20,8 +20,4 @@ interface LibreTubeServices {
         @Header("User-Agent") userAgent: String,
         @Path("videoId") videoId: String,
     ): Response<ResponseBody>
-
-    @GET
-    @Streaming
-    suspend fun downloadFile(@Url url: String): ResponseBody
 }
