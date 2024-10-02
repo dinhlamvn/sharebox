@@ -156,6 +156,10 @@ class ShareLinkActivity :
         binding.buttonArchive.setOnClickListener {
             val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank()
                 ?: return@setOnClickListener showToast(R.string.require_input_link)
+            if (!link.isWebLink()) {
+                return@setOnClickListener showLinkError(getString(R.string.require_input_correct_weblink))
+            }
+
             viewModel.archiveLink(link)
         }
 
