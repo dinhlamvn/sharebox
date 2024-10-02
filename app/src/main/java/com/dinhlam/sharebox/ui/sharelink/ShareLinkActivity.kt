@@ -21,6 +21,7 @@ import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
@@ -152,8 +153,14 @@ class ShareLinkActivity :
 
         handleUri()
 
-        binding.buttonDone.setOnClickListener {
-            onDone()
+        binding.buttonArchive.setOnClickListener {
+            val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank()
+                ?: return@setOnClickListener showToast(R.string.require_input_link)
+            viewModel.archiveLink(link)
+        }
+
+        binding.buttonGo.setOnClickListener {
+            onGo()
         }
 
         adapter.attachTo(binding.recyclerView, this)
@@ -172,13 +179,20 @@ class ShareLinkActivity :
 
         binding.editLink.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                onDone()
+                onGo()
             }
             true
         }
 
         binding.editLink.doAfterTextChangedDebounce(scope = lifecycleScope) {
             showLinkError(null)
+        }
+
+        viewModel.onChange(ShareLinkState::asyncLoadArchive, this) { asyncLoad ->
+            if (asyncLoad.success) {
+                showToast(R.string.shares_success)
+                finish()
+            }
         }
     }
 
@@ -191,11 +205,11 @@ class ShareLinkActivity :
     private fun handleUri() {
         val uri = intent.data ?: return viewModel.getDefaultBox(false)
         binding.editLink.setText(uri.toString())
-        viewModel.getDefaultBox(true, ::onDone)
+        viewModel.getDefaultBox(true, ::onGo)
     }
 
 
-    private fun onDone() {
+    private fun onGo() {
         binding.editLink.hideKeyboard()
         val link =
             binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return showLinkError(
