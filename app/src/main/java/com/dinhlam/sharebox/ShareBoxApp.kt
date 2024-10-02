@@ -2,6 +2,7 @@ package com.dinhlam.sharebox
 
 import android.app.Application
 import android.app.NotificationManager
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
@@ -17,6 +18,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.services.PerformCopiedContentService
 import com.dinhlam.sharebox.utils.UserUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.installations.FirebaseInstallations
@@ -108,6 +110,8 @@ class ShareBoxApp : Application(), Configuration.Provider {
                 )
             )
         }
+
+        startService(Intent(this, PerformCopiedContentService::class.java))
     }
 
     private fun requestApplyTheme() {

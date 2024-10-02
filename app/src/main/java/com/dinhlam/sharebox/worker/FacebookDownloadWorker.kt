@@ -91,7 +91,8 @@ class FacebookDownloadWorker @AssistedInject constructor(
                 )
             }
 
-            val intent = router.downloadPopup(appContext, videos, emptyList(), emptyList())
+            val intent =
+                router.downloadPopup(appContext, videos, emptyList(), emptyList(), notificationId)
             val notification = createDownloadNotification(intent)
             appContext.pushNotification(notificationId, notification)
             Result.success()
@@ -109,7 +110,12 @@ class FacebookDownloadWorker @AssistedInject constructor(
                 NotificationCompat.Action(
                     null,
                     appContext.getString(R.string.download),
-                    PendingIntent.getActivity(appContext, notificationId, intent, PendingIntent.FLAG_IMMUTABLE)
+                    PendingIntent.getActivity(
+                        appContext,
+                        notificationId,
+                        intent,
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
                 )
             )
             .setAutoCancel(true)
@@ -119,20 +125,21 @@ class FacebookDownloadWorker @AssistedInject constructor(
     private fun parseVideoLinks(htmlString: String): List<Pair<String, String>> {
         val jsoup = Jsoup.parse(htmlString)
         val aTags = jsoup.getElementsByTag("a")
-        return aTags.filter { element -> element.hasAttr("href") && element.hasAttr("id") }.mapNotNull { element ->
-            val href = element.attr("href") ?: ""
-            val isVideoSD = element.id().contains(Regex("sdlink"))
-            val isVideoHD = element.id().contains(Regex("hdlink"))
-            if ((isVideoSD || isVideoHD) && href.isNotEmpty()) {
-                String.format(
-                    Locale.getDefault(),
-                    "Video %s",
-                    if (isVideoSD) "SD" else "HD"
-                ) to href
-            } else {
-                null
+        return aTags.filter { element -> element.hasAttr("href") && element.hasAttr("id") }
+            .mapNotNull { element ->
+                val href = element.attr("href") ?: ""
+                val isVideoSD = element.id().contains(Regex("sdlink"))
+                val isVideoHD = element.id().contains(Regex("hdlink"))
+                if ((isVideoSD || isVideoHD) && href.isNotEmpty()) {
+                    String.format(
+                        Locale.getDefault(),
+                        "Video %s",
+                        if (isVideoSD) "SD" else "HD"
+                    ) to href
+                } else {
+                    null
+                }
             }
-        }
     }
 
     private fun createForegroundInfo(): ForegroundInfo {

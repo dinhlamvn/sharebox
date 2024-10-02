@@ -112,7 +112,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
             val images =
                 imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
 
-            val intent = router.downloadPopup(appContext, videos, audios, images)
+            val intent = router.downloadPopup(appContext, videos, audios, images, notificationId)
             val notification = createDownloadNotification(intent)
             appContext.pushNotification(notificationId, notification)
             Result.success()

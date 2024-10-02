@@ -66,3 +66,7 @@ fun Context.pushNotification(id: Int, notification: Notification) {
         NotificationManagerCompat.from(this).notify(id, notification)
     }
 }
+
+fun Context.cancelNotification(id: Int) {
+    NotificationManagerCompat.from(this).cancel(id)
+}

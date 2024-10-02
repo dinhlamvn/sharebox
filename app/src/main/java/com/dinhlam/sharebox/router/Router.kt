@@ -49,7 +49,7 @@ interface Router {
     fun textInput(context: Context, title: String?, text: String?): Intent
 
     fun shareLink(context: Context): Intent
-    fun downloadPopup(context: Context, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>): Intent
+    fun downloadPopup(context: Context, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>, notificationId: Int): Intent
 
     fun bookmark(context: Context): Intent
 

@@ -225,7 +225,8 @@ class AppRouter constructor(private val context: Context) : Router {
         context: Context,
         videos: List<DownloadData>,
         audios: List<DownloadData>,
-        images: List<DownloadData>
+        images: List<DownloadData>,
+        notificationId: Int
     ): Intent {
         return Intent(context, DownloadPopupActivity::class.java).putParcelableArrayListExtra(
             AppExtras.EXTRA_DOWNLOAD_VIDEOS, arrayListOf(*videos.toTypedArray())
@@ -233,7 +234,9 @@ class AppRouter constructor(private val context: Context) : Router {
             AppExtras.EXTRA_DOWNLOAD_AUDIOS, arrayListOf(*audios.toTypedArray())
         ).putParcelableArrayListExtra(
             AppExtras.EXTRA_DOWNLOAD_IMAGES, arrayListOf(*images.toTypedArray())
-        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        ).putExtra(AppExtras.EXTRA_NOTIFICATION_ID, notificationId)
+
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
     }
 
     override fun bookmark(context: Context): Intent {

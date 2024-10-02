@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityDownloadPopupBinding
 import com.dinhlam.sharebox.extensions.asFileExtension
+import com.dinhlam.sharebox.extensions.cancelNotification
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -193,6 +194,11 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val notificationId = intent.getIntExtra(AppExtras.EXTRA_NOTIFICATION_ID, 0)
+        if (notificationId != 0) {
+            cancelNotification(notificationId)
+        }
+
         binding.background.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }

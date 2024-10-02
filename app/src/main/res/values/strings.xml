@@ -184,6 +184,7 @@
     <string name="error_add_yourself">You can\'t add yourself</string>
     <string name="download">Download</string>
     <string name="download_ready">The resource is ready to download</string>
+    <string name="perform_copied_content_desc">You can tap on Download button to download copied web url</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>
