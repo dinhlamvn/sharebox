@@ -128,6 +128,7 @@ class YoutubeDownloadWorker @AssistedInject constructor(
         return NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
             .setContentTitle(appContext.getString(R.string.download))
             .setContentText(appContext.getString(R.string.download_ready))
+            .setSmallIcon(R.mipmap.ic_launcher)
             .addAction(
                 NotificationCompat.Action(
                     null,
