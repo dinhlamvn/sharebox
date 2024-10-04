@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.worker
 
 import android.content.Context
 import android.content.pm.ServiceInfo
+import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -18,6 +19,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import kotlin.random.Random
 
 @HiltWorker
@@ -25,6 +28,7 @@ class DirectDownloadShareWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
     private val videoHelper: VideoHelper,
+    private val okHttpClient: OkHttpClient,
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val notificationId = Random.nextInt()
@@ -38,9 +42,10 @@ class DirectDownloadShareWorker @AssistedInject constructor(
         try {
             val shareUrl =
                 workerParams.inputData.getString(AppExtras.EXTRA_URL) ?: error("No share url")
-            val videoSource = videoHelper.getVideoSource(shareUrl) ?: error("No video source")
+            val originUrl = getOriginUrl(shareUrl)
+            val videoSource = videoHelper.getVideoSource(originUrl) ?: error("No video source")
             val videoOriginUrl =
-                videoHelper.getVideoOriginUrl(videoSource, shareUrl) ?: error("No video url")
+                videoHelper.getVideoOriginUrl(videoSource, originUrl) ?: error("No video url")
             videoHelper.downloadVideo(appContext, notificationId, videoSource, videoOriginUrl)
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
@@ -48,6 +53,23 @@ class DirectDownloadShareWorker @AssistedInject constructor(
             }
         }
         return Result.success()
+    }
+
+    private suspend fun getOriginUrl(s: String): String = withContext(Dispatchers.IO) {
+        val call = okHttpClient.newCall(Request.Builder().url(s).build())
+        val body = call.execute()
+
+        if (body.isRedirect) {
+            return@withContext body.use { responseBody -> responseBody.header("Location")!! }
+        }
+
+        val url = body.use { responseBody -> responseBody.request().url().url().toString() }
+
+        if (url.contains("login.php?next=")) {
+            Uri.parse(url).getQueryParameter("next")!!
+        } else {
+            url
+        }
     }
 
     private fun createForegroundInfo(): ForegroundInfo {
