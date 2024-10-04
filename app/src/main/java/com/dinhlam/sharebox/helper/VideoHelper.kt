@@ -54,7 +54,7 @@ class VideoHelper @Inject constructor(
             return@withContext body.use { it.header("Location")!! }
         }
 
-        body.use { it.request().url().url().toString() }
+        body.use { responseBody -> responseBody.request().url().url().toString() }
     }
 
     private fun getYoutubeVideoSourceId(url: String): String {
