@@ -117,7 +117,7 @@ class YoutubeDownloadWorker @AssistedInject constructor(
 
             val intent =
                 router.downloadPopup(appContext, videos, audios, emptyList(), notificationId)
-            val notification = createDownloadNotification(intent)
+            val notification = createDownloadNotification(intent, sourceUrl)
             appContext.pushNotification(notificationId, notification)
             Result.success()
         } catch (e: Exception) {
@@ -125,10 +125,10 @@ class YoutubeDownloadWorker @AssistedInject constructor(
         }
     }
 
-    private fun createDownloadNotification(intent: Intent): Notification {
+    private fun createDownloadNotification(intent: Intent, sourceUrl: String): Notification {
         return NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
             .setContentTitle(appContext.getString(R.string.download))
-            .setContentText(appContext.getString(R.string.download_ready))
+            .setContentText(appContext.getString(R.string.download_ready, sourceUrl))
             .setSmallIcon(R.mipmap.ic_launcher)
             .addAction(
                 NotificationCompat.Action(

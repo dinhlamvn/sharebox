@@ -12,14 +12,21 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
-import com.dinhlam.sharebox.ui.clipboard.ClipboardDownloadShareActivity
+import com.dinhlam.sharebox.router.Router
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PerformCopiedContentService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 20241002
     }
+
+    @Inject
+    lateinit var router: Router
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -46,10 +53,18 @@ class PerformCopiedContentService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val intent = Intent(this, ClipboardDownloadShareActivity::class.java)
+        val intent = router.shareLink(this).putExtra(AppExtras.EXTRA_BOOLEAN, true)
         return NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(getString(R.string.app_name))
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    NOTIFICATION_ID,
+                    packageManager.getLaunchIntentForPackage(packageName),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
             .setContentText(getString(R.string.perform_copied_content_desc))
             .addAction(
                 NotificationCompat.Action(

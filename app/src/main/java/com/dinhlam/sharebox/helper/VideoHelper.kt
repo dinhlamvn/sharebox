@@ -120,7 +120,7 @@ class VideoHelper @Inject constructor(
     private fun isFacebookVideo(url: String): Boolean {
         return (url.contains(Regex("facebook.com|fb.com|fb.watch")) && (url.contains("watch") || url.contains(
             "/videos/"
-        ) || url.contains("reel"))) || url.contains("fb.gg/v/")
+        ) || url.contains("reel") || url.contains("stories"))) || url.contains("fb.gg/v/")
     }
 
     suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String? {

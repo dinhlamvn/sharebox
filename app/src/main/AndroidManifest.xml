@@ -151,11 +151,6 @@
         </activity>
 
         <activity
-            android:name=".ui.clipboard.ClipboardDownloadShareActivity"
-            android:launchMode="singleInstance"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
             android:name=".ui.downloadpopup.DownloadPopupActivity"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.Transparent"

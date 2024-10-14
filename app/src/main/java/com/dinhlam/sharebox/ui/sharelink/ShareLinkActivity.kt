@@ -1,7 +1,10 @@
 package com.dinhlam.sharebox.ui.sharelink
 
 import android.app.Activity
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +20,7 @@ import com.dinhlam.sharebox.databinding.ActivityShareLinkBinding
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getDrawableCompat
+import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
@@ -207,11 +211,13 @@ class ShareLinkActivity :
     }
 
     private fun handleUri() {
-        val uri = intent.data ?: return viewModel.getDefaultBox(false)
-        binding.editLink.setText(uri.toString())
-        viewModel.getDefaultBox(true, ::onGo)
+        binding.editLink.postDelayed({
+            val uri = intent.data ?: pickWebLinkFromClipboard()
+            ?: return@postDelayed viewModel.getDefaultBox(false)
+            binding.editLink.setText(uri.toString())
+            viewModel.getDefaultBox(true, ::onGo)
+        }, 500)
     }
-
 
     private fun onGo() {
         binding.editLink.hideKeyboard()
@@ -253,5 +259,29 @@ class ShareLinkActivity :
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun pickWebLinkFromClipboard(): Uri? {
+        val shouldPick = intent.getBooleanExtra(AppExtras.EXTRA_BOOLEAN, false)
+        if (!shouldPick) {
+            return null
+        }
+
+        val clipboardManager = getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
+        if (!clipboardManager.hasPrimaryClip()) {
+            return null
+        }
+        val clipItemCount = clipboardManager.primaryClip?.itemCount ?: 0
+        if (clipItemCount == 0) {
+            return null
+        }
+        val text = clipboardManager.primaryClip?.getItemAt(0)?.text?.toString()
+            ?: return null
+
+        if (text.isWebLink()) {
+            return Uri.parse(text)
+        }
+
+        return null
     }
 }
