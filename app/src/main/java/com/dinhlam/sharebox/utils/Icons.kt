@@ -93,7 +93,7 @@ object Icons {
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
         return createIcon(
-            context, FontAwesome.Icon.faw_edit, block(IconBuilder(context))
+            context, FontAwesome.Icon.faw_edit1, block(IconBuilder(context))
         )
     }
 
@@ -120,7 +120,11 @@ object Icons {
     fun doneCircleIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
-        return createIcon(context, GoogleMaterial.Icon.gmd_check_circle, block(IconBuilder(context)))
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_check_circle,
+            block(IconBuilder(context))
+        )
     }
 
     fun rightArrowIcon(
@@ -315,7 +319,11 @@ object Icons {
     fun webIcon(
         context: Context, block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
     ): IconicsDrawable {
-        return createIcon(context, GoogleMaterial.Icon.gmd_open_in_browser, block(IconBuilder(context)))
+        return createIcon(
+            context,
+            GoogleMaterial.Icon.gmd_open_in_browser,
+            block(IconBuilder(context))
+        )
     }
 
     fun imageIcon(
@@ -371,5 +379,13 @@ object Icons {
         return createIcon(
             context, GoogleMaterial.getIcon(iconCode)
         )
+    }
+
+    fun getWebIconByUrl(url: String): IIcon {
+        return when {
+            url.contains(Regex("(fb.com|facebook.com)")) -> FontAwesome.Icon.faw_facebook_square
+            url.contains(Regex("(youtube.com)")) -> FontAwesome.Icon.faw_youtube_square
+            else -> GoogleMaterial.Icon.gmd_link
+        }
     }
 }

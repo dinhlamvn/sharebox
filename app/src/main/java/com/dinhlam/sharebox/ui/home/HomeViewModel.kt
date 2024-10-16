@@ -2,13 +2,14 @@ package com.dinhlam.sharebox.ui.home
 
 import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.orElse
+import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
@@ -26,68 +27,31 @@ class HomeViewModel @Inject constructor(
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val appSettingHelper: AppSettingHelper
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {
         private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 5
     }
 
-    init {
-        onChange(HomeState::asyncLoadShares) { asyncLoad ->
-            if (asyncLoad.completed) {
-                triggerCanLoadMore()
-            }
-        }
-        refresh()
-    }
-
-    private fun triggerCanLoadMore() = getState { state ->
-        suspend {
-            shareRepository.findRecentlyShares(
-                userHelper.getCurrentUserId(),
-                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
-            )
-        }.execute { asyncLoad -> copy(canLoadMore = !asyncLoad.data.isNullOrEmpty()) }
-    }
-
     private fun getListBoxes() = suspend {
         boxRepository.findByUser(userHelper.getCurrentUserId(), BOX_LIST_INIT_LOAD_SIZE_DEFAULT, 0)
     }.execute { asyncLoad ->
-        copy(boxes = asyncLoad.data.orEmpty())
+        copy(boxes = asyncLoad.completed.ifTrue(asyncLoad.data.orEmpty(), boxes))
     }
 
     private fun getRecentlyShares() {
         suspend {
             shareRepository.findRecentlyShares(
                 userHelper.getCurrentUserId(),
-                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                appSettingHelper.getNumOfRecently(),
                 0
             )
         }.execute { asyncLoad ->
             val list = asyncLoad.data.orEmpty()
             copy(
-                shares = list,
-                isRefreshing = asyncLoad is AsyncLoad.Loading,
-                canLoadMore = list.isNotEmpty()
-            )
-        }
-    }
-
-    fun loadMores() = getState { state ->
-        suspend {
-            shareRepository.findRecentlyShares(
-                userHelper.getCurrentUserId(),
-                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
-            )
-        }.execute { asyncLoad ->
-            val loadShares = asyncLoad.data.orEmpty()
-            copy(
-                shares = this.shares.plus(loadShares),
-                canLoadMore = loadShares.isNotEmpty(),
-                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage,
-                isLoadingMore = asyncLoad is AsyncLoad.Loading
+                shares = asyncLoad.completed.ifTrue(list, shares),
+                isRefreshing = asyncLoad is AsyncLoad.Loading
             )
         }
     }
@@ -157,7 +121,7 @@ class HomeViewModel @Inject constructor(
         refresh()
     }
 
-    private fun refresh() {
+    fun refresh() {
         getListBoxes()
         getRecentlyShares()
     }

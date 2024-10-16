@@ -75,7 +75,7 @@
     <string name="complete">Complete</string>
     <string name="edit_avatar">Edit avatar</string>
     <string name="share_text_quote_hint">Type here…</string>
-    <string name="share_link_hint">Enter or Paste your url…</string>
+    <string name="share_link_hint">Enter URL</string>
     <string name="require_input_link">Please input the link</string>
     <string name="require_input_text_quote">Please input the text quote to archive</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
@@ -184,7 +184,9 @@
     <string name="error_add_yourself">You can\'t add yourself</string>
     <string name="download">Download</string>
     <string name="download_ready">The resource for %s is ready to download</string>
-    <string name="perform_copied_content_desc">You can tap on Download button to download your copied url</string>
+    <string name="perform_copied_content_desc">You can tap on the button below to archive the content you\'ve copied</string>
+    <string name="title_num_of_recently">Number of recently share to show</string>
+    <string name="require_min_num_recently">Number of recently must be from %d</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

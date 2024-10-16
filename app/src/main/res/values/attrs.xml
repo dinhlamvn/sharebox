@@ -14,6 +14,7 @@
 
     <declare-styleable name="CardViewIconView">
         <attr name="icon_size" format="dimension" />
+        <attr name="icon_code" format="string" />
     </declare-styleable>
 
     <declare-styleable name="FontAwesomeImageView">

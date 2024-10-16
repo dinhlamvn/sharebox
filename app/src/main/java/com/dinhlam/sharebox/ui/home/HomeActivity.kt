@@ -429,4 +429,9 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     fun openBox(boxId: String) {
         viewBoxDetailLauncher.launch(router.boxDetail(this, boxId))
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
+    }
 }

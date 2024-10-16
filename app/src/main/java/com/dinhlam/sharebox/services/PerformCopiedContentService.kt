@@ -35,9 +35,6 @@ class PerformCopiedContentService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val clipboardManager =
             getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
-        clipboardManager.addPrimaryClipChangedListener {
-            val a = 10
-        }
 
         val notification = createNotification()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -69,7 +66,7 @@ class PerformCopiedContentService : Service() {
             .addAction(
                 NotificationCompat.Action(
                     null,
-                    getString(R.string.download),
+                    getString(R.string.archives),
                     PendingIntent.getActivity(
                         this,
                         NOTIFICATION_ID,

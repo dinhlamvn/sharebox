@@ -127,3 +127,7 @@ fun Context.copy(text: String?) {
     clipboard.setPrimaryClip(ClipData.newPlainText("sharebox_copied_content", text))
     Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show()
 }
+
+fun <T> Boolean.ifTrue(data: T, other: T): T {
+    return if (this) data else other
+}

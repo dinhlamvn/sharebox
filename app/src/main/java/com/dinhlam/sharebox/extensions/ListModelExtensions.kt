@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.listmodel.ListItemListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
+import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.IIcon
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
@@ -17,7 +18,7 @@ fun ShareDetail.buildListItemListModel(
     fun getRecentlyIcon(shareData: ShareData): IIcon {
         return when (shareData) {
             is ShareData.ShareText -> FontAwesome.Icon.faw_sticky_note
-            is ShareData.ShareUrl -> GoogleMaterial.Icon.gmd_web
+            is ShareData.ShareUrl -> Icons.getWebIconByUrl(shareData.url)
             is ShareData.ShareImage -> FontAwesome.Icon.faw_image
             is ShareData.ShareImages -> FontAwesome.Icon.faw_images
         }

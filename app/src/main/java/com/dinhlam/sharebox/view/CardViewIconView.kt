@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.use
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.card.MaterialCardView
 
 class CardViewIconView @JvmOverloads constructor(
@@ -21,6 +22,7 @@ class CardViewIconView @JvmOverloads constructor(
     }
 
     private var iconSize: Int = 24.dp()
+    private var iconCode: String? = null
 
     private val imageView = AppCompatImageView(context)
 
@@ -30,11 +32,17 @@ class CardViewIconView @JvmOverloads constructor(
                 R.styleable.CardViewIconView_icon_size,
                 DEFAULT_ICON_SIZE.dp()
             )
+
+            iconCode = typedArray.getString(R.styleable.CardViewIconView_icon_code)
         }
 
         addView(imageView, LayoutParams(iconSize, iconSize).apply {
             gravity = Gravity.CENTER
         })
+
+        iconCode?.let { code ->
+            imageView.setImageDrawable(Icons.getFontAwesomeIcon(context, code))
+        }
     }
 
     fun setIcon(icon: Drawable) {

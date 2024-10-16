@@ -179,6 +179,40 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         })
 
+        binding.seekbarNumOfRecently.progress =
+            appSettingHelper.getNumOfRecently()
+        binding.textNumOfRecently.text = "${binding.seekbarNumOfRecently.progress}"
+
+        binding.seekbarNumOfRecently.setOnSeekBarChangeListener(object :
+            OnSeekBarChangeListener {
+
+            private var toast: Toast? = null
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser && progress < AppConsts.LOADING_LIMIT_ITEM_PER_PAGE) {
+                    toast?.cancel()
+                    toast = showToast(
+                        getString(
+                            R.string.require_min_num_recently, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                        )
+                    )
+                    seekBar?.progress = AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                }
+                binding.textNumOfRecently.text = "${seekBar?.progress ?: 0}"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val progress =
+                    seekBar?.progress?.coerceMinMax(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 100)
+                        ?: return
+                appSettingHelper.setNumOfRecently(progress)
+            }
+        })
+
         binding.switchAutoSync.isChecked = appSettingHelper.isSyncDataInBackground()
 
         binding.switchAutoSync.setOnCheckedChangeListener { _, isChecked ->

@@ -23,6 +23,7 @@ import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
+import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
@@ -61,7 +62,7 @@ class ShareLinkActivity :
             Icons.googleIcon(this@ShareLinkActivity),
             size = 32.dp(),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://google.com")
+                setWebLink("https://google.com")
             })
         ).attachTo(this)
 
@@ -71,7 +72,7 @@ class ShareLinkActivity :
             size = 32.dp(),
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://tiktok.com")
+                setWebLink("https://tiktok.com")
             })
         ).attachTo(this)
 
@@ -81,7 +82,7 @@ class ShareLinkActivity :
             size = 32.dp(),
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://youtube.com")
+                setWebLink("https://youtube.com")
             })
         ).attachTo(this)
 
@@ -91,7 +92,7 @@ class ShareLinkActivity :
             size = 32.dp(),
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://cand.com.vn")
+                setWebLink("https://cand.com.vn")
             })
         ).attachTo(this)
 
@@ -101,7 +102,7 @@ class ShareLinkActivity :
             size = 32.dp(),
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://thanhnien.vn")
+                setWebLink("https://thanhnien.vn")
             })
         ).attachTo(this)
 
@@ -111,7 +112,7 @@ class ShareLinkActivity :
             size = 32.dp(),
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://zingnews.vn")
+                setWebLink("https://zingnews.vn")
             })
         ).attachTo(this)
 
@@ -121,7 +122,7 @@ class ShareLinkActivity :
             size = 32.dp(),
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                gotoLink("https://tuoitre.vn")
+                setWebLink("https://tuoitre.vn")
             })
         ).attachTo(this)
     }
@@ -136,7 +137,7 @@ class ShareLinkActivity :
     override val viewModel: ShareLinkViewModel by viewModels()
 
     override fun onStateChanged(state: ShareLinkState) {
-        val boxName = state.currentBox?.boxName ?: getString(R.string.box_general)
+        val boxName = state.currentBox?.boxName
         val isLock = state.currentBox?.passcode?.isNotBlank() ?: false
         binding.textShareBox.text = boxName
         binding.textShareBox.setDrawableCompat(
@@ -158,6 +159,11 @@ class ShareLinkActivity :
         handleUri()
 
         binding.buttonArchive.setOnClickListener {
+            if (getState(viewModel, ShareLinkState::currentBox) == null) {
+                showToast(R.string.please_choose_box)
+                return@setOnClickListener
+            }
+
             val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank()
                 ?: return@setOnClickListener showToast(R.string.require_input_link)
             if (!link.isWebLink()) {
@@ -168,6 +174,10 @@ class ShareLinkActivity :
         }
 
         binding.buttonGo.setOnClickListener {
+            if (getState(viewModel, ShareLinkState::currentBox) == null) {
+                showToast(R.string.please_choose_box)
+                return@setOnClickListener
+            }
             onGo()
         }
 
@@ -196,6 +206,10 @@ class ShareLinkActivity :
             showLinkError(null)
         }
 
+        binding.buttonPaste.setOnClickListener {
+            binding.editLink.setText(pickWebLinkFromClipboard()?.toString())
+        }
+
         viewModel.onChange(ShareLinkState::asyncLoadArchive, this) { asyncLoad ->
             if (asyncLoad.success) {
                 showToast(R.string.shares_success)
@@ -212,7 +226,7 @@ class ShareLinkActivity :
 
     private fun handleUri() {
         binding.editLink.postDelayed({
-            val uri = intent.data ?: pickWebLinkFromClipboard()
+            val uri = intent.data ?: intent.getBooleanExtra(AppExtras.EXTRA_BOOLEAN, false).ifTrue(pickWebLinkFromClipboard(), null)
             ?: return@postDelayed viewModel.getDefaultBox(false)
             binding.editLink.setText(uri.toString())
             viewModel.getDefaultBox(true, ::onGo)
@@ -253,6 +267,10 @@ class ShareLinkActivity :
         )
     }
 
+    private fun setWebLink(link: String) {
+        binding.editLink.setText(link)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             finish()
@@ -262,11 +280,6 @@ class ShareLinkActivity :
     }
 
     private fun pickWebLinkFromClipboard(): Uri? {
-        val shouldPick = intent.getBooleanExtra(AppExtras.EXTRA_BOOLEAN, false)
-        if (!shouldPick) {
-            return null
-        }
-
         val clipboardManager = getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
         if (!clipboardManager.hasPrimaryClip()) {
             return null

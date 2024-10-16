@@ -84,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@id/button_done"
+        app:layout_constraintBottom_toTopOf="@id/container_bottom"
         app:layout_constraintTop_toBottomOf="@id/divider">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,10 +94,12 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toStartOf="@id/button_paste"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -117,17 +119,17 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_hint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/tips_share_link"
-                android:textAppearance="@style/TextCaption"
-                android:textColor="?android:textColorHint"
-                app:layout_constraintTop_toBottomOf="@id/text_layout" />
+            <com.dinhlam.sharebox.view.CardViewIconView
+                android:id="@+id/button_paste"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="16dp"
+                app:icon_code="faw_paste"
+                app:icon_size="24dp"
+                app:layout_constraintBottom_toBottomOf="@id/text_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_layout" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
@@ -140,13 +142,14 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/text_hint" />
+                app:layout_constraintTop_toBottomOf="@id/text_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
+        android:id="@+id/container_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"

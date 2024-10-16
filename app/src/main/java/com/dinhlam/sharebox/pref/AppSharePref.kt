@@ -16,6 +16,7 @@ class AppSharePref @Inject constructor(
         private const val KEY_SETTING_NETWORK_CONDITION = "setting-network-condition"
         private const val KEY_SETTING_IMAGE_DOWNLOAD_QUALITY = "setting-download-image-quality"
         private const val KEY_SETTING_SYNC_IN_BACKGROUND = "setting-sync-in-background"
+        private const val KEY_SETTING_NUM_OF_RECENTLY = "setting-num-of-recently"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -48,4 +49,12 @@ class AppSharePref @Inject constructor(
         put(KEY_SETTING_SYNC_IN_BACKGROUND, syncInBackground, true)
 
     fun isSyncInBackground() = get(KEY_SETTING_SYNC_IN_BACKGROUND, false)
+
+    fun setNumOfRecently(quality: Int) {
+        put(KEY_SETTING_NUM_OF_RECENTLY, quality)
+    }
+
+    fun getNumOfRecently(): Int {
+        return get(KEY_SETTING_NUM_OF_RECENTLY, 10)
+    }
 }

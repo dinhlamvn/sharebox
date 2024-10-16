@@ -58,4 +58,13 @@ class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePre
     fun isSyncDataInBackground(): Boolean {
         return appSharePref.isSyncInBackground()
     }
+
+    fun setNumOfRecently(@IntRange(from = 10, to = 100) quality: Int) {
+        appSharePref.setNumOfRecently(quality)
+    }
+
+    fun getNumOfRecently(): Int {
+        return appSharePref.getNumOfRecently()
+            .coerceMinMax(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 100)
+    }
 }
