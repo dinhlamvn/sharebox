@@ -176,7 +176,7 @@ class HomeAdapter @Inject constructor(
                 activity.getDrawableCompat(R.drawable.ic_tiktok),
                 size = 32.dp(),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.gotoLink("https://tiktok.com")
+                    activity.startActivity(router.tiktokDiscover(activity))
                 })
             )
         )

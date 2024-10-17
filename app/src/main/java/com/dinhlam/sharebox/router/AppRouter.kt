@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
 import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
+import com.dinhlam.sharebox.ui.discover.tiktok.TiktokDiscoverActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeActivity
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
@@ -223,12 +224,17 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun downloadPopup(
         context: Context,
+        url: String,
         videos: List<DownloadData>,
         audios: List<DownloadData>,
         images: List<DownloadData>,
         notificationId: Int
     ): Intent {
-        return Intent(context, DownloadPopupActivity::class.java).putParcelableArrayListExtra(
+        return Intent(
+            context, DownloadPopupActivity::class.java
+        ).putExtra(
+            AppExtras.EXTRA_URL, url
+        ).putParcelableArrayListExtra(
             AppExtras.EXTRA_DOWNLOAD_VIDEOS, arrayListOf(*videos.toTypedArray())
         ).putParcelableArrayListExtra(
             AppExtras.EXTRA_DOWNLOAD_AUDIOS, arrayListOf(*audios.toTypedArray())
@@ -266,5 +272,9 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun boxInvited(context: Context): Intent {
         return Intent(context, BoxInvitedActivity::class.java)
+    }
+
+    override fun tiktokDiscover(context: Context): Intent {
+        return Intent(context, TiktokDiscoverActivity::class.java)
     }
 }

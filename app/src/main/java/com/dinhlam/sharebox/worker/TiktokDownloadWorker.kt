@@ -112,7 +112,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
             val images =
                 imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
 
-            val intent = router.downloadPopup(appContext, videos, audios, images, notificationId)
+            val intent = router.downloadPopup(appContext, tiktokUrl, videos, audios, images, notificationId)
             val notification = createDownloadNotification(intent, sourceUrl)
             appContext.pushNotification(notificationId, notification)
             Result.success()
@@ -123,7 +123,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
 
     private fun createDownloadNotification(intent: Intent, sourceUrl: String): Notification {
         return NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
-            .setContentTitle(appContext.getString(R.string.download))
+            .setContentTitle(appContext.getString(R.string.completed))
             .setContentText(appContext.getString(R.string.download_ready, sourceUrl))
             .setSmallIcon(R.mipmap.ic_launcher)
             .addAction(
@@ -170,7 +170,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
             ForegroundInfo(
                 workerParams.inputData.getInt("id", notificationId),
                 NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                    .setContentText(appContext.getString(R.string.download_preparing))
+                    .setContentText(appContext.getString(R.string.download_preparing, workerParams.inputData.getString("url")))
                     .setAutoCancel(false)
                     .setContentTitle(appContext.getString(R.string.downloading))
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -186,7 +186,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
             ForegroundInfo(
                 workerParams.inputData.getInt("id", notificationId),
                 NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                    .setContentText(appContext.getString(R.string.download_preparing))
+                    .setContentText(appContext.getString(R.string.download_preparing, workerParams.inputData.getString("url")))
                     .setAutoCancel(false)
                     .setContentTitle(appContext.getString(R.string.downloading))
                     .setSmallIcon(R.mipmap.ic_launcher)

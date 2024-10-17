@@ -2,8 +2,9 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.network.FDownServices
+import com.dinhlam.sharebox.data.network.AppServices
 import com.dinhlam.sharebox.data.network.DownloadServices
+import com.dinhlam.sharebox.data.network.FDownServices
 import com.dinhlam.sharebox.data.network.LibreTubeServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.helper.CronetHelper
@@ -41,6 +42,15 @@ object NetworkModule {
             .writeTimeout(30_000, TimeUnit.MILLISECONDS)
             .cache(Cache(cacheDir, 1024 * 1024 * 50)).build()
 
+    }
+
+    @Provides
+    fun provideAppServices(
+        gson: Gson, httpClient: OkHttpClient
+    ): AppServices {
+        return getRetrofitBuilder(gson, httpClient)
+            .baseUrl("http://10.0.2.2:3000")
+            .build().create(AppServices::class.java)
     }
 
     @Provides

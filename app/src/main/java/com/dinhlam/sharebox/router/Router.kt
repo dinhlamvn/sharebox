@@ -49,7 +49,7 @@ interface Router {
     fun textInput(context: Context, title: String?, text: String?): Intent
 
     fun shareLink(context: Context): Intent
-    fun downloadPopup(context: Context, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>, notificationId: Int): Intent
+    fun downloadPopup(context: Context, url: String, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>, notificationId: Int): Intent
 
     fun bookmark(context: Context): Intent
 
@@ -59,4 +59,6 @@ interface Router {
     fun trash(context: Context): Intent
     fun boxMembers(context: Context, boxId: String): Intent
     fun boxInvited(context: Context): Intent
+
+    fun tiktokDiscover(context: Context): Intent
 }

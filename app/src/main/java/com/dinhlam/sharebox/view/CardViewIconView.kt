@@ -41,7 +41,21 @@ class CardViewIconView @JvmOverloads constructor(
         })
 
         iconCode?.let { code ->
-            imageView.setImageDrawable(Icons.getFontAwesomeIcon(context, code))
+            when {
+                code.startsWith("fa") -> imageView.setImageDrawable(
+                    Icons.getFontAwesomeIcon(
+                        context,
+                        code
+                    )
+                )
+
+                code.startsWith("gm") -> imageView.setImageDrawable(
+                    Icons.getGoogleMaterialIcon(
+                        context,
+                        code
+                    )
+                )
+            }
         }
     }
 

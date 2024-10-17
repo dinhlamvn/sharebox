@@ -40,7 +40,7 @@ class YoutubeDownloadWorker @AssistedInject constructor(
     private val notificationId = Random.nextInt()
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return createForegroundInfo(appContext.getString(R.string.download_preparing))
+        return createForegroundInfo(appContext.getString(R.string.download_preparing, workerParams.inputData.getString("url")))
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -116,7 +116,7 @@ class YoutubeDownloadWorker @AssistedInject constructor(
             }
 
             val intent =
-                router.downloadPopup(appContext, videos, audios, emptyList(), notificationId)
+                router.downloadPopup(appContext, sourceUrl, videos, audios, emptyList(), notificationId)
             val notification = createDownloadNotification(intent, sourceUrl)
             appContext.pushNotification(notificationId, notification)
             Result.success()
@@ -127,7 +127,7 @@ class YoutubeDownloadWorker @AssistedInject constructor(
 
     private fun createDownloadNotification(intent: Intent, sourceUrl: String): Notification {
         return NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
-            .setContentTitle(appContext.getString(R.string.download))
+            .setContentTitle(appContext.getString(R.string.completed))
             .setContentText(appContext.getString(R.string.download_ready, sourceUrl))
             .setSmallIcon(R.mipmap.ic_launcher)
             .addAction(

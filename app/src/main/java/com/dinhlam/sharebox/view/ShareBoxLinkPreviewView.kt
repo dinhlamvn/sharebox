@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.extensions.trimToDomain
+import com.dinhlam.sharebox.extensions.updateHeight
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
@@ -67,6 +68,20 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     private val binding: ViewShareBoxLinkPreviewBinding = ViewShareBoxLinkPreviewBinding.inflate(
         LayoutInflater.from(context), this
     )
+
+    init {
+        context.obtainStyledAttributes(attrs, R.styleable.ShareBoxLinkPreviewView)
+            .use { typedArray ->
+                val thumbnailHeight =
+                    typedArray.getDimensionPixelSize(
+                        R.styleable.ShareBoxLinkPreviewView_thumbnail_height,
+                        0
+                    )
+                if (thumbnailHeight != 0) {
+                    binding.imageView.updateHeight(thumbnailHeight)
+                }
+            }
+    }
 
     private fun resetUi() {
         binding.textViewUrl.hint = null
@@ -170,6 +185,9 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
     }
 
     fun release() {
+        if (job.isActive && !job.isCompleted) {
+            job.cancel()
+        }
         ImageLoader.INSTANCE.release(context, binding.imageView)
         resetUi()
     }

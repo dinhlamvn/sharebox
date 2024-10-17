@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.view
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -13,12 +12,19 @@ class ShareBoxLoadingView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyle) {
 
     private val binding: ViewLoadingBinding = inflate(context, R.layout.view_loading, this).run {
-        setBackgroundColor(Color.argb(255.times(0.3f).toInt(), 0, 0, 0))
         isFocusable = true
         isClickable = true
         ViewLoadingBinding.bind(this).apply {
             progressBar.hide()
             isVisible = false
+        }
+    }
+
+    fun toggle(isShow: Boolean) {
+        if (isShow) {
+            show()
+        } else {
+            hide()
         }
     }
 

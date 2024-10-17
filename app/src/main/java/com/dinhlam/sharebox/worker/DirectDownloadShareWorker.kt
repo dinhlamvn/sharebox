@@ -77,7 +77,12 @@ class DirectDownloadShareWorker @AssistedInject constructor(
             ForegroundInfo(
                 notificationId,
                 NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                    .setContentText(appContext.getString(R.string.download_preparing))
+                    .setContentText(
+                        appContext.getString(
+                            R.string.download_preparing,
+                            workerParams.inputData.getString(AppExtras.EXTRA_URL)
+                        )
+                    )
                     .setAutoCancel(false)
                     .setContentTitle(appContext.getString(R.string.downloading))
                     .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(
@@ -90,7 +95,12 @@ class DirectDownloadShareWorker @AssistedInject constructor(
             ForegroundInfo(
                 notificationId,
                 NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                    .setContentText(appContext.getString(R.string.download_preparing))
+                    .setContentText(
+                        appContext.getString(
+                            R.string.download_preparing,
+                            workerParams.inputData.getString(AppExtras.EXTRA_URL)
+                        )
+                    )
                     .setAutoCancel(false)
                     .setContentTitle(appContext.getString(R.string.downloading))
                     .setSmallIcon(R.mipmap.ic_launcher).setAutoCancel(false).setContentIntent(

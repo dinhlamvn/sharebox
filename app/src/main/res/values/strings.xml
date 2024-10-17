@@ -91,7 +91,7 @@
     <string name="message_enqueue_sync_data">Auto sync data to cloud everyday.</string>
     <string name="message_cancel_enqueue_sync_data">Canceled auto sync data</string>
     <string name="downloading">Downloading</string>
-    <string name="download_preparing">Preparing…</string>
+    <string name="download_preparing">Preparing download for %s…</string>
     <string name="cancel">Cancel</string>
     <string name="limit_share_image">We just allow archive maximum 10 images</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
@@ -187,6 +187,10 @@
     <string name="perform_copied_content_desc">You can tap on the button below to archive the content you\'ve copied</string>
     <string name="title_num_of_recently">Number of recently share to show</string>
     <string name="require_min_num_recently">Number of recently must be from %d</string>
+    <string name="title_tiktok_discover" translatable="false">Tiktok Discover</string>
+    <string name="view_count">%s views</string>
+    <string name="completed">Completed</string>
+    <string name="archive_url_success">"Archived %s "</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

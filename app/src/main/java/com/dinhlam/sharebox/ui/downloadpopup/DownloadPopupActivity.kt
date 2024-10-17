@@ -15,8 +15,8 @@ import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.helper.DownloadHelper
-import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.DownloadData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
@@ -222,6 +222,8 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
     }
 
     private fun handleDownloadPopup() {
+        val url = intent.getStringExtra(AppExtras.EXTRA_URL)
+        binding.shareLinkPreview.setLink(url)
         adapter.requestBuildListModels()
     }
 }

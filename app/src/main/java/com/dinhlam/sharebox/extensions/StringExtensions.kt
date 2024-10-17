@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.extensions
 
 import android.net.Uri
+import androidx.core.text.HtmlCompat
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -39,4 +40,8 @@ fun String.trimToDomain(): String? {
 
 fun String.asFileExtension(): String {
     return substringAfter("/")
+}
+
+fun String.toHTML(): CharSequence {
+    return HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_LEGACY)
 }
