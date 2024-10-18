@@ -272,6 +272,11 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.discover.zingnews.ZingNewsDiscoverActivity"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name=".provider.ShareBoxFileProvider"
             android:authorities="${applicationId}.file_provider"

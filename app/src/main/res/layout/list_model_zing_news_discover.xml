@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppMaterialCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:elevation="4dp"
+    app:cardCornerRadius="8dp"
+    tools:layout_width="200dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_width="200dp">
+
+        <com.dinhlam.sharebox.view.ShareBoxLinkPreviewView
+            android:id="@+id/share_link_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:thumbnail_height="200dp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="3"
+            android:padding="8dp"
+            android:textAppearance="@style/TextBody"
+            app:layout_constraintEnd_toStartOf="@id/button_archive"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/share_link_preview"
+            tools:text="Có ăn thì phải có làm chứ" />
+
+        <com.dinhlam.sharebox.view.FontAwesomeImageView
+            android:id="@+id/button_archive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:gm_icon="gmd_archive"
+            app:icon_size="12dp"
+            app:layout_constraintBottom_toBottomOf="@id/text_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_desc" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

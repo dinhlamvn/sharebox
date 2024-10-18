@@ -200,7 +200,7 @@ class HomeAdapter @Inject constructor(
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.gotoLink("https://zingnews.vn")
+                    activity.startActivity(router.zingNewsDiscover(activity))
                 })
             )
         )

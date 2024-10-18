@@ -38,7 +38,7 @@ data class TiktokDiscoverListModel(
             }
 
             override fun onUnBind() {
-                binding.shareLinkPreview.release()
+
             }
         }
     }

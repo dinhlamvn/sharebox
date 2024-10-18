@@ -10,4 +10,7 @@ interface DownloadServices {
     @GET
     @Streaming
     suspend fun downloadFile(@Url url: String): ResponseBody
+
+    @GET
+    suspend fun downloadFileWithoutStream(@Url url: String): ResponseBody
 }
