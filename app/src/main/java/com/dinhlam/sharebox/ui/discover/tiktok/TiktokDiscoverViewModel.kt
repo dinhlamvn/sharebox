@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.TiktokCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,7 +21,11 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     init {
         getDefaultBox()
-        getTiktokTrending()
+        getTiktokCategories()
+        onChange(TiktokDiscoverState::activeCategory) { tiktokCategory ->
+            val categoryId = tiktokCategory?.categoryId ?: return@onChange
+            getTiktokTrending(categoryId)
+        }
     }
 
     private fun getDefaultBox() {
@@ -31,8 +36,22 @@ class TiktokDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun getTiktokTrending() = suspend {
-        appServices.getTiktokTrending()
+    private fun getTiktokCategories() {
+        suspend {
+            appServices.getTiktokCategories()
+        }.execute { asyncLoad ->
+            val categories = asyncLoad.data.orEmpty()
+            copy(categories = categories, activeCategory = categories.firstOrNull())
+        }
+    }
+
+    fun refresh() = getState { state ->
+        val categoryId = state.activeCategory?.categoryId ?: return@getState
+        getTiktokTrending(categoryId)
+    }
+
+    private fun getTiktokTrending(categoryId: Int) = suspend {
+        appServices.getTiktokTrending(categoryId)
     }.execute { asyncLoad ->
         copy(
             asyncLoadTiktokDiscover = asyncLoad,
@@ -61,5 +80,9 @@ class TiktokDiscoverViewModel @Inject constructor(
         }.execute { asyncLoad ->
             copy(asyncLoadArchive = asyncLoad)
         }
+    }
+
+    fun setActiveCategory(tiktokCategory: TiktokCategory) {
+        setState { copy(activeCategory = tiktokCategory) }
     }
 }

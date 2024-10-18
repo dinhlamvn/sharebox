@@ -12,7 +12,9 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTiktokDiscoverBinding
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.listmodel.ChipListModel
 import com.dinhlam.sharebox.listmodel.TiktokDiscoverListModel
+import com.dinhlam.sharebox.recyclerview.decoration.HorizontalSpacingDecoration
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
@@ -66,6 +68,22 @@ class TiktokDiscoverActivity :
         }
     }
 
+    private val categoryAdapter = BaseListAdapter.create {
+        getState(viewModel) { state ->
+            state.categories.forEach { tiktokCategory ->
+                ChipListModel(
+                    "category_${tiktokCategory.categoryId}",
+                    tiktokCategory.categoryName,
+                    tiktokCategory.categoryId == state.activeCategory?.categoryId,
+                    BaseListAdapter.NoHashProp(
+                        View.OnClickListener {
+                            viewModel.setActiveCategory(tiktokCategory)
+                        })
+                ).attachTo(this)
+            }
+        }
+    }
+
     override val viewModel: TiktokDiscoverViewModel by viewModels()
 
     override fun onStateChanged(state: TiktokDiscoverState) {
@@ -77,6 +95,7 @@ class TiktokDiscoverActivity :
             start = Icons.boxIcon(this) { copy(sizeDp = 20) },
             end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
         )
+        categoryAdapter.requestBuildListModels()
         adapter.requestBuildListModels()
     }
 
@@ -84,11 +103,13 @@ class TiktokDiscoverActivity :
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
 
+        binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8))
+        categoryAdapter.attachTo(binding.recyclerViewCategory, this)
         adapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
-            viewModel.getTiktokTrending()
+            viewModel.refresh()
         }
 
         binding.containerShareBox.setOnClickListener {
