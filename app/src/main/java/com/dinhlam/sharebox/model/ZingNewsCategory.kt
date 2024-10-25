@@ -10,7 +10,7 @@ data class ZingNewsCategory(
         val categories = arrayOf(
             ZingNewsCategory("xuat-ban", "Xuất bản", "https://znews.vn/xuat-ban.html"),
             ZingNewsCategory("cong-nghe", "Công nghệ", "https://znews.vn/cong-nghe.html"),
-            ZingNewsCategory("tac-gia", "Tác gi", "https://znews.vn/tac-gia.html"),
+            ZingNewsCategory("tac-gia", "Tác giả", "https://znews.vn/tac-gia.html"),
             ZingNewsCategory(
                 "kd-tc",
                 "Kinh doanh & tài chính",

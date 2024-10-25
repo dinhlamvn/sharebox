@@ -25,7 +25,6 @@ import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
@@ -183,36 +182,12 @@ class HomeAdapter @Inject constructor(
 
         add(
             CircleIconListModel(
-                "youtube",
-                Icons.youtubeIcon(activity),
-                size = 32.dp(),
-                margin = Spacing.Only(start = 16.dp()),
-                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.gotoLink("https://m.youtube.com")
-                })
-            )
-        )
-
-        add(
-            CircleIconListModel(
                 "zing_news",
                 activity.getDrawableCompat(R.drawable.ic_zing_news),
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.zingNewsDiscover(activity))
-                })
-            )
-        )
-
-        add(
-            CircleIconListModel(
-                "cand",
-                activity.getDrawableCompat(R.drawable.ic_cand),
-                size = 32.dp(),
-                margin = Spacing.Only(start = 16.dp()),
-                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.gotoLink("https://cand.com.vn")
                 })
             )
         )

@@ -177,11 +177,11 @@
     <string name="download_ready">Nội dung cho %s đã sẵn sàng để tải xuống</string>
     <string name="perform_copied_content_desc">Bạn có thể nhấp vào nút phía dưới để lưu trữ nội dung vừa sao chép</string>
     <string name="title_add_member">Thêm thành viên</string>
-    <string name="title_num_of_recently">Number of recently share to show</string>
-    <string name="require_min_num_recently">Number of recently must be from %d</string>
-    <string name="view_count">%s views</string>
-    <string name="completed">Completed</string>
-    <string name="archive_url_success">"Archived %s "</string>
+    <string name="title_num_of_recently">Số lượng chia sẻ gần đây được hiển thị</string>
+    <string name="require_min_num_recently">Số chia sẻ gần đây phải từ %d</string>
+    <string name="view_count">%s lượt xem</string>
+    <string name="completed">Đã hoàn thành</string>
+    <string name="archive_url_success">Đã lưu trữ %s</string>
     <string name="title_znews_discover">ZNews</string>
 
     <string-array name="bookmark_collection_option_menu_items">
