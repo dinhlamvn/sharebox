@@ -54,7 +54,7 @@ class VideoHelper @Inject constructor(
             return@withContext body.use { it.header("Location")!! }
         }
 
-        body.use { responseBody -> responseBody.request().url().url().toString() }
+        body.use { responseBody -> responseBody.request.url.toString() }
     }
 
     private fun getYoutubeVideoSourceId(url: String): String {
@@ -100,7 +100,7 @@ class VideoHelper @Inject constructor(
             return@withContext body.use { it.header("Location")!! }
         }
 
-        val url = body.use { it.request().url().url().toString() }
+        val url = body.use { it.request.url.toString() }
 
         if (url.contains("login.php?next=")) {
             Uri.parse(url).getQueryParameter("next")!!

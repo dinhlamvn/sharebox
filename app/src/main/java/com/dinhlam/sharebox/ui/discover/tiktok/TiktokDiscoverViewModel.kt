@@ -1,19 +1,21 @@
 package com.dinhlam.sharebox.ui.discover.tiktok
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.network.AppServices
+import com.dinhlam.sharebox.data.network.TiktokServices
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.TiktokCategory
+import com.dinhlam.sharebox.model.TiktokDiscover
+import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TiktokDiscoverViewModel @Inject constructor(
-    private val appServices: AppServices,
+    private val tiktokServices: TiktokServices,
     private val boxRepository: BoxRepository,
     private val userHelper: UserHelper,
     private val shareRepository: ShareRepository
@@ -21,7 +23,6 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     init {
         getDefaultBox()
-        getTiktokCategories()
         onChange(TiktokDiscoverState::activeCategory) { tiktokCategory ->
             val categoryId = tiktokCategory?.categoryId ?: return@onChange
             getTiktokTrending(categoryId)
@@ -36,22 +37,30 @@ class TiktokDiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun getTiktokCategories() {
-        suspend {
-            appServices.getTiktokCategories()
-        }.execute { asyncLoad ->
-            val categories = asyncLoad.data.orEmpty()
-            copy(categories = categories, activeCategory = categories.firstOrNull())
-        }
-    }
-
     fun refresh() = getState { state ->
         val categoryId = state.activeCategory?.categoryId ?: return@getState
         getTiktokTrending(categoryId)
     }
 
     private fun getTiktokTrending(categoryId: Int) = suspend {
-        appServices.getTiktokTrending(categoryId)
+        val queryMap = mapOf(
+            "count" to "20",
+            "categoryType" to "$categoryId",
+            "aid" to "1988",
+            "app_language" to "en",
+            "app_name" to "tiktok_web"
+        )
+        tiktokServices.explore(
+            UserAgentUtils.pickRandomUserAgent(),
+            queryMap
+        ).itemList.map { item ->
+            TiktokDiscover(
+                item.id,
+                "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
+                item.stats.playCount,
+                item.desc
+            )
+        }
     }.execute { asyncLoad ->
         copy(
             asyncLoadTiktokDiscover = asyncLoad,

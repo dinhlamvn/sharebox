@@ -8,7 +8,7 @@ data class TiktokDiscover(
     @SerializedName("url")
     val url: String,
     @SerializedName("playCount")
-    val playCount: Int,
+    val playCount: Long,
     @SerializedName("desc")
     val desc: String?,
 )

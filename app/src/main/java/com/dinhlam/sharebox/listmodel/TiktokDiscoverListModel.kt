@@ -13,7 +13,7 @@ data class TiktokDiscoverListModel(
     val id: String,
     val url: String,
     val desc: String?,
-    val views: Int,
+    val views: Long,
     val onClick: BaseListAdapter.NoHashProp<OnClickListener>,
     val onArchiveClick: BaseListAdapter.NoHashProp<OnClickListener>,
     val onDownloadClick: BaseListAdapter.NoHashProp<OnClickListener>,

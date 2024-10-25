@@ -63,7 +63,7 @@ class DirectDownloadShareWorker @AssistedInject constructor(
             return@withContext body.use { responseBody -> responseBody.header("Location")!! }
         }
 
-        val url = body.use { responseBody -> responseBody.request().url().url().toString() }
+        val url = body.use { responseBody -> responseBody.request.url.toString() }
 
         if (url.contains("login.php?next=")) {
             Uri.parse(url).getQueryParameter("next")!!
