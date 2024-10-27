@@ -78,12 +78,18 @@
 
 -keep class com.dinhlam.sharebox.listmodel.** { *; }
 
+-keep class com.dinhlam.sharebox.data.** { *; }
+
 -keepattributes *Annotation*
 -dontwarn sun.misc.**
 
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
+
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
 
 #facebook sdk
 -keep class com.facebook.** {
