@@ -34,12 +34,10 @@ data class ChipListModel(
                     binding.icon.isVisible = true
                     binding.icon.setIconColor(buildContext.getColorCompat(android.R.color.white))
                     binding.text.setTextColor(buildContext.getColorCompat(android.R.color.white))
-                    binding.container.setBackgroundColor(buildContext.getColorCompat(R.color.md_theme_onPrimaryContainer))
+                    binding.container.setBackgroundColor(buildContext.getColorCompat(R.color.md_theme_primary))
                 } else {
                     binding.icon.isVisible = false
-                    binding.icon.setIconColor(buildContext.getColorCompat(android.R.color.black))
-                    binding.text.setTextColor(buildContext.getColorCompat(android.R.color.black))
-                    binding.container.setBackgroundColor(buildContext.getColorCompat(R.color.md_theme_surface))
+                    binding.text.setTextAppearance(buildContext, R.style.TextBodyMedium)
                 }
             }
 
