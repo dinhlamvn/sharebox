@@ -48,7 +48,7 @@ interface Router {
     fun profile(context: Context): Intent
     fun textInput(context: Context, title: String?, text: String?): Intent
 
-    fun shareLink(context: Context): Intent
+    fun shareLink(context: Context, uri: Uri?): Intent
     fun downloadPopup(context: Context, url: String, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>, notificationId: Int): Intent
 
     fun bookmark(context: Context): Intent

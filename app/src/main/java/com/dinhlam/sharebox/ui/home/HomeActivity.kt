@@ -353,7 +353,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     fun requestArchiveWeb() {
-        archiveResultLauncher.launch(router.shareLink(this))
+        archiveResultLauncher.launch(router.shareLink(this, null))
     }
 
     fun requestArchiveImages() {

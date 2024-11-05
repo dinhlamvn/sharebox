@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityClipboardBinding
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
+import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
@@ -68,10 +69,14 @@ class ClipboardActivity : BaseActivity<ActivityClipboardBinding>() {
     }
 
     private fun handleShareData(text: String): Intent {
-        return Intent(Intent.ACTION_SEND).apply {
-            type = "text/*"
-            component = ComponentName(packageName, ShareReceiveActivity::class.java.name)
-            putExtra(Intent.EXTRA_TEXT, text)
+        return if (text.isWebLink()) {
+            router.shareLink(this, Uri.parse(text))
+        } else {
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/*"
+                component = ComponentName(packageName, ShareReceiveActivity::class.java.name)
+                putExtra(Intent.EXTRA_TEXT, text)
+            }
         }
     }
 

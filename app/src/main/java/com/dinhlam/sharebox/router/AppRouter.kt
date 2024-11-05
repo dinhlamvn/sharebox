@@ -220,8 +220,8 @@ class AppRouter constructor(private val context: Context) : Router {
             .putExtra(Intent.EXTRA_TEXT, text)
     }
 
-    override fun shareLink(context: Context): Intent {
-        return Intent(context, ShareLinkActivity::class.java)
+    override fun shareLink(context: Context, uri: Uri?): Intent {
+        return Intent(context, ShareLinkActivity::class.java).setData(uri)
     }
 
     override fun downloadPopup(
