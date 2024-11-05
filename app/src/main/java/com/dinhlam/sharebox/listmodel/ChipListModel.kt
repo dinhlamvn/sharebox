@@ -38,6 +38,7 @@ data class ChipListModel(
                 } else {
                     binding.icon.isVisible = false
                     binding.text.setTextAppearance(buildContext, R.style.TextBodyMedium)
+                    binding.container.background = null
                 }
             }
 
