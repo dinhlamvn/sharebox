@@ -12,7 +12,6 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.router.Router
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +49,7 @@ class PerformCopiedContentService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val intent = router.shareLink(this).putExtra(AppExtras.EXTRA_BOOLEAN, true)
+        val intent = router.clipboard(this).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return NotificationCompat.Builder(this, AppConsts.NOTIFICATION_DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(getString(R.string.app_name))

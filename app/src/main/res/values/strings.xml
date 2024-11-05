@@ -192,6 +192,7 @@
     <string name="completed">Completed</string>
     <string name="archive_url_success">"Archived %s "</string>
     <string name="title_znews_discover">ZNews</string>
+    <string name="nothing">Nothing</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

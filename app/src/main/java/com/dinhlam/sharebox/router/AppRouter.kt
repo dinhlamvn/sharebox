@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
 import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
+import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
 import com.dinhlam.sharebox.ui.discover.tiktok.TiktokDiscoverActivity
 import com.dinhlam.sharebox.ui.discover.zingnews.ZingNewsDiscoverActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
@@ -281,5 +282,9 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun zingNewsDiscover(context: Context): Intent {
         return Intent(context, ZingNewsDiscoverActivity::class.java)
+    }
+
+    override fun clipboard(context: Context): Intent {
+        return Intent(context, ClipboardActivity::class.java)
     }
 }

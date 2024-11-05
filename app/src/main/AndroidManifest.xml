@@ -277,6 +277,12 @@
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.clipboard.ClipboardActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.Transparent"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name=".provider.ShareBoxFileProvider"
             android:authorities="${applicationId}.file_provider"

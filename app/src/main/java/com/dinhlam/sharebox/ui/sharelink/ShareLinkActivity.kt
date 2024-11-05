@@ -23,7 +23,6 @@ import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
-import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
@@ -226,8 +225,7 @@ class ShareLinkActivity :
 
     private fun handleUri() {
         binding.editLink.postDelayed({
-            val uri = intent.data ?: intent.getBooleanExtra(AppExtras.EXTRA_BOOLEAN, false).ifTrue(pickWebLinkFromClipboard(), null)
-            ?: return@postDelayed viewModel.getDefaultBox(false)
+            val uri = intent.data ?: return@postDelayed viewModel.getDefaultBox(false)
             binding.editLink.setText(uri.toString())
             viewModel.getDefaultBox(true, ::onGo)
         }, 500)

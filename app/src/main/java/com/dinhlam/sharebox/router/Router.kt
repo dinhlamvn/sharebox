@@ -63,4 +63,6 @@ interface Router {
     fun tiktokDiscover(context: Context): Intent
 
     fun zingNewsDiscover(context: Context): Intent
+
+    fun clipboard(context: Context): Intent
 }
