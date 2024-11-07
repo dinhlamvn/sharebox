@@ -32,7 +32,6 @@ import com.dinhlam.sharebox.listmodel.CircleIconListModel
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -208,16 +207,6 @@ class ShareLinkActivity :
 
         binding.buttonPaste.setOnClickListener {
             binding.editLink.setText(pickWebLinkFromClipboard()?.toString())
-        }
-
-        binding.buttonDownload.setOnClickListener {
-            val link = binding.editLink.text?.toString().takeIfNotNullOrBlank().orEmpty()
-            if (!link.isWebLink()) {
-                showToast(R.string.require_input_correct_weblink)
-                return@setOnClickListener
-            }
-            showToast(R.string.downloading)
-            WorkerUtils.enqueueDownloadShare(this, link)
         }
 
         viewModel.onChange(ShareLinkState::asyncLoadArchive, this) { asyncLoad ->
