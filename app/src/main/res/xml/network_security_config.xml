@@ -3,6 +3,9 @@
     <domain-config>
         <!-- Make sure your URL Server here -->
         <domain includeSubdomains="true">ssstik.io</domain>
+        <domain includeSubdomains="true">tiktok.com</domain>
+        <domain includeSubdomains="true">fdown.net</domain>
+        <domain includeSubdomains="true">pipedapi.kavin.rocks</domain>
         <trust-anchors>
             <certificates src="user" />
             <certificates src="system" />
@@ -16,7 +19,7 @@
         </trust-anchors>
     </debug-overrides>
 
-    <base-config cleartextTrafficPermitted="true">
+    <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
