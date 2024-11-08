@@ -59,7 +59,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     private val stateScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-    private val setStateChannel = Channel<suspend S.() -> S>(Channel.UNLIMITED)
+    private val setStateChannel = Channel<S.() -> S>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(S) -> Unit>(Channel.UNLIMITED)
 
     @Volatile
