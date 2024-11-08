@@ -20,6 +20,8 @@ import com.dinhlam.sharebox.extensions.pushNotification
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.tracking.TrackerManager
+import com.dinhlam.sharebox.tracking.events.FacebookDownloadErrorEvent
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -49,10 +51,10 @@ class FacebookDownloadWorker @AssistedInject constructor(
         try {
             setForeground(createForegroundInfo())
             val sourceUrl =
-                workerParams.inputData.getString("url") ?: return@withContext Result.success()
+                workerParams.inputData.getString("url") ?: error("No input url")
             val facebookUrl = videoHelper.getFacebookUrl(sourceUrl)
             val videoId =
-                Uri.parse(facebookUrl).lastPathSegment ?: return@withContext Result.success()
+                Uri.parse(facebookUrl).lastPathSegment ?: error("No video id")
             var retryTimes = 3
             var html = ""
             do {
@@ -76,11 +78,7 @@ class FacebookDownloadWorker @AssistedInject constructor(
             } while (retryTimes > 0)
 
             if (html.isEmpty()) {
-                return@withContext if (runAttemptCount < 3) {
-                    Result.retry()
-                } else {
-                    Result.failure()
-                }
+                error("HTML is empty")
             }
 
             val videoUrls = parseVideoLinks(html)
@@ -101,9 +99,12 @@ class FacebookDownloadWorker @AssistedInject constructor(
                     notificationId
                 )
             val notification = createDownloadNotification(intent, sourceUrl)
-            appContext.pushNotification(notificationId, notification)
+            if (!appContext.pushNotification(notificationId, notification)) {
+                error("Push notification to device failed")
+            }
             Result.success()
         } catch (e: Exception) {
+            TrackerManager.logEvent(FacebookDownloadErrorEvent(e.message))
             Result.failure()
         }
     }

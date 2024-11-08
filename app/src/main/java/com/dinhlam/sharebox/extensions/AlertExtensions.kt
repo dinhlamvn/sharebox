@@ -57,14 +57,16 @@ fun Activity.showAlert(
 }
 
 
-fun Context.pushNotification(id: Int, notification: Notification) {
+fun Context.pushNotification(id: Int, notification: Notification): Boolean {
     if (ContextCompat.checkSelfPermission(
             this,
             android.Manifest.permission.POST_NOTIFICATIONS
         ) == PackageManager.PERMISSION_GRANTED
     ) {
         NotificationManagerCompat.from(this).notify(id, notification)
+        return true
     }
+    return false
 }
 
 fun Context.cancelNotification(id: Int) {

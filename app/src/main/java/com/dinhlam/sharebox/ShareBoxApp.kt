@@ -17,6 +17,8 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.tracking.TrackerManager
+import com.dinhlam.sharebox.tracking.trackers.FirebaseAnalysisTracker
 import com.dinhlam.sharebox.utils.UserUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.installations.FirebaseInstallations
@@ -108,6 +110,8 @@ class ShareBoxApp : Application(), Configuration.Provider {
                 )
             )
         }
+
+        TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
     }
 
     private fun requestApplyTheme() {

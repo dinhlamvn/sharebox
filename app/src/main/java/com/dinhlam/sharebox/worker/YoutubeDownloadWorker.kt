@@ -40,7 +40,12 @@ class YoutubeDownloadWorker @AssistedInject constructor(
     private val notificationId = Random.nextInt()
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return createForegroundInfo(appContext.getString(R.string.download_preparing, workerParams.inputData.getString("url")))
+        return createForegroundInfo(
+            appContext.getString(
+                R.string.download_preparing,
+                workerParams.inputData.getString("url")
+            )
+        )
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -116,9 +121,18 @@ class YoutubeDownloadWorker @AssistedInject constructor(
             }
 
             val intent =
-                router.downloadPopup(appContext, sourceUrl, videos, audios, emptyList(), notificationId)
+                router.downloadPopup(
+                    appContext,
+                    sourceUrl,
+                    videos,
+                    audios,
+                    emptyList(),
+                    notificationId
+                )
             val notification = createDownloadNotification(intent, sourceUrl)
-            appContext.pushNotification(notificationId, notification)
+            if (!appContext.pushNotification(notificationId, notification)) {
+                error("Push notification to device failed")
+            }
             Result.success()
         } catch (e: Exception) {
             Result.failure()

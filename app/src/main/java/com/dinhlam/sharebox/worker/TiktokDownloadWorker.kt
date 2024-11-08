@@ -21,6 +21,8 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.tracking.TrackerManager
+import com.dinhlam.sharebox.tracking.events.TiktokDownloadErrorEvent
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -50,10 +52,10 @@ class TiktokDownloadWorker @AssistedInject constructor(
         try {
             setForeground(createForegroundInfo())
             val sourceUrl =
-                workerParams.inputData.getString("url") ?: return@withContext Result.success()
+                workerParams.inputData.getString("url") ?: error("No input url")
             val tiktokUrl = videoHelper.getTiktokUrl(sourceUrl)
             val videoId =
-                Uri.parse(tiktokUrl).lastPathSegment ?: return@withContext Result.success()
+                Uri.parse(tiktokUrl).lastPathSegment ?: error("No video id")
             var retryTimes = 3
             var html = ""
             do {
@@ -84,11 +86,7 @@ class TiktokDownloadWorker @AssistedInject constructor(
             } while (retryTimes > 0)
 
             if (html.isEmpty()) {
-                return@withContext if (runAttemptCount < 3) {
-                    Result.retry()
-                } else {
-                    Result.failure()
-                }
+                error("HTML is empty")
             }
 
             val imageUrls = parseHtmlSSSTikGallery(html)
@@ -112,11 +110,15 @@ class TiktokDownloadWorker @AssistedInject constructor(
             val images =
                 imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
 
-            val intent = router.downloadPopup(appContext, tiktokUrl, videos, audios, images, notificationId)
+            val intent =
+                router.downloadPopup(appContext, tiktokUrl, videos, audios, images, notificationId)
             val notification = createDownloadNotification(intent, sourceUrl)
-            appContext.pushNotification(notificationId, notification)
+            if (!appContext.pushNotification(notificationId, notification)) {
+                error("Push notification to device failed")
+            }
             Result.success()
         } catch (e: Exception) {
+            TrackerManager.logEvent(TiktokDownloadErrorEvent(e.message))
             Result.failure()
         }
     }
@@ -130,7 +132,12 @@ class TiktokDownloadWorker @AssistedInject constructor(
                 NotificationCompat.Action(
                     null,
                     appContext.getString(R.string.download),
-                    PendingIntent.getActivity(appContext, notificationId, intent, PendingIntent.FLAG_IMMUTABLE)
+                    PendingIntent.getActivity(
+                        appContext,
+                        notificationId,
+                        intent,
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
                 )
             )
             .setAutoCancel(true)
@@ -170,7 +177,12 @@ class TiktokDownloadWorker @AssistedInject constructor(
             ForegroundInfo(
                 workerParams.inputData.getInt("id", notificationId),
                 NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                    .setContentText(appContext.getString(R.string.download_preparing, workerParams.inputData.getString("url")))
+                    .setContentText(
+                        appContext.getString(
+                            R.string.download_preparing,
+                            workerParams.inputData.getString("url")
+                        )
+                    )
                     .setAutoCancel(false)
                     .setContentTitle(appContext.getString(R.string.downloading))
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -186,7 +198,12 @@ class TiktokDownloadWorker @AssistedInject constructor(
             ForegroundInfo(
                 workerParams.inputData.getInt("id", notificationId),
                 NotificationCompat.Builder(appContext, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID)
-                    .setContentText(appContext.getString(R.string.download_preparing, workerParams.inputData.getString("url")))
+                    .setContentText(
+                        appContext.getString(
+                            R.string.download_preparing,
+                            workerParams.inputData.getString("url")
+                        )
+                    )
                     .setAutoCancel(false)
                     .setContentTitle(appContext.getString(R.string.downloading))
                     .setSmallIcon(R.mipmap.ic_launcher)
