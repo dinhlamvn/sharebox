@@ -15,6 +15,7 @@ data class CircleIconListModel(
     val id: String,
     val icon: Drawable?,
     val size: Int = 24.dp(),
+    val backgroundColor: Int? = null,
     val margin: Spacing = Spacing.None,
     val onClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseListModel(id) {
@@ -27,6 +28,8 @@ data class CircleIconListModel(
                 ListModelCircleIconBinding.inflate(inflater, container, false)
             ) {
             override fun onBind(model: CircleIconListModel, position: Int) {
+                model.backgroundColor?.let(binding.root::setCardBackgroundColor)
+                    ?: binding.root.setCardBackgroundColor(null)
                 binding.imageIcon.updateSize(model.size, model.size)
                 binding.root.updateMargin(model.margin)
                 binding.imageIcon.setImageDrawable(model.icon)

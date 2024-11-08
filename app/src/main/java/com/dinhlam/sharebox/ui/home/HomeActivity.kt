@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -24,7 +25,6 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
-import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
@@ -49,6 +49,18 @@ import javax.inject.Inject
 class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+
+    private val scrollListener = object : OnScrollListener() {
+        var totalScrolledY: Int = 0
+        var alpha: Float = 0f
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            totalScrolledY = totalScrolledY.plus(dy).coerceAtLeast(0)
+            alpha = (totalScrolledY / 100.dpF()).coerceAtMost(1f)
+            setupToolbarAction(recyclerView, alpha, totalScrolledY)
+        }
+    }
 
     private val viewBoxDetailLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -120,6 +132,11 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         val recyclerViewState = binding.recyclerView.layoutManager?.onSaveInstanceState()
         homeAdapter.requestBuildListModels {
             binding.recyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
+            setupToolbarAction(
+                binding.recyclerView,
+                scrollListener.alpha,
+                scrollListener.totalScrolledY
+            )
         }
     }
 
@@ -256,18 +273,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             requestArchiveImages()
         }
 
-        binding.recyclerView.addOnScrollListener(object : OnScrollListener() {
-            private var totalScrolledY: Int = 0
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                totalScrolledY = totalScrolledY.plus(dy).coerceAtLeast(0).coerceAtMost(100.dp())
-                val alpha = (totalScrolledY / 100.dpF()).coerceAtMost(1f)
-                binding.containerAction.isVisible = alpha >= 0.2f
-                binding.containerAction.alpha = alpha
-                binding.textTitle.alpha = 1 - alpha
-            }
-        })
+        binding.recyclerView.addOnScrollListener(scrollListener)
     }
 
     override fun onStart() {
@@ -401,7 +407,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     fun openShare(share: ShareDetail) {
         when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
+                this,
+                shareData.url,
+                share.boxDetail?.boxId,
+                share.boxDetail?.boxName,
+                false
+            )
+
             is ShareData.ShareText -> {
                 viewModel.setCurrentShare(share)
                 openShareTextResultLauncher.launch(router.textInput(this, null, shareData.text))
@@ -433,5 +446,16 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     override fun onResume() {
         super.onResume()
         viewModel.refresh()
+    }
+
+    @UiThread
+    private fun setupToolbarAction(recyclerView: RecyclerView, alpha: Float, dy: Int) {
+        recyclerView.findViewHolderForLayoutPosition(0)?.itemView?.apply {
+            x = dy * -1f
+            this.alpha = 1f - alpha
+        }
+        binding.containerAction.isVisible = alpha >= 0.2f
+        binding.containerAction.alpha = alpha
+        binding.textTitle.alpha = 1 - alpha
     }
 }

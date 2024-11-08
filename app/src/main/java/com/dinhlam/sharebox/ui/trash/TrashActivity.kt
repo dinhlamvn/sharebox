@@ -161,7 +161,13 @@ class TrashActivity :
 
     private fun openShare(share: ShareDetail) {
         when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
+            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
+                this,
+                shareData.url,
+                share.boxDetail?.boxId,
+                share.boxDetail?.boxName,
+                false
+            )
             is ShareData.ShareText -> {
                 TextViewerDialogFragment().apply {
                     arguments = bundleOf(Intent.EXTRA_TEXT to shareData.text)

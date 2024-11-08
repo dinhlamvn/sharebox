@@ -13,7 +13,7 @@ data class HomeState(
     val totalBox: Int = 0,
     val chooseBoxFor: ChooseBoxFor? = null,
     val currentShare: ShareDetail? = null,
-    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.Initialize
+    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.Initialize,
 ) : BaseViewModel.BaseState {
 
     sealed interface ChooseBoxFor {

@@ -12,6 +12,7 @@ import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
@@ -174,6 +175,7 @@ class HomeAdapter @Inject constructor(
                 "tiktok",
                 activity.getDrawableCompat(R.drawable.ic_tiktok),
                 size = 32.dp(),
+                backgroundColor = context.getColorCompat(R.color.md_theme_primary),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.tiktokDiscover(activity))
                 })
@@ -186,6 +188,7 @@ class HomeAdapter @Inject constructor(
                 activity.getDrawableCompat(R.drawable.ic_zing_news),
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
+                backgroundColor = context.getColorCompat(R.color.md_theme_primary),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.zingNewsDiscover(activity))
                 })

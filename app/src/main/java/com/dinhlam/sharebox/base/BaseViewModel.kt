@@ -123,7 +123,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
 
     protected fun doInBackground(
         errorCatcher: ((Throwable) -> Unit)? = null, block: suspend CoroutineScope.() -> Unit
-    ) = viewModelScope.launch(Dispatchers.IO) {
+    ) = viewModelScope.launch {
         try {
             block.invoke(this)
         } catch (e: Exception) {
