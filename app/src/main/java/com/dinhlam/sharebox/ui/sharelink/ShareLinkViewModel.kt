@@ -17,37 +17,23 @@ class ShareLinkViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
 ) : BaseViewModel<ShareLinkState>(ShareLinkState()) {
 
-    init {
-        getDefaultBox()
-    }
-
-    private fun getDefaultBox() {
-        suspend {
-            boxRepository.findFirst(userHelper.getCurrentUserId())
-        }.execute { asyncLoad ->
-            copy(currentBox = asyncLoad.data)
-        }
-    }
-
-    fun setCurrentBoxId(boxId: String) {
-        suspend { boxRepository.findOne(boxId) }.execute { asyncLoad ->
-            copy(currentBox = asyncLoad.data)
-        }
-    }
-
-    fun archiveLink(link: String) = getState { state ->
+    fun archiveLink(link: String, boxId: String) = getState { state ->
         suspend {
             val shareData = ShareData.ShareUrl(link)
             val isVideoShare = videoHelper.getVideoSource(shareData.url) != null
             shareRepository.insert(
                 shareData = shareData,
                 shareNote = null,
-                shareBoxId = state.currentBox?.boxId,
+                shareBoxId = boxId,
                 shareUserId = userHelper.getCurrentUserId(),
                 isVideoShare = isVideoShare
             )!!
         }.execute { asyncLoad ->
             copy(asyncLoadArchive = asyncLoad)
         }
+    }
+
+    fun setLinkError(error: String?) = setState {
+        copy(linkError = error)
     }
 }

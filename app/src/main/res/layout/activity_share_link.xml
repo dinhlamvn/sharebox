@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,94 +10,25 @@
         style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:contentInsetEnd="16dp"
         app:contentInsetStart="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/container_share_box"
-                style="@style/AppMaterialCardView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="12dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/edit_link">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_share_box"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:drawablePadding="6dp"
-                        android:ellipsize="end"
-                        android:gravity="center_vertical"
-                        android:maxLines="1"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="8dp"
-                        android:textAppearance="@style/TextBody"
-                        tools:text="No box" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image_add_box"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:background="?attr/selectableItemBackground"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp"
-                        android:scaleType="centerInside" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@id/container_bottom"
-        app:layout_constraintTop_toBottomOf="@id/divider">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@id/button_paste"
+                android:layout_marginEnd="8dp"
+                app:errorEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/button_archive"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -110,43 +40,87 @@
                     android:gravity="start|top"
                     android:hint="@string/share_link_hint"
                     android:imeOptions="actionDone"
-                    android:inputType="textWebEditText"
+                    android:inputType="text"
                     android:maxLines="1"
-                    android:paddingHorizontal="16dp"
                     android:paddingVertical="12dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="56dp"
                     android:scrollHorizontally="true"
                     android:textAppearance="@style/TextBody" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.dinhlam.sharebox.view.CardViewIconView
+                android:id="@+id/button_go"
+                android:layout_width="40dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textAppearance="@style/TextBodyMedium"
+                app:cardBackgroundColor="@color/md_theme_primary"
+                app:icon_code="faw_arrow_right"
+                app:icon_color="@android:color/white"
+                app:icon_size="20dp"
+                app:layout_constraintBottom_toBottomOf="@id/text_layout"
+                app:layout_constraintEnd_toEndOf="@id/text_layout"
+                app:layout_constraintTop_toTopOf="@id/text_layout" />
+
+            <com.dinhlam.sharebox.view.CardViewIconView
+                android:id="@+id/button_archive"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
+                app:cardCornerRadius="16dp"
+                app:icon_code="gmd_archive"
+                app:icon_size="20dp"
+                app:layout_constraintBottom_toBottomOf="@id/text_layout"
+                app:layout_constraintEnd_toStartOf="@id/button_paste"
+                app:layout_constraintTop_toTopOf="@id/text_layout" />
+
+            <com.dinhlam.sharebox.view.CardViewIconView
                 android:id="@+id/button_paste"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginEnd="8dp"
                 app:cardCornerRadius="16dp"
                 app:icon_code="faw_paste"
                 app:icon_size="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/text_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/text_layout" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:overScrollMode="never"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="16dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/text_layout" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextBody"
+        android:textColor="@color/red_500"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/text_error" />
 
     <LinearLayout
         android:id="@+id/container_bottom"
@@ -156,30 +130,8 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scroll_view"
+        app:layout_constraintTop_toBottomOf="@id/recycler_view"
         app:layout_constraintVertical_bias="1">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_archive"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="4dp"
-            android:layout_weight="1"
-            android:backgroundTintMode="src_over"
-            android:gravity="center"
-            android:text="@string/archives"
-            android:textAppearance="@style/TextBodyMedium" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_go"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="4dp"
-            android:layout_weight="1"
-            android:backgroundTintMode="src_over"
-            android:gravity="center"
-            android:text="@string/go"
-            android:textAppearance="@style/TextBodyMedium" />
 
     </LinearLayout>
 

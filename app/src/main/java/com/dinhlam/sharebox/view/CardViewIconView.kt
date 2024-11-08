@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.card.MaterialCardView
+import com.mikepenz.iconics.utils.colorInt
 
 class CardViewIconView @JvmOverloads constructor(
     context: Context,
@@ -23,6 +24,7 @@ class CardViewIconView @JvmOverloads constructor(
 
     private var iconSize: Int = 24.dp()
     private var iconCode: String? = null
+    private var iconColor: Int = 0
 
     private val imageView = AppCompatImageView(context)
 
@@ -34,6 +36,8 @@ class CardViewIconView @JvmOverloads constructor(
             )
 
             iconCode = typedArray.getString(R.styleable.CardViewIconView_icon_code)
+
+            iconColor = typedArray.getColor(R.styleable.CardViewIconView_icon_color, 0)
         }
 
         addView(imageView, LayoutParams(iconSize, iconSize).apply {
@@ -46,14 +50,22 @@ class CardViewIconView @JvmOverloads constructor(
                     Icons.getFontAwesomeIcon(
                         context,
                         code
-                    )
+                    ).apply {
+                        if (iconColor != 0) {
+                            colorInt = iconColor
+                        }
+                    }
                 )
 
                 code.startsWith("gm") -> imageView.setImageDrawable(
                     Icons.getGoogleMaterialIcon(
                         context,
                         code
-                    )
+                    ).apply {
+                        if (iconColor != 0) {
+                            colorInt = iconColor
+                        }
+                    }
                 )
             }
         }

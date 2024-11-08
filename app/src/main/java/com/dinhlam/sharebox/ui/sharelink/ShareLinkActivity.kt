@@ -6,11 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.UiThread
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -24,7 +25,6 @@ import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -39,13 +39,22 @@ import javax.inject.Inject
 class ShareLinkActivity :
     BaseViewModelActivity<ShareLinkState, ShareLinkViewModel, ActivityShareLinkBinding>() {
 
-    private val chooseBoxLauncher =
+    private val chooseBoxToGoLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data ?: return@registerForActivityResult
-                val boxId =
-                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
-                viewModel.setCurrentBoxId(boxId)
+                val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)
+                val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
+                gotoLink(getCorrectLink(), boxId, boxName)
+            }
+        }
+
+    private val chooseBoxToArchiveLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)!!
+                viewModel.archiveLink(getCorrectLink(), boxId)
             }
         }
 
@@ -126,23 +135,11 @@ class ShareLinkActivity :
         ).attachTo(this)
     }
 
-    private val createBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let(viewModel::setCurrentBoxId)
-            }
-        }
-
     override val viewModel: ShareLinkViewModel by viewModels()
 
     override fun onStateChanged(state: ShareLinkState) {
-        val boxName = state.currentBox?.boxName
-        val isLock = state.currentBox?.passcode?.isNotBlank() ?: false
-        binding.textShareBox.text = boxName
-        binding.textShareBox.setDrawableCompat(
-            start = Icons.boxIcon(this),
-            end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
-        )
+        showLinkError(state.linkError)
+        adapter.requestBuildListModels()
     }
 
     override fun onCreateViewBinding(): ActivityShareLinkBinding {
@@ -152,47 +149,19 @@ class ShareLinkActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         handleUri()
 
         binding.buttonArchive.setOnClickListener {
-            if (getState(viewModel, ShareLinkState::currentBox) == null) {
-                showToast(R.string.please_choose_box)
-                return@setOnClickListener
-            }
-
-            val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank()
-                ?: return@setOnClickListener showToast(R.string.require_input_link)
-            if (!link.isWebLink()) {
-                return@setOnClickListener showLinkError(getString(R.string.require_input_correct_weblink))
-            }
-
-            viewModel.archiveLink(link)
+            onArchiveLink()
         }
 
         binding.buttonGo.setOnClickListener {
-            if (getState(viewModel, ShareLinkState::currentBox) == null) {
-                showToast(R.string.please_choose_box)
-                return@setOnClickListener
-            }
             onGo()
         }
 
         adapter.attachTo(binding.recyclerView, this)
-
-        binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
-        binding.imageAddBox.setOnClickListener {
-            createBoxResultLauncher.launch(router.boxForm(this, null))
-        }
-
-        binding.containerShareBox.setOnClickListener {
-            chooseBoxLauncher.launch(router.boxList(this, null))
-        }
-
-        binding.editLink.setHorizontallyScrolling(false)
-        binding.editLink.maxLines = Int.MAX_VALUE
 
         binding.editLink.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -202,11 +171,12 @@ class ShareLinkActivity :
         }
 
         binding.editLink.doAfterTextChangedDebounce(scope = lifecycleScope) {
-            showLinkError(null)
+            viewModel.setLinkError(null)
         }
 
         binding.buttonPaste.setOnClickListener {
-            binding.editLink.setText(pickWebLinkFromClipboard()?.toString())
+            val clipboardData = pickWebLinkFromClipboard()?.toString() ?: return@setOnClickListener
+            binding.editLink.setText(clipboardData)
         }
 
         viewModel.onChange(ShareLinkState::asyncLoadArchive, this) { asyncLoad ->
@@ -232,48 +202,56 @@ class ShareLinkActivity :
 
     private fun onGo() {
         binding.editLink.hideKeyboard()
-        val link =
-            binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return showLinkError(
-                getString(R.string.require_input_link)
+        val correctLink = getCorrectLink().takeIfNotNullOrBlank() ?: return viewModel.setLinkError(
+            getString(R.string.require_input_link)
+        )
+
+        if (!correctLink.isWebLink()) {
+            return viewModel.setLinkError(getString(R.string.require_input_correct_weblink))
+        }
+
+        chooseBoxToGoLauncher.launch(router.boxList(this, getString(R.string.choose_box_for_web)))
+    }
+
+    private fun onArchiveLink() {
+        binding.editLink.hideKeyboard()
+        val correctLink = getCorrectLink().takeIfNotNullOrBlank() ?: return viewModel.setLinkError(
+            getString(R.string.require_input_link)
+        )
+
+        if (!correctLink.isWebLink()) {
+            return viewModel.setLinkError(getString(R.string.require_input_correct_weblink))
+        }
+
+        chooseBoxToArchiveLauncher.launch(
+            router.boxList(
+                this,
+                getString(R.string.choose_box_for_web)
             )
-        val correctLink = if (link.startsWith("http://") || link.startsWith("https://")) {
+        )
+    }
+
+    private fun getCorrectLink(): String {
+        val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return ""
+        return if (link.startsWith("http://") || link.startsWith("https://")) {
             link
         } else {
             "https://$link"
         }
-
-        if (!correctLink.isWebLink()) {
-            showLinkError(getString(R.string.require_input_correct_weblink))
-            return
-        }
-
-        gotoLink(correctLink)
     }
 
-    private fun showLinkError(error: String?) {
-        binding.textLayout.error = error
-    }
-
-    private fun gotoLink(link: String) = getState(viewModel) { state ->
+    private fun gotoLink(link: String, boxId: String?, boxName: String?) {
         router.moveToChromeCustomTab(
             this,
             link,
-            state.currentBox?.boxId,
-            state.currentBox?.boxName,
+            boxId,
+            boxName,
             shareHelper.isSupportDownloadLink(link)
         )
     }
 
     private fun setWebLink(link: String) {
         binding.editLink.setText(link)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun pickWebLinkFromClipboard(): Uri? {
@@ -293,5 +271,16 @@ class ShareLinkActivity :
         }
 
         return null
+    }
+
+    override fun supportNavBack(): Boolean {
+        return false
+    }
+
+    @UiThread
+    private fun showLinkError(error: String?) {
+        binding.textError.error = error
+        binding.textError.text = error
+        binding.textError.isVisible = error.isNullOrBlank().not()
     }
 }
