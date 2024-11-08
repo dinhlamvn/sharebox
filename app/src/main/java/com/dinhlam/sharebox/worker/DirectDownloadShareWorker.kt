@@ -49,7 +49,11 @@ class DirectDownloadShareWorker @AssistedInject constructor(
             videoHelper.downloadVideo(appContext, notificationId, videoSource, videoOriginUrl)
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(appContext, R.string.nothing_to_download, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    appContext,
+                    R.string.no_support_download_this_content,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         return Result.success()

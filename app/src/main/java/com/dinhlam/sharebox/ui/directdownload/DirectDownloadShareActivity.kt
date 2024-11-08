@@ -30,7 +30,7 @@ class DirectDownloadShareActivity : AppCompatActivity() {
             }
 
             else -> {
-                showToast(R.string.nothing_to_download)
+                showToast(R.string.no_support_download_this_content)
                 finishAndRemoveTask()
             }
         }
@@ -38,7 +38,7 @@ class DirectDownloadShareActivity : AppCompatActivity() {
 
     private fun handleShareData(text: String) {
         if (!text.isWebLink()) {
-            showToast(R.string.nothing_to_download)
+            showToast(R.string.no_support_download_this_content)
             finishAndRemoveTask()
             return
         }
