@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -206,5 +205,25 @@ class HomeViewModel @Inject constructor(
             }
         }
         setState { copy(boxes = boxes) }
+    }
+
+    fun reloadBoxDetail(id: String) {
+        suspend {
+            boxRepository.findOne(id)!!
+        }.execute { asyncLoad ->
+            if (asyncLoad is AsyncLoad.Success) {
+                val box = asyncLoad.value
+                val newBoxList = boxes.map { boxDetail ->
+                    if (boxDetail.boxId == id) {
+                        box
+                    } else {
+                        boxDetail
+                    }
+                }
+                copy(boxes = newBoxList)
+            } else {
+                this
+            }
+        }
     }
 }

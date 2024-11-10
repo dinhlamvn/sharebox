@@ -50,6 +50,15 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
+        val editBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { id ->
+                    viewModel.reloadBoxDetail(id)
+                }
+            }
+        }
+
     private val scrollListener = object : OnScrollListener() {
         var totalScrolledY: Int = 0
         var alpha: Float = 0f

@@ -151,6 +151,10 @@ class HomeAdapter @Inject constructor(
     private fun onBoxOptionClick(boxDetail: BoxDetail) {
         val items = arrayOf(
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                FontAwesome.Icon.faw_edit.name,
+                activity.getString(R.string.title_edit_box)
+            ),
+            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_copy.name,
                 activity.getString(R.string.copy_id)
             )
@@ -160,7 +164,14 @@ class HomeAdapter @Inject constructor(
             items
         ) { position, _, _ ->
             when (position) {
-                0 -> activity.copy(boxDetail.boxId)
+                0 -> activity.editBoxResultLauncher.launch(
+                    router.boxForm(
+                        activity,
+                        boxDetail.boxId
+                    )
+                )
+
+                1 -> activity.copy(boxDetail.boxId)
             }
         }
     }

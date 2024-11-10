@@ -12,12 +12,13 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/container"
-        style="@style/MaterialCardView.TopLeftRightCorners"
+        style="@style/AppMaterialCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:behavior_fitToContents="true"
         app:behavior_hideable="true"
         app:behavior_skipCollapsed="true"
+        app:cardCornerRadius="0dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
