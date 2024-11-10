@@ -91,8 +91,10 @@ class HomeAdapter @Inject constructor(
                     boxDetail.createdDate,
                     Spacing.None,
                     !boxDetail.passcode.isNullOrBlank(),
-                    false,
-                    NoHashProp(this::onBoxClick),
+                    true,
+                    NoHashProp(View.OnClickListener {
+                        onBoxClick(boxDetail.boxId)
+                    }),
                     NoHashProp(View.OnClickListener {
                         onBoxOptionClick(boxDetail)
                     })

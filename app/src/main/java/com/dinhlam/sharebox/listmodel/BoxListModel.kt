@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.listmodel
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -19,8 +20,8 @@ data class BoxListModel(
     val created: Long,
     val margin: Spacing = Spacing.None,
     val hasPasscode: Boolean = false,
-    val active: Boolean = false,
-    val onClick: BaseListAdapter.NoHashProp<(String) -> Unit> = BaseListAdapter.NoHashProp(null),
+    val isShowOptionAction: Boolean = false,
+    val onClick: BaseListAdapter.NoHashProp<OnClickListener?> = BaseListAdapter.NoHashProp(null),
     val onOptionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseListModel(id) {
 
@@ -40,6 +41,7 @@ data class BoxListModel(
             }
 
             override fun onBind(model: BoxListModel, position: Int) {
+                binding.imageAction.isVisible = model.isShowOptionAction
                 binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     marginStart = model.margin.start
                     topMargin = model.margin.top
@@ -49,9 +51,7 @@ data class BoxListModel(
 
                 binding.imageAction.setOnClickListener(model.onOptionClick.prop)
 
-                binding.container.setOnClickListener {
-                    model.onClick.prop?.invoke(model.boxId)
-                }
+                binding.container.setOnClickListener(model.onClick.prop)
                 binding.textName.text = model.name
                 binding.textName.setDrawableCompat(
                     if (model.hasPasscode) Icons.lockIcon(

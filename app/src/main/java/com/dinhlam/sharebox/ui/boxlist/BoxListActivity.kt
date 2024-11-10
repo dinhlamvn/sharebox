@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseListAdapter.NoHashProp
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
@@ -19,9 +20,12 @@ import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
+import com.dinhlam.sharebox.listmodel.BoxListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +57,7 @@ class BoxListActivity :
                 returnSelectedBox(selectedBox)
             } else {
                 showToast(R.string.error_require_passcode)
+                viewModel.setSelectedBox(null)
             }
         }
 
@@ -70,64 +75,46 @@ class BoxListActivity :
                         height = 100.dp()
                     ).attachTo(this)
                 } else {
-                    state.searchBoxes.forEach { box ->
-                        TextListModel("text_${box.boxId}",
-                            box.boxName,
-                            height = 50.dp(),
-                            gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                            actionClick = BaseListAdapter.NoHashProp(
-                                View.OnClickListener {
-                                    viewModel.setSelectedBox(box)
-                                },
-                            ),
-                            startIcon = if (box.boxId == state.selectedBox?.boxId) Icons.doneCircleIcon(
-                                this@BoxListActivity
-                            ) {
-                                copy(sizeDp = 16)
-                            } else null,
-                            endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(this@BoxListActivity) {
-                                copy(
-                                    sizeDp = 16
-                                )
-                            } else null).attachTo(this)
+                    state.searchBoxes.forEachIndexed { idx, boxDetail ->
+                        BoxListModel(
+                            "box_${boxDetail.boxId}",
+                            boxDetail.boxId,
+                            boxDetail.boxName,
+                            boxDetail.createdDate,
+                            Spacing.None,
+                            !boxDetail.passcode.isNullOrBlank(),
+                            false,
+                            NoHashProp(View.OnClickListener {
+                                viewModel.setSelectedBox(boxDetail)
+                            }),
+                        ).attachTo(this)
+
+                        VerticalDividerListModel(
+                            "box_divider_$idx"
+                        ).attachTo(this)
                     }
                 }
 
                 return@getState
             }
 
-            TextListModel(
-                "text_new_box",
-                getString(R.string.create_box_2),
-                textAppearance = R.style.TextBodyMedium,
-                height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                actionClick = BaseListAdapter.NoHashProp(
-                    View.OnClickListener {
-                        createBoxResultLauncher.launch(router.boxForm(this@BoxListActivity, null))
-                    },
-                ),
-            ).attachTo(this)
+            state.boxes.forEachIndexed { idx, boxDetail ->
+                BoxListModel(
+                    "box_${boxDetail.boxId}",
+                    boxDetail.boxId,
+                    boxDetail.boxName,
+                    boxDetail.createdDate,
+                    Spacing.None,
+                    !boxDetail.passcode.isNullOrBlank(),
+                    false,
+                    NoHashProp(View.OnClickListener {
+                        viewModel.setSelectedBox(boxDetail)
+                    }),
+                ).attachTo(this)
 
-            state.boxes.forEach { box ->
-                TextListModel("text_${box.boxId}",
-                    box.boxName,
-                    height = 50.dp(),
-                    gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                    actionClick = BaseListAdapter.NoHashProp(
-                        View.OnClickListener {
-                            viewModel.setSelectedBox(box)
-                        },
-                    ),
-                    startIcon = if (box.boxId == state.selectedBox?.boxId) Icons.doneCircleIcon(
-                        this@BoxListActivity
-                    ) {
-                        copy(sizeDp = 16)
-                    } else null,
-                    endIcon = if (box.passcode?.isNotBlank() == true) Icons.lockIcon(this@BoxListActivity) {
-                        copy(
-                            sizeDp = 16
-                        )
-                    } else null).attachTo(this)
+                VerticalDividerListModel(
+                    "box_divider_$idx"
+                ).attachTo(this)
             }
 
             if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
@@ -173,15 +160,20 @@ class BoxListActivity :
             viewModel.search(editable.trimmedString())
         }
 
-        binding.imageDone.setImageDrawable(Icons.doneIcon(this))
+        binding.imageAdd.setImageDrawable(Icons.plusIcon(this))
 
-        binding.imageDone.setOnClickListener {
-            onDone()
+        binding.imageAdd.setOnClickListener {
+            createBoxResultLauncher.launch(router.boxForm(this, null))
+        }
+
+        viewModel.onChange(BoxListState::selectedBox) { selectedBox ->
+            if (selectedBox != null) {
+                onBoxSelected(selectedBox)
+            }
         }
     }
 
-    private fun onDone() = getState(viewModel) { state ->
-        val selectedBox = state.selectedBox ?: return@getState showToast(R.string.please_choose_box)
+    private fun onBoxSelected(selectedBox: BoxDetail) = getState(viewModel) { state ->
         if (selectedBox.passcode != null) {
             passcodeConfirmResultLauncher.launch(
                 router.passcodeIntent(this, selectedBox.passcode).putExtra(
