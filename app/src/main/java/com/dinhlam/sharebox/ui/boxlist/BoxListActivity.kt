@@ -166,7 +166,7 @@ class BoxListActivity :
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 
-        viewModel.onChange(BoxListState::selectedBox) { selectedBox ->
+        viewModel.onChange(BoxListState::selectedBox, this) { selectedBox ->
             if (selectedBox != null) {
                 onBoxSelected(selectedBox)
             }

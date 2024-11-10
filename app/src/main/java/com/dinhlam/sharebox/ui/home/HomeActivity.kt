@@ -50,7 +50,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
-        val editBoxResultLauncher =
+    val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { id ->
@@ -466,5 +466,14 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         binding.containerAction.isVisible = alpha >= 0.2f
         binding.containerAction.alpha = alpha
         binding.textTitle.alpha = 1 - alpha
+    }
+
+    fun requestManageMembers(boxId: String) {
+        if (userHelper.isSignedIn()) {
+            startActivity(router.boxMembers(this, boxId))
+        } else {
+            showToast(R.string.require_sign_in_to_manage_member)
+            startActivity(router.signIn(false))
+        }
     }
 }

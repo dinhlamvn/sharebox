@@ -19,10 +19,20 @@ class BoxMemberViewModel @Inject constructor(
     val realtimeDatabaseRepository: RealtimeDatabaseRepository
 ) : BaseViewModel<BoxMemberState>(BoxMemberState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))) {
 
-    private var listener: ValueEventListener =
-        realtimeDatabaseRepository.onBoxMembersChange(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID)) { list ->
-            setState { copy(members = list, loading = false) }
+    init {
+        loadBoxDetail()
+    }
+
+    private fun loadBoxDetail() = getState { state ->
+        suspend {
+            boxRepository.findOne(state.boxId)!!
+        }.execute { asyncLoad ->
+            val box = asyncLoad.data
+            copy(boxDetail = box)
         }
+    }
+
+    private var listener: ValueEventListener? = null
 
     fun addMember(email: String) = getState { state ->
         val memberId = UserUtils.createUserId(email)
@@ -44,8 +54,16 @@ class BoxMemberViewModel @Inject constructor(
 
     override fun onCleared() {
         getState { state ->
-            realtimeDatabaseRepository.removeBoxMembersChangeEvent(state.boxId, listener)
+            listener?.let {
+                realtimeDatabaseRepository.removeBoxMembersChangeEvent(state.boxId, it)
+            }
         }
         super.onCleared()
+    }
+
+    fun listen(boxId: String) {
+        listener = realtimeDatabaseRepository.onBoxMembersChange(boxId) { list ->
+            setState { copy(members = list, loading = false) }
+        }
     }
 }

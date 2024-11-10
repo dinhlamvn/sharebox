@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.ui.boxmember
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -15,6 +17,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.BoxMemberListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.UserUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +29,19 @@ class BoxMemberActivity :
 
     @Inject
     lateinit var userHelper: UserHelper
+
+    @Inject
+    lateinit var router: Router
+
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.listen(getState(viewModel, BoxMemberState::boxId))
+            } else {
+                showToast(R.string.error_require_passcode)
+                finish()
+            }
+        }
 
     private val memberAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
@@ -66,6 +82,24 @@ class BoxMemberActivity :
 
         binding.imageAdd.setOnClickListener {
             showDialogInputEmail()
+        }
+
+        viewModel.onChange(
+            BoxMemberState::boxDetail,
+            this,
+        ) { boxDetail ->
+            val box = boxDetail ?: return@onChange
+            if (!box.passcode.isNullOrBlank()) {
+                val intent = router.passcodeIntent(
+                    this, box.passcode, getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode,
+                        box.boxName
+                    )
+                )
+                passcodeConfirmResultLauncher.launch(intent)
+            } else {
+                viewModel.listen(getState(viewModel, BoxMemberState::boxId))
+            }
         }
     }
 

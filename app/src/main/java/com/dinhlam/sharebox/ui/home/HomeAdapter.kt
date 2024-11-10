@@ -157,6 +157,10 @@ class HomeAdapter @Inject constructor(
                 activity.getString(R.string.title_edit_box)
             ),
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                FontAwesome.Icon.faw_users.name,
+                activity.getString(R.string.members)
+            ),
+            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_copy.name,
                 activity.getString(R.string.copy_id)
             )
@@ -172,8 +176,9 @@ class HomeAdapter @Inject constructor(
                         boxDetail.boxId
                     )
                 )
+                1 -> activity.requestManageMembers(boxDetail.boxId)
 
-                1 -> activity.copy(boxDetail.boxId)
+                2 -> activity.copy(boxDetail.boxId)
             }
         }
     }
