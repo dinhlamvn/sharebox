@@ -8,7 +8,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.dinhlam.sharebox.extensions.appendIf
-import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.get
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -134,7 +134,7 @@ class LocalStorageHelper @Inject constructor(
                     inputStream.copyTo(outputStream)
                 }
             }
-        } ?: return@withContext ImageLoader.INSTANCE.get(appContext, imageSource)?.let { bitmap ->
+        } ?: return@withContext imageSource.get(appContext)?.let { bitmap ->
             resolver.openOutputStream(destUri)?.use { outputStream ->
                 bitmap.compress(
                     Bitmap.CompressFormat.JPEG,

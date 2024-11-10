@@ -7,9 +7,9 @@ import androidx.core.text.buildSpannedString
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewCommentBinding
 import com.dinhlam.sharebox.extensions.asElapsedTimeDisplay
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
 
 data class CommentListModel(
     val id: Int,
@@ -36,7 +36,7 @@ data class CommentListModel(
                 append(" • ")
                 append(model.commentDate.asElapsedTimeDisplay())
             }
-            ImageLoader.INSTANCE.load(buildContext, model.avatar, binding.imageAvatar) {
+            binding.imageAvatar.load(buildContext, model.avatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             binding.textContent.setReadMoreText(model.content)

@@ -8,9 +8,10 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
 import com.dinhlam.sharebox.extensions.updateSize
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
+import com.dinhlam.sharebox.imageloader.release
 
 data class ResourceImageListModel(
     @DrawableRes val drawableRes: Int,
@@ -35,7 +36,7 @@ data class ResourceImageListModel(
                     actionClick?.prop?.invoke()
                 }
 
-                ImageLoader.INSTANCE.load(buildContext, model.drawableRes, binding.image) {
+                binding.image.load(buildContext, model.drawableRes) {
                     copy(transformType = TransformType.Normal(model.scaleType))
                 }
 
@@ -48,7 +49,7 @@ data class ResourceImageListModel(
             }
 
             override fun onUnBind() {
-                ImageLoader.INSTANCE.release(buildContext, binding.image)
+                binding.image.release(buildContext)
             }
         }
     }

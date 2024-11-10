@@ -37,9 +37,9 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
 import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.model.ShareData
@@ -141,7 +141,7 @@ class ShareReceiveActivity :
 
     private fun updateUserInfo(activeUser: UserDetail?) {
         activeUser?.let { user ->
-            ImageLoader.INSTANCE.load(this, user.avatar, binding.imageAvatar) {
+            binding.imageAvatar.load(this, user.avatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             binding.textViewName.text = user.name

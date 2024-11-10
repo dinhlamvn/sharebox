@@ -22,9 +22,9 @@ import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
@@ -87,9 +87,9 @@ class BookmarkListItemActivity :
     }
 
     private fun updateUi(bookmarkCollection: BookmarkCollectionDetail) {
-        ImageLoader.INSTANCE.load(this, bookmarkCollection.thumbnail, binding.imageTopBar)
-        ImageLoader.INSTANCE.load(
-            this, bookmarkCollection.thumbnail, binding.imageThumbnailSmall
+        binding.imageTopBar.load(this, bookmarkCollection.thumbnail)
+        binding.imageThumbnailSmall.load(
+            this, bookmarkCollection.thumbnail
         ) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }

@@ -11,7 +11,8 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageViewMoreBinding
 import com.dinhlam.sharebox.extensions.asViewMoreDisplayCountValue
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
-import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.load
+import com.dinhlam.sharebox.imageloader.release
 
 data class ImageViewMoreListModel(
     val uri: Uri,
@@ -43,7 +44,7 @@ data class ImageViewMoreListModel(
                     height = model.height
                 }
 
-                ImageLoader.INSTANCE.load(buildContext, model.uri, binding.imageView)
+                binding.imageView.load(buildContext, model.uri)
 
                 model.number.takeIfGreaterThanZero()?.let { num ->
                     binding.textNumber.isVisible = true
@@ -55,7 +56,7 @@ data class ImageViewMoreListModel(
             }
 
             override fun onUnBind() {
-                ImageLoader.INSTANCE.release(buildContext, binding.imageView)
+                binding.imageView.release(buildContext)
             }
         }
     }

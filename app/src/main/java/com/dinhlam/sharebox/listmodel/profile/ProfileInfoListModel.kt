@@ -8,9 +8,9 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewProfileInfoBinding
 import com.dinhlam.sharebox.extensions.asDisplayPoint
 import com.dinhlam.sharebox.extensions.asProfileAge
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 
@@ -44,7 +44,7 @@ data class ProfileInfoListModel(
 
         override fun onBind(model: ProfileInfoListModel, position: Int) {
             binding.imageSetting.setOnClickListener(model.actionSetting.prop)
-            ImageLoader.INSTANCE.load(buildContext, model.avatar, binding.imageAvatar) {
+            binding.imageAvatar.load(buildContext, model.avatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }
             binding.textViewName.text = model.name

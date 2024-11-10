@@ -14,9 +14,9 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkCollectionFormBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.trimmedString
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
@@ -144,10 +144,9 @@ class BookmarkCollectionFormActivity :
 
         getState(viewModel) { state ->
             state.bookmarkCollectionDetail?.let { collectionDetail ->
-                ImageLoader.INSTANCE.load(
+                binding.imageThumbnail.load(
                     this,
-                    collectionDetail.thumbnail,
-                    binding.imageThumbnail
+                    collectionDetail.thumbnail
                 ) {
                     copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
                 }
@@ -170,7 +169,7 @@ class BookmarkCollectionFormActivity :
     private fun showThumbnail(data: Intent?) {
         val uri = data?.data ?: return
         viewModel.setThumbnail(uri)
-        ImageLoader.INSTANCE.load(this, uri, binding.imageThumbnail) {
+        binding.imageThumbnail.load(this, uri) {
             copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
         }
     }

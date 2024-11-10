@@ -13,16 +13,16 @@ import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.databinding.FragmentCommentBinding
 import com.dinhlam.sharebox.dialog.commentinput.CommentInputDialogFragment
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
 import com.dinhlam.sharebox.listmodel.CommentListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
+import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -122,8 +122,8 @@ class CommentFragment :
         binding.imageAvatar.isVisible = true
         binding.textComment.isVisible = true
 
-        ImageLoader.INSTANCE.load(
-            requireContext(), nonNullUser.avatar, binding.imageAvatar
+        binding.imageAvatar.load(
+            requireContext(), nonNullUser.avatar
         ) {
             copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
         }

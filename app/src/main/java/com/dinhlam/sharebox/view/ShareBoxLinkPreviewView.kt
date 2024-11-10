@@ -10,9 +10,10 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.databinding.ViewShareBoxLinkPreviewBinding
 import com.dinhlam.sharebox.extensions.trimToDomain
 import com.dinhlam.sharebox.extensions.updateHeight
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
+import com.dinhlam.sharebox.imageloader.release
 import com.dinhlam.sharebox.utils.LinkPreviewCacheUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -113,10 +114,9 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
 
     private suspend fun handleResult(openGraphResult: OpenGraphResult) =
         withContext(Dispatchers.Main) {
-            ImageLoader.INSTANCE.load(
+            binding.imageView.load(
                 context,
-                openGraphResult.image,
-                binding.imageView
+                openGraphResult.image
             ) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
@@ -126,7 +126,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         }
 
     private suspend fun handleErrorResult(url: String) = withContext(Dispatchers.Main) {
-        ImageLoader.INSTANCE.load(context, R.drawable.image_no_preview, binding.imageView)
+        binding.imageView.load(context, R.drawable.image_no_preview)
         binding.textViewUrl.hint = url
         binding.frameLoading.isVisible = false
     }
@@ -189,7 +189,7 @@ class ShareBoxLinkPreviewView @JvmOverloads constructor(
         if (job.isActive && !job.isCompleted) {
             job.cancel()
         }
-        ImageLoader.INSTANCE.release(context, binding.imageView)
+        binding.imageView.release(context)
         resetUi()
     }
 }

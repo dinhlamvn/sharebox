@@ -9,9 +9,10 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelShareImageBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.setDrawableCompat
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
+import com.dinhlam.sharebox.imageloader.release
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.utils.Icons
@@ -84,7 +85,7 @@ data class ShareImageListModel(
                 model.actionShareToOther.prop?.invoke(model.shareId)
             }
 
-            ImageLoader.INSTANCE.load(buildContext, model.uri, binding.imageShare) {
+            binding.imageShare.load(buildContext, model.uri) {
                 copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
             }
 
@@ -99,7 +100,7 @@ data class ShareImageListModel(
         }
 
         override fun onUnBind() {
-            ImageLoader.INSTANCE.release(buildContext, binding.imageShare)
+            binding.imageShare.release(buildContext)
             binding.textBoxName.text = null
             binding.textShareDate.text = null
         }

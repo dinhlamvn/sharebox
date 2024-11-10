@@ -10,7 +10,7 @@ import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBookmarkCollectionBinding
 import com.dinhlam.sharebox.extensions.asDisplayCountValue
-import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.load
 import com.dinhlam.sharebox.utils.Icons
 
 data class BookmarkCollectionListModel(
@@ -55,7 +55,7 @@ data class BookmarkCollectionListModel(
             }
             binding.container.setOnLongClickListener(model.onLongClickListener.prop)
             binding.container.setOnClickListener(model.onClickListener.prop)
-            ImageLoader.INSTANCE.load(buildContext, model.thumbnail, binding.imageThumbnail)
+            binding.imageThumbnail.load(buildContext, model.thumbnail)
             binding.textName.text = model.name
             binding.textDesc.text = model.desc
             binding.imageLock.isVisible = !model.passcode.isNullOrBlank()

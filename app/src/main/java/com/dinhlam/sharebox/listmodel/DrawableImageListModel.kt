@@ -9,7 +9,7 @@ import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
-import com.dinhlam.sharebox.imageloader.ImageLoader
+import com.dinhlam.sharebox.imageloader.release
 import com.dinhlam.sharebox.model.Spacing
 
 data class DrawableImageListModel(
@@ -48,7 +48,7 @@ data class DrawableImageListModel(
             }
 
             override fun onUnBind() {
-                ImageLoader.INSTANCE.release(buildContext, binding.image)
+                binding.image.release(buildContext)
             }
         }
     }

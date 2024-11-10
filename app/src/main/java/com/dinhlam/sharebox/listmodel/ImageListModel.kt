@@ -8,9 +8,10 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.databinding.ModelViewImageBinding
 import com.dinhlam.sharebox.extensions.updateSize
-import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
+import com.dinhlam.sharebox.imageloader.load
+import com.dinhlam.sharebox.imageloader.release
 
 data class ImageListModel(
     val uri: Uri,
@@ -32,13 +33,13 @@ data class ImageListModel(
                 binding.image.updateSize(model.width, model.height)
                 binding.image.setOnClickListener(model.actionClick?.prop)
 
-                ImageLoader.INSTANCE.load(buildContext, model.uri, binding.image) {
+                binding.image.load(buildContext, model.uri) {
                     copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
                 }
             }
 
             override fun onUnBind() {
-                ImageLoader.INSTANCE.release(buildContext, binding.image)
+                binding.image.release(buildContext)
             }
         }
     }
