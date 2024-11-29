@@ -12,11 +12,9 @@ import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
-import com.dinhlam.sharebox.listmodel.CardIconViewListModel
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -43,8 +41,6 @@ class HomeAdapter @Inject constructor(
     private val viewModel: HomeViewModel = activity.viewModel
 
     override fun buildListModels() = activity.getState(viewModel) { state ->
-        CardIconViewListModel("icon", Icons.webIcon(context)).attachTo(this)
-
         MainActionListModel(
             ContextCompat.getColor(activity, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
@@ -180,6 +176,7 @@ class HomeAdapter @Inject constructor(
                         boxDetail.boxId
                     )
                 )
+
                 1 -> activity.requestManageMembers(boxDetail.boxId)
 
                 2 -> activity.copy(boxDetail.boxId)
@@ -196,8 +193,7 @@ class HomeAdapter @Inject constructor(
             CircleIconListModel(
                 "tiktok",
                 activity.getDrawableCompat(R.drawable.ic_tiktok),
-                size = 32.dp(),
-                backgroundColor = context.getColorCompat(R.color.md_theme_primary),
+                size = 40.dp(),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.tiktokDiscover(activity))
                 })
@@ -208,9 +204,20 @@ class HomeAdapter @Inject constructor(
             CircleIconListModel(
                 "zing_news",
                 activity.getDrawableCompat(R.drawable.ic_zing_news),
-                size = 32.dp(),
+                size = 40.dp(),
                 margin = Spacing.Only(start = 16.dp()),
-                backgroundColor = context.getColorCompat(R.color.md_theme_primary),
+                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                    activity.startActivity(router.zingNewsDiscover(activity))
+                })
+            )
+        )
+
+        add(
+            CircleIconListModel(
+                "facebook_downloader",
+                Icons.facebookIcon(activity),
+                size = 40.dp(),
+                margin = Spacing.Only(start = 16.dp()),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.zingNewsDiscover(activity))
                 })

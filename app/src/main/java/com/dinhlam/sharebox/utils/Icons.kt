@@ -369,6 +369,13 @@ object Icons {
         return createIcon(context, FontAwesome.Icon.faw_youtube, block(IconBuilder(context)))
     }
 
+    fun facebookIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_facebook_square, block(IconBuilder(context)))
+    }
+
     fun getFontAwesomeIcon(context: Context, iconCode: String): IconicsDrawable {
         return createIcon(
             context, FontAwesome.getIcon(iconCode)

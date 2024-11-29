@@ -63,8 +63,8 @@ android {
 
         release {
             debuggable false
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
@@ -76,16 +76,16 @@ android {
             resValue 'string', 'app_name', 'ShareBox Dev'
 
             applicationIdSuffix ".dev"
-            buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
-            buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://sharebox-dev-502a2.appspot.com\""
+            buildConfigField "String", "FIREBASE_DATABASE_URL", "\"https://sharebox-dev-502a2-default-rtdb.firebaseio.com\""
+            buildConfigField "String", "FIREBASE_STORAGE_URL", "\"gs://sharebox-dev-502a2.appspot.com\""
             buildConfigField 'Boolean', 'DEV', 'true'
         }
 
         prod {
             resValue 'string', 'app_name', 'ShareBox'
 
-            buildConfigField "String", "FIREBASE_DATABASE_URL" , "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
-            buildConfigField "String", "FIREBASE_STORAGE_URL" , "\"gs://share-box-6c293.appspot.com\""
+            buildConfigField "String", "FIREBASE_DATABASE_URL", "\"https://share-box-6c293-default-rtdb.asia-southeast1.firebasedatabase.app\""
+            buildConfigField "String", "FIREBASE_STORAGE_URL", "\"gs://share-box-6c293.appspot.com\""
             buildConfigField 'Boolean', 'DEV', 'false'
         }
     }
