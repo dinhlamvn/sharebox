@@ -21,8 +21,8 @@ data class ButtonListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<ButtonListModel, ModelViewButtonBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<ButtonListModel, ModelViewButtonBinding>(
             ModelViewButtonBinding.inflate(inflater, container, false)
         ) {
             override fun onBind(model: ButtonListModel, position: Int) {

@@ -47,17 +47,17 @@ data class ShareUrlListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListUrlWebHolder(ListModelShareUrlBinding.inflate(inflater, container, false))
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return ShareListUrlWebHolderViewBinding(ListModelShareUrlBinding.inflate(inflater, container, false))
     }
 
     override fun getSpanSizeConfig(): BaseSpanSizeLookup.SpanSizeConfig {
         return BaseSpanSizeLookup.SpanSizeConfig.Normal
     }
 
-    private class ShareListUrlWebHolder(
+    private class ShareListUrlWebHolderViewBinding(
         binding: ListModelShareUrlBinding
-    ) : BaseListAdapter.BaseViewHolder<ShareUrlListModel, ListModelShareUrlBinding>(binding) {
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ShareUrlListModel, ListModelShareUrlBinding>(binding) {
 
         init {
             binding.textBoxName.setDrawableCompat(start = Icons.boxIcon(buildContext) {

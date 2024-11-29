@@ -20,12 +20,12 @@ data class ListItemListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ListItemViewHolder(inflater, container)
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return ListItemViewHolderViewBinding(inflater, container)
     }
 
-    private class ListItemViewHolder(layoutInflater: LayoutInflater, container: ViewGroup) :
-        BaseListAdapter.BaseViewHolder<ListItemListModel, ListModelListItemBinding>(
+    private class ListItemViewHolderViewBinding(layoutInflater: LayoutInflater, container: ViewGroup) :
+        BaseListAdapter.BaseViewHolderViewBinding<ListItemListModel, ListModelListItemBinding>(
             ListModelListItemBinding.inflate(layoutInflater, container, false)
         ) {
 

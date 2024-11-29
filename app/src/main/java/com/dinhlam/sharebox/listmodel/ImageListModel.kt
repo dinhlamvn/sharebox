@@ -24,8 +24,8 @@ data class ImageListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<ImageListModel, ModelViewImageBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<ImageListModel, ModelViewImageBinding>(
             ModelViewImageBinding.inflate(inflater, container, false)
         ) {
 

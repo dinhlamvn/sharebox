@@ -16,9 +16,9 @@ data class ZingNewsDiscoverListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
+    ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolder<ZingNewsDiscoverListModel, ListModelZingNewsDiscoverBinding>(
+            BaseListAdapter.BaseViewHolderViewBinding<ZingNewsDiscoverListModel, ListModelZingNewsDiscoverBinding>(
                 ListModelZingNewsDiscoverBinding.inflate(inflater, container, false)
             ) {
 

@@ -29,8 +29,8 @@ data class IconTextListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<IconTextListModel, ModelViewIconTextBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<IconTextListModel, ModelViewIconTextBinding>(
             ModelViewIconTextBinding.inflate(inflater, container, false)
         ) {
 

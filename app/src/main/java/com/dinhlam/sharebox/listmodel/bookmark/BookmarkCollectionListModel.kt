@@ -31,16 +31,16 @@ data class BookmarkCollectionListModel(
 ) : BaseListAdapter.BaseListModel("bookmark_collection_$id") {
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ModelViewBookmarkCollectionViewHolder(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return ModelViewBookmarkCollectionViewHolderViewBinding(
             ModelViewBookmarkCollectionBinding.inflate(
                 inflater, container, false
             )
         )
     }
 
-    private class ModelViewBookmarkCollectionViewHolder(binding: ModelViewBookmarkCollectionBinding) :
-        BaseListAdapter.BaseViewHolder<BookmarkCollectionListModel, ModelViewBookmarkCollectionBinding>(
+    private class ModelViewBookmarkCollectionViewHolderViewBinding(binding: ModelViewBookmarkCollectionBinding) :
+        BaseListAdapter.BaseViewHolderViewBinding<BookmarkCollectionListModel, ModelViewBookmarkCollectionBinding>(
             binding
         ) {
 

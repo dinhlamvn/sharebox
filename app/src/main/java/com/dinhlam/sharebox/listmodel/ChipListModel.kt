@@ -19,8 +19,8 @@ data class ChipListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<ChipListModel, ListModelChipBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<ChipListModel, ListModelChipBinding>(
             ListModelChipBinding.inflate(
                 inflater,
                 container,

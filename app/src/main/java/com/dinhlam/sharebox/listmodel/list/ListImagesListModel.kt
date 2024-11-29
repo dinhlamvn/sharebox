@@ -58,8 +58,8 @@ data class ListImagesListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListImagesViewHolder(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return ShareListImagesViewHolderViewBinding(
             ListModelShareImagesBinding.inflate(
                 inflater,
                 container,
@@ -72,9 +72,9 @@ data class ListImagesListModel(
         return BaseSpanSizeLookup.SpanSizeConfig.Full
     }
 
-    private class ShareListImagesViewHolder(
+    private class ShareListImagesViewHolderViewBinding(
         binding: ListModelShareImagesBinding,
-    ) : BaseListAdapter.BaseViewHolder<ListImagesListModel, ListModelShareImagesBinding>(
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ListImagesListModel, ListModelShareImagesBinding>(
         binding
     ) {
 

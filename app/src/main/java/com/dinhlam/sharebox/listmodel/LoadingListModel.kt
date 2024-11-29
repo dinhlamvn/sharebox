@@ -12,8 +12,8 @@ data class LoadingListModel(val id: String, val height: Int = ViewGroup.LayoutPa
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<LoadingListModel, ModelViewLoadingBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<LoadingListModel, ModelViewLoadingBinding>(
             ModelViewLoadingBinding.inflate(inflater, container, false)
         ) {
             override fun onBind(model: LoadingListModel, position: Int) {

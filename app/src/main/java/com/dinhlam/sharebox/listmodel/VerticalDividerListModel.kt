@@ -26,8 +26,8 @@ data class VerticalDividerListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return DividerViewHolder(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return DividerViewHolderViewBinding(
             ListModelVerticalDividerBinding.inflate(
                 inflater,
                 container,
@@ -36,8 +36,8 @@ data class VerticalDividerListModel(
         )
     }
 
-    private class DividerViewHolder(binding: ListModelVerticalDividerBinding) :
-        BaseListAdapter.BaseViewHolder<VerticalDividerListModel, ListModelVerticalDividerBinding>(
+    private class DividerViewHolderViewBinding(binding: ListModelVerticalDividerBinding) :
+        BaseListAdapter.BaseViewHolderViewBinding<VerticalDividerListModel, ListModelVerticalDividerBinding>(
             binding
         ) {
 

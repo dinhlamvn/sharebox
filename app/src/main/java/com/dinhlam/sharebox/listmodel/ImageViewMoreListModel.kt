@@ -25,9 +25,9 @@ data class ImageViewMoreListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
+    ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolder<ImageViewMoreListModel, ModelViewImageViewMoreBinding>(
+            BaseListAdapter.BaseViewHolderViewBinding<ImageViewMoreListModel, ModelViewImageViewMoreBinding>(
                 ModelViewImageViewMoreBinding.inflate(inflater, container, false)
             ) {
 

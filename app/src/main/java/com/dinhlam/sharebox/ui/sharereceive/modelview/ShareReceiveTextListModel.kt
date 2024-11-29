@@ -11,9 +11,9 @@ data class ShareReceiveTextListModel(val id: String, val text: String?) :
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
+    ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolder<ShareReceiveTextListModel, ModelViewShareReceiveTextBinding>(
+            BaseListAdapter.BaseViewHolderViewBinding<ShareReceiveTextListModel, ModelViewShareReceiveTextBinding>(
                 ModelViewShareReceiveTextBinding.inflate(inflater, container, false)
             ) {
 

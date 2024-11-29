@@ -16,13 +16,13 @@ data class ProfileMenuItemListModel(
     val listener: BaseListAdapter.NoHashProp<Function1<Int, Unit>> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseListModel("profile_menu_item_$id") {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
-        return ProfileMenuItemViewHolder(ModelViewProfileMenuItemBinding.inflate(inflater, container, false))
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*> {
+        return ProfileMenuItemViewHolderViewBinding(ModelViewProfileMenuItemBinding.inflate(inflater, container, false))
     }
 
-    private class ProfileMenuItemViewHolder(
+    private class ProfileMenuItemViewHolderViewBinding(
         binding: ModelViewProfileMenuItemBinding
-    ) : BaseListAdapter.BaseViewHolder<ProfileMenuItemListModel, ModelViewProfileMenuItemBinding>(
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ProfileMenuItemListModel, ModelViewProfileMenuItemBinding>(
         binding
     ) {
 

@@ -11,8 +11,8 @@ data class HashTagListModel(
     val onClick: BaseListAdapter.NoHashProp<Function1<String, Unit>> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseListModel("hashtag_$text") {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<HashTagListModel, ModelViewHashtagBinding>(
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<HashTagListModel, ModelViewHashtagBinding>(
             ModelViewHashtagBinding.inflate(inflater, container, false)
         ) {
 

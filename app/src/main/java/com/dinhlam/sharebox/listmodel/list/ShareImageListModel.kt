@@ -54,11 +54,11 @@ data class ShareImageListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> = ShareListImageViewHolder(inflater, container)
+    ): BaseListAdapter.BaseViewHolder<*> = ShareListImageViewHolderViewBinding(inflater, container)
 
-    private class ShareListImageViewHolder(
+    private class ShareListImageViewHolderViewBinding(
         inflater: LayoutInflater, container: ViewGroup
-    ) : BaseListAdapter.BaseViewHolder<ShareImageListModel, ListModelShareImageBinding>(
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ShareImageListModel, ListModelShareImageBinding>(
         ListModelShareImageBinding.inflate(inflater, container, false)
     ) {
 

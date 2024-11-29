@@ -22,9 +22,9 @@ data class CircleIconListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
+    ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolder<CircleIconListModel, ListModelCircleIconBinding>(
+            BaseListAdapter.BaseViewHolderViewBinding<CircleIconListModel, ListModelCircleIconBinding>(
                 ListModelCircleIconBinding.inflate(inflater, container, false)
             ) {
             override fun onBind(model: CircleIconListModel, position: Int) {

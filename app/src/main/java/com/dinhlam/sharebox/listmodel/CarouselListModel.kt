@@ -20,8 +20,8 @@ data class CarouselListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<CarouselListModel, ModelViewCarouselBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<CarouselListModel, ModelViewCarouselBinding>(
             ModelViewCarouselBinding.inflate(inflater, container, false)
         ) {
 

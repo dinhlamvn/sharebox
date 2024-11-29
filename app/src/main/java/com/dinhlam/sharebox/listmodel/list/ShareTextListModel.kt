@@ -46,17 +46,17 @@ data class ShareTextListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return ShareListTextViewHolder(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return ShareListTextViewHolderViewBinding(
             ListModelShareTextBinding.inflate(
                 inflater, container, false
             )
         )
     }
 
-    class ShareListTextViewHolder(
+    class ShareListTextViewHolderViewBinding(
         binding: ListModelShareTextBinding,
-    ) : BaseListAdapter.BaseViewHolder<ShareTextListModel, ListModelShareTextBinding>(
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ShareTextListModel, ListModelShareTextBinding>(
         binding
     ) {
 

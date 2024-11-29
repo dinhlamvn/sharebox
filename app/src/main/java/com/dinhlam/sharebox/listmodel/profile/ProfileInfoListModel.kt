@@ -28,13 +28,13 @@ data class ProfileInfoListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return UserInfoViewHolder(ModelViewProfileInfoBinding.inflate(inflater, container, false))
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return UserInfoViewHolderViewBinding(ModelViewProfileInfoBinding.inflate(inflater, container, false))
     }
 
-    private class UserInfoViewHolder(
+    private class UserInfoViewHolderViewBinding(
         binding: ModelViewProfileInfoBinding,
-    ) : BaseListAdapter.BaseViewHolder<ProfileInfoListModel, ModelViewProfileInfoBinding>(
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ProfileInfoListModel, ModelViewProfileInfoBinding>(
         binding
     ) {
 

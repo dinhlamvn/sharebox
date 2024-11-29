@@ -22,8 +22,8 @@ inline fun <reified R> Any?.cast(): R? {
     return this as? R
 }
 
-inline fun <reified R> Any?.castNonNull(): R {
-    return this as R
+inline fun <reified R> Any?.castNonNull(error: String = "Can't cast this object $this"): R {
+    return this as? R ?: error(error)
 }
 
 @Suppress("DEPRECATION")

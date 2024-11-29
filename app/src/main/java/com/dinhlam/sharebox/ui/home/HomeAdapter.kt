@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.CardIconViewListModel
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -26,6 +27,7 @@ import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
@@ -41,6 +43,8 @@ class HomeAdapter @Inject constructor(
     private val viewModel: HomeViewModel = activity.viewModel
 
     override fun buildListModels() = activity.getState(viewModel) { state ->
+        CardIconViewListModel("icon", Icons.webIcon(context)).attachTo(this)
+
         MainActionListModel(
             ContextCompat.getColor(activity, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {

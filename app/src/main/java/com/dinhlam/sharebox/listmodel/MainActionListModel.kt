@@ -18,8 +18,8 @@ data class MainActionListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<MainActionListModel, ViewMainActionBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<MainActionListModel, ViewMainActionBinding>(
             ViewMainActionBinding.inflate(inflater, container, false)
         ) {
 

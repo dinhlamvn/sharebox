@@ -21,9 +21,9 @@ data class TiktokDiscoverListModel(
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
+    ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolder<TiktokDiscoverListModel, ListModelTiktokDiscoverBinding>(
+            BaseListAdapter.BaseViewHolderViewBinding<TiktokDiscoverListModel, ListModelTiktokDiscoverBinding>(
                 ListModelTiktokDiscoverBinding.inflate(inflater, container, false)
             ) {
 

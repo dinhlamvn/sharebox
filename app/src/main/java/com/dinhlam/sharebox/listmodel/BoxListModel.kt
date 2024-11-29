@@ -28,8 +28,8 @@ data class BoxListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<BoxListModel, ModelViewBoxBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<BoxListModel, ModelViewBoxBinding>(
             ModelViewBoxBinding.inflate(inflater, container, false)
         ) {
 

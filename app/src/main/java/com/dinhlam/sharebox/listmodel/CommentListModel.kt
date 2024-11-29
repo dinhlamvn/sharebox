@@ -22,12 +22,12 @@ data class CommentListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return CommentViewHolder(ModelViewCommentBinding.inflate(inflater, container, false))
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return CommentViewHolderViewBinding(ModelViewCommentBinding.inflate(inflater, container, false))
     }
 
-    private class CommentViewHolder(binding: ModelViewCommentBinding) :
-        BaseListAdapter.BaseViewHolder<CommentListModel, ModelViewCommentBinding>(binding) {
+    private class CommentViewHolderViewBinding(binding: ModelViewCommentBinding) :
+        BaseListAdapter.BaseViewHolderViewBinding<CommentListModel, ModelViewCommentBinding>(binding) {
         override fun onBind(model: CommentListModel, position: Int) {
             binding.textName.text = buildSpannedString {
                 bold {

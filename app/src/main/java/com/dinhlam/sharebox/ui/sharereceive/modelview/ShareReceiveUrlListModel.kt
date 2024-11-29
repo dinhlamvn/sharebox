@@ -8,9 +8,9 @@ import com.dinhlam.sharebox.databinding.ModelViewShareReceiveUrlBinding
 data class ShareReceiveUrlListModel(val id: String, val url: String?) :
     BaseListAdapter.BaseListModel("share_url_$id") {
 
-    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*, *> {
+    override fun createViewHolder(inflater: LayoutInflater, container: ViewGroup): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolder<ShareReceiveUrlListModel, ModelViewShareReceiveUrlBinding>(
+            BaseListAdapter.BaseViewHolderViewBinding<ShareReceiveUrlListModel, ModelViewShareReceiveUrlBinding>(
                 ModelViewShareReceiveUrlBinding.inflate(inflater, container, false)
             ) {
 

@@ -16,12 +16,12 @@ data class DiscoverListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return DiscoverViewHolder(inflater, container)
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return DiscoverViewHolderViewBinding(inflater, container)
     }
 
-    private class DiscoverViewHolder(layoutInflater: LayoutInflater, container: ViewGroup) :
-        BaseListAdapter.BaseViewHolder<DiscoverListModel, ListModelDiscoverBinding>(
+    private class DiscoverViewHolderViewBinding(layoutInflater: LayoutInflater, container: ViewGroup) :
+        BaseListAdapter.BaseViewHolderViewBinding<DiscoverListModel, ListModelDiscoverBinding>(
             ListModelDiscoverBinding.inflate(layoutInflater, container, false)
         ) {
         private val adapter = BaseListAdapter.create()

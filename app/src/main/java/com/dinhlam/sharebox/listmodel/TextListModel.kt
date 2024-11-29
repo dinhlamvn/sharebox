@@ -38,8 +38,8 @@ data class TextListModel(
     override fun createViewHolder(
         inflater: LayoutInflater,
         container: ViewGroup
-    ): BaseListAdapter.BaseViewHolder<*, *> {
-        return object : BaseListAdapter.BaseViewHolder<TextListModel, ModelViewTextBinding>(
+    ): BaseListAdapter.BaseViewHolder<*> {
+        return object : BaseListAdapter.BaseViewHolderViewBinding<TextListModel, ModelViewTextBinding>(
             ModelViewTextBinding.inflate(inflater, container, false)
         ) {
 
