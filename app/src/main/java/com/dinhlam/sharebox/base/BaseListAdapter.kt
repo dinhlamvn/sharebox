@@ -257,9 +257,9 @@ abstract class BaseListAdapter :
 
     abstract class BaseViewHolderCustomView<T : BaseListModel, V : View>(
         val view: V,
-        private val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+        private val layoutParams: RecyclerView.LayoutParams = RecyclerView.LayoutParams(
+            RecyclerView.LayoutParams.MATCH_PARENT,
+            RecyclerView.LayoutParams.WRAP_CONTENT
         )
     ) : BaseViewHolder<T>(view.apply { this.layoutParams = layoutParams })
 

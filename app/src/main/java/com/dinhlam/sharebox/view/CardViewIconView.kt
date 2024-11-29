@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.use
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.updateSize
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.card.MaterialCardView
 import com.mikepenz.iconics.utils.colorInt
@@ -71,7 +72,12 @@ class CardViewIconView @JvmOverloads constructor(
         }
     }
 
-    fun setIcon(icon: Drawable) {
+    fun setIcon(icon: Drawable?) {
         imageView.setImageDrawable(icon)
+    }
+
+    fun setIconSize(sizeDp: Int) {
+        this.iconSize = sizeDp
+        this.imageView.updateSize(sizeDp, sizeDp)
     }
 }
