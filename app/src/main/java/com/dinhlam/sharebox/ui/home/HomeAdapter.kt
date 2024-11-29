@@ -193,7 +193,7 @@ class HomeAdapter @Inject constructor(
             CircleIconListModel(
                 "tiktok",
                 activity.getDrawableCompat(R.drawable.ic_tiktok),
-                size = 40.dp(),
+                size = 32.dp(),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.tiktokDiscover(activity))
                 })
@@ -204,7 +204,7 @@ class HomeAdapter @Inject constructor(
             CircleIconListModel(
                 "zing_news",
                 activity.getDrawableCompat(R.drawable.ic_zing_news),
-                size = 40.dp(),
+                size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.zingNewsDiscover(activity))
@@ -216,7 +216,7 @@ class HomeAdapter @Inject constructor(
             CircleIconListModel(
                 "facebook_downloader",
                 Icons.facebookIcon(activity),
-                size = 40.dp(),
+                size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     activity.startActivity(router.zingNewsDiscover(activity))
