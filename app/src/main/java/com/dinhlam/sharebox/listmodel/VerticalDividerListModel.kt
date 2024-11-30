@@ -1,16 +1,17 @@
 package com.dinhlam.sharebox.listmodel
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ListModelVerticalDividerBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.updateMargin
 import com.dinhlam.sharebox.extensions.updateWidth
 import com.dinhlam.sharebox.model.Spacing
+import com.google.android.material.divider.MaterialDivider
 
 data class VerticalDividerListModel(
     val id: String,
@@ -27,35 +28,32 @@ data class VerticalDividerListModel(
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return DividerViewHolderViewBinding(
-            ListModelVerticalDividerBinding.inflate(
-                inflater,
-                container,
-                false
-            )
-        )
+        return DividerViewHolderViewBinding(container.context)
     }
 
-    private class DividerViewHolderViewBinding(binding: ListModelVerticalDividerBinding) :
-        BaseListAdapter.BaseViewHolderViewBinding<VerticalDividerListModel, ListModelVerticalDividerBinding>(
-            binding
+    private class DividerViewHolderViewBinding(context: Context) :
+        BaseListAdapter.BaseViewHolderCustomView<VerticalDividerListModel, MaterialDivider>(
+            MaterialDivider(context)
         ) {
 
-        private val defaultColor = binding.root.dividerColor
+        init {
+            view.dividerThickness = 1.dp()
+        }
 
+        private val defaultColor = view.dividerColor
 
         override fun onBind(model: VerticalDividerListModel, position: Int) {
-            binding.root.updateWidth(model.width)
-            binding.root.updateMargin(model.margin)
+            view.updateWidth(model.width)
+            view.updateMargin(model.margin)
 
-            binding.divider.dividerThickness = model.height
+            view.dividerThickness = model.height
 
             model.dividerColor.takeIf { color -> color != 0 }?.let { takenColor ->
-                binding.root.dividerColor = ContextCompat.getColor(
+                view.dividerColor = ContextCompat.getColor(
                     buildContext, takenColor
                 )
             } ?: apply {
-                binding.root.dividerColor = defaultColor
+                view.dividerColor = defaultColor
             }
         }
 
