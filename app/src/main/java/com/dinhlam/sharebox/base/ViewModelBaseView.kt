@@ -23,7 +23,8 @@ import kotlinx.coroutines.selects.SelectBuilder
 import kotlinx.coroutines.selects.select
 import kotlin.reflect.KProperty1
 
-interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> : LifecycleOwner {
+internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> :
+    LifecycleOwner {
     val viewModel: VM
     fun onStateChanged(state: S)
 
@@ -46,7 +47,7 @@ interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> 
         property2: KProperty1<S, V2>,
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2) -> Unit
-    ) = viewModel.stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
+    ) = viewModel.stateFlow.map { state -> Consumer2(property1.get(state), property2.get(state)) }
         .distinctUntilChanged()
         .resolveConsumer(this) { consumer ->
             block(consumer.value1, consumer.value2)
@@ -58,11 +59,11 @@ interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> 
         property3: KProperty1<S, V3>,
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3) -> Unit
-    ) = viewModel.stateFlow.map {
+    ) = viewModel.stateFlow.map { state ->
         Consumer3(
-            property1.get(it),
-            property2.get(it),
-            property3.get(it)
+            property1.get(state),
+            property2.get(state),
+            property3.get(state)
         )
     }
         .distinctUntilChanged()
@@ -77,12 +78,12 @@ interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> 
         property4: KProperty1<S, V4>,
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3, V4) -> Unit
-    ) = viewModel.stateFlow.map {
+    ) = viewModel.stateFlow.map { state ->
         Consumer4(
-            property1.get(it),
-            property2.get(it),
-            property3.get(it),
-            property4.get(it)
+            property1.get(state),
+            property2.get(state),
+            property3.get(state),
+            property4.get(state)
         )
     }.distinctUntilChanged()
         .resolveConsumer(this) { consumer ->
@@ -97,13 +98,13 @@ interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> 
         property5: KProperty1<S, V5>,
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3, V4, V5) -> Unit
-    ) = viewModel.stateFlow.map {
+    ) = viewModel.stateFlow.map { state ->
         Consumer5(
-            property1.get(it),
-            property2.get(it),
-            property3.get(it),
-            property4.get(it),
-            property5.get(it)
+            property1.get(state),
+            property2.get(state),
+            property3.get(state),
+            property4.get(state),
+            property5.get(state)
         )
     }.distinctUntilChanged()
         .resolveConsumer(this) { consumer ->
@@ -122,9 +123,9 @@ interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewModel<S>> 
         val flow = flowWhenStarted(lifecycleOwner).distinctUntilChanged()
         val scope = lifecycleOwner.lifecycleScope
         return scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
-            flow.collectLatest {
+            flow.collectLatest { consumerValue ->
                 lifecycleOwner.launchWhenAtLeast(Lifecycle.State.STARTED) {
-                    block(it)
+                    block(consumerValue)
                 }
             }
         }

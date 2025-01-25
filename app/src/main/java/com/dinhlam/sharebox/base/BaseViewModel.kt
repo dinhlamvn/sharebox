@@ -130,7 +130,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property2: KProperty1<S, V2>,
         block: (V1, V2) -> Unit
     ) {
-        stateFlow.map { Consumer2(property1.get(it), property2.get(it)) }
+        stateFlow.map { state -> Consumer2(property1.get(state), property2.get(state)) }
             .distinctUntilChanged()
             .resolveConsumer { consumer ->
                 block(consumer.value1, consumer.value2)
@@ -143,7 +143,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property3: KProperty1<S, V3>,
         block: (V1, V2, V3) -> Unit
     ) {
-        stateFlow.map { Consumer3(property1.get(it), property2.get(it), property3.get(it)) }
+        stateFlow.map { state -> Consumer3(property1.get(state), property2.get(state), property3.get(state)) }
             .distinctUntilChanged()
             .resolveConsumer { consumer ->
                 block(consumer.value1, consumer.value2, consumer.value3)
@@ -157,12 +157,12 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property4: KProperty1<S, V4>,
         block: (V1, V2, V3, V4) -> Unit
     ) {
-        stateFlow.map {
+        stateFlow.map { state ->
             Consumer4(
-                property1.get(it),
-                property2.get(it),
-                property3.get(it),
-                property4.get(it)
+                property1.get(state),
+                property2.get(state),
+                property3.get(state),
+                property4.get(state)
             )
         }.distinctUntilChanged()
             .resolveConsumer { consumer ->
@@ -178,13 +178,13 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property5: KProperty1<S, V5>,
         block: (V1, V2, V3, V4, V5) -> Unit
     ) {
-        stateFlow.map {
+        stateFlow.map { state ->
             Consumer5(
-                property1.get(it),
-                property2.get(it),
-                property3.get(it),
-                property4.get(it),
-                property5.get(it)
+                property1.get(state),
+                property2.get(state),
+                property3.get(state),
+                property4.get(state),
+                property5.get(state)
             )
         }.distinctUntilChanged()
             .resolveConsumer { consumer ->
