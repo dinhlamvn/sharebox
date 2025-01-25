@@ -8,6 +8,6 @@ data class TrashState(
     val shares: List<ShareDetail> = emptyList(),
     val currentPage: Int = 1,
     val canLoadMore: Boolean = false,
-    val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.Initialize,
+    val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.UnInitialized,
     val currentShare: ShareDetail? = null
 ) : BaseViewModel.BaseState

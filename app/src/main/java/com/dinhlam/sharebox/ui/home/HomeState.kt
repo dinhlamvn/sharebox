@@ -6,14 +6,14 @@ import com.dinhlam.sharebox.model.ShareDetail
 
 data class HomeState(
     val currentUserId: String,
-    val asyncLoadShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.Initialize,
+    val asyncLoadShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.UnInitialized,
     val isRefreshing: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val boxes: List<BoxDetail> = emptyList(),
     val totalBox: Int = 0,
     val chooseBoxFor: ChooseBoxFor? = null,
     val currentShare: ShareDetail? = null,
-    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.Initialize,
+    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized,
 ) : BaseViewModel.BaseState {
 
     sealed interface ChooseBoxFor {

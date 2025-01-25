@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.ui.sharereceive
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -197,34 +196,33 @@ class ShareReceiveViewModel @Inject constructor(
                     .setSubText(context.getString(R.string.distribute_images_title))
                     .setAutoCancel(false).setProgress(100, 0, false)
                     .setSmallIcon(R.drawable.ic_file_upload_white)
-
-                val shareUris = mutableListOf<Uri>()
                 val uploadId = 456789
-
-                uris.forEachIndexed { index, uri ->
-                    val progress = index.plus(1f).div(uris.size).times(100).toInt()
-                    notificationBuilder.setProgress(100, progress, false).setContentTitle(
-                        context.getString(
-                            R.string.complete_progress, "${index.plus(1)}/${uris.size}"
+                val shareUris = buildList {
+                    uris.forEachIndexed { index, uri ->
+                        val progress = index.plus(1f).div(uris.size).times(100).toInt()
+                        notificationBuilder.setProgress(100, progress, false).setContentTitle(
+                            context.getString(
+                                R.string.complete_progress, "${index.plus(1)}/${uris.size}"
+                            )
                         )
-                    )
-                    if (ContextCompat.checkSelfPermission(
-                            context, android.Manifest.permission.POST_NOTIFICATIONS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        notificationManagerCompat.notify(
-                            uploadId, notificationBuilder.build()
+                        if (ContextCompat.checkSelfPermission(
+                                context, android.Manifest.permission.POST_NOTIFICATIONS
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            notificationManagerCompat.notify(
+                                uploadId, notificationBuilder.build()
+                            )
+                        }
+                        val task = firebaseStorageHelper.uploadShareImageFileWithoutNotification(
+                            share.shareId, uri
                         )
-                    }
-                    val task = firebaseStorageHelper.uploadShareImageFileWithoutNotification(
-                        share.shareId, uri
-                    )
-                    if (task.task.isSuccessful) {
-                        val networkUri =
-                            firebaseStorageHelper.getImageDownloadUri(share.shareId, uri)
-                        shareUris.add(networkUri)
-                    } else {
-                        shareUris.add(uri)
+                        if (task.task.isSuccessful) {
+                            val networkUri =
+                                firebaseStorageHelper.getImageDownloadUri(share.shareId, uri)
+                            add(networkUri)
+                        } else {
+                            add(uri)
+                        }
                     }
                 }
                 notificationManagerCompat.cancel(uploadId)

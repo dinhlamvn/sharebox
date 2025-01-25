@@ -195,7 +195,7 @@ class ShareReceiveActivity :
             scrollToBottomEditText(v)
         }
 
-        viewModel.onChange(ShareReceiveState::currentBox, this) { currentBox ->
+        onChange(ShareReceiveState::currentBox) { currentBox ->
             val boxName = currentBox?.boxName
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
             binding.textShareBox.text = boxName
@@ -205,13 +205,13 @@ class ShareReceiveActivity :
             )
         }
 
-        viewModel.onChange(ShareReceiveState::bookmarkCollection, this) { collectionDetail ->
+        onChange(ShareReceiveState::bookmarkCollection) { collectionDetail ->
             collectionDetail?.let {
                 binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
             } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
         }
 
-        viewModel.onChange(ShareReceiveState::asyncLoadArchive, this) { asyncLoad ->
+        onChange(ShareReceiveState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad is BaseViewModel.AsyncLoad.Loading) {
                 binding.viewLoading.show()
             } else {

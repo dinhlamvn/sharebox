@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
@@ -128,13 +129,13 @@ class BoxFormActivity :
             onSave()
         }
 
-        viewModel.onChange(BoxFormState::boxDetail, this) { boxDetail ->
+        onChange(BoxFormState::boxDetail) { boxDetail ->
             binding.textEditName.setText(boxDetail?.boxName)
             binding.textEditDesc.setText(boxDetail?.boxDesc)
         }
 
-        viewModel.onChange(BoxFormState::asyncLoadSave, this) { asyncLoad ->
-            binding.viewLoading.isVisible = asyncLoad.loading
+        onChange(BoxFormState::asyncLoadSave) { asyncLoad ->
+            binding.viewLoading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             val box = asyncLoad.data
             box?.let { createdBox ->
                 setResult(

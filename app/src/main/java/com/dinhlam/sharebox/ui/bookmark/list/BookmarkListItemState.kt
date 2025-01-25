@@ -10,5 +10,5 @@ data class BookmarkListItemState(
     val requestVerifyPasscode: Boolean = false,
     val isSharesLoading: Boolean = false,
     val shares: List<ShareDetail> = emptyList(),
-    val asyncLoadRemoveShare: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.Initialize
+    val asyncLoadRemoveShare: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized
 ) : BaseViewModel.BaseState

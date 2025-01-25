@@ -10,6 +10,6 @@ data class ZingNewsDiscoverState(
     val zingNewsCategory: ZingNewsCategory? = null,
     val zingNewsCategories: List<ZingNewsCategory> = emptyList(),
     val zingNewsDiscovers: List<ZingNewsDiscover> = emptyList(),
-    val asyncLoadZingNewsDiscover: BaseViewModel.AsyncLoad<List<ZingNewsDiscover>> = BaseViewModel.AsyncLoad.Initialize,
-    val asyncLoadArchive: BaseViewModel.AsyncLoad<String> = BaseViewModel.AsyncLoad.Initialize
+    val asyncLoadZingNewsDiscover: BaseViewModel.AsyncLoad<List<ZingNewsDiscover>> = BaseViewModel.AsyncLoad.UnInitialized,
+    val asyncLoadArchive: BaseViewModel.AsyncLoad<String> = BaseViewModel.AsyncLoad.UnInitialized
 ) : BaseViewModel.BaseState

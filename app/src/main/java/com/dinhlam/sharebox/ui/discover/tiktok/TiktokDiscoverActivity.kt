@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTiktokDiscoverBinding
@@ -87,7 +88,7 @@ class TiktokDiscoverActivity :
     override val viewModel: TiktokDiscoverViewModel by viewModels()
 
     override fun onStateChanged(state: TiktokDiscoverState) {
-        binding.loading.toggle(state.asyncLoadTiktokDiscover.loading)
+        binding.loading.toggle(state.asyncLoadTiktokDiscover is BaseViewModel.AsyncLoad.Loading)
         val boxName = state.currentBox?.boxName
         val isLock = state.currentBox?.passcode?.isNotBlank() ?: false
         binding.textShareBox.text = boxName
@@ -116,14 +117,14 @@ class TiktokDiscoverActivity :
             chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
-        viewModel.onChange(TiktokDiscoverState::asyncLoadArchive, this) { asyncLoad ->
+        onChange(TiktokDiscoverState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad.success) {
                 showToast(getString(R.string.archive_url_success, asyncLoad.data))
             }
         }
     }
 
-    private fun onArchive(url: String) = getState(viewModel) { state ->
+    private fun onArchive(url: String) = getState(viewModel) {
         val box = getState(viewModel, TiktokDiscoverState::currentBox) ?: return@getState showToast(
             R.string.please_choose_box
         )

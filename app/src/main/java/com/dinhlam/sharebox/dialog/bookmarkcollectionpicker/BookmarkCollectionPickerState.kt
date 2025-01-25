@@ -9,5 +9,5 @@ data class BookmarkCollectionPickerState(
     val bookmarkCollections: List<BookmarkCollectionDetail> = emptyList(),
     val pickedBookmarkCollection: BookmarkCollectionDetail? = null,
     val originalBookmarkCollection: BookmarkCollectionDetail? = null,
-    val asyncLoadBookmark: BaseViewModel.AsyncLoad<Pair<List<BookmarkCollectionDetail>, BookmarkCollectionDetail?>> = BaseViewModel.AsyncLoad.Initialize
+    val asyncLoadBookmark: BaseViewModel.AsyncLoad<Pair<List<BookmarkCollectionDetail>, BookmarkCollectionDetail?>> = BaseViewModel.AsyncLoad.UnInitialized
 ) : BaseViewModel.BaseState

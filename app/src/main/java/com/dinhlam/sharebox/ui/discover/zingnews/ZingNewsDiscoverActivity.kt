@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityZingnewsDiscoverBinding
@@ -80,7 +81,7 @@ class ZingNewsDiscoverActivity :
     override val viewModel: ZingNewDiscoverViewModel by viewModels()
 
     override fun onStateChanged(state: ZingNewsDiscoverState) {
-        binding.loading.toggle(state.asyncLoadZingNewsDiscover.loading)
+        binding.loading.toggle(state.asyncLoadZingNewsDiscover is BaseViewModel.AsyncLoad.Loading)
         val boxName = state.currentBox?.boxName
         val isLock = state.currentBox?.passcode?.isNotBlank() ?: false
         binding.textShareBox.text = boxName
@@ -109,7 +110,7 @@ class ZingNewsDiscoverActivity :
             chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
-        viewModel.onChange(ZingNewsDiscoverState::asyncLoadArchive, this) { asyncLoad ->
+        onChange(ZingNewsDiscoverState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad.success) {
                 showToast(getString(R.string.archive_url_success, asyncLoad.data))
             }

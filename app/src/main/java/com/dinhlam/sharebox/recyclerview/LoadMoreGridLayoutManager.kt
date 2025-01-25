@@ -11,11 +11,11 @@ class LoadMoreGridLayoutManager(
     private val onLoadMore: () -> Unit
 ) : GridLayoutManager(context, spanCount) {
 
-    var hadTriggerLoadMore = false
+    var hasTriggerLoadMore = false
 
     override fun onScrollStateChanged(state: Int) {
         if (!blockShouldLoadMore.invoke()) {
-            hadTriggerLoadMore = false
+            hasTriggerLoadMore = false
             return
         }
 
@@ -25,8 +25,8 @@ class LoadMoreGridLayoutManager(
 
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             val lastPosition = findLastCompletelyVisibleItemPosition()
-            if (!hadTriggerLoadMore && lastPosition == itemCount - 1) {
-                hadTriggerLoadMore = true
+            if (!hasTriggerLoadMore && lastPosition == itemCount - 1) {
+                hasTriggerLoadMore = true
                 onLoadMore()
             }
         }

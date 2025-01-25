@@ -177,10 +177,9 @@ class BoxDetailActivity :
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.onChange(
+        onChange(
             BoxDetailState::boxDetail,
-            BoxDetailState::mustInputPasscode,
-            this,
+            BoxDetailState::mustInputPasscode
         ) { boxDetail, mustInputPasscode ->
             if (!boxDetail?.passcode.isNullOrBlank() && mustInputPasscode) {
                 val takeBox = boxDetail ?: return@onChange finish()
@@ -196,7 +195,7 @@ class BoxDetailActivity :
             }
         }
 
-        viewModel.onChange(BoxDetailState::asyncLoadSave, this) { asyncLoad ->
+        onChange(BoxDetailState::asyncLoadSave) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 viewModel.updateShare(asyncLoad.value)
@@ -284,6 +283,7 @@ class BoxDetailActivity :
                 share.boxDetail?.boxName,
                 false
             )
+
             is ShareData.ShareText -> {
                 viewModel.setCurrentShare(share)
                 openShareTextResultLauncher.launch(router.textInput(this, null, shareData.text))

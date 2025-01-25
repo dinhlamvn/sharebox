@@ -4,7 +4,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.model.BoxDetail
 
 data class BoxListState(
-    val asyncLoadBoxes: BaseViewModel.AsyncLoad<List<BoxDetail>> = BaseViewModel.AsyncLoad.Initialize,
+    val asyncLoadBoxes: BaseViewModel.AsyncLoad<List<BoxDetail>> = BaseViewModel.AsyncLoad.UnInitialized,
     val boxes: List<BoxDetail> = emptyList(),
     val searchBoxes: List<BoxDetail> = emptyList(),
     val totalBox: Int = 0,

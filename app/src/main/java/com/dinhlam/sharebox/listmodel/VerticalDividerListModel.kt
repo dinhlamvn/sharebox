@@ -28,10 +28,10 @@ data class VerticalDividerListModel(
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return DividerViewHolderViewBinding(container.context)
+        return DividerViewHolderViewHolder(container.context)
     }
 
-    private class DividerViewHolderViewBinding(context: Context) :
+    private class DividerViewHolderViewHolder(context: Context) :
         BaseListAdapter.BaseViewHolderCustomView<VerticalDividerListModel, MaterialDivider>(
             MaterialDivider(context)
         ) {

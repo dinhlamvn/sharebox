@@ -84,10 +84,7 @@ class BoxMemberActivity :
             showDialogInputEmail()
         }
 
-        viewModel.onChange(
-            BoxMemberState::boxDetail,
-            this,
-        ) { boxDetail ->
+        onChange(BoxMemberState::boxDetail) { boxDetail ->
             val box = boxDetail ?: return@onChange
             if (!box.passcode.isNullOrBlank()) {
                 val intent = router.passcodeIntent(

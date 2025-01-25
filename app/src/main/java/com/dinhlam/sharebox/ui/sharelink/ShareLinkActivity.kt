@@ -179,7 +179,7 @@ class ShareLinkActivity :
             binding.editLink.setText(clipboardData)
         }
 
-        viewModel.onChange(ShareLinkState::asyncLoadArchive, this) { asyncLoad ->
+        onChange(ShareLinkState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad.success) {
                 showToast(R.string.shares_success)
                 finish()

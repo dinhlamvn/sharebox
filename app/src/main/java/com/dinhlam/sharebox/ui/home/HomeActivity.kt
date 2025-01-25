@@ -250,7 +250,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             requestCreateBox()
         }
 
-        viewModel.onChange(HomeState::asyncLoadSave, this) { asyncLoad ->
+        onChange(HomeState::asyncLoadSave) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 viewModel.updateShare(asyncLoad.value)

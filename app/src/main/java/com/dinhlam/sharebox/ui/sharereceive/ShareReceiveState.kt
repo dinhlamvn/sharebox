@@ -7,7 +7,7 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.UserDetail
 
 data class ShareReceiveState(
-    val asyncLoadArchive: BaseViewModel.AsyncLoad<Boolean> = BaseViewModel.AsyncLoad.Initialize,
+    val asyncLoadArchive: BaseViewModel.AsyncLoad<Boolean> = BaseViewModel.AsyncLoad.UnInitialized,
     val activeUser: UserDetail? = null,
     val shareData: ShareData? = null,
     val note: String? = null,

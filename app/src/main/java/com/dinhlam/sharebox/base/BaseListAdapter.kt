@@ -245,7 +245,7 @@ abstract class BaseListAdapter :
         }
     }
 
-    abstract class BaseViewHolder<T : BaseListModel>(view: View) : RecyclerView.ViewHolder(view) {
+    sealed class BaseViewHolder<T : BaseListModel>(view: View) : RecyclerView.ViewHolder(view) {
         protected val buildContext: Context = itemView.context
 
         abstract fun onBind(model: T, position: Int)

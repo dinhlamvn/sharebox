@@ -13,8 +13,8 @@ class BaseSpanSizeLookup(
     }
 
     sealed class SpanSizeConfig(open val spanCount: Int = 1) {
-        object Normal : SpanSizeConfig(1)
-        object Full : SpanSizeConfig(-1)
+        data object Normal : SpanSizeConfig(1)
+        data object Full : SpanSizeConfig(-1)
         data class Custom(override val spanCount: Int) : SpanSizeConfig(spanCount)
     }
 

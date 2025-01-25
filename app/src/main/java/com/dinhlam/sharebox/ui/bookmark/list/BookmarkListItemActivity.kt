@@ -107,8 +107,8 @@ class BookmarkListItemActivity :
             finish()
         }
 
-        viewModel.onChange(
-            BookmarkListItemState::bookmarkCollection, this
+        onChange(
+            BookmarkListItemState::bookmarkCollection
         ) { bookmarkCollection ->
             bookmarkCollection?.let(::updateUi)
         }
@@ -133,15 +133,15 @@ class BookmarkListItemActivity :
 
         binding.recyclerView.adapter = shareAdapter
 
-        viewModel.onChange(
-            BookmarkListItemState::requestVerifyPasscode, this
+        onChange(
+            BookmarkListItemState::requestVerifyPasscode
         ) { shouldRequest ->
             if (shouldRequest) {
                 requestVerifyPasscode()
             }
         }
 
-        viewModel.onChange(BookmarkListItemState::asyncLoadRemoveShare, this) { asyncLoad ->
+        onChange(BookmarkListItemState::asyncLoadRemoveShare) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 showToast(getString(R.string.removed_item, asyncLoad.value.shareNote))
