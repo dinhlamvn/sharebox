@@ -12,7 +12,7 @@ import java.io.File
 abstract class ImageLoader {
 
     companion object {
-        lateinit var INSTANCE: ImageLoader
+        internal lateinit var INSTANCE: ImageLoader
             private set
 
         private val lock = Any()

@@ -22,4 +22,19 @@
         <item name="fontFamily">@font/roboto</item>
     </style>
 
+    <style name="TextCaptionMedium" parent="TextCaption">
+        <item name="fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextFontAwesomeRegular" parent="TextBody">
+        <item name="fontFamily">@font/font_awesome_6_regular</item>
+    </style>
+
+    <style name="TextFontAwesomeBrandsRegular" parent="TextBody">
+        <item name="fontFamily">@font/font_awesome_6_brands_regular</item>
+    </style>
+
+    <style name="TextFontAwesomeSolid" parent="TextBody">
+        <item name="fontFamily">@font/font_awesome_6_solid</item>
+    </style>
 </resources>

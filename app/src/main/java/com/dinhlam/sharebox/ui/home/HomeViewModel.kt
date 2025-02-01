@@ -16,7 +16,6 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -30,8 +29,6 @@ class HomeViewModel @Inject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val appSettingHelper: AppSettingHelper
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
-
-    private var setAlphaJob: Job? = null
 
     companion object {
         private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 5

@@ -106,7 +106,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
 
     protected fun doInBackground(
         errorCatcher: ((Throwable) -> Unit)? = null, block: suspend CoroutineScope.() -> Unit
-    ) = viewModelScope.launch {
+    ) = viewModelScope.launch(Dispatchers.IO) {
         try {
             block.invoke(this)
         } catch (e: Exception) {
@@ -118,10 +118,10 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property: KProperty1<S, V>, lifecycleOwner: LifecycleOwner? = null, block: (V) -> Unit
     ) {
         stateFlow.map {
-            Consumer1(property.get(it))
+            Observer1(property.get(it))
         }.distinctUntilChanged()
-            .resolveConsumer { consumer ->
-                block(consumer.value)
+            .resolveObserver { observer ->
+                block(observer.value)
             }
     }
 
@@ -130,10 +130,10 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property2: KProperty1<S, V2>,
         block: (V1, V2) -> Unit
     ) {
-        stateFlow.map { state -> Consumer2(property1.get(state), property2.get(state)) }
+        stateFlow.map { state -> Observer2(property1.get(state), property2.get(state)) }
             .distinctUntilChanged()
-            .resolveConsumer { consumer ->
-                block(consumer.value1, consumer.value2)
+            .resolveObserver { observer ->
+                block(observer.value1, observer.value2)
             }
     }
 
@@ -143,10 +143,10 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property3: KProperty1<S, V3>,
         block: (V1, V2, V3) -> Unit
     ) {
-        stateFlow.map { state -> Consumer3(property1.get(state), property2.get(state), property3.get(state)) }
+        stateFlow.map { state -> Observer3(property1.get(state), property2.get(state), property3.get(state)) }
             .distinctUntilChanged()
-            .resolveConsumer { consumer ->
-                block(consumer.value1, consumer.value2, consumer.value3)
+            .resolveObserver { observer ->
+                block(observer.value1, observer.value2, observer.value3)
             }
     }
 
@@ -158,15 +158,15 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         block: (V1, V2, V3, V4) -> Unit
     ) {
         stateFlow.map { state ->
-            Consumer4(
+            Observer4(
                 property1.get(state),
                 property2.get(state),
                 property3.get(state),
                 property4.get(state)
             )
         }.distinctUntilChanged()
-            .resolveConsumer { consumer ->
-                block(consumer.value1, consumer.value2, consumer.value3, consumer.value4)
+            .resolveObserver { observer ->
+                block(observer.value1, observer.value2, observer.value3, observer.value4)
             }
     }
 
@@ -179,7 +179,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         block: (V1, V2, V3, V4, V5) -> Unit
     ) {
         stateFlow.map { state ->
-            Consumer5(
+            Observer5(
                 property1.get(state),
                 property2.get(state),
                 property3.get(state),
@@ -187,22 +187,22 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
                 property5.get(state)
             )
         }.distinctUntilChanged()
-            .resolveConsumer { consumer ->
+            .resolveObserver { observer ->
                 block(
-                    consumer.value1,
-                    consumer.value2,
-                    consumer.value3,
-                    consumer.value4,
-                    consumer.value5
+                    observer.value1,
+                    observer.value2,
+                    observer.value3,
+                    observer.value4,
+                    observer.value5
                 )
             }
     }
 
-    private fun <T> Flow<T>.resolveConsumer(block: (T) -> Unit): Job {
+    private fun <T> Flow<T>.resolveObserver(block: (T) -> Unit): Job {
         return stateScope.launch(start = CoroutineStart.UNDISPATCHED) {
             yield()
-            collectLatest {
-                block(it)
+            collectLatest { data ->
+                block(data)
             }
         }
     }

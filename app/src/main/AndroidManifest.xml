@@ -77,7 +77,7 @@
         </activity>
 
         <activity
-            android:name="com.dinhlam.sharebox.ui.home.HomeActivity"
+            android:name="com.dinhlam.sharebox.ui.main.MainActivity"
             android:exported="true"
             tools:ignore="LockedOrientationActivity">
 

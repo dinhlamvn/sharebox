@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTiktokDiscoverBinding
+import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.listmodel.ChipListModel
@@ -96,15 +100,31 @@ class TiktokDiscoverActivity :
             start = Icons.boxIcon(this) { copy(sizeDp = 20) },
             end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
         )
-        categoryAdapter.requestBuildListModels()
+        categoryAdapter.requestBuildListModels {
+            val position =
+                getState(viewModel) { state -> state.categories.indexOfFirst { cate -> cate.categoryId == state.activeCategory?.categoryId } }
+            if (position >= 0) {
+                binding.recyclerViewCategory.layoutManager?.cast<LinearLayoutManager>()
+                    ?.scrollToPositionWithOffset(position, 20.dp)
+            }
+        }
         adapter.requestBuildListModels()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        registerOnBackPressHandler {
+            if (binding.recyclerView.computeVerticalScrollOffset() == 0) {
+                finish()
+            } else {
+                binding.recyclerView.smoothScrollToPosition(0)
+            }
+        }
+
         setSupportActionBar(binding.toolbar)
 
-        binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8))
+        binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8.dp))
         categoryAdapter.attachTo(binding.recyclerViewCategory, this)
         adapter.attachTo(binding.recyclerView, this)
 

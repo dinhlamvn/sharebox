@@ -22,9 +22,14 @@
         <attr name="icon_color" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="FontAwesomeImageView">
-        <attr name="fa_icon" format="string" />
-        <attr name="gm_icon" format="string" />
+    <declare-styleable name="FontAwesomeIconView">
+        <attr name="icon_code" />
         <attr name="icon_size" />
+        <attr name="icon_color" />
+        <attr name="icon_style" format="enum">
+            <enum name="solid" value="0" />
+            <enum name="regular" value="1" />
+            <enum name="regular_brands" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

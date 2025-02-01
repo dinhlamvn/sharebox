@@ -13,9 +13,6 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.FragmentComponent
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
@@ -28,7 +25,7 @@ import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(
-    value = [SingletonComponent::class, ActivityComponent::class, FragmentComponent::class, ViewModelComponent::class]
+    value = [SingletonComponent::class]
 )
 object NetworkModule {
 

@@ -5,7 +5,6 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ModelViewBoxBinding
 import com.dinhlam.sharebox.extensions.format
@@ -29,17 +28,10 @@ data class BoxListModel(
         inflater: LayoutInflater,
         container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return object : BaseListAdapter.BaseViewHolderViewBinding<BoxListModel, ModelViewBoxBinding>(
-            ModelViewBoxBinding.inflate(inflater, container, false)
-        ) {
-
-            init {
-                binding.imageIcon.setImageDrawable(Icons.boxIcon(buildContext) {
-                    copy(sizeDp = 32, colorRes = R.color.md_theme_primary)
-                })
-                binding.imageAction.setImageDrawable(Icons.moreIcon(buildContext))
-            }
-
+        return object :
+            BaseListAdapter.BaseViewHolderViewBinding<BoxListModel, ModelViewBoxBinding>(
+                ModelViewBoxBinding.inflate(inflater, container, false)
+            ) {
             override fun onBind(model: BoxListModel, position: Int) {
                 binding.imageAction.isVisible = model.isShowOptionAction
                 binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {

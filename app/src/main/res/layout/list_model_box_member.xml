@@ -17,14 +17,12 @@
         android:textAppearance="@style/TextBody"
         tools:text="dinhlamvn353@gmail.com" />
 
-    <com.dinhlam.sharebox.view.FontAwesomeImageView
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/image_trash"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        app:fa_icon="faw_trash"
+        app:icon_code="f1f8"
         app:icon_size="24dp" />
 
 </LinearLayout>

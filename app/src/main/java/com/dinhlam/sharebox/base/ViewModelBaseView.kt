@@ -31,15 +31,15 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
     fun <R> getState(viewModel: VM, block: (S) -> R) = block.invoke(viewModel.currentState)
 
     fun <V> onChange(block: (S) -> Unit) = viewModel.stateFlow
-        .map { state -> Consumer1(state) }
-        .distinctUntilChanged().resolveConsumer(this) { consumer ->
-            block(consumer.value)
+        .map { state -> Observer1(state) }
+        .distinctUntilChanged().resolveObserver(this) { observer ->
+            block(observer.value)
         }
 
     fun <V> onChange(property: KProperty1<S, V>, block: (V) -> Unit) = viewModel.stateFlow
-        .map { state -> Consumer1(property.get(state)) }
-        .distinctUntilChanged().resolveConsumer(this) { consumer ->
-            block(consumer.value)
+        .map { state -> Observer1(property.get(state)) }
+        .distinctUntilChanged().resolveObserver(this) { observer ->
+            block(observer.value)
         }
 
     fun <V1, V2> onChange(
@@ -47,10 +47,10 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         property2: KProperty1<S, V2>,
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2) -> Unit
-    ) = viewModel.stateFlow.map { state -> Consumer2(property1.get(state), property2.get(state)) }
+    ) = viewModel.stateFlow.map { state -> Observer2(property1.get(state), property2.get(state)) }
         .distinctUntilChanged()
-        .resolveConsumer(this) { consumer ->
-            block(consumer.value1, consumer.value2)
+        .resolveObserver(this) { observer ->
+            block(observer.value1, observer.value2)
         }
 
     fun <V1, V2, V3> onChange(
@@ -60,15 +60,15 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3) -> Unit
     ) = viewModel.stateFlow.map { state ->
-        Consumer3(
+        Observer3(
             property1.get(state),
             property2.get(state),
             property3.get(state)
         )
     }
         .distinctUntilChanged()
-        .resolveConsumer(this) { consumer ->
-            block(consumer.value1, consumer.value2, consumer.value3)
+        .resolveObserver(this) { observer ->
+            block(observer.value1, observer.value2, observer.value3)
         }
 
     fun <V1, V2, V3, V4> onChange(
@@ -79,15 +79,15 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3, V4) -> Unit
     ) = viewModel.stateFlow.map { state ->
-        Consumer4(
+        Observer4(
             property1.get(state),
             property2.get(state),
             property3.get(state),
             property4.get(state)
         )
     }.distinctUntilChanged()
-        .resolveConsumer(this) { consumer ->
-            block(consumer.value1, consumer.value2, consumer.value3, consumer.value4)
+        .resolveObserver(this) { observer ->
+            block(observer.value1, observer.value2, observer.value3, observer.value4)
         }
 
     fun <V1, V2, V3, V4, V5> onChange(
@@ -99,7 +99,7 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3, V4, V5) -> Unit
     ) = viewModel.stateFlow.map { state ->
-        Consumer5(
+        Observer5(
             property1.get(state),
             property2.get(state),
             property3.get(state),
@@ -107,25 +107,25 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
             property5.get(state)
         )
     }.distinctUntilChanged()
-        .resolveConsumer(this) { consumer ->
+        .resolveObserver(this) { observer ->
             block(
-                consumer.value1,
-                consumer.value2,
-                consumer.value3,
-                consumer.value4,
-                consumer.value5
+                observer.value1,
+                observer.value2,
+                observer.value3,
+                observer.value4,
+                observer.value5
             )
         }
 
-    private fun <T> Flow<T>.resolveConsumer(
+    private fun <T> Flow<T>.resolveObserver(
         lifecycleOwner: LifecycleOwner, block: (T) -> Unit
     ): Job {
         val flow = flowWhenStarted(lifecycleOwner).distinctUntilChanged()
         val scope = lifecycleOwner.lifecycleScope
         return scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
-            flow.collectLatest { consumerValue ->
+            flow.collectLatest { observerValue ->
                 lifecycleOwner.launchWhenAtLeast(Lifecycle.State.STARTED) {
-                    block(consumerValue)
+                    block(observerValue)
                 }
             }
         }

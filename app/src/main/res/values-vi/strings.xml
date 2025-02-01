@@ -185,6 +185,9 @@
     <string name="title_znews_discover">ZNews</string>
     <string name="nothing">Không có gì</string>
     <string name="no_support_download_this_content">Không hỗ trợ tải nội dung này</string>
+    <string name="home">Trang chủ</string>
+    <string name="explore">Explore</string>
+    <string name="me">Me</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>

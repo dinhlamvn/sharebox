@@ -1,4 +1,5 @@
 <resources>
+    <string name="logo" translatable="false">SHAREbox</string>
     <string name="share_activity_title">Archive</string>
     <string name="share_direct_download_activity_title">Download</string>
     <string name="text_input_note_hint_desc">What\'s this?</string>
@@ -194,6 +195,9 @@
     <string name="title_znews_discover">ZNews</string>
     <string name="nothing">Nothing</string>
     <string name="no_support_download_this_content">No support download this content</string>
+    <string name="home">Home</string>
+    <string name="explore">Explore</string>
+    <string name="me">Me</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

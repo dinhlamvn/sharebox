@@ -6,6 +6,12 @@ import java.text.DecimalFormat
 import java.util.Calendar
 import java.util.TimeZone
 
+val Number.dp
+    get() = dp()
+
+val Number.dpF
+    get() = dpF()
+
 fun Number.dp() = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), Resources.getSystem().displayMetrics
 ).toInt()

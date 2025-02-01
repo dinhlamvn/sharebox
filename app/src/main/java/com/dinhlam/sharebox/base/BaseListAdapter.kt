@@ -37,7 +37,7 @@ abstract class BaseListAdapter :
                 .asCoroutineDispatcher()
         )
 
-    private var recyclerView: RecyclerView? = null
+    private var recyclerViews = mutableSetOf<RecyclerView>()
 
     private var buildListModelsJob: Job? = null
 
@@ -45,16 +45,19 @@ abstract class BaseListAdapter :
 
     private val listModels: MutableList<BaseListModel> = CopyOnWriteArrayList()
 
-    fun attachTo(recyclerView: RecyclerView, lifecycleOwner: LifecycleOwner) {
-        lifecycleOwner.lifecycle.addObserver(this)
-        this.recyclerView = recyclerView
-        this.recyclerView?.adapter = this
+    fun attachTo(recyclerView: RecyclerView, lifecycleOwner: LifecycleOwner? = null) {
+        lifecycleOwner?.lifecycle?.addObserver(this)
+        recyclerViews.add(recyclerView)
+        recyclerView.adapter = this
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         owner.lifecycle.removeObserver(this)
-        recyclerView?.adapter = null
+        recyclerViews.forEach { recyclerView ->
+            recyclerView.swapAdapter(null, true)
+        }
+        recyclerViews.clear()
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

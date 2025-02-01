@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelDiscoverBinding
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.updateMargin
 import com.dinhlam.sharebox.model.Spacing
@@ -27,7 +28,7 @@ data class DiscoverListModel(
         private val adapter = BaseListAdapter.create()
 
         init {
-            adapter.attachTo(binding.recyclerView, buildContext.castNonNull())
+            adapter.attachTo(binding.recyclerView)
         }
 
         override fun onBind(model: DiscoverListModel, position: Int) {

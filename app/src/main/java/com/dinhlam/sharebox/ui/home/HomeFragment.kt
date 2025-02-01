@@ -8,26 +8,25 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.ActivityHomeBinding
+import com.dinhlam.sharebox.databinding.FragmentHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
-import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
-import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.extensions.packageName
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -37,20 +36,19 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 @AndroidEntryPoint
-@ActivityScoped
-class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHomeBinding>(),
+class HomeFragment @Inject constructor() :
+    BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener,
+    HomeAdapter.Callback {
 
-    val editBoxResultLauncher =
+    private val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { id ->
@@ -58,18 +56,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 }
             }
         }
-
-    private val scrollListener = object : OnScrollListener() {
-        var totalScrolledY: Int = 0
-        var alpha: Float = 0f
-
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            totalScrolledY = totalScrolledY.plus(dy).coerceAtLeast(0)
-            alpha = (totalScrolledY / 100.dpF()).coerceAtMost(1f)
-            setupToolbarAction(recyclerView, alpha, totalScrolledY)
-        }
-    }
 
     private val viewBoxDetailLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -133,20 +119,11 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     @Inject
     lateinit var shareHelper: ShareHelper
 
-
     @Inject
     lateinit var userHelper: UserHelper
 
     override fun onStateChanged(state: HomeState) {
-        val recyclerViewState = binding.recyclerView.layoutManager?.onSaveInstanceState()
-        homeAdapter.requestBuildListModels {
-            binding.recyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
-            setupToolbarAction(
-                binding.recyclerView,
-                scrollListener.alpha,
-                scrollListener.totalScrolledY
-            )
-        }
+        homeAdapter.requestBuildListModels()
     }
 
     private val createBoxResultLauncher =
@@ -204,18 +181,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     @Inject
     lateinit var homeAdapter: HomeAdapter
 
-    override fun onCreateViewBinding(): ActivityHomeBinding {
-        return ActivityHomeBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHomeBinding {
+        return FragmentHomeBinding.inflate(layoutInflater, container, false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setupActionBarAction()
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
-                    this, android.Manifest.permission.POST_NOTIFICATIONS
+                    requireContext(), android.Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -224,30 +201,12 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             }
         }
 
-        registerOnBackPressHandler {
-            if (binding.recyclerView.computeVerticalScrollOffset() > 0) {
-                binding.recyclerView.smoothScrollToPosition(0)
-            } else {
-                finish()
-            }
-        }
-
-        binding.imageProfile.setImageDrawable(Icons.userIcon(this))
-        binding.imageProfile.setOnClickListener {
-            startActivity(router.profile(this))
-        }
-
-        binding.imageAdd.setImageDrawable(Icons.plusIcon(this))
-
+        homeAdapter.callback = this
         homeAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
             viewModel.doOnRefresh()
-        }
-
-        binding.imageAdd.setOnClickListener {
-            requestCreateBox()
         }
 
         onChange(HomeState::asyncLoadSave) { asyncLoad ->
@@ -256,33 +215,6 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 viewModel.updateShare(asyncLoad.value)
             }
         }
-    }
-
-    private fun setupActionBarAction() {
-        binding.containerAction.isVisible = false
-        binding.buttonArchiveText.setIcon(Icons.noteIcon(this) {
-            copy(colorRes = android.R.color.white)
-        })
-        binding.buttonArchiveWeb.setIcon(Icons.webIcon(this) {
-            copy(colorRes = android.R.color.white)
-        })
-        binding.buttonArchiveImages.setIcon(Icons.imageIcon(this) {
-            copy(colorRes = android.R.color.white)
-        })
-
-        binding.buttonArchiveText.setOnClickListener {
-            requestArchiveNote()
-        }
-
-        binding.buttonArchiveWeb.setOnClickListener {
-            requestArchiveWeb()
-        }
-
-        binding.buttonArchiveImages.setOnClickListener {
-            requestArchiveImages()
-        }
-
-        binding.recyclerView.addOnScrollListener(scrollListener)
     }
 
     override fun onStart() {
@@ -294,7 +226,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
     private fun showAlertDialog() {
-        AlertDialog.Builder(this).setTitle(R.string.alert_notice)
+        AlertDialog.Builder(requireContext()).setTitle(R.string.alert_notice)
             .setMessage(R.string.alert_request_post_notification_permission_message)
             .setPositiveButton(R.string.dialog_ok) { _, _ ->
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -319,18 +251,18 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
                 1 -> onRequestChangeNote(share)
                 2 -> onRequestMoveShare(share)
                 3 -> WorkerUtils.enqueueDownloadShare(
-                    this, share.shareData.cast<ShareData.ShareUrl>()?.url, share
+                    requireContext(), share.shareData.cast<ShareData.ShareUrl>()?.url, share
                 )
 
                 4 -> onBookmark(shareId)
-                5 -> copy(share.boxDetail?.boxId)
+                5 -> context?.copy(share.boxDetail?.boxId)
                 6 -> moveToTrash(share)
             }
         }
     }
 
     private fun moveToTrash(share: ShareDetail) {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(requireContext())
             .setMessage(R.string.confirm_move_to_trash)
             .setPositiveButton(R.string.dialog_ok) { _, _ ->
                 viewModel.moveShareToTrash(share.shareId)
@@ -341,14 +273,19 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
 
     private fun onRequestMoveShare(share: ShareDetail) {
         viewModel.setCurrentShare(share)
-        moveShareToBoxLauncher.launch(router.boxList(this, getString(R.string.move_share_to)))
+        moveShareToBoxLauncher.launch(
+            router.boxList(
+                requireContext(),
+                getString(R.string.move_share_to)
+            )
+        )
     }
 
     private fun onRequestChangeNote(share: ShareDetail) {
         viewModel.setCurrentShare(share)
         changeShareNoteResultLauncher.launch(
             router.textInput(
-                this,
+                requireContext(),
                 getString(R.string.note),
                 share.shareNote
             )
@@ -358,25 +295,13 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     private fun onBookmark(shareId: String) {
         viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
             shareHelper.showBookmarkCollectionPickerDialog(
-                supportFragmentManager, shareId, collectionId
+                childFragmentManager, shareId, collectionId
             )
         }
     }
 
     private fun requestCreateBox() {
-        createBoxResultLauncher.launch(router.boxForm(this, null))
-    }
-
-    fun requestArchiveWeb() {
-        archiveResultLauncher.launch(router.shareLink(this, null))
-    }
-
-    fun requestArchiveImages() {
-        pickImagesResultLauncher.launch(router.pickImageIntent(true))
-    }
-
-    fun requestArchiveNote() {
-        archiveTextResultLauncher.launch(router.textInput(this, null, null))
+        createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
     }
 
     private fun onArchiveNote(text: String) {
@@ -396,45 +321,11 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
             openBox(boxId)
         } else if (chooseBoxFor is HomeState.ChooseBoxFor.Web) {
             router.moveToChromeCustomTab(
-                this,
+                requireContext(),
                 chooseBoxFor.link,
                 boxId,
                 boxName,
                 shareHelper.isSupportDownloadLink(chooseBoxFor.link)
-            )
-        }
-    }
-
-    fun requestViewAllBox() {
-        viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Detail)
-        showBoxList()
-    }
-
-    fun showMore(share: ShareDetail) {
-        shareHelper.showMore(this, share, this)
-    }
-
-    fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
-                this,
-                shareData.url,
-                share.boxDetail?.boxId,
-                share.boxDetail?.boxName,
-                false
-            )
-
-            is ShareData.ShareText -> {
-                viewModel.setCurrentShare(share)
-                openShareTextResultLauncher.launch(router.textInput(this, null, shareData.text))
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, shareData.uris
             )
         }
     }
@@ -445,11 +336,7 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
     }
 
     private fun showBoxList(title: String? = null) {
-        chooseBoxLauncher.launch(router.boxList(this, title))
-    }
-
-    fun openBox(boxId: String) {
-        viewBoxDetailLauncher.launch(router.boxDetail(this, boxId))
+        chooseBoxLauncher.launch(router.boxList(requireContext(), title))
     }
 
     override fun onResume() {
@@ -457,20 +344,77 @@ class HomeActivity : BaseViewModelActivity<HomeState, HomeViewModel, ActivityHom
         viewModel.refresh()
     }
 
-    @UiThread
-    private fun setupToolbarAction(recyclerView: RecyclerView, alpha: Float, dy: Int) {
-        recyclerView.findViewHolderForLayoutPosition(0)?.itemView?.apply {
-            x = dy * -1f
-            this.alpha = 1f - alpha
-        }
-        binding.containerAction.isVisible = alpha >= 0.2f
-        binding.containerAction.alpha = alpha
-        binding.textTitle.alpha = 1 - alpha
+    override val state: HomeState
+        get() = getState(viewModel) { it }
+
+    override fun requestArchiveNote() {
+        archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null))
     }
 
-    fun requestManageMembers(boxId: String) {
+    override fun requestArchiveWeb() {
+        archiveResultLauncher.launch(router.shareLink(requireContext(), null))
+    }
+
+    override fun requestArchiveImages() {
+        pickImagesResultLauncher.launch(router.pickImageIntent(true))
+    }
+
+    override fun requestViewAllBox() {
+        viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Detail)
+        showBoxList()
+    }
+
+    override fun showMore(shareDetail: ShareDetail) {
+        shareHelper.showMore(requireActivity(), shareDetail, this@HomeFragment)
+    }
+
+    override fun openShare(shareDetail: ShareDetail) {
+        when (val shareData = shareDetail.shareData) {
+            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
+                requireContext(),
+                shareData.url,
+                shareDetail.boxDetail?.boxId,
+                shareDetail.boxDetail?.boxName,
+                false
+            )
+
+            is ShareData.ShareText -> {
+                viewModel.setCurrentShare(shareDetail)
+                openShareTextResultLauncher.launch(
+                    router.textInput(
+                        requireContext(),
+                        null,
+                        shareData.text
+                    )
+                )
+            }
+
+            is ShareData.ShareImage -> shareHelper.viewShareImage(
+                requireContext(), shareData.uri
+            )
+
+            is ShareData.ShareImages -> shareHelper.viewShareImages(
+                requireContext(), shareData.uris
+            )
+        }
+    }
+
+    override fun openBox(boxId: String) {
+        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId))
+    }
+
+    override fun editBox(boxId: String) {
+        editBoxResultLauncher.launch(
+            router.boxForm(
+                requireContext(),
+                boxId
+            )
+        )
+    }
+
+    override fun requestManageMembers(boxId: String) {
         if (userHelper.isSignedIn()) {
-            startActivity(router.boxMembers(this, boxId))
+            startActivity(router.boxMembers(requireContext(), boxId))
         } else {
             showToast(R.string.require_sign_in_to_manage_member)
             startActivity(router.signIn(false))

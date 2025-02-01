@@ -3,7 +3,6 @@ package com.dinhlam.sharebox.recyclerview.decoration
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.dinhlam.sharebox.extensions.dp
 
 class HorizontalSpacingDecoration(private val spacing: Int) : RecyclerView.ItemDecoration() {
 
@@ -13,6 +12,8 @@ class HorizontalSpacingDecoration(private val spacing: Int) : RecyclerView.ItemD
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        outRect.left = spacing.dp()
+        val spacingValue = spacing / 2
+        outRect.left = spacingValue
+        outRect.right = spacingValue
     }
 }

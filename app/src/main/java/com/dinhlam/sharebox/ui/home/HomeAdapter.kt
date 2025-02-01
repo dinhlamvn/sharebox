@@ -9,11 +9,8 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
-import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getDrawableCompat
-import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.BoxListModel
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
@@ -23,34 +20,45 @@ import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.TextPairListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
-import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-@ActivityScoped
 class HomeAdapter @Inject constructor(
-    @ActivityContext private val context: Context,
-    private val shareHelper: ShareHelper,
-    private val router: Router,
+    @ApplicationContext private val context: Context,
+    private val router: Router
 ) : BaseListAdapter() {
-    private val activity: HomeActivity = context.castNonNull()
-    private val viewModel: HomeViewModel = activity.viewModel
+    lateinit var callback: Callback
 
-    override fun buildListModels() = activity.getState(viewModel) { state ->
+    interface Callback {
+        val state: HomeState
+        fun requestArchiveNote()
+        fun requestArchiveWeb()
+        fun requestArchiveImages()
+        fun requestViewAllBox()
+        fun showMore(shareDetail: ShareDetail)
+        fun openShare(shareDetail: ShareDetail)
+        fun openBox(boxId: String)
+        fun editBox(boxId: String)
+        fun requestManageMembers(boxId: String)
+    }
+
+    override fun buildListModels() {
+        val state = callback.state
         MainActionListModel(
-            ContextCompat.getColor(activity, R.color.md_theme_primary),
+            ContextCompat.getColor(context, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
-                activity.requestArchiveNote()
+                callback.requestArchiveNote()
             }),
             NoHashProp(View.OnClickListener {
-                activity.requestArchiveWeb()
+                callback.requestArchiveWeb()
             }),
             NoHashProp(View.OnClickListener {
-                activity.requestArchiveImages()
+                callback.requestArchiveImages()
             }),
         ).attachTo(this)
 
@@ -66,12 +74,12 @@ class HomeAdapter @Inject constructor(
 
         TextPairListModel(
             "title_your_boxes",
-            text1 = activity.getString(R.string.your_boxes),
+            text1 = context.getString(R.string.your_boxes),
             textAppearance1 = R.style.TextTitleMedium,
-            text2 = activity.getString(R.string.view_all),
+            text2 = context.getString(R.string.view_all),
             textColor2 = R.color.md_theme_primary,
             actionClick2 = NoHashProp(View.OnClickListener {
-                activity.requestViewAllBox()
+                callback.requestViewAllBox()
             })
         ).attachTo(this)
 
@@ -107,13 +115,13 @@ class HomeAdapter @Inject constructor(
             }
         } else {
             TextListModel(
-                "text_empty_boxes", activity.getString(R.string.no_boxes), height = 100.dp()
+                "text_empty_boxes", context.getString(R.string.no_boxes), height = 100.dp()
             ).attachTo(this)
         }
 
         TextListModel(
             "title_recently",
-            text = activity.getString(R.string.recently_shares),
+            text = context.getString(R.string.recently_shares),
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             gravity = Gravity.START,
             textAppearance = R.style.TextTitleMedium,
@@ -128,13 +136,13 @@ class HomeAdapter @Inject constructor(
 
         if (state.shares.isEmpty()) {
             TextListModel(
-                "text_empty_shares", activity.getString(R.string.no_result), height = 100.dp()
+                "text_empty_shares", context.getString(R.string.no_result), height = 100.dp()
             ).attachTo(this)
         } else {
             state.shares.forEachIndexed { idx, share ->
                 share.buildListItemListModel(
-                    activity::showMore,
-                    activity::openShare
+                    callback::showMore,
+                    callback::openShare
                 ).attachTo(this)
                 VerticalDividerListModel(
                     "share_divider_$idx",
@@ -154,48 +162,43 @@ class HomeAdapter @Inject constructor(
         val items = arrayOf(
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_edit.name,
-                activity.getString(R.string.title_edit_box)
+                context.getString(R.string.title_edit_box)
             ),
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_users.name,
-                activity.getString(R.string.members)
+                context.getString(R.string.members)
             ),
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_copy.name,
-                activity.getString(R.string.copy_id)
+                context.getString(R.string.copy_id)
             )
         )
-        OptionMenuBottomSheetDialogFragment.show(
-            activity.supportFragmentManager,
-            items
-        ) { position, _, _ ->
-            when (position) {
-                0 -> activity.editBoxResultLauncher.launch(
-                    router.boxForm(
-                        activity,
-                        boxDetail.boxId
-                    )
-                )
-
-                1 -> activity.requestManageMembers(boxDetail.boxId)
-
-                2 -> activity.copy(boxDetail.boxId)
-            }
-        }
+//        OptionMenuBottomSheetDialogFragment.show(
+//            fragmentManager,
+//            items
+//        ) { position, _, _ ->
+//            when (position) {
+//                0 -> callback.editBox(boxDetail.boxId)
+//
+//                1 -> callback.requestManageMembers(boxDetail.boxId)
+//
+//                2 -> context.copy(boxDetail.boxId)
+//            }
+//        }
     }
 
     private fun onBoxClick(boxId: String) {
-        activity.openBox(boxId)
+        callback.openBox(boxId)
     }
 
     private fun getDiscoverList() = buildList {
         add(
             CircleIconListModel(
                 "tiktok",
-                activity.getDrawableCompat(R.drawable.ic_tiktok),
+                context.getDrawableCompat(R.drawable.ic_tiktok),
                 size = 32.dp(),
-                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.startActivity(router.tiktokDiscover(activity))
+                onClick = NoHashProp(View.OnClickListener {
+                    context.startActivity(router.tiktokDiscover(context))
                 })
             )
         )
@@ -203,11 +206,11 @@ class HomeAdapter @Inject constructor(
         add(
             CircleIconListModel(
                 "zing_news",
-                activity.getDrawableCompat(R.drawable.ic_zing_news),
+                context.getDrawableCompat(R.drawable.ic_zing_news),
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
-                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.startActivity(router.zingNewsDiscover(activity))
+                onClick = NoHashProp(View.OnClickListener {
+                    context.startActivity(router.zingNewsDiscover(context))
                 })
             )
         )
@@ -215,11 +218,11 @@ class HomeAdapter @Inject constructor(
         add(
             CircleIconListModel(
                 "facebook_downloader",
-                Icons.facebookIcon(activity),
+                Icons.facebookIcon(context),
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
-                onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    activity.startActivity(router.zingNewsDiscover(activity))
+                onClick = NoHashProp(View.OnClickListener {
+                    context.startActivity(router.zingNewsDiscover(context))
                 })
             )
         )

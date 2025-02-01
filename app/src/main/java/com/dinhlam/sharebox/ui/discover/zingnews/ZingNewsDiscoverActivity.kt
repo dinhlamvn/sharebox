@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityZingnewsDiscoverBinding
+import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.listmodel.ChipListModel
@@ -97,7 +98,7 @@ class ZingNewsDiscoverActivity :
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
 
-        binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8))
+        binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8.dp))
         categoryAdapter.attachTo(binding.recyclerViewCategory, this)
         adapter.attachTo(binding.recyclerView, this)
 

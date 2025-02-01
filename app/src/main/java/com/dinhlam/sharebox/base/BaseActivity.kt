@@ -5,6 +5,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.sharebox.di.DefaultFragmentFactoryEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -23,6 +25,12 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val entryPoint = EntryPointAccessors.fromActivity(
+            this,
+            DefaultFragmentFactoryEntryPoint::class.java
+        )
+        supportFragmentManager.fragmentFactory = entryPoint.getFragmentFactory()
+
         super.onCreate(savedInstanceState)
         _binding = onCreateViewBinding()
         setContentView(_binding!!.root)

@@ -24,19 +24,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:thumbnail_height="200dp" />
 
-        <com.dinhlam.sharebox.view.CardViewIconView
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
             android:id="@+id/button_download"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             app:cardCornerRadius="16dp"
-            app:gm_icon="gmd_file_download"
-            app:icon_code="gmd_file_download"
-            app:icon_size="16dp"
+            app:icon_code="f019"
+            app:icon_size="20dp"
+            app:layout_constraintBottom_toBottomOf="@id/button_archive"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/share_link_preview" />
+            app:layout_constraintTop_toTopOf="@id/button_archive" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_views"
@@ -62,16 +60,15 @@
             app:layout_constraintTop_toBottomOf="@id/text_views"
             tools:text="Có ăn thì phải có làm chứ" />
 
-        <com.dinhlam.sharebox.view.FontAwesomeImageView
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
             android:id="@+id/button_archive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:gm_icon="gmd_archive"
-            app:icon_size="12dp"
+            app:icon_code="f0c7"
+            app:icon_size="20dp"
             app:layout_constraintBottom_toBottomOf="@id/text_desc"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/button_download"
             app:layout_constraintTop_toTopOf="@id/text_desc" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

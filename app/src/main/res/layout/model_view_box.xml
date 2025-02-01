@@ -7,14 +7,15 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/image_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:scaleType="centerInside"
+        app:icon_code="f466"
+        app:icon_size="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -50,12 +51,14 @@
         app:layout_constraintTop_toBottomOf="@id/text_name"
         tools:text="Aug 02 1965" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/image_action"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
+        app:icon_code="f142"
+        app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

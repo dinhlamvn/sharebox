@@ -28,7 +28,7 @@ import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
 import com.dinhlam.sharebox.ui.discover.tiktok.TiktokDiscoverActivity
 import com.dinhlam.sharebox.ui.discover.zingnews.ZingNewsDiscoverActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
-import com.dinhlam.sharebox.ui.home.HomeActivity
+import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileActivity
@@ -43,7 +43,7 @@ import com.dinhlam.sharebox.utils.Icons
 class AppRouter constructor(private val context: Context) : Router {
 
     override fun home(isNewTask: Boolean): Intent {
-        return Intent(context, HomeActivity::class.java).apply {
+        return Intent(context, HomeFragment::class.java).apply {
             if (isNewTask) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }

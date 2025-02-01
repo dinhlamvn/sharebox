@@ -33,3 +33,6 @@ fun <T> SavedStateHandle.getNonNull(key: String): T =
 
 fun <T> SavedStateHandle.getNonNullOrElse(key: String, default: T): T =
     get<T>(key) ?: default
+
+val Fragment.packageName: String
+    get() = context!!.packageName
