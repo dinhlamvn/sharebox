@@ -89,7 +89,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         setState { stateReducer(AsyncLoad.Loading) }
         return stateScope.launch(dispatcher ?: EmptyCoroutineContext) {
             try {
-                val result = this@execute.invoke()
+                val result = invoke()
                 setState { stateReducer(AsyncLoad.Success(result)) }
             } catch (error: Throwable) {
                 setState { stateReducer(AsyncLoad.Failed(error)) }
@@ -143,7 +143,13 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         property3: KProperty1<S, V3>,
         block: (V1, V2, V3) -> Unit
     ) {
-        stateFlow.map { state -> Observer3(property1.get(state), property2.get(state), property3.get(state)) }
+        stateFlow.map { state ->
+            Observer3(
+                property1.get(state),
+                property2.get(state),
+                property3.get(state)
+            )
+        }
             .distinctUntilChanged()
             .resolveObserver { observer ->
                 block(observer.value1, observer.value2, observer.value3)

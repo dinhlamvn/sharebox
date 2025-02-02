@@ -15,6 +15,7 @@ import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.utils.Ids
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
@@ -49,6 +50,7 @@ abstract class BaseListAdapter :
         lifecycleOwner?.lifecycle?.addObserver(this)
         recyclerViews.add(recyclerView)
         recyclerView.adapter = this
+        requestBuildListModels()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -58,18 +60,6 @@ abstract class BaseListAdapter :
             recyclerView.swapAdapter(null, true)
         }
         recyclerViews.clear()
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        requestBuildListModels()
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        listModelManager.onClear()
-        listModels.clear()
-        super.submitList(null)
     }
 
     @Synchronized
@@ -87,10 +77,10 @@ abstract class BaseListAdapter :
 
     fun requestBuildListModels(lists: List<BaseListModel>, callback: Runnable? = null) {
         cancelCurrentBuild()
-        buildListModelsJob = buildListModelsScope.launch {
+        buildListModelsJob = buildListModelsScope.launch(start = CoroutineStart.UNDISPATCHED) {
             listModels.clear()
             listModels.addAll(lists)
-            withContext(Dispatchers.Main) {
+            withContext(Dispatchers.Main.immediate) {
                 super.submitList(listModels.toList(), callback)
             }
         }
@@ -98,8 +88,7 @@ abstract class BaseListAdapter :
 
     fun requestBuildListModels(callback: Runnable? = null) {
         cancelCurrentBuild()
-
-        buildListModelsJob = buildListModelsScope.launch {
+        buildListModelsJob = buildListModelsScope.launch(start = CoroutineStart.UNDISPATCHED) {
             buildListModelsInternal(callback)
         }
     }
@@ -113,7 +102,7 @@ abstract class BaseListAdapter :
     private suspend fun buildListModelsInternal(callback: Runnable?) {
         listModels.clear()
         buildListModels()
-        withContext(Dispatchers.Main) {
+        withContext(Dispatchers.Main.immediate) {
             super.submitList(listModels.toList(), callback)
         }
     }

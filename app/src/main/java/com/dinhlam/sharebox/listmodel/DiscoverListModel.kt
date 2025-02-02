@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelDiscoverBinding
-import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.updateMargin
 import com.dinhlam.sharebox.model.Spacing
 
@@ -21,13 +19,17 @@ data class DiscoverListModel(
         return DiscoverViewHolderViewBinding(inflater, container)
     }
 
-    private class DiscoverViewHolderViewBinding(layoutInflater: LayoutInflater, container: ViewGroup) :
+    private class DiscoverViewHolderViewBinding(
+        layoutInflater: LayoutInflater,
+        container: ViewGroup
+    ) :
         BaseListAdapter.BaseViewHolderViewBinding<DiscoverListModel, ListModelDiscoverBinding>(
             ListModelDiscoverBinding.inflate(layoutInflater, container, false)
         ) {
         private val adapter = BaseListAdapter.create()
 
         init {
+            binding.recyclerView.itemAnimator = null
             adapter.attachTo(binding.recyclerView)
         }
 

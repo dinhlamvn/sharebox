@@ -3,17 +3,17 @@ package com.dinhlam.sharebox.ui.profile
 import android.app.Activity
 import android.os.Bundle
 import android.view.Gravity
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.base.BaseViewModelActivity
-import com.dinhlam.sharebox.databinding.ActivityProfileBinding
+import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.databinding.FragmentProfileBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.screenWidth
@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.DrawableImageListModel
-import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.profile.ProfileInfoListModel
@@ -33,11 +32,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProfileActivity :
-    BaseViewModelActivity<ProfileState, ProfileViewModel, ActivityProfileBinding>() {
+class ProfileFragment @Inject constructor() :
+    BaseViewModelFragment<ProfileState, ProfileViewModel, FragmentProfileBinding>() {
 
-    override fun onCreateViewBinding(): ActivityProfileBinding {
-        return ActivityProfileBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentProfileBinding {
+        return FragmentProfileBinding.inflate(layoutInflater)
     }
 
     private val signInLauncher = registerForActivityResult(
@@ -46,12 +48,8 @@ class ProfileActivity :
 
     private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
-            if (state.isRefreshing) {
-                LoadingListModel("loading").attachTo(this)
-                return@getState
-            }
-
-            val nonNullUser = state.currentUser ?: return@getState run {
+            val nonNullUser = state.currentUser
+            if (nonNullUser == null) {
                 TextListModel(
                     "text_sign_in_message",
                     getString(R.string.sign_in_message),
@@ -70,7 +68,7 @@ class ProfileActivity :
                 val margin = screenWidth().minus(48.dp()).div(2)
 
                 DrawableImageListModel(
-                    Icons.settingIcon(this@ProfileActivity),
+                    Icons.settingIcon(requireContext()),
                     width = 48.dp(),
                     height = 48.dp(),
                     scaleType = ImageView.ScaleType.CENTER_INSIDE,
@@ -79,6 +77,8 @@ class ProfileActivity :
                     },
                     margin = Spacing.Horizontal(margin, margin)
                 ).attachTo(this)
+
+                return@getState
             }
 
             ProfileInfoListModel(
@@ -88,8 +88,8 @@ class ProfileActivity :
                 state.shareCount,
                 getLevel(state.shareCount),
                 nonNullUser.joinDate,
-                Icons.shareIcon(this@ProfileActivity),
-                Icons.levelIcon(this@ProfileActivity),
+                Icons.shareIcon(requireContext()),
+                Icons.levelIcon(requireContext()),
                 BaseListAdapter.NoHashProp(View.OnClickListener {
                     openSettingPage()
                 })
@@ -105,9 +105,9 @@ class ProfileActivity :
                 textAppearance = R.style.TextBodyMedium,
                 height = 50.dp(),
                 gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                startIcon = Icons.bookmarkIcon(this@ProfileActivity),
+                startIcon = Icons.bookmarkIcon(requireContext()),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    startActivity(router.bookmark(this@ProfileActivity))
+                    startActivity(router.bookmark(requireContext()))
                 })
             ).attachTo(this)
 
@@ -121,9 +121,9 @@ class ProfileActivity :
                 textAppearance = R.style.TextBodyMedium,
                 height = 50.dp(),
                 gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                startIcon = Icons.trashIcon(this@ProfileActivity),
+                startIcon = Icons.trashIcon(requireContext()),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    startActivity(router.trash(this@ProfileActivity))
+                    startActivity(router.trash(requireContext()))
                 })
             ).attachTo(this)
 
@@ -138,9 +138,9 @@ class ProfileActivity :
                     textAppearance = R.style.TextBodyMedium,
                     height = 50.dp(),
                     gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                    startIcon = Icons.linkIcon(this@ProfileActivity),
+                    startIcon = Icons.linkIcon(requireContext()),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        startActivity(router.boxInvited(this@ProfileActivity))
+                        startActivity(router.boxInvited(requireContext()))
                     })
                 ).attachTo(this)
 
@@ -169,14 +169,9 @@ class ProfileActivity :
         adapter.requestBuildListModels()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerView.adapter = adapter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
@@ -194,16 +189,8 @@ class ProfileActivity :
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         viewModel.getCurrentUserProfile()
     }
 
@@ -215,7 +202,6 @@ class ProfileActivity :
             else -> 3
         }
     }
-
 }
 
 

@@ -200,11 +200,6 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name=".ui.profile.ProfileActivity"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
             android:name=".ui.bookmark.BookmarkActivity"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="LockedOrientationActivity" />

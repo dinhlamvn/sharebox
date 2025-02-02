@@ -25,16 +25,15 @@ import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class HomeAdapter @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val router: Router
 ) : BaseListAdapter() {
     lateinit var callback: Callback
 
     interface Callback {
+        val buildContext: Context
         val state: HomeState
         fun requestArchiveNote()
         fun requestArchiveWeb()
@@ -50,7 +49,7 @@ class HomeAdapter @Inject constructor(
     override fun buildListModels() {
         val state = callback.state
         MainActionListModel(
-            ContextCompat.getColor(context, R.color.md_theme_primary),
+            ContextCompat.getColor(callback.buildContext, R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
                 callback.requestArchiveNote()
             }),
@@ -74,9 +73,9 @@ class HomeAdapter @Inject constructor(
 
         TextPairListModel(
             "title_your_boxes",
-            text1 = context.getString(R.string.your_boxes),
+            text1 = callback.buildContext.getString(R.string.your_boxes),
             textAppearance1 = R.style.TextTitleMedium,
-            text2 = context.getString(R.string.view_all),
+            text2 = callback.buildContext.getString(R.string.view_all),
             textColor2 = R.color.md_theme_primary,
             actionClick2 = NoHashProp(View.OnClickListener {
                 callback.requestViewAllBox()
@@ -115,13 +114,13 @@ class HomeAdapter @Inject constructor(
             }
         } else {
             TextListModel(
-                "text_empty_boxes", context.getString(R.string.no_boxes), height = 100.dp()
+                "text_empty_boxes", callback.buildContext.getString(R.string.no_boxes), height = 100.dp()
             ).attachTo(this)
         }
 
         TextListModel(
             "title_recently",
-            text = context.getString(R.string.recently_shares),
+            text = callback.buildContext.getString(R.string.recently_shares),
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             gravity = Gravity.START,
             textAppearance = R.style.TextTitleMedium,
@@ -136,7 +135,9 @@ class HomeAdapter @Inject constructor(
 
         if (state.shares.isEmpty()) {
             TextListModel(
-                "text_empty_shares", context.getString(R.string.no_result), height = 100.dp()
+                "text_empty_shares",
+                callback.buildContext.getString(R.string.no_result),
+                height = 100.dp()
             ).attachTo(this)
         } else {
             state.shares.forEachIndexed { idx, share ->
@@ -162,15 +163,15 @@ class HomeAdapter @Inject constructor(
         val items = arrayOf(
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_edit.name,
-                context.getString(R.string.title_edit_box)
+                callback.buildContext.getString(R.string.title_edit_box)
             ),
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_users.name,
-                context.getString(R.string.members)
+                callback.buildContext.getString(R.string.members)
             ),
             OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
                 FontAwesome.Icon.faw_copy.name,
-                context.getString(R.string.copy_id)
+                callback.buildContext.getString(R.string.copy_id)
             )
         )
 //        OptionMenuBottomSheetDialogFragment.show(
@@ -182,7 +183,7 @@ class HomeAdapter @Inject constructor(
 //
 //                1 -> callback.requestManageMembers(boxDetail.boxId)
 //
-//                2 -> context.copy(boxDetail.boxId)
+//                2 -> callback.context.copy(boxDetail.boxId)
 //            }
 //        }
     }
@@ -195,10 +196,10 @@ class HomeAdapter @Inject constructor(
         add(
             CircleIconListModel(
                 "tiktok",
-                context.getDrawableCompat(R.drawable.ic_tiktok),
+                callback.buildContext.getDrawableCompat(R.drawable.ic_tiktok),
                 size = 32.dp(),
                 onClick = NoHashProp(View.OnClickListener {
-                    context.startActivity(router.tiktokDiscover(context))
+                    callback.buildContext.startActivity(router.tiktokDiscover(callback.buildContext))
                 })
             )
         )
@@ -206,11 +207,11 @@ class HomeAdapter @Inject constructor(
         add(
             CircleIconListModel(
                 "zing_news",
-                context.getDrawableCompat(R.drawable.ic_zing_news),
+                callback.buildContext.getDrawableCompat(R.drawable.ic_zing_news),
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = NoHashProp(View.OnClickListener {
-                    context.startActivity(router.zingNewsDiscover(context))
+                    callback.buildContext.startActivity(router.zingNewsDiscover(callback.buildContext))
                 })
             )
         )
@@ -218,11 +219,11 @@ class HomeAdapter @Inject constructor(
         add(
             CircleIconListModel(
                 "facebook_downloader",
-                Icons.facebookIcon(context),
+                Icons.facebookIcon(callback.buildContext),
                 size = 32.dp(),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = NoHashProp(View.OnClickListener {
-                    context.startActivity(router.zingNewsDiscover(context))
+                    callback.buildContext.startActivity(router.zingNewsDiscover(callback.buildContext))
                 })
             )
         )

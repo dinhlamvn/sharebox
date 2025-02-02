@@ -116,11 +116,6 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-    fun doOnRefresh() {
-        setState { HomeState(userHelper.getCurrentUserId()) }
-        refresh()
-    }
-
     fun refresh() {
         getListBoxes()
         getRecentlyShares()

@@ -14,10 +14,6 @@ class ProfileViewModel @Inject constructor(
     private val shareRepository: ShareRepository
 ) : BaseViewModel<ProfileState>(ProfileState()) {
 
-    init {
-        getCurrentUserProfile()
-    }
-
     fun getCurrentUserProfile() =
         suspend {
             val userDetail = userRepository.findOne(userHelper.getCurrentUserId())
@@ -26,9 +22,8 @@ class ProfileViewModel @Inject constructor(
         }.execute { asyncLoad ->
             val pair = asyncLoad.data
             copy(
-                currentUser = pair?.first,
-                shareCount = pair?.second ?: 0,
-                isRefreshing = asyncLoad is AsyncLoad.Loading
+                currentUser = pair?.first ?: currentUser,
+                shareCount = pair?.second ?: shareCount
             )
         }
 }

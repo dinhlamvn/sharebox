@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.ui.home
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -130,7 +131,7 @@ class HomeFragment @Inject constructor() :
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { _ ->
-                    viewModel.doOnRefresh()
+                    viewModel.refresh()
                 }
             }
         }
@@ -138,7 +139,7 @@ class HomeFragment @Inject constructor() :
     private val archiveResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.doOnRefresh()
+                viewModel.refresh()
             }
         }
 
@@ -206,7 +207,7 @@ class HomeFragment @Inject constructor() :
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
-            viewModel.doOnRefresh()
+            viewModel.refresh()
         }
 
         onChange(HomeState::asyncLoadSave) { asyncLoad ->
@@ -220,7 +221,7 @@ class HomeFragment @Inject constructor() :
     override fun onStart() {
         super.onStart()
         if (userHelper.getCurrentUserId() != getState(viewModel, HomeState::currentUserId)) {
-            viewModel.doOnRefresh()
+            viewModel.refresh()
         }
     }
 
@@ -255,7 +256,7 @@ class HomeFragment @Inject constructor() :
                 )
 
                 4 -> onBookmark(shareId)
-                5 -> context?.copy(share.boxDetail?.boxId)
+                5 -> buildContext.copy(share.boxDetail?.boxId)
                 6 -> moveToTrash(share)
             }
         }
@@ -346,6 +347,9 @@ class HomeFragment @Inject constructor() :
 
     override val state: HomeState
         get() = getState(viewModel) { it }
+
+    override val buildContext: Context
+        get() = requireContext()
 
     override fun requestArchiveNote() {
         archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null))

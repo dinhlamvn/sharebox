@@ -9,7 +9,10 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityMainBinding
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.ui.discover.DiscoverFragment
+import com.dinhlam.sharebox.ui.download.DownloadFragment
 import com.dinhlam.sharebox.ui.home.HomeFragment
+import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
@@ -32,14 +35,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
             val pos = when (menuItem.itemId) {
                 R.id.home -> 0
-                R.id.explore -> 1
-                R.id.download -> 3
-                R.id.me -> 4
-                else -> error("No ID ${menuItem.itemId}")
+                R.id.discover -> 1
+                R.id.download -> 2
+                R.id.me -> 3
+                else -> error("${menuItem.itemId} is undefined.")
             }
-            binding.viewPager.currentItem = pos
+            binding.viewPager.setCurrentItem(pos, false)
             true
         }
+        binding.viewPager.isUserInputEnabled = false
     }
 
     class ViewPagerAdapter @Inject constructor(@ActivityContext context: Context) :
@@ -48,12 +52,27 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         @Inject
         lateinit var homeFragment: HomeFragment
 
+        @Inject
+        lateinit var discoverFragment: DiscoverFragment
+
+        @Inject
+        lateinit var downloadFragment: DownloadFragment
+
+        @Inject
+        lateinit var profileFragment: ProfileFragment
+
         override fun getItemCount(): Int {
-            return 1
+            return 4
         }
 
         override fun createFragment(position: Int): Fragment {
-            return homeFragment
+            return when (position) {
+                0 -> homeFragment
+                1 -> discoverFragment
+                2 -> downloadFragment
+                3 -> profileFragment
+                else -> error("No Fragment found for position $position")
+            }
         }
     }
 }

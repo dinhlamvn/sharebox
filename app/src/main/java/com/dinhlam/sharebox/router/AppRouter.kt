@@ -31,7 +31,7 @@ import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
-import com.dinhlam.sharebox.ui.profile.ProfileActivity
+import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
@@ -211,7 +211,7 @@ class AppRouter constructor(private val context: Context) : Router {
     }
 
     override fun profile(context: Context): Intent {
-        return Intent(context, ProfileActivity::class.java)
+        return Intent(context, ProfileFragment::class.java)
     }
 
     override fun textInput(context: Context, title: String?, text: String?): Intent {
