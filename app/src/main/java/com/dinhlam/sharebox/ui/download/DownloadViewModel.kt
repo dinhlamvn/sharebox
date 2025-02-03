@@ -9,6 +9,9 @@ import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.model.VideoSource
+import com.dinhlam.sharebox.tracking.TrackerManager
+import com.dinhlam.sharebox.tracking.events.TiktokDownloadErrorEvent
+import com.dinhlam.sharebox.tracking.events.YoutubeDownloadErrorEvent
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +83,14 @@ class DownloadViewModel @Inject constructor(
         while (retry > 0) {
             val responseBody =
                 libreTubeServices.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), videoId)
+            if (!responseBody.isSuccessful) {
+                val error = "${responseBody.code()} - " + responseBody.errorBody()?.string()
+                TrackerManager.logEvent(YoutubeDownloadErrorEvent(error))
+                delay(1000)
+                retry--
+                continue
+            }
+
             strResponse =
                 responseBody.body()?.use { res -> res.string() }.orEmpty()
 
@@ -161,6 +172,8 @@ class DownloadViewModel @Inject constructor(
                 UserAgentUtils.pickRandomUserAgent(), facebookUrl
             )
             if (!downloadResponse.isSuccessful) {
+                val error = "${downloadResponse.code()} - " + downloadResponse.errorBody()?.string()
+                TrackerManager.logEvent(YoutubeDownloadErrorEvent(error))
                 retryTimes--
                 delay(1000)
                 continue
@@ -229,6 +242,8 @@ class DownloadViewModel @Inject constructor(
                 UserAgentUtils.pickRandomUserAgent(), requestBody
             )
             if (!sssTikResponse.isSuccessful) {
+                val error = "${sssTikResponse.code()} - " + sssTikResponse.errorBody()?.string()
+                TrackerManager.logEvent(TiktokDownloadErrorEvent(error))
                 retryTimes--
                 delay(1000)
                 continue
