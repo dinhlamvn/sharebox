@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.TiktokCategory
 import com.dinhlam.sharebox.model.TiktokDiscover
+import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,7 +30,11 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     private fun getDefaultBox() {
         suspend {
-            boxRepository.findFirst(userHelper.getCurrentUserId())
+            val boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-tiktok-box")
+            boxRepository.findOne(boxId) ?: boxRepository.run {
+                boxRepository.insert(boxId, "Tiktok Discover", null, userHelper.getCurrentUserId())
+                boxRepository.findOne(boxId)
+            }
         }.execute { asyncLoad ->
             copy(currentBox = asyncLoad.data)
         }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,15 +47,6 @@ class ShareLinkActivity :
                 val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)
                 val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
                 gotoLink(getCorrectLink(), boxId, boxName)
-            }
-        }
-
-    private val chooseBoxToArchiveLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data ?: return@registerForActivityResult
-                val boxId = data.getStringExtra(AppExtras.EXTRA_BOX_ID)!!
-                viewModel.archiveLink(getCorrectLink(), boxId)
             }
         }
 
@@ -149,13 +141,8 @@ class ShareLinkActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         handleUri()
-
-        binding.buttonArchive.setOnClickListener {
-            onArchiveLink()
-        }
 
         binding.buttonGo.setOnClickListener {
             onGo()
@@ -213,24 +200,6 @@ class ShareLinkActivity :
         chooseBoxToGoLauncher.launch(router.boxList(this, getString(R.string.choose_box_for_web)))
     }
 
-    private fun onArchiveLink() {
-        binding.editLink.hideKeyboard()
-        val correctLink = getCorrectLink().takeIfNotNullOrBlank() ?: return viewModel.setLinkError(
-            getString(R.string.require_input_link)
-        )
-
-        if (!correctLink.isWebLink()) {
-            return viewModel.setLinkError(getString(R.string.require_input_correct_weblink))
-        }
-
-        chooseBoxToArchiveLauncher.launch(
-            router.boxList(
-                this,
-                getString(R.string.choose_box_for_web)
-            )
-        )
-    }
-
     private fun getCorrectLink(): String {
         val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return ""
         return if (link.startsWith("http://") || link.startsWith("https://")) {
@@ -273,8 +242,12 @@ class ShareLinkActivity :
         return null
     }
 
-    override fun supportNavBack(): Boolean {
-        return false
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     @UiThread
