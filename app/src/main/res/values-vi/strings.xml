@@ -174,7 +174,7 @@
     <string name="require_sign_in_to_manage_member">Bạn cần đăng nhập để quản lý thành viên của Box</string>
     <string name="error_add_yourself">Bạn không thể thêm chính mình</string>
     <string name="download">Tải vể</string>
-    <string name="download_ready">Nội dung cho %s đã sẵn sàng để tải xuống</string>
+    <string name="download_ready">Sẵn sàng tải %s</string>
     <string name="perform_copied_content_desc">Bạn có thể nhấp vào nút phía dưới để lưu trữ nội dung vừa sao chép</string>
     <string name="title_add_member">Thêm thành viên</string>
     <string name="title_num_of_recently">Số lượng chia sẻ gần đây được hiển thị</string>
@@ -186,8 +186,7 @@
     <string name="nothing">Không có gì</string>
     <string name="no_support_download_this_content">Không hỗ trợ tải nội dung này</string>
     <string name="home">Trang chủ</string>
-    <string name="explore">Explore</string>
-    <string name="me">Me</string>
+    <string name="me">Tôi</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>

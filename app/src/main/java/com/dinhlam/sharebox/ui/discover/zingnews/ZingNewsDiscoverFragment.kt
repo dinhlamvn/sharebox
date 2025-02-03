@@ -98,6 +98,7 @@ class ZingNewsDiscoverFragment :
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
+            viewModel.refresh()
         }
 
         onChange(ZingNewsDiscoverState::asyncLoadArchive) { asyncLoad ->

@@ -35,9 +35,11 @@ class TiktokDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun refresh() = getState { state ->
+    fun refresh() {
         setState { copy(cache = emptyMap()) }
-        getTiktokTrending(state.activeCategories)
+        getState { state ->
+            getTiktokTrending(state.activeCategories)
+        }
     }
 
     private fun getTiktokTrending(categories: Set<TiktokCategory>) = getState { state ->

@@ -114,4 +114,11 @@ class ZingNewDiscoverViewModel @Inject constructor(
             )
         }
     }
+
+    fun refresh() {
+        setState { copy(cache = emptyMap()) }
+        getState { state ->
+            getZingNewsData(state.zingNewsCheckedCategories)
+        }
+    }
 }
