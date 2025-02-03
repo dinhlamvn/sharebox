@@ -8,8 +8,9 @@ import com.dinhlam.sharebox.model.TiktokDiscover
 data class TiktokDiscoverState(
     val currentBox: BoxDetail? = null,
     val categories: List<TiktokCategory> = TiktokCategory.categories,
-    val activeCategory: TiktokCategory? = TiktokCategory.categories.firstOrNull(),
+    val activeCategories: Set<TiktokCategory> = setOf(TiktokCategory.categories.first()),
     val tiktokDiscoverList: List<TiktokDiscover> = emptyList(),
-    val asyncLoadTiktokDiscover: BaseViewModel.AsyncLoad<List<TiktokDiscover>> = BaseViewModel.AsyncLoad.UnInitialized,
-    val asyncLoadArchive: BaseViewModel.AsyncLoad<String> = BaseViewModel.AsyncLoad.UnInitialized
+    val asyncLoadTiktokDiscover: BaseViewModel.AsyncLoad<List<Pair<Int, List<TiktokDiscover>>>> = BaseViewModel.AsyncLoad.UnInitialized,
+    val asyncLoadArchive: BaseViewModel.AsyncLoad<String> = BaseViewModel.AsyncLoad.UnInitialized,
+    val cache: Map<Int, List<TiktokDiscover>> = emptyMap()
 ) : BaseViewModel.BaseState

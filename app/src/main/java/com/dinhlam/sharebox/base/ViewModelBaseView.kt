@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.base
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.launchWhenAtLeast
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -28,28 +30,34 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
     val viewModel: VM
     fun onStateChanged(state: S)
 
+    val subscriptionLifecycleOwner: LifecycleOwner
+        get() = try {
+            this.cast<Fragment>()?.viewLifecycleOwner ?: this
+        } catch (e: IllegalStateException) {
+            this
+        }
+
     fun <R> getState(viewModel: VM, block: (S) -> R) = block.invoke(viewModel.currentState)
 
-    fun <V> onChange(block: (S) -> Unit) = viewModel.stateFlow
+    fun onChange(block: (S) -> Unit) = viewModel.stateFlow
         .map { state -> Observer1(state) }
-        .distinctUntilChanged().resolveObserver(this) { observer ->
+        .distinctUntilChanged().resolveObserver(subscriptionLifecycleOwner) { observer ->
             block(observer.value)
         }
 
     fun <V> onChange(property: KProperty1<S, V>, block: (V) -> Unit) = viewModel.stateFlow
         .map { state -> Observer1(property.get(state)) }
-        .distinctUntilChanged().resolveObserver(this) { observer ->
+        .distinctUntilChanged().resolveObserver(subscriptionLifecycleOwner) { observer ->
             block(observer.value)
         }
 
     fun <V1, V2> onChange(
         property1: KProperty1<S, V1>,
         property2: KProperty1<S, V2>,
-        lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2) -> Unit
     ) = viewModel.stateFlow.map { state -> Observer2(property1.get(state), property2.get(state)) }
         .distinctUntilChanged()
-        .resolveObserver(this) { observer ->
+        .resolveObserver(subscriptionLifecycleOwner) { observer ->
             block(observer.value1, observer.value2)
         }
 
@@ -57,7 +65,6 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         property1: KProperty1<S, V1>,
         property2: KProperty1<S, V2>,
         property3: KProperty1<S, V3>,
-        lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3) -> Unit
     ) = viewModel.stateFlow.map { state ->
         Observer3(
@@ -65,9 +72,8 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
             property2.get(state),
             property3.get(state)
         )
-    }
-        .distinctUntilChanged()
-        .resolveObserver(this) { observer ->
+    }.distinctUntilChanged()
+        .resolveObserver(subscriptionLifecycleOwner) { observer ->
             block(observer.value1, observer.value2, observer.value3)
         }
 
@@ -76,7 +82,6 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         property2: KProperty1<S, V2>,
         property3: KProperty1<S, V3>,
         property4: KProperty1<S, V4>,
-        lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3, V4) -> Unit
     ) = viewModel.stateFlow.map { state ->
         Observer4(
@@ -86,7 +91,7 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
             property4.get(state)
         )
     }.distinctUntilChanged()
-        .resolveObserver(this) { observer ->
+        .resolveObserver(subscriptionLifecycleOwner) { observer ->
             block(observer.value1, observer.value2, observer.value3, observer.value4)
         }
 
@@ -96,7 +101,6 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
         property3: KProperty1<S, V3>,
         property4: KProperty1<S, V4>,
         property5: KProperty1<S, V5>,
-        lifecycleOwner: LifecycleOwner? = null,
         block: (V1, V2, V3, V4, V5) -> Unit
     ) = viewModel.stateFlow.map { state ->
         Observer5(
@@ -107,7 +111,7 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
             property5.get(state)
         )
     }.distinctUntilChanged()
-        .resolveObserver(this) { observer ->
+        .resolveObserver(subscriptionLifecycleOwner) { observer ->
             block(
                 observer.value1,
                 observer.value2,

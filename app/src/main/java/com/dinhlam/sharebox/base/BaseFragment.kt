@@ -1,11 +1,14 @@
 package com.dinhlam.sharebox.base
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.dinhlam.sharebox.di.DefaultFragmentFactoryEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
@@ -28,5 +31,14 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val entryPoint = EntryPointAccessors.fromFragment(
+            this,
+            DefaultFragmentFactoryEntryPoint::class.java
+        )
+        childFragmentManager.fragmentFactory = entryPoint.getFragmentFactory()
     }
 }

@@ -11,3 +11,11 @@ fun <T, R> Map<T, R>.getOrThrow(key: T): R {
 }
 
 fun <T> List<T>.takeIfNotEmpty(): List<T>? = ifEmpty { null }
+
+fun <T> Set<T>.toggleElement(element: T): Set<T> {
+    return if (contains(element)) {
+        minus(element)
+    } else {
+        plus(element)
+    }
+}

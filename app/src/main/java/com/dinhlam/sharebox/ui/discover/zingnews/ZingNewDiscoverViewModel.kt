@@ -4,6 +4,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.extensions.toggleElement
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ZingNewsCategory
@@ -23,16 +24,14 @@ class ZingNewDiscoverViewModel @Inject constructor(
 
     init {
         getDefaultBox()
-        onChange(ZingNewsDiscoverState::zingNewsCategory) { zingNewsCategory ->
-            zingNewsCategory?.url?.let(::getZingNewsData)
-        }
+        onChange(ZingNewsDiscoverState::zingNewsCheckedCategories, ::getZingNewsData)
         setDefaultCategory()
     }
 
     private fun setDefaultCategory() = setState {
         val categories = ZingNewsCategory.categories.copyOf().toMutableList()
         categories.shuffle()
-        copy(zingNewsCategories = categories, zingNewsCategory = categories.firstOrNull())
+        copy(zingNewsCategories = categories, zingNewsCheckedCategories = setOf(categories.first()))
     }
 
     private fun getDefaultBox() {
@@ -65,19 +64,32 @@ class ZingNewDiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun getZingNewsData(url: String) {
+    private fun getZingNewsData(categories: Set<ZingNewsCategory>) = getState { state ->
         suspend {
-            val responseBody =
-                downloadServices.downloadFileWithoutStream(url)
-            responseBody.use { body ->
-                val html = body.string()
-                val jsoup = Jsoup.parse(html)
-                getDataFromHTML(jsoup)
+            buildList {
+                categories.forEach { zingNewsCategory ->
+                    val url = zingNewsCategory.url
+                    val cachedData = state.cache[url]
+                    if (cachedData != null) {
+                        add(url to cachedData)
+                    } else {
+                        val responseBody =
+                            downloadServices.downloadFileWithoutStream(zingNewsCategory.url)
+                        responseBody.use { body ->
+                            val html = body.string()
+                            val jsoup = Jsoup.parse(html)
+                            val list = getDataFromHTML(jsoup)
+                            add(url to list)
+                        }
+                    }
+                }
             }
         }.execute { asyncLoad ->
             copy(
                 asyncLoadZingNewsDiscover = asyncLoad,
-                zingNewsDiscovers = asyncLoad.data.orEmpty()
+                zingNewsDiscovers = asyncLoad.data?.map(Pair<String, List<ZingNewsDiscover>>::second)
+                    ?.flatten()?.shuffled() ?: zingNewsDiscovers,
+                cache = cache.plus(asyncLoad.data.orEmpty())
             )
         }
     }
@@ -92,7 +104,14 @@ class ZingNewDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun setActiveCategory(zingNewsCategory: ZingNewsCategory) {
-        setState { copy(zingNewsCategory = zingNewsCategory) }
+    fun setActiveCategory(zingNewsCategory: ZingNewsCategory) = getState { state ->
+        if (state.zingNewsCheckedCategories.contains(zingNewsCategory) && state.zingNewsCheckedCategories.size == 1) {
+            return@getState
+        }
+        setState {
+            copy(
+                zingNewsCheckedCategories = zingNewsCheckedCategories.toggleElement(zingNewsCategory)
+            )
+        }
     }
 }

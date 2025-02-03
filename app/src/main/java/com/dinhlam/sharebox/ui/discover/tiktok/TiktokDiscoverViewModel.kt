@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.data.network.TiktokServices
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.ifTrue
+import com.dinhlam.sharebox.extensions.toggleElement
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.TiktokCategory
@@ -23,10 +24,7 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     init {
         getDefaultBox()
-        onChange(TiktokDiscoverState::activeCategory) { tiktokCategory ->
-            val categoryId = tiktokCategory?.categoryId ?: return@onChange
-            getTiktokTrending(categoryId)
-        }
+        onChange(TiktokDiscoverState::activeCategories, ::getTiktokTrending)
     }
 
     private fun getDefaultBox() {
@@ -38,35 +36,51 @@ class TiktokDiscoverViewModel @Inject constructor(
     }
 
     fun refresh() = getState { state ->
-        val categoryId = state.activeCategory?.categoryId ?: return@getState
-        getTiktokTrending(categoryId)
+        setState { copy(cache = emptyMap()) }
+        getTiktokTrending(state.activeCategories)
     }
 
-    private fun getTiktokTrending(categoryId: Int) = suspend {
-        val queryMap = mapOf(
-            "count" to "20",
-            "categoryType" to "$categoryId",
-            "aid" to "1988",
-            "app_language" to "en",
-            "app_name" to "tiktok_web"
-        )
-        tiktokServices.explore(
-            UserAgentUtils.pickRandomUserAgent(),
-            queryMap
-        ).itemList.map { item ->
-            TiktokDiscover(
-                item.id,
-                "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
-                item.stats.playCount,
-                item.desc
+    private fun getTiktokTrending(categories: Set<TiktokCategory>) = getState { state ->
+        suspend {
+            buildList {
+                categories.forEach { tiktokCategory ->
+                    val cacheData = state.cache[tiktokCategory.categoryId]
+                    if (cacheData != null) {
+                        add(tiktokCategory.categoryId to cacheData)
+                    } else {
+                        val queryMap = mapOf(
+                            "count" to "20",
+                            "categoryType" to "${tiktokCategory.categoryId}",
+                            "aid" to "1988",
+                            "app_language" to "en",
+                            "app_name" to "tiktok_web"
+                        )
+                        val list = tiktokServices.explore(
+                            UserAgentUtils.pickRandomUserAgent(),
+                            queryMap
+                        ).itemList.map { item ->
+                            TiktokDiscover(
+                                item.id,
+                                "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
+                                item.stats.playCount,
+                                item.desc
+                            )
+                        }
+                        add(tiktokCategory.categoryId to list)
+                    }
+                }
+            }.shuffled()
+        }.execute { asyncLoad ->
+            copy(
+                asyncLoadTiktokDiscover = asyncLoad,
+                tiktokDiscoverList = asyncLoad.completed.ifTrue(
+                    asyncLoad.data.orEmpty().map(Pair<Int, List<TiktokDiscover>>::second).flatten()
+                        .shuffled(),
+                    tiktokDiscoverList
+                ),
+                cache = cache.plus(asyncLoad.data.orEmpty())
             )
         }
-    }.execute { asyncLoad ->
-        copy(
-            asyncLoadTiktokDiscover = asyncLoad,
-            tiktokDiscoverList = asyncLoad.completed.ifTrue(asyncLoad.data, tiktokDiscoverList)
-                .orEmpty()
-        )
     }
 
     fun setCurrentBoxId(boxId: String) {
@@ -91,7 +105,10 @@ class TiktokDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun setActiveCategory(tiktokCategory: TiktokCategory) {
-        setState { copy(activeCategory = tiktokCategory) }
+    fun setActiveCategory(tiktokCategory: TiktokCategory) = getState { state ->
+        if (state.activeCategories.contains(tiktokCategory) && state.activeCategories.size == 1) {
+            return@getState
+        }
+        setState { copy(activeCategories = activeCategories.toggleElement(tiktokCategory)) }
     }
 }

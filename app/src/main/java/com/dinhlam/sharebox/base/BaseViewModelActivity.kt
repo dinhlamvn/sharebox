@@ -8,6 +8,6 @@ abstract class BaseViewModelActivity<T : BaseViewModel.BaseState, VM : BaseViewM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onChange<T>(::onStateChanged)
+        onChange(::onStateChanged)
     }
 }

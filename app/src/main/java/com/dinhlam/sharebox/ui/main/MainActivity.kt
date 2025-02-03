@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.ui.discover.DiscoverFragment
 import com.dinhlam.sharebox.ui.download.DownloadFragment
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.profile.ProfileFragment
+import com.dinhlam.sharebox.utils.LiveEvents
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
@@ -46,20 +47,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.viewPager.isUserInputEnabled = false
     }
 
+    fun moveToDiscover(tab: Int) {
+        binding.bottomNavigationView.selectedItemId = R.id.discover
+        LiveEvents.changeDiscoverTab(tab)
+    }
+
     class ViewPagerAdapter @Inject constructor(@ActivityContext context: Context) :
         FragmentStateAdapter(context.castNonNull<AppCompatActivity>()) {
-
-        @Inject
-        lateinit var homeFragment: HomeFragment
-
-        @Inject
-        lateinit var discoverFragment: DiscoverFragment
-
-        @Inject
-        lateinit var downloadFragment: DownloadFragment
-
-        @Inject
-        lateinit var profileFragment: ProfileFragment
 
         override fun getItemCount(): Int {
             return 4
@@ -67,10 +61,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> homeFragment
-                1 -> discoverFragment
-                2 -> downloadFragment
-                3 -> profileFragment
+                0 -> HomeFragment()
+                1 -> DiscoverFragment()
+                2 -> DownloadFragment()
+                3 -> ProfileFragment()
                 else -> error("No Fragment found for position $position")
             }
         }

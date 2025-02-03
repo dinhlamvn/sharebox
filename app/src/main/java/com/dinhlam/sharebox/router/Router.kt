@@ -60,9 +60,5 @@ interface Router {
     fun boxMembers(context: Context, boxId: String): Intent
     fun boxInvited(context: Context): Intent
 
-    fun tiktokDiscover(context: Context): Intent
-
-    fun zingNewsDiscover(context: Context): Intent
-
     fun clipboard(context: Context): Intent
 }

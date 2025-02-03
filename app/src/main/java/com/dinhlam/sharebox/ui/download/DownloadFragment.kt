@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseFragment
 import com.dinhlam.sharebox.databinding.FragmentDownloadBinding
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class DownloadFragment @Inject constructor() : BaseFragment<FragmentDownloadBinding>() {
+@AndroidEntryPoint
+class DownloadFragment : BaseFragment<FragmentDownloadBinding>() {
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?

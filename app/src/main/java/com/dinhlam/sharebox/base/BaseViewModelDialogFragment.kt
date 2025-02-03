@@ -9,6 +9,6 @@ abstract class BaseViewModelDialogFragment<T : BaseViewModel.BaseState, VM : Bas
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onChange<T>(::onStateChanged)
+        onChange(::onStateChanged)
     }
 }

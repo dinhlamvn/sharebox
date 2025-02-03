@@ -32,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProfileFragment @Inject constructor() :
+class ProfileFragment :
     BaseViewModelFragment<ProfileState, ProfileViewModel, FragmentProfileBinding>() {
 
     override fun onCreateViewBinding(

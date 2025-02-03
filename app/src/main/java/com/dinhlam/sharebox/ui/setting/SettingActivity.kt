@@ -72,7 +72,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
     private fun handleSignInResult(activityResult: ActivityResult) {
         if (activityResult.resultCode == Activity.RESULT_OK) {
-            binding.imageAction.setImageDrawable(Icons.signOutIcon(this))
+            binding.textAction.setText(R.string.sign_out)
         }
     }
 
@@ -124,7 +124,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             requestChangeNetworkCondition(checkedId)
         }
 
-        binding.imageAction.setOnClickListener {
+        binding.textAction.setOnClickListener {
             if (userHelper.isSignedIn()) {
                 requestSignOut()
             } else {
@@ -132,11 +132,11 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
-        binding.imageAction.setImageDrawable(
+        binding.textAction.setText(
             if (userHelper.isSignedIn()) {
-                Icons.signOutIcon(this)
+                R.string.sign_out
             } else {
-                Icons.signInIcon(this)
+                R.string.sign_in
             }
         )
         binding.toolbar.navigationIcon = Icons.leftArrowIcon(this) {
@@ -261,7 +261,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                         userSharePref.getAnonymousUserId()
                     )
                     userHelper.signOut(this@SettingActivity, this, {
-                        binding.imageAction.setImageDrawable(Icons.signInIcon(this@SettingActivity))
+                        binding.textAction.setText(R.string.sign_in)
                         showToast(R.string.logged_out)
                     }, {
                         showToast(R.string.logged_out_error)

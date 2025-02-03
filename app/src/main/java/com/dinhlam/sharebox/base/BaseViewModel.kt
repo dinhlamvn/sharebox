@@ -115,7 +115,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     }
 
     protected fun <V> onChange(
-        property: KProperty1<S, V>, lifecycleOwner: LifecycleOwner? = null, block: (V) -> Unit
+        property: KProperty1<S, V>, block: (V) -> Unit
     ) {
         stateFlow.map {
             Observer1(property.get(it))

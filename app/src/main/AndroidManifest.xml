@@ -263,16 +263,6 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name=".ui.discover.tiktok.TiktokDiscoverActivity"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
-            android:name=".ui.discover.zingnews.ZingNewsDiscoverActivity"
-            android:windowSoftInputMode="adjustResize"
-            tools:ignore="LockedOrientationActivity" />
-
-        <activity
             android:name=".ui.clipboard.ClipboardActivity"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.Transparent"

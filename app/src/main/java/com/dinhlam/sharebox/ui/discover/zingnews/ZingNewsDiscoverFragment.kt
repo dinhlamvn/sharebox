@@ -2,34 +2,37 @@ package com.dinhlam.sharebox.ui.discover.zingnews
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.ActivityZingnewsDiscoverBinding
+import com.dinhlam.sharebox.databinding.FragmentZingnewsDiscoverBinding
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.listmodel.ChipListModel
 import com.dinhlam.sharebox.listmodel.ZingNewsDiscoverListModel
 import com.dinhlam.sharebox.model.ZingNewsDiscover
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalSpacingDecoration
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class ZingNewsDiscoverActivity :
-    BaseViewModelActivity<ZingNewsDiscoverState, ZingNewDiscoverViewModel, ActivityZingnewsDiscoverBinding>() {
+class ZingNewsDiscoverFragment :
+    BaseViewModelFragment<ZingNewsDiscoverState, ZingNewDiscoverViewModel, FragmentZingnewsDiscoverBinding>() {
 
-    override fun onCreateViewBinding(): ActivityZingnewsDiscoverBinding {
-        return ActivityZingnewsDiscoverBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentZingnewsDiscoverBinding {
+        return FragmentZingnewsDiscoverBinding.inflate(inflater, container, false)
     }
 
     private val chooseBoxLauncher =
@@ -69,7 +72,7 @@ class ZingNewsDiscoverActivity :
                 ChipListModel(
                     "category_${zingNewsCategory.id}",
                     zingNewsCategory.name,
-                    zingNewsCategory.id == state.zingNewsCategory?.id,
+                    state.zingNewsCheckedCategories.contains(zingNewsCategory),
                     BaseListAdapter.NoHashProp(
                         View.OnClickListener {
                             viewModel.setActiveCategory(zingNewsCategory)
@@ -83,32 +86,18 @@ class ZingNewsDiscoverActivity :
 
     override fun onStateChanged(state: ZingNewsDiscoverState) {
         binding.loading.toggle(state.asyncLoadZingNewsDiscover is BaseViewModel.AsyncLoad.Loading)
-        val boxName = state.currentBox?.boxName
-        val isLock = state.currentBox?.passcode?.isNotBlank() ?: false
-        binding.textShareBox.text = boxName
-        binding.textShareBox.setDrawableCompat(
-            start = Icons.boxIcon(this) { copy(sizeDp = 20) },
-            end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
-        )
         categoryAdapter.requestBuildListModels()
         adapter.requestBuildListModels()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8.dp))
         categoryAdapter.attachTo(binding.recyclerViewCategory, this)
         adapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
-            //viewModel.refresh()
-        }
-
-        binding.containerShareBox.setOnClickListener {
-            chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
         onChange(ZingNewsDiscoverState::asyncLoadArchive) { asyncLoad ->
@@ -120,7 +109,7 @@ class ZingNewsDiscoverActivity :
 
     private fun onClick(zingNewsDiscover: ZingNewsDiscover) = getState(viewModel) { state ->
         router.moveToChromeCustomTab(
-            this@ZingNewsDiscoverActivity,
+            requireContext(),
             zingNewsDiscover.url,
             state.currentBox?.boxId,
             state.currentBox?.boxName,
@@ -128,9 +117,9 @@ class ZingNewsDiscoverActivity :
         )
     }
 
-    private fun onArchive(url: String) = getState(viewModel) { state ->
+    private fun onArchive(url: String) {
         val box =
-            getState(viewModel, ZingNewsDiscoverState::currentBox) ?: return@getState showToast(
+            getState(viewModel, ZingNewsDiscoverState::currentBox) ?: return showToast(
                 R.string.please_choose_box
             )
         viewModel.archiveLink(url, box.boxId)

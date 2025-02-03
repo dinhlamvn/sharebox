@@ -3,7 +3,6 @@ package com.dinhlam.sharebox.ui.home
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -36,18 +35,19 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor() :
+class HomeFragment :
     BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener,
-    HomeAdapter.Callback {
+    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
     private val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -127,15 +127,6 @@ class HomeFragment @Inject constructor() :
         homeAdapter.requestBuildListModels()
     }
 
-    private val createBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { _ ->
-                    viewModel.refresh()
-                }
-            }
-        }
-
     private val archiveResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -202,7 +193,6 @@ class HomeFragment @Inject constructor() :
             }
         }
 
-        homeAdapter.callback = this
         homeAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -213,15 +203,8 @@ class HomeFragment @Inject constructor() :
         onChange(HomeState::asyncLoadSave) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
-                viewModel.updateShare(asyncLoad.value)
+                viewModel.refresh()
             }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (userHelper.getCurrentUserId() != getState(viewModel, HomeState::currentUserId)) {
-            viewModel.refresh()
         }
     }
 
@@ -256,7 +239,7 @@ class HomeFragment @Inject constructor() :
                 )
 
                 4 -> onBookmark(shareId)
-                5 -> buildContext.copy(share.boxDetail?.boxId)
+                5 -> context?.copy(share.boxDetail?.boxId)
                 6 -> moveToTrash(share)
             }
         }
@@ -301,10 +284,6 @@ class HomeFragment @Inject constructor() :
         }
     }
 
-    private fun requestCreateBox() {
-        createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
-    }
-
     private fun onArchiveNote(text: String) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/*"
@@ -331,11 +310,6 @@ class HomeFragment @Inject constructor() :
         }
     }
 
-    fun gotoLink(link: String) {
-        viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Web(link))
-        showBoxList(getString(R.string.choose_box_for_web))
-    }
-
     private fun showBoxList(title: String? = null) {
         chooseBoxLauncher.launch(router.boxList(requireContext(), title))
     }
@@ -345,34 +319,28 @@ class HomeFragment @Inject constructor() :
         viewModel.refresh()
     }
 
-    override val state: HomeState
-        get() = getState(viewModel) { it }
-
-    override val buildContext: Context
-        get() = requireContext()
-
-    override fun requestArchiveNote() {
+    fun requestArchiveNote() {
         archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null))
     }
 
-    override fun requestArchiveWeb() {
+    fun requestArchiveWeb() {
         archiveResultLauncher.launch(router.shareLink(requireContext(), null))
     }
 
-    override fun requestArchiveImages() {
+    fun requestArchiveImages() {
         pickImagesResultLauncher.launch(router.pickImageIntent(true))
     }
 
-    override fun requestViewAllBox() {
+    fun requestViewAllBox() {
         viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Detail)
         showBoxList()
     }
 
-    override fun showMore(shareDetail: ShareDetail) {
+    fun showMore(shareDetail: ShareDetail) {
         shareHelper.showMore(requireActivity(), shareDetail, this@HomeFragment)
     }
 
-    override fun openShare(shareDetail: ShareDetail) {
+    fun openShare(shareDetail: ShareDetail) {
         when (val shareData = shareDetail.shareData) {
             is ShareData.ShareUrl -> router.moveToChromeCustomTab(
                 requireContext(),
@@ -403,11 +371,11 @@ class HomeFragment @Inject constructor() :
         }
     }
 
-    override fun openBox(boxId: String) {
+    fun openBox(boxId: String) {
         viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId))
     }
 
-    override fun editBox(boxId: String) {
+    fun editBox(boxId: String) {
         editBoxResultLauncher.launch(
             router.boxForm(
                 requireContext(),
@@ -416,12 +384,45 @@ class HomeFragment @Inject constructor() :
         )
     }
 
-    override fun requestManageMembers(boxId: String) {
+    fun requestManageMembers(boxId: String) {
         if (userHelper.isSignedIn()) {
             startActivity(router.boxMembers(requireContext(), boxId))
         } else {
             showToast(R.string.require_sign_in_to_manage_member)
             startActivity(router.signIn(false))
         }
+    }
+
+    fun showBoxOption(boxDetail: BoxDetail) {
+        val items = arrayOf(
+            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                FontAwesome.Icon.faw_edit.name,
+                getString(R.string.title_edit_box)
+            ),
+            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                FontAwesome.Icon.faw_users.name,
+                getString(R.string.members)
+            ),
+            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                FontAwesome.Icon.faw_copy.name,
+                getString(R.string.copy_id)
+            )
+        )
+        OptionMenuBottomSheetDialogFragment.show(
+            childFragmentManager,
+            items
+        ) { position, _, _ ->
+            when (position) {
+                0 -> editBox(boxDetail.boxId)
+
+                1 -> requestManageMembers(boxDetail.boxId)
+
+                2 -> context?.copy(boxDetail.boxId)
+            }
+        }
+    }
+
+    fun moveToDiscover(tab: Int) {
+        activity?.cast<MainActivity>()?.moveToDiscover(tab)
     }
 }

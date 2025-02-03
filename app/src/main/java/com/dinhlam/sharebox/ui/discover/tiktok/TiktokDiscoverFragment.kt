@@ -2,36 +2,36 @@ package com.dinhlam.sharebox.ui.discover.tiktok
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.ActivityTiktokDiscoverBinding
-import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.databinding.FragmentTiktokDiscoverBinding
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.listmodel.ChipListModel
 import com.dinhlam.sharebox.listmodel.TiktokDiscoverListModel
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalSpacingDecoration
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TiktokDiscoverActivity :
-    BaseViewModelActivity<TiktokDiscoverState, TiktokDiscoverViewModel, ActivityTiktokDiscoverBinding>() {
+class TiktokDiscoverFragment :
+    BaseViewModelFragment<TiktokDiscoverState, TiktokDiscoverViewModel, FragmentTiktokDiscoverBinding>() {
 
-    override fun onCreateViewBinding(): ActivityTiktokDiscoverBinding {
-        return ActivityTiktokDiscoverBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentTiktokDiscoverBinding {
+        return FragmentTiktokDiscoverBinding.inflate(layoutInflater)
     }
 
     private val chooseBoxLauncher =
@@ -63,7 +63,7 @@ class TiktokDiscoverActivity :
                     }),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
                         WorkerUtils.enqueueJobDownloadTiktokVideo(
-                            this@TiktokDiscoverActivity,
+                            requireContext(),
                             tiktokDiscover.hashCode(),
                             tiktokDiscover.url
                         )
@@ -79,7 +79,7 @@ class TiktokDiscoverActivity :
                 ChipListModel(
                     "category_${tiktokCategory.categoryId}",
                     tiktokCategory.categoryName,
-                    tiktokCategory.categoryId == state.activeCategory?.categoryId,
+                    state.activeCategories.contains(tiktokCategory),
                     BaseListAdapter.NoHashProp(
                         View.OnClickListener {
                             viewModel.setActiveCategory(tiktokCategory)
@@ -93,37 +93,12 @@ class TiktokDiscoverActivity :
 
     override fun onStateChanged(state: TiktokDiscoverState) {
         binding.loading.toggle(state.asyncLoadTiktokDiscover is BaseViewModel.AsyncLoad.Loading)
-        val boxName = state.currentBox?.boxName
-        val isLock = state.currentBox?.passcode?.isNotBlank() ?: false
-        binding.textShareBox.text = boxName
-        binding.textShareBox.setDrawableCompat(
-            start = Icons.boxIcon(this) { copy(sizeDp = 20) },
-            end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
-        )
-        categoryAdapter.requestBuildListModels {
-            val position =
-                getState(viewModel) { state -> state.categories.indexOfFirst { cate -> cate.categoryId == state.activeCategory?.categoryId } }
-            if (position >= 0) {
-                binding.recyclerViewCategory.layoutManager?.cast<LinearLayoutManager>()
-                    ?.scrollToPositionWithOffset(position, 20.dp)
-            }
-        }
+        categoryAdapter.requestBuildListModels()
         adapter.requestBuildListModels()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        registerOnBackPressHandler {
-            if (binding.recyclerView.computeVerticalScrollOffset() == 0) {
-                finish()
-            } else {
-                binding.recyclerView.smoothScrollToPosition(0)
-            }
-        }
-
-        setSupportActionBar(binding.toolbar)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.recyclerViewCategory.addItemDecoration(HorizontalSpacingDecoration(8.dp))
         categoryAdapter.attachTo(binding.recyclerViewCategory, this)
         adapter.attachTo(binding.recyclerView, this)
@@ -131,10 +106,6 @@ class TiktokDiscoverActivity :
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
             viewModel.refresh()
-        }
-
-        binding.containerShareBox.setOnClickListener {
-            chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
         onChange(TiktokDiscoverState::asyncLoadArchive) { asyncLoad ->

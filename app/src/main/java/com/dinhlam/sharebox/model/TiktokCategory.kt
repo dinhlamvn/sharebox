@@ -10,7 +10,6 @@ data class TiktokCategory(
 ) {
     companion object {
         val categories = listOf(
-            TiktokCategory(120, "All"),
             TiktokCategory(119, "Singing & Dancing"),
             TiktokCategory(104, "Comedy"),
             TiktokCategory(112, "Sports"),
