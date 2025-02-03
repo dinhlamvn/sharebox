@@ -9,6 +9,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityMainBinding
 import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.ui.discover.DiscoverFragment
 import com.dinhlam.sharebox.ui.download.DownloadFragment
 import com.dinhlam.sharebox.ui.home.HomeFragment
@@ -30,6 +31,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        registerOnBackPressHandler {
+            if (binding.bottomNavigationView.selectedItemId != R.id.home) {
+                binding.bottomNavigationView.selectedItemId = R.id.home
+            } else {
+                finish()
+            }
+        }
 
         binding.viewPager.adapter = adapter
 

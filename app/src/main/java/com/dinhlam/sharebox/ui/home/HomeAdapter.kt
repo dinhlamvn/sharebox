@@ -10,6 +10,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.listmodel.BoxListModel
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
@@ -158,6 +159,8 @@ class HomeAdapter @Inject constructor(
                 "tiktok",
                 homeFragment.requireContext().getDrawableCompat(R.drawable.ic_tiktok),
                 size = 32.dp(),
+                backgroundColor = homeFragment.requireContext()
+                    .getColorCompat(R.color.md_theme_primary),
                 onClick = NoHashProp(View.OnClickListener {
                     homeFragment.moveToDiscover(0)
                 })
@@ -169,6 +172,8 @@ class HomeAdapter @Inject constructor(
                 "zing_news",
                 homeFragment.requireContext().getDrawableCompat(R.drawable.ic_zing_news),
                 size = 32.dp(),
+                backgroundColor = homeFragment.requireContext()
+                    .getColorCompat(R.color.md_theme_primary),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = NoHashProp(View.OnClickListener {
                     homeFragment.moveToDiscover(1)
