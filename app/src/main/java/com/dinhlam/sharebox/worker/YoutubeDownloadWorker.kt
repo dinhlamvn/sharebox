@@ -5,9 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.net.Uri
 import android.os.Build
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -16,24 +14,21 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.network.LibreTubeServices
+import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.pushNotification
-import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
+import javax.inject.Named
 import kotlin.random.Random
 
 @HiltWorker
 class YoutubeDownloadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val libreTubeServices: LibreTubeServices,
+    @Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
 
@@ -57,75 +52,13 @@ class YoutubeDownloadWorker @AssistedInject constructor(
             )
             val sourceUrl =
                 workerParams.inputData.getString("url") ?: return@withContext Result.failure()
-            val videoId = getVideoId(sourceUrl) ?: return@withContext Result.failure()
-
-            val responseBody =
-                libreTubeServices.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), videoId)
-
-            val strResponse =
-                responseBody.body()?.use { res -> res.string() } ?: return@withContext withContext(
-                    Dispatchers.Main
-                ) {
-                    Toast.makeText(appContext, R.string.download_failed, Toast.LENGTH_SHORT).show()
-                    if (runAttemptCount < 3) {
-                        Result.retry()
-                    } else {
-                        Result.failure()
-                    }
-                }
-
-            val json = JSONObject(strResponse)
-            val videoStreams = json.getJSONArray("videoStreams") ?: JSONArray()
-            val audioStreams = json.getJSONArray("audioStreams") ?: JSONArray()
-
-            if (videoStreams.length() == 0 && audioStreams.length() == 0) {
-                Toast.makeText(appContext, R.string.nothing_to_download, Toast.LENGTH_SHORT).show()
-                return@withContext Result.success()
-            }
-
-            val videos = mutableListOf<DownloadData>()
-            for (i in 0 until videoStreams.length()) {
-                val videoObj = videoStreams.getJSONObject(i)
-                val mimeType = videoObj.getString("mimeType")
-                val isVideoOnly = videoObj.getBoolean("videoOnly")
-                val videoQuality = videoObj.getString("quality")
-                if (mimeType.contains("video/mp4", true)) {
-                    val suffix = if (isVideoOnly) {
-                        "($videoQuality) - No Sound"
-                    } else {
-                        "($videoQuality})"
-                    }
-                    videos.add(
-                        DownloadData(
-                            videoId, mimeType, suffix, videoObj.getString("url")
-                        )
-                    )
-                }
-            }
-
-            val audios = mutableListOf<DownloadData>()
-            for (i in 0 until audioStreams.length()) {
-                val audioObject = audioStreams.getJSONObject(i)
-                val mimeType = audioObject.getString("mimeType")
-                if (mimeType.contains("audio/mp3", true) || mimeType.contains("audio/mp4", true)) {
-                    audios.add(
-                        DownloadData(
-                            videoId,
-                            mimeType,
-                            "(${audioObject.getString("quality")})",
-                            audioObject.getString("url")
-                        )
-                    )
-                }
-
-            }
-
+            val downloadContent = youtubeDownloader.download(sourceUrl)
             val intent =
                 router.downloadPopup(
                     appContext,
                     sourceUrl,
-                    videos,
-                    audios,
+                    downloadContent.videos,
+                    downloadContent.audios,
                     emptyList(),
                     notificationId
                 )
@@ -157,14 +90,6 @@ class YoutubeDownloadWorker @AssistedInject constructor(
                 )
             )
             .build()
-    }
-
-    private fun getVideoId(sourceUrl: String): String? {
-        val uri = Uri.parse(sourceUrl)
-        if (sourceUrl.contains("/shorts/")) {
-            return uri.lastPathSegment
-        }
-        return uri.getQueryParameter("v")
     }
 
     private fun createForegroundInfo(subText: String): ForegroundInfo {

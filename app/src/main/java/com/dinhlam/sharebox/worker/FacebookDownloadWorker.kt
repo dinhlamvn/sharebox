@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -16,27 +15,23 @@ import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.network.FDownServices
+import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.pushNotification
-import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.tracking.TrackerManager
 import com.dinhlam.sharebox.tracking.events.FacebookDownloadErrorEvent
-import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import org.jsoup.Jsoup
-import java.util.Locale
+import javax.inject.Named
 import kotlin.random.Random
 
 @HiltWorker
 class FacebookDownloadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val videoHelper: VideoHelper,
+    @Named("FacebookDownloader") private val facebookDownloader: Downloader,
     private val fDownServices: FDownServices,
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -52,48 +47,13 @@ class FacebookDownloadWorker @AssistedInject constructor(
             setForeground(createForegroundInfo())
             val sourceUrl =
                 workerParams.inputData.getString("url") ?: error("No input url")
-            val facebookUrl = videoHelper.getFacebookUrl(sourceUrl)
-            val videoId =
-                Uri.parse(facebookUrl).lastPathSegment ?: error("No video id")
-            var retryTimes = 3
-            var html = ""
-            do {
-                val downloadResponse = fDownServices.getDownloadData(
-                    UserAgentUtils.pickRandomUserAgent(), facebookUrl
-                )
-                if (!downloadResponse.isSuccessful) {
-                    retryTimes--
-                    delay(1000)
-                    continue
-                }
-                html = downloadResponse.body()
-                    ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
-
-                if (html.isNotEmpty()) {
-                    break
-                }
-
-                retryTimes--
-                delay(1000)
-            } while (retryTimes > 0)
-
-            if (html.isEmpty()) {
-                error("HTML is empty")
-            }
-
-            val videoUrls = parseVideoLinks(html)
-
-            val videos = videoUrls.map { pair ->
-                DownloadData(
-                    "${videoId}_${pair.first}", "video/mp4", pair.first, pair.second
-                )
-            }
+            val downloadContent = facebookDownloader.download(sourceUrl)
 
             val intent =
                 router.downloadPopup(
                     appContext,
-                    facebookUrl,
-                    videos,
+                    sourceUrl,
+                    downloadContent.videos,
                     emptyList(),
                     emptyList(),
                     notificationId
@@ -128,26 +88,6 @@ class FacebookDownloadWorker @AssistedInject constructor(
             )
             .setAutoCancel(true)
             .build()
-    }
-
-    private fun parseVideoLinks(htmlString: String): List<Pair<String, String>> {
-        val jsoup = Jsoup.parse(htmlString)
-        val aTags = jsoup.getElementsByTag("a")
-        return aTags.filter { element -> element.hasAttr("href") && element.hasAttr("id") }
-            .mapNotNull { element ->
-                val href = element.attr("href") ?: ""
-                val isVideoSD = element.id().contains(Regex("sdlink"))
-                val isVideoHD = element.id().contains(Regex("hdlink"))
-                if ((isVideoSD || isVideoHD) && href.isNotEmpty()) {
-                    String.format(
-                        Locale.getDefault(),
-                        "Video %s",
-                        if (isVideoSD) "SD" else "HD"
-                    ) to href
-                } else {
-                    null
-                }
-            }
     }
 
     private fun createForegroundInfo(): ForegroundInfo {

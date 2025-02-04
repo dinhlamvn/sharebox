@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
@@ -15,30 +14,23 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.network.SSSTikServices
+import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.pushNotification
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.helper.VideoHelper
-import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.tracking.TrackerManager
 import com.dinhlam.sharebox.tracking.events.TiktokDownloadErrorEvent
-import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import okhttp3.MultipartBody
-import org.jsoup.Jsoup
+import javax.inject.Named
 import kotlin.random.Random
 
 @HiltWorker
 class TiktokDownloadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val videoHelper: VideoHelper,
-    private val sssTikServices: SSSTikServices,
+    @Named("TiktokDownloader") private val tiktokDownloader: Downloader,
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
 
@@ -53,65 +45,15 @@ class TiktokDownloadWorker @AssistedInject constructor(
             setForeground(createForegroundInfo())
             val sourceUrl =
                 workerParams.inputData.getString("url") ?: error("No input url")
-            val tiktokUrl = videoHelper.getTiktokUrl(sourceUrl)
-            val videoId =
-                Uri.parse(tiktokUrl).lastPathSegment ?: error("No video id")
-            var retryTimes = 3
-            var html = ""
-            do {
-                val requestBody = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("id", tiktokUrl)
-                    .addFormDataPart("locale", "en")
-                    .addFormDataPart("tt", "a1kxcWUy")
-                    .build()
-
-                val sssTikResponse = sssTikServices.getDownloadLink(
-                    UserAgentUtils.pickRandomUserAgent(), requestBody
-                )
-                if (!sssTikResponse.isSuccessful) {
-                    retryTimes--
-                    delay(1000)
-                    continue
-                }
-                html = sssTikResponse.body()
-                    ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
-
-                if (html.isNotEmpty()) {
-                    break
-                }
-
-                retryTimes--
-                delay(1000)
-            } while (retryTimes > 0)
-
-            if (html.isEmpty()) {
-                error("HTML is empty")
-            }
-
-            val imageUrls = parseHtmlSSSTikGallery(html)
-            val videoUrl = parseVideoLink(html)
-            val audioUrl = parseAudioLink(html)
-
-            val videos = videoUrl?.let { downloadUrl ->
-                listOf(
-                    DownloadData(
-                        videoId, "video/mp4", "(HD)", downloadUrl
-                    )
-                )
-            } ?: emptyList()
-            val audios = audioUrl?.let { downloadUrl ->
-                listOf(
-                    DownloadData(
-                        videoId, "audio/mp3", "(MP3)", downloadUrl
-                    )
-                )
-            } ?: emptyList()
-            val images =
-                imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
-
-            val intent =
-                router.downloadPopup(appContext, tiktokUrl, videos, audios, images, notificationId)
+            val downloadContent = tiktokDownloader.download(sourceUrl)
+            val intent = router.downloadPopup(
+                appContext,
+                sourceUrl,
+                downloadContent.videos,
+                downloadContent.audios,
+                downloadContent.images,
+                notificationId
+            )
             val notification = createDownloadNotification(intent, sourceUrl)
             if (!appContext.pushNotification(notificationId, notification)) {
                 error("Push notification to device failed")
@@ -142,34 +84,6 @@ class TiktokDownloadWorker @AssistedInject constructor(
             )
             .setAutoCancel(true)
             .build()
-    }
-
-    private fun parseHtmlSSSTikGallery(htmlString: String): List<String> {
-        val jsoup = Jsoup.parse(htmlString)
-        val slideTags = jsoup.getElementsByClass("splide__slide")
-        return slideTags.mapNotNull { element ->
-            element.getElementsByTag("a").firstOrNull()?.attr("href")
-        }
-    }
-
-    private fun parseVideoLink(htmlString: String): String? {
-        val jsoup = Jsoup.parse(htmlString)
-        val aTags = jsoup.getElementsByTag("a")
-        return aTags.filter { element -> element.hasAttr("href") }.firstOrNull { element ->
-            val href = element.attr("href") ?: ""
-            val isMp4Download = element.text().contains("Without watermark", true)
-            href.contains("tikcdn.io") && isMp4Download
-        }?.attr("href").takeIfNotNullOrBlank()
-    }
-
-    private fun parseAudioLink(htmlString: String): String? {
-        val jsoup = Jsoup.parse(htmlString)
-        val aTags = jsoup.getElementsByTag("a")
-        return aTags.filter { element -> element.hasAttr("href") }.firstOrNull { element ->
-            val href = element.attr("href") ?: ""
-            val isAudioLink = element.text().contains("mp3", true)
-            href.contains("tikcdn.io") && isAudioLink
-        }?.attr("href").takeIfNotNullOrBlank()
     }
 
     private fun createForegroundInfo(): ForegroundInfo {
