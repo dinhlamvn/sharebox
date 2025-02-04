@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.di
 
 import androidx.fragment.app.Fragment
 import dagger.MapKey
+import javax.inject.Qualifier
 import kotlin.reflect.KClass
 
 @Target(

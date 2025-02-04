@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config>
-        <!-- Make sure your URL Server here -->
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">ssstik.io</domain>
         <domain includeSubdomains="true">tiktok.com</domain>
         <domain includeSubdomains="true">fdown.net</domain>
@@ -18,10 +17,4 @@
             <certificates src="system" />
         </trust-anchors>
     </debug-overrides>
-
-    <base-config cleartextTrafficPermitted="false">
-        <trust-anchors>
-            <certificates src="system" />
-        </trust-anchors>
-    </base-config>
 </network-security-config>
