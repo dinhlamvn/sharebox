@@ -19,46 +19,52 @@ class FacebookDownloader @Inject constructor(
 ) : Downloader {
 
     override suspend fun download(downloadUrl: String): DownloadContent {
-        val facebookUrl = videoHelper.getFacebookUrl(downloadUrl)
-        val videoId =
-            Uri.parse(facebookUrl).lastPathSegment ?: error("No video id")
-        var retryTimes = 3
-        var html = ""
-        do {
-            val downloadResponse = fDownServices.getDownloadData(
-                UserAgentUtils.pickRandomUserAgent(), facebookUrl
-            )
-            if (!downloadResponse.isSuccessful) {
-                val error = "${downloadResponse.code()} - " + downloadResponse.errorBody()?.string()
-                TrackerManager.logEvent(FacebookDownloadErrorEvent(error))
+        return try {
+            val facebookUrl = videoHelper.getFacebookUrl(downloadUrl)
+            val videoId =
+                Uri.parse(facebookUrl).lastPathSegment ?: error("No video id")
+            var retryTimes = 3
+            var html = ""
+            do {
+                val downloadResponse = fDownServices.getDownloadData(
+                    UserAgentUtils.pickRandomUserAgent(), facebookUrl
+                )
+                if (!downloadResponse.isSuccessful) {
+                    val error =
+                        "${downloadResponse.code()} - " + downloadResponse.errorBody()?.string()
+                    TrackerManager.logEvent(FacebookDownloadErrorEvent(error))
+                    retryTimes--
+                    delay(1000)
+                    continue
+                }
+                html = downloadResponse.body()
+                    ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
+
+                if (html.isNotEmpty()) {
+                    break
+                }
+
                 retryTimes--
                 delay(1000)
-                continue
-            }
-            html = downloadResponse.body()
-                ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
+            } while (retryTimes > 0)
 
-            if (html.isNotEmpty()) {
-                break
+            if (html.isEmpty()) {
+                return DownloadContent()
             }
 
-            retryTimes--
-            delay(1000)
-        } while (retryTimes > 0)
+            val videoUrls = parseFacebookVideoLinks(html)
 
-        if (html.isEmpty()) {
-            return DownloadContent()
+            val videos = videoUrls.map { pair ->
+                DownloadData(
+                    "${videoId}_${pair.first}", "video/mp4", pair.first, pair.second
+                )
+            }
+
+            return DownloadContent(videos, emptyList(), emptyList())
+        } catch (e: Exception) {
+            TrackerManager.logEvent(FacebookDownloadErrorEvent(e.message))
+            DownloadContent()
         }
-
-        val videoUrls = parseFacebookVideoLinks(html)
-
-        val videos = videoUrls.map { pair ->
-            DownloadData(
-                "${videoId}_${pair.first}", "video/mp4", pair.first, pair.second
-            )
-        }
-
-        return DownloadContent(videos, emptyList(), emptyList())
     }
 
     private fun parseFacebookVideoLinks(htmlString: String): List<Pair<String, String>> {

@@ -19,66 +19,71 @@ class TiktokDownloader @Inject constructor(
     private val sssTikServices: SSSTikServices
 ) : Downloader {
     override suspend fun download(downloadUrl: String): DownloadContent {
-        val tiktokUrl = videoHelper.getTiktokUrl(downloadUrl)
-        val videoId =
-            Uri.parse(tiktokUrl).lastPathSegment ?: error("No video id")
-        var retryTimes = 3
-        var html = ""
-        do {
-            val requestBody = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("id", tiktokUrl)
-                .addFormDataPart("locale", "en")
-                .addFormDataPart("tt", "a1kxcWUy")
-                .build()
+        return try {
+            val tiktokUrl = videoHelper.getTiktokUrl(downloadUrl)
+            val videoId =
+                Uri.parse(tiktokUrl).lastPathSegment ?: error("No video id")
+            var retryTimes = 3
+            var html = ""
+            do {
+                val requestBody = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("id", tiktokUrl)
+                    .addFormDataPart("locale", "en")
+                    .addFormDataPart("tt", "a1kxcWUy")
+                    .build()
 
-            val sssTikResponse = sssTikServices.getDownloadLink(
-                UserAgentUtils.pickRandomUserAgent(), requestBody
-            )
-            if (!sssTikResponse.isSuccessful) {
-                val error = "${sssTikResponse.code()} - " + sssTikResponse.errorBody()?.string()
-                TrackerManager.logEvent(TiktokDownloadErrorEvent(error))
+                val sssTikResponse = sssTikServices.getDownloadLink(
+                    UserAgentUtils.pickRandomUserAgent(), requestBody
+                )
+                if (!sssTikResponse.isSuccessful) {
+                    val error = "${sssTikResponse.code()} - " + sssTikResponse.errorBody()?.string()
+                    TrackerManager.logEvent(TiktokDownloadErrorEvent(error))
+                    retryTimes--
+                    delay(1000)
+                    continue
+                }
+                html = sssTikResponse.body()
+                    ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
+
+                if (html.isNotEmpty()) {
+                    break
+                }
+
                 retryTimes--
                 delay(1000)
-                continue
-            }
-            html = sssTikResponse.body()
-                ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
+            } while (retryTimes > 0)
 
-            if (html.isNotEmpty()) {
-                break
+            if (html.isEmpty()) {
+                return DownloadContent()
             }
 
-            retryTimes--
-            delay(1000)
-        } while (retryTimes > 0)
+            val imageUrls = parseHtmlSSSTikGallery(html)
+            val videoUrls = parseVideoLink(html)
+            val audioUrls = parseAudioLink(html)
 
-        if (html.isEmpty()) {
-            return DownloadContent()
+            val videos = videoUrls?.let { videoUrl ->
+                listOf(
+                    DownloadData(
+                        videoId, "video/mp4", "(HD)", videoUrl
+                    )
+                )
+            } ?: emptyList()
+            val audios = audioUrls?.let { audioUrl ->
+                listOf(
+                    DownloadData(
+                        videoId, "audio/mp3", "(MP3)", audioUrl
+                    )
+                )
+            } ?: emptyList()
+            val images =
+                imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
+
+            return DownloadContent(videos, audios, images)
+        } catch (e: Exception) {
+            TrackerManager.logEvent(TiktokDownloadErrorEvent(e.message))
+            DownloadContent()
         }
-
-        val imageUrls = parseHtmlSSSTikGallery(html)
-        val videoUrls = parseVideoLink(html)
-        val audioUrls = parseAudioLink(html)
-
-        val videos = videoUrls?.let { videoUrl ->
-            listOf(
-                DownloadData(
-                    videoId, "video/mp4", "(HD)", videoUrl
-                )
-            )
-        } ?: emptyList()
-        val audios = audioUrls?.let { audioUrl ->
-            listOf(
-                DownloadData(
-                    videoId, "audio/mp3", "(MP3)", audioUrl
-                )
-            )
-        } ?: emptyList()
-        val images =
-            imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
-
-        return DownloadContent(videos, audios, images)
     }
 
     private fun parseHtmlSSSTikGallery(htmlString: String): List<String> {

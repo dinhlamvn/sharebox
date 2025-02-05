@@ -37,7 +37,7 @@ object NetworkModule {
         }
         return OkHttpClient.Builder()
             .apply {
-                if (true) {
+                if (BuildConfig.DEV) {
                     addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 }
             }
@@ -45,7 +45,6 @@ object NetworkModule {
             .readTimeout(30_000, TimeUnit.MILLISECONDS)
             .writeTimeout(30_000, TimeUnit.MILLISECONDS)
             .cache(Cache(cacheDir, 1024 * 1024 * 50)).build()
-
     }
 
     @Provides
