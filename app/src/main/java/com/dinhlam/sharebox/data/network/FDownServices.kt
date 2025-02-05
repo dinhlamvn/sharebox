@@ -11,8 +11,5 @@ interface FDownServices {
 
     @POST("download.php")
     @FormUrlEncoded
-    suspend fun getDownloadData(
-        @Header("User-Agent") userAgent: String,
-        @Field("URLz") facebookUrl: String
-    ): Response<ResponseBody>
+    suspend fun getDownloadData(@Field("URLz") facebookUrl: String): Response<ResponseBody>
 }

@@ -26,9 +26,7 @@ class FacebookDownloader @Inject constructor(
             var retryTimes = 3
             var html = ""
             do {
-                val downloadResponse = fDownServices.getDownloadData(
-                    UserAgentUtils.pickRandomUserAgent(), facebookUrl
-                )
+                val downloadResponse = fDownServices.getDownloadData(facebookUrl)
                 if (!downloadResponse.isSuccessful) {
                     val error =
                         "${downloadResponse.code()} - " + downloadResponse.errorBody()?.string()

@@ -21,6 +21,7 @@ class DownloadViewModel @Inject constructor(
     @Named("TiktokDownloader") private val tiktokDownloader: Downloader,
     @Named("FacebookDownloader") private val facebookDownloader: Downloader,
     @Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
+    @Named("TiktokDownloaderV2") private val tiktokDownloaderV2: Downloader,
 ) : BaseViewModel<DownloadState>(DownloadState()) {
 
     fun download(downloadLink: String) {
@@ -57,7 +58,7 @@ class DownloadViewModel @Inject constructor(
         downloadUrl: String
     ): DownloadContent {
         return when (urlSource) {
-            VideoSource.Tiktok -> tiktokDownloader.download(downloadUrl)
+            VideoSource.Tiktok -> tiktokDownloaderV2.download(downloadUrl)
             VideoSource.Youtube -> youtubeDownloader.download(downloadUrl)
             VideoSource.Facebook -> facebookDownloader.download(downloadUrl)
         }

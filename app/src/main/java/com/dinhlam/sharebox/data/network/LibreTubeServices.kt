@@ -16,8 +16,5 @@ interface LibreTubeServices {
     @Headers(
         "content-type:application/x-www-form-urlencoded; charset=UTF-8",
     )
-    suspend fun getDownloadLink(
-        @Header("User-Agent") userAgent: String,
-        @Path("videoId") videoId: String,
-    ): Response<ResponseBody>
+    suspend fun getDownloadLink(@Path("videoId") videoId: String): Response<ResponseBody>
 }

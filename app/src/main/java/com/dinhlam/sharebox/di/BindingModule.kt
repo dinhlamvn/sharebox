@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.di
 import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.downloader.FacebookDownloader
 import com.dinhlam.sharebox.downloader.TiktokDownloader
+import com.dinhlam.sharebox.downloader.TiktokDownloaderV2
 import com.dinhlam.sharebox.downloader.YoutubeDownloader
 import dagger.Binds
 import dagger.Module
@@ -16,13 +17,17 @@ interface BindingModule {
 
     @Binds
     @Named("TiktokDownloader")
-    fun bindTiktokDownloader(tiktokDownloader: TiktokDownloader): Downloader
+    fun bindTiktokDownloader(downloader: TiktokDownloader): Downloader
+
+    @Binds
+    @Named("TiktokDownloaderV2")
+    fun bindTiktokDownloaderV2(downloader: TiktokDownloaderV2): Downloader
 
     @Binds
     @Named("FacebookDownloader")
-    fun bindFacebookDownloader(facebookDownloader: FacebookDownloader): Downloader
+    fun bindFacebookDownloader(downloader: FacebookDownloader): Downloader
 
     @Binds
     @Named("YoutubeDownloader")
-    fun bindYoutubeDownloader(youtubeDownloader: YoutubeDownloader): Downloader
+    fun bindYoutubeDownloader(downloader: YoutubeDownloader): Downloader
 }

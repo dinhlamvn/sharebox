@@ -14,7 +14,6 @@ interface SSSTikServices {
 
     @POST("abc?url=dl")
     suspend fun getDownloadLink(
-        @Header("User-Agent") userAgent: String,
         @Body requestBody: RequestBody
     ): Response<ResponseBody>
 

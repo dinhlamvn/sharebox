@@ -1,82 +1,52 @@
 package com.dinhlam.sharebox.downloader
 
 import android.net.Uri
-import com.dinhlam.sharebox.data.network.SSSTikServices
+import com.dinhlam.sharebox.data.network.AppDLServices
+import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.DownloadContent
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.tracking.TrackerManager
 import com.dinhlam.sharebox.tracking.events.TiktokDownloadErrorEvent
-import kotlinx.coroutines.delay
-import okhttp3.MultipartBody
 import org.jsoup.Jsoup
 import javax.inject.Inject
 
-class TiktokDownloader @Inject constructor(
+class TiktokDownloaderV2 @Inject constructor(
     private val videoHelper: VideoHelper,
-    private val sssTikServices: SSSTikServices
+    private val appDLServices: AppDLServices
 ) : Downloader {
     override suspend fun download(downloadUrl: String): DownloadContent {
         return try {
             val tiktokUrl = videoHelper.getTiktokUrl(downloadUrl)
             val videoId =
                 Uri.parse(tiktokUrl).lastPathSegment ?: error("No video id")
-            var retryTimes = 3
-            var html = ""
-            do {
-                val requestBody = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("id", tiktokUrl)
-                    .addFormDataPart("locale", "en")
-                    .addFormDataPart("tt", "REZDY1Zj")
-                    .build()
-
-                val sssTikResponse = sssTikServices.getDownloadLink(requestBody)
-                if (!sssTikResponse.isSuccessful) {
-                    val error = "${sssTikResponse.code()} - " + sssTikResponse.errorBody()?.string()
-                    TrackerManager.logEvent(TiktokDownloadErrorEvent(error))
-                    retryTimes--
-                    delay(1000)
-                    continue
-                }
-                html = sssTikResponse.body()
-                    ?.use { responseBody -> responseBody.use { res -> res.string() } } ?: ""
-
-                if (html.isNotEmpty()) {
-                    break
-                }
-
-                retryTimes--
-                delay(1000)
-            } while (retryTimes > 0)
-
-            if (html.isEmpty()) {
-                return DownloadContent()
+            val ts = ((System.currentTimeMillis() / 1000) / 60).toString()
+            val s = "%s%s%s%s%s".format(ts, "1.136", tiktokUrl, "ssstik.io", "b0lF_14022023_DK")
+            var str3 = ""
+            for (ch in s.toCharArray()) {
+                val sb = StringBuilder()
+                sb.append(str3)
+                sb.append("%03d".format(ch.code))
+                str3 = sb.toString()
             }
-
-            val imageUrls = parseHtmlSSSTikGallery(html)
-            val videoUrls = parseVideoLink(html)
-            val audioUrls = parseAudioLink(html)
-
-            val videos = videoUrls?.let { videoUrl ->
-                listOf(
-                    DownloadData(
-                        videoId, "video/mp4", "(HD)", videoUrl
-                    )
+            val str4 = "%d%s".format(str3.length, str3)
+            val tt = str4.md5()
+            val response = appDLServices.fetch(tiktokUrl, "en", tt, ts)!!
+            val videos = listOf(
+                DownloadData(
+                    videoId, "video/mp4", "(No Watermark)", response.noWatermarkLink
+                ),
+                DownloadData(
+                    videoId, "video/mp4", "(No Watermark - HD)", response.noWatermarkLinkHd
                 )
-            } ?: emptyList()
-            val audios = audioUrls?.let { audioUrl ->
-                listOf(
-                    DownloadData(
-                        videoId, "audio/mp3", "(MP3)", audioUrl
-                    )
+            )
+            val audios = listOf(
+                DownloadData(
+                    videoId, "audio/mp3", "(MP3)", response.musicLink
                 )
-            } ?: emptyList()
-            val images =
-                imageUrls.map { imageUrl -> DownloadData(videoId, "image/jpg", "(JPG)", imageUrl) }
-
-            return DownloadContent(videos, audios, images)
+            )
+            return DownloadContent(videos, audios)
         } catch (e: Exception) {
             TrackerManager.logEvent(TiktokDownloadErrorEvent(e.message))
             DownloadContent()

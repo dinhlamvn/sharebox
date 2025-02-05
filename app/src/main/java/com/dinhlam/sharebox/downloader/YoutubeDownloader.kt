@@ -21,8 +21,7 @@ class YoutubeDownloader @Inject constructor(
             var retry = 3
             var strResponse = ""
             while (retry > 0) {
-                val responseBody =
-                    libreTubeServices.getDownloadLink(UserAgentUtils.pickRandomUserAgent(), videoId)
+                val responseBody = libreTubeServices.getDownloadLink(videoId)
                 if (!responseBody.isSuccessful) {
                     val error = "${responseBody.code()} - " + responseBody.errorBody()?.string()
                     TrackerManager.logEvent(YoutubeDownloadErrorEvent(error))
