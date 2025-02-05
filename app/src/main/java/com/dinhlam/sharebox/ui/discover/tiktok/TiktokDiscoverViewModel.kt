@@ -25,7 +25,7 @@ class TiktokDiscoverViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val userHelper: UserHelper,
     private val shareRepository: ShareRepository,
-    @Named("TiktokDownloader") private val tiktokDownloader: Downloader
+    @Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader
 ) : BaseViewModel<TiktokDiscoverState>(TiktokDiscoverState()) {
 
     init {
