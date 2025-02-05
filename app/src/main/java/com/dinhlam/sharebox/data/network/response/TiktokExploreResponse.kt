@@ -31,7 +31,13 @@ data class TiktokExploreResponse(
 
     data class Stats(
         @SerializedName("playCount")
-        val playCount: Long
+        val playCount: Long,
+        @SerializedName("commentCount")
+        val commentCount: Long,
+        @SerializedName("diggCount")
+        val diggCount: Long,
+        @SerializedName("shareCount")
+        val shareCount: Long
     )
 
 }

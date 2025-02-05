@@ -43,7 +43,7 @@ fun nowUTCTimeInMillis() = Calendar.getInstance().run {
     timeInMillis
 }
 
-fun Long.asViewCount(): String {
+fun Number.asViewCount(): String {
     val mil = this.toFloat() / 1_000_000
     val thous = this.toFloat() / 1_000
     return if (mil >= 1.0f) {

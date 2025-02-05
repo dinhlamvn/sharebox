@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.utils.UserAgentUtils
 import com.dinhlam.sharebox.utils.WorkerUtils
 import javax.inject.Inject
 
-class DownloadHelper @Inject constructor(private val tikServices: SSSTikServices) {
+object DownloadHelper {
 
     fun enqueueDownload(context: Context, downloadUrl: String, fileName: String) {
         val downloadManager =

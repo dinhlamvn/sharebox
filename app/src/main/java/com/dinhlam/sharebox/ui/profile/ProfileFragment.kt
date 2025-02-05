@@ -65,7 +65,7 @@ class ProfileFragment :
                     })
                 ).attachTo(this)
 
-                val margin = screenWidth().minus(48.dp()).div(2)
+                val margin = screenWidth.minus(48.dp()).div(2)
 
                 DrawableImageListModel(
                     Icons.settingIcon(requireContext()),

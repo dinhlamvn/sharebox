@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/video_background"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/video_background"
+        app:layout_constraintTop_toTopOf="@id/video_background" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/video_view"
+        app:layout_constraintEnd_toEndOf="@id/video_view"
+        app:layout_constraintStart_toStartOf="@id/video_view"
+        app:layout_constraintTop_toTopOf="@id/video_view" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:icon_code="f06e"
+        app:icon_size="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/video_background" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_view_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textAppearance="@style/TextBodyMedium"
+        app:layout_constraintBottom_toBottomOf="@id/icon_view"
+        app:layout_constraintStart_toEndOf="@id/icon_view"
+        app:layout_constraintTop_toTopOf="@id/icon_view"
+        tools:text="22M" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:icon_code="f004"
+        app:icon_size="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/text_view_count"
+        app:layout_constraintStart_toEndOf="@id/text_view_count"
+        app:layout_constraintTop_toTopOf="@id/text_view_count" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_like_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textAppearance="@style/TextBodyMedium"
+        app:layout_constraintBottom_toBottomOf="@id/icon_like"
+        app:layout_constraintStart_toEndOf="@id/icon_like"
+        app:layout_constraintTop_toTopOf="@id/icon_like"
+        tools:text="1M" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        android:textAppearance="@style/TextBody"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_share"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_count"
+        tools:text="Có ăn thì phải có làm chứ" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/button_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        app:icon_code="f019"
+        app:icon_size="24dp"
+        app:layout_constraintStart_toStartOf="@id/button_share"
+        app:layout_constraintTop_toTopOf="@id/icon_like" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/button_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:padding="4dp"
+        app:icon_code="f064"
+        app:icon_size="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_download" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/button_tiktok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:padding="4dp"
+        app:icon_code="e07b"
+        app:icon_color="@color/white"
+        app:icon_size="28dp"
+        app:icon_style="regular_brands"
+        app:layout_constraintEnd_toEndOf="@id/video_view"
+        app:layout_constraintTop_toTopOf="@id/video_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

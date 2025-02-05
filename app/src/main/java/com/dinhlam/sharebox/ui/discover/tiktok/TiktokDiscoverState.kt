@@ -10,7 +10,8 @@ data class TiktokDiscoverState(
     val categories: List<TiktokCategory> = TiktokCategory.categories,
     val activeCategories: Set<TiktokCategory> = setOf(TiktokCategory.categories.first()),
     val tiktokDiscoverList: List<TiktokDiscover> = emptyList(),
-    val asyncLoadTiktokDiscover: BaseViewModel.AsyncLoad<List<Pair<Int, List<TiktokDiscover>>>> = BaseViewModel.AsyncLoad.UnInitialized,
+    val asyncLoadTiktokDiscover: BaseViewModel.AsyncLoad<List<TiktokDiscover>> = BaseViewModel.AsyncLoad.UnInitialized,
     val asyncLoadArchive: BaseViewModel.AsyncLoad<String> = BaseViewModel.AsyncLoad.UnInitialized,
-    val cache: Map<Int, List<TiktokDiscover>> = emptyMap()
+    val tiktokDownloadUrlCache: Map<String, String> = emptyMap(),
+    val isLoadingMore: Boolean = false,
 ) : BaseViewModel.BaseState

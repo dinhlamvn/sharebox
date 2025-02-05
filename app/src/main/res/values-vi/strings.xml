@@ -188,6 +188,7 @@
     <string name="home">Trang chủ</string>
     <string name="me">Tôi</string>
     <string name="processing">Đang xử lý…</string>
+    <string name="video_not_available">Video isn\'t available</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>

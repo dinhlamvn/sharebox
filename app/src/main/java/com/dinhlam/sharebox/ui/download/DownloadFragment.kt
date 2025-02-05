@@ -28,7 +28,6 @@ import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.DownloadData
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class DownloadFragment :
@@ -41,9 +40,6 @@ class DownloadFragment :
     }
 
     override val viewModel: DownloadViewModel by viewModels()
-
-    @Inject
-    lateinit var downloadHelper: DownloadHelper
 
     private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
@@ -181,17 +177,17 @@ class DownloadFragment :
     private fun downloadVideo(id: String, mimeType: String, downloadUrl: String) {
         val outputFile =
             "sharebox_video_${id}_${System.currentTimeMillis()}.${mimeType.asFileExtension()}"
-        downloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 
     private fun downloadAudio(id: String, mimeType: String, downloadUrl: String) {
         val outputFile =
             "sharebox_audio_${id}_${System.currentTimeMillis()}.${mimeType.asFileExtension()}"
-        downloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 
     private fun downloadImages(id: String, urls: List<String>) {
-        downloadHelper.downloadImages(requireContext(), id, urls)
+        DownloadHelper.downloadImages(requireContext(), id, urls)
     }
 
     override fun onStateChanged(state: DownloadState) {

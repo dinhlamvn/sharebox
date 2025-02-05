@@ -33,11 +33,15 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     protected val binding: VB
         get() = _binding!!
 
+    protected open val isUseMaterialDialog: Boolean = true
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialAlertDialogBuilder(requireContext(), theme).apply {
+        return if (isUseMaterialDialog) MaterialAlertDialogBuilder(requireContext(), theme).apply {
             _binding = onCreateViewBinding(layoutInflater, null)
             setView(binding.root)
-        }.create()
+        }.create() else {
+            super.onCreateDialog(savedInstanceState)
+        }
     }
 
     override fun getView(): View? {
@@ -47,7 +51,10 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return binding.root
+        val vb = _binding ?: onCreateViewBinding(inflater, container).also { vb ->
+            _binding = vb
+        }
+        return vb.root
     }
 
     override fun onDestroyView() {
@@ -58,7 +65,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { wd ->
-            val dialogWidth = screenWidth() - getSpacing().dp()
+            val dialogWidth = screenWidth - getSpacing().dp()
             val dialogHeight = WindowManager.LayoutParams.WRAP_CONTENT
             wd.setLayout(dialogWidth, dialogHeight)
         }

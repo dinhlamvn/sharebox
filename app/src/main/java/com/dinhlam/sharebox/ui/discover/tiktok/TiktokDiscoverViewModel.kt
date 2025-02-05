@@ -4,6 +4,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.network.TiktokServices
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.toggleElement
 import com.dinhlam.sharebox.helper.UserHelper
@@ -13,14 +14,18 @@ import com.dinhlam.sharebox.model.TiktokDiscover
 import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class TiktokDiscoverViewModel @Inject constructor(
     private val tiktokServices: TiktokServices,
     private val boxRepository: BoxRepository,
     private val userHelper: UserHelper,
-    private val shareRepository: ShareRepository
+    private val shareRepository: ShareRepository,
+    @Named("TiktokDownloader") private val tiktokDownloader: Downloader
 ) : BaseViewModel<TiktokDiscoverState>(TiktokDiscoverState()) {
 
     init {
@@ -41,58 +46,51 @@ class TiktokDiscoverViewModel @Inject constructor(
     }
 
     fun refresh() {
-        setState { copy(cache = emptyMap()) }
         getState { state ->
             getTiktokTrending(state.activeCategories)
         }
     }
 
-    private fun getTiktokTrending(categories: Set<TiktokCategory>) = getState { state ->
+    private fun getTiktokTrending(categories: Set<TiktokCategory>) {
         suspend {
-            buildList {
-                categories.forEach { tiktokCategory ->
-                    val cacheData = state.cache[tiktokCategory.categoryId]
-                    if (cacheData != null) {
-                        add(tiktokCategory.categoryId to cacheData)
-                    } else {
-                        val queryMap = mapOf(
-                            "count" to "20",
-                            "categoryType" to "${tiktokCategory.categoryId}",
-                            "aid" to "1988",
-                            "app_language" to "en",
-                            "app_name" to "tiktok_web"
-                        )
-                        val list = tiktokServices.explore(
-                            UserAgentUtils.pickRandomUserAgent(),
-                            queryMap
-                        ).itemList.map { item ->
-                            TiktokDiscover(
-                                item.id,
-                                "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
-                                item.stats.playCount,
-                                item.desc
-                            )
-                        }
-                        add(tiktokCategory.categoryId to list)
-                    }
-                }
-            }.shuffled()
+            getDiscoverList(categories)
         }.execute { asyncLoad ->
             copy(
                 asyncLoadTiktokDiscover = asyncLoad,
                 tiktokDiscoverList = asyncLoad.completed.ifTrue(
-                    asyncLoad.data.orEmpty().map(Pair<Int, List<TiktokDiscover>>::second).flatten()
-                        .shuffled(),
+                    asyncLoad.data.orEmpty(),
                     tiktokDiscoverList
                 ),
-                cache = cache.plus(asyncLoad.data.orEmpty())
             )
         }
     }
 
-    fun setCurrentBoxId(boxId: String) {
-        suspend { boxRepository.findOne(boxId) }.execute { asyncLoad ->
-            copy(currentBox = asyncLoad.data)
+    private suspend fun getDiscoverList(
+        categories: Set<TiktokCategory>
+    ) = buildList {
+        categories.forEach { tiktokCategory ->
+            val queryMap = mapOf(
+                "count" to "20",
+                "categoryType" to "${tiktokCategory.categoryId}",
+                "aid" to "1988",
+                "app_language" to "en",
+                "app_name" to "tiktok_web"
+            )
+            val list = tiktokServices.explore(
+                UserAgentUtils.pickRandomUserAgent(),
+                queryMap
+            ).itemList.map { item ->
+                TiktokDiscover(
+                    item.id,
+                    "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
+                    item.stats.playCount,
+                    item.stats.commentCount,
+                    item.stats.diggCount,
+                    item.stats.shareCount,
+                    item.desc
+                )
+            }
+            addAll(list)
         }
     }
 
@@ -117,5 +115,44 @@ class TiktokDiscoverViewModel @Inject constructor(
             return@getState
         }
         setState { copy(activeCategories = activeCategories.toggleElement(tiktokCategory)) }
+    }
+
+    fun loadTiktokVideo(tiktokDiscover: TiktokDiscover, block: (String?) -> Unit) =
+        getState { state ->
+            val cachedUrl = state.tiktokDownloadUrlCache[tiktokDiscover.url]
+            if (cachedUrl != null) {
+                block(cachedUrl)
+            } else {
+                doInBackground {
+                    val downloadContent = tiktokDownloader.download(tiktokDiscover.url)
+                    val videoUrl = downloadContent.videos.firstOrNull()?.downloadUrl
+                    withContext(Dispatchers.Main) {
+                        block(videoUrl)
+                        if (videoUrl != null) {
+                            setState {
+                                copy(
+                                    tiktokDownloadUrlCache = tiktokDownloadUrlCache.plus(
+                                        tiktokDiscover.url to videoUrl
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    fun loadMore() = getState { state ->
+        suspend {
+            getDiscoverList(state.activeCategories)
+        }.execute { asyncLoad ->
+            if (asyncLoad is AsyncLoad.Success) {
+                val list = asyncLoad.value
+                val newList = tiktokDiscoverList.plus(list).distinct()
+                copy(tiktokDiscoverList = newList, isLoadingMore = false)
+            } else {
+                copy(isLoadingMore = asyncLoad is AsyncLoad.Loading)
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.dinhlam.sharebox.listmodel
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelTiktokDiscoverBinding
 import com.dinhlam.sharebox.extensions.asViewCount
@@ -14,6 +13,7 @@ data class TiktokDiscoverListModel(
     val url: String,
     val desc: String?,
     val views: Long,
+    val likes: Long,
     val onClick: BaseListAdapter.NoHashProp<OnClickListener>,
     val onArchiveClick: BaseListAdapter.NoHashProp<OnClickListener>,
     val onDownloadClick: BaseListAdapter.NoHashProp<OnClickListener>,
@@ -33,8 +33,8 @@ data class TiktokDiscoverListModel(
                 binding.buttonDownload.setOnClickListener(model.onDownloadClick.prop)
                 binding.shareLinkPreview.setLink(model.url)
                 binding.textDesc.text = model.desc?.toHTML()
-                binding.textViews.text =
-                    buildContext.getString(R.string.view_count, model.views.asViewCount())
+                binding.textViewCount.text = model.views.asViewCount()
+                binding.textLikeCount.text = model.likes.asViewCount()
             }
 
             override fun onUnBind() {

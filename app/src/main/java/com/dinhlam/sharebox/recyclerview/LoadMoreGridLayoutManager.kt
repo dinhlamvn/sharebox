@@ -7,26 +7,29 @@ import androidx.recyclerview.widget.RecyclerView
 class LoadMoreGridLayoutManager(
     context: Context,
     spanCount: Int,
-    private val blockShouldLoadMore: () -> Boolean,
+    private val isLoadingMore: () -> Boolean,
     private val onLoadMore: () -> Unit
 ) : GridLayoutManager(context, spanCount) {
-
-    var hasTriggerLoadMore = false
+    private var lastTimeTriggerLoadMore: Long = 0L
 
     override fun onScrollStateChanged(state: Int) {
-        if (!blockShouldLoadMore.invoke()) {
-            hasTriggerLoadMore = false
-            return
-        }
-
-        if (itemCount <= 1) {
-            return
-        }
-
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
+            if (isLoadingMore()) {
+                return
+            }
+
+            // Do not trigger load more within 1s to avoid redundant call
+            if (System.currentTimeMillis() - lastTimeTriggerLoadMore <= 1000L) {
+                return
+            }
+
+            if (itemCount <= 1) {
+                return
+            }
+
             val lastPosition = findLastCompletelyVisibleItemPosition()
-            if (!hasTriggerLoadMore && lastPosition == itemCount - 1) {
-                hasTriggerLoadMore = true
+            if (lastPosition == itemCount - 1) {
+                lastTimeTriggerLoadMore = System.currentTimeMillis()
                 onLoadMore()
             }
         }

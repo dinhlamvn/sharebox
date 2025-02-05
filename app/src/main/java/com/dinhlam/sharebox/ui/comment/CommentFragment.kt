@@ -15,7 +15,7 @@ import com.dinhlam.sharebox.base.BaseBottomSheetViewModelDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.FragmentCommentBinding
 import com.dinhlam.sharebox.dialog.commentinput.CommentInputDialogFragment
-import com.dinhlam.sharebox.extensions.screenHeight
+import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.imageloader.load
@@ -39,7 +39,7 @@ class CommentFragment :
     ): FragmentCommentBinding {
         return FragmentCommentBinding.inflate(inflater, container, false).apply {
             this.container.updateLayoutParams {
-                height = screenHeight().times(0.8f).toInt()
+                height = heightPercentage(80)
             }
         }
     }

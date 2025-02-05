@@ -31,7 +31,6 @@ class ZingNewDiscoverViewModel @Inject constructor(
 
     private fun setDefaultCategory() = setState {
         val categories = ZingNewsCategory.categories.copyOf().toMutableList()
-        categories.shuffle()
         copy(zingNewsCategories = categories, zingNewsCheckedCategories = setOf(categories.first()))
     }
 
@@ -39,7 +38,12 @@ class ZingNewDiscoverViewModel @Inject constructor(
         suspend {
             val boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-zingnews-box")
             boxRepository.findOne(boxId) ?: boxRepository.run {
-                boxRepository.insert(boxId, "ZingNews Discover", null, userHelper.getCurrentUserId())
+                boxRepository.insert(
+                    boxId,
+                    "ZingNews Discover",
+                    null,
+                    userHelper.getCurrentUserId()
+                )
                 boxRepository.findOne(boxId)
             }
         }.execute { asyncLoad ->
@@ -93,7 +97,7 @@ class ZingNewDiscoverViewModel @Inject constructor(
             copy(
                 asyncLoadZingNewsDiscover = asyncLoad,
                 zingNewsDiscovers = asyncLoad.data?.map(Pair<String, List<ZingNewsDiscover>>::second)
-                    ?.flatten()?.shuffled() ?: zingNewsDiscovers,
+                    ?.flatten() ?: zingNewsDiscovers,
                 cache = cache.plus(asyncLoad.data.orEmpty())
             )
         }
