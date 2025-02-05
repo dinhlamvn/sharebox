@@ -102,8 +102,8 @@ class VideoHelper @Inject constructor(
 
         val url = body.use { it.request.url.toString() }
 
-        if (url.contains("login.php?next=")) {
-            Uri.parse(url).getQueryParameter("next")!!
+        if (url.contains("/login")) {
+            Uri.parse(url).getQueryParameter("next").orEmpty()
         } else {
             url
         }
