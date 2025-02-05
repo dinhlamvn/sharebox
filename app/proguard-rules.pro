@@ -36,8 +36,11 @@
 -keepattributes AnnotationDefault
 
 # Retain service method parameters when optimizing.
--keepclassmembers,allowshrinking,allowobfuscation interface * {
+-keepclassmembers,allowobfuscation class * {
     @retrofit2.http.* <methods>;
+}
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
 }
 
 # Ignore annotation used for build tooling.

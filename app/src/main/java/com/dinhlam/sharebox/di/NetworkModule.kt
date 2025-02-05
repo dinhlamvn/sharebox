@@ -37,8 +37,8 @@ object NetworkModule {
         }
         return OkHttpClient.Builder()
             .apply {
-                if (BuildConfig.DEBUG || BuildConfig.DEV) {
-                    addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                if (true) {
+                    addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 }
             }
             .connectTimeout(30_000, TimeUnit.MILLISECONDS)
