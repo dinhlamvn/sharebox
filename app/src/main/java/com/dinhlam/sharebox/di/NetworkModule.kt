@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.network.AppDLServices
 import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.data.network.FDownServices
+import com.dinhlam.sharebox.data.network.GetMyFBServices
 import com.dinhlam.sharebox.data.network.LibreTubeServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.data.network.TiktokServices
@@ -140,6 +141,23 @@ object NetworkModule {
             .baseUrl("https://appdl.pro")
             .build()
             .create(AppDLServices::class.java)
+    }
+
+    @Provides
+    fun provideGetMyFBServices(
+        gson: Gson, httpClient: OkHttpClient
+    ): GetMyFBServices {
+        return getRetrofitBuilder(gson, httpClient.newBuilder().addInterceptor { chain ->
+            val requestBuilder = chain.request().newBuilder()
+            requestBuilder.addHeader(
+                "token",
+                "6639e1d16702e8a25265c6bbcd13e6dcbd9079c3"
+            )
+            chain.proceed(requestBuilder.build())
+        }.build())
+            .baseUrl("https://api.getmyfb.com")
+            .build()
+            .create(GetMyFBServices::class.java)
     }
 
     private fun getRetrofitBuilder(gson: Gson, httpClient: OkHttpClient): Retrofit.Builder {

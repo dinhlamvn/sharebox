@@ -3,7 +3,9 @@ package com.dinhlam.sharebox.data.network.response
 import com.google.gson.annotations.SerializedName
 
 data class AppDLResponse(
+    @SerializedName("itemId")
     val itemId: String,
+    @SerializedName("original")
     val original: String,
     @SerializedName("aweme_link")
     val awemeLink: String,
@@ -19,9 +21,11 @@ data class AppDLResponse(
     val coverLink: String,
     @SerializedName("author_cover_link")
     val authorCoverLink: String,
+    @SerializedName("text")
     val text: String,
     @SerializedName("create_time")
     val createTime: String,
+    @SerializedName("duration")
     val duration: String,
     @SerializedName("author_unique_id")
     val authorUniqueId: String,
@@ -39,7 +43,10 @@ data class AppDLResponse(
     val likeCount: String,
     @SerializedName("origin_cover")
     val originCover: String,
+    @SerializedName("slides")
     val slides: String,
+    @SerializedName("signed")
     val signed: Long,
+    @SerializedName("type")
     val type: Long,
 )

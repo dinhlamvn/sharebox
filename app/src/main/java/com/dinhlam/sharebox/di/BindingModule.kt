@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.di
 
 import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.downloader.FacebookDownloader
+import com.dinhlam.sharebox.downloader.FacebookDownloaderV2
 import com.dinhlam.sharebox.downloader.TiktokDownloader
 import com.dinhlam.sharebox.downloader.TiktokDownloaderV2
 import com.dinhlam.sharebox.downloader.YoutubeDownloader
@@ -26,6 +27,10 @@ interface BindingModule {
     @Binds
     @Named("FacebookDownloader")
     fun bindFacebookDownloader(downloader: FacebookDownloader): Downloader
+
+    @Binds
+    @Named("FacebookDownloaderV2")
+    fun bindFacebookDownloaderV2(downloader: FacebookDownloaderV2): Downloader
 
     @Binds
     @Named("YoutubeDownloader")

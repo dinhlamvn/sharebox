@@ -18,10 +18,9 @@ import javax.inject.Named
 class DownloadViewModel @Inject constructor(
     private val videoHelper: VideoHelper,
     private val okHttpClient: OkHttpClient,
-    @Named("TiktokDownloader") private val tiktokDownloader: Downloader,
-    @Named("FacebookDownloader") private val facebookDownloader: Downloader,
+    @Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader,
+    @Named("FacebookDownloaderV2") private val facebookDownloader: Downloader,
     @Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
-    @Named("TiktokDownloaderV2") private val tiktokDownloaderV2: Downloader,
 ) : BaseViewModel<DownloadState>(DownloadState()) {
 
     fun download(downloadLink: String) {
@@ -58,7 +57,7 @@ class DownloadViewModel @Inject constructor(
         downloadUrl: String
     ): DownloadContent {
         return when (urlSource) {
-            VideoSource.Tiktok -> tiktokDownloaderV2.download(downloadUrl)
+            VideoSource.Tiktok -> tiktokDownloader.download(downloadUrl)
             VideoSource.Youtube -> youtubeDownloader.download(downloadUrl)
             VideoSource.Facebook -> facebookDownloader.download(downloadUrl)
         }
