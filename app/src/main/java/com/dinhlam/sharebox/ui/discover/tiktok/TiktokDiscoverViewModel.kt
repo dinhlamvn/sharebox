@@ -6,7 +6,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.ifTrue
-import com.dinhlam.sharebox.extensions.toggleElement
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.TiktokCategory
@@ -30,7 +29,7 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     init {
         getDefaultBox()
-        onChange(TiktokDiscoverState::activeCategories, ::getTiktokTrending)
+        onChange(TiktokDiscoverState::activeCategory, ::getTiktokTrending)
     }
 
     private fun getDefaultBox() {
@@ -47,13 +46,13 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     fun refresh() {
         getState { state ->
-            getTiktokTrending(state.activeCategories)
+            getTiktokTrending(state.activeCategory)
         }
     }
 
-    private fun getTiktokTrending(categories: Set<TiktokCategory>) {
+    private fun getTiktokTrending(category: TiktokCategory) {
         suspend {
-            getDiscoverList(categories)
+            getDiscoverList(category)
         }.execute { asyncLoad ->
             copy(
                 asyncLoadTiktokDiscover = asyncLoad,
@@ -66,31 +65,28 @@ class TiktokDiscoverViewModel @Inject constructor(
     }
 
     private suspend fun getDiscoverList(
-        categories: Set<TiktokCategory>
-    ) = buildList {
-        categories.forEach { tiktokCategory ->
-            val queryMap = mapOf(
-                "count" to "20",
-                "categoryType" to "${tiktokCategory.categoryId}",
-                "aid" to "1988",
-                "app_language" to "en",
-                "app_name" to "tiktok_web"
+        category: TiktokCategory
+    ): List<TiktokDiscover> {
+        val queryMap = mapOf(
+            "count" to "20",
+            "categoryType" to "${category.categoryId}",
+            "aid" to "1988",
+            "app_language" to "en",
+            "app_name" to "tiktok_web"
+        )
+        return tiktokServices.explore(
+            UserAgentUtils.pickRandomUserAgent(),
+            queryMap
+        ).itemList.map { item ->
+            TiktokDiscover(
+                item.id,
+                "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
+                item.stats.playCount,
+                item.stats.commentCount,
+                item.stats.diggCount,
+                item.stats.shareCount,
+                item.desc
             )
-            val list = tiktokServices.explore(
-                UserAgentUtils.pickRandomUserAgent(),
-                queryMap
-            ).itemList.map { item ->
-                TiktokDiscover(
-                    item.id,
-                    "https://www.tiktok.com/@${item.author.uniqueId}/video/${item.video.id}",
-                    item.stats.playCount,
-                    item.stats.commentCount,
-                    item.stats.diggCount,
-                    item.stats.shareCount,
-                    item.desc
-                )
-            }
-            addAll(list)
         }
     }
 
@@ -110,11 +106,8 @@ class TiktokDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun setActiveCategory(tiktokCategory: TiktokCategory) = getState { state ->
-        if (state.activeCategories.contains(tiktokCategory) && state.activeCategories.size == 1) {
-            return@getState
-        }
-        setState { copy(activeCategories = activeCategories.toggleElement(tiktokCategory)) }
+    fun setActiveCategory(tiktokCategory: TiktokCategory) {
+        setState { copy(activeCategory = tiktokCategory) }
     }
 
     fun loadTiktokVideo(tiktokDiscover: TiktokDiscover, block: (String?) -> Unit) =
@@ -144,7 +137,7 @@ class TiktokDiscoverViewModel @Inject constructor(
 
     fun loadMore() = getState { state ->
         suspend {
-            getDiscoverList(state.activeCategories)
+            getDiscoverList(state.activeCategory)
         }.execute { asyncLoad ->
             if (asyncLoad is AsyncLoad.Success) {
                 val list = asyncLoad.value

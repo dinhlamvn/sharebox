@@ -86,7 +86,7 @@ class TiktokDiscoverFragment :
                 ChipListModel(
                     "category_${tiktokCategory.categoryId}",
                     tiktokCategory.categoryName,
-                    state.activeCategories.contains(tiktokCategory),
+                    state.activeCategory.categoryId == tiktokCategory.categoryId,
                     BaseListAdapter.NoHashProp(
                         View.OnClickListener {
                             viewModel.setActiveCategory(tiktokCategory)
