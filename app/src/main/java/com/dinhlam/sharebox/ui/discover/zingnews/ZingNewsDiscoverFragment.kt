@@ -72,7 +72,7 @@ class ZingNewsDiscoverFragment :
                 ChipListModel(
                     "category_${zingNewsCategory.id}",
                     zingNewsCategory.name,
-                    state.zingNewsCheckedCategories.contains(zingNewsCategory),
+                    state.activeCategory.id == zingNewsCategory.id,
                     BaseListAdapter.NoHashProp(
                         View.OnClickListener {
                             viewModel.setActiveCategory(zingNewsCategory)

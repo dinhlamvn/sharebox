@@ -4,7 +4,6 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.extensions.toggleElement
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ZingNewsCategory
@@ -25,13 +24,7 @@ class ZingNewDiscoverViewModel @Inject constructor(
 
     init {
         getDefaultBox()
-        onChange(ZingNewsDiscoverState::zingNewsCheckedCategories, ::getZingNewsData)
-        setDefaultCategory()
-    }
-
-    private fun setDefaultCategory() = setState {
-        val categories = ZingNewsCategory.categories.copyOf().toMutableList()
-        copy(zingNewsCategories = categories, zingNewsCheckedCategories = setOf(categories.first()))
+        onChange(ZingNewsDiscoverState::activeCategory, ::getZingNewsData)
     }
 
     private fun getDefaultBox() {
@@ -73,32 +66,28 @@ class ZingNewDiscoverViewModel @Inject constructor(
         }
     }
 
-    private fun getZingNewsData(categories: Set<ZingNewsCategory>) = getState { state ->
+    private fun getZingNewsData(category: ZingNewsCategory) = getState { state ->
         suspend {
-            buildList {
-                categories.forEach { zingNewsCategory ->
-                    val url = zingNewsCategory.url
-                    val cachedData = state.cache[url]
-                    if (cachedData != null) {
-                        add(url to cachedData)
-                    } else {
-                        val responseBody =
-                            downloadServices.downloadFileWithoutStream(zingNewsCategory.url)
-                        responseBody.use { body ->
-                            val html = body.string()
-                            val jsoup = Jsoup.parse(html)
-                            val list = getDataFromHTML(jsoup)
-                            add(url to list)
-                        }
-                    }
+            val url = category.url
+            val cachedData = state.cache[url]
+            if (cachedData != null) {
+                url to cachedData
+            } else {
+                val responseBody =
+                    downloadServices.downloadFileWithoutStream(category.url)
+                responseBody.use { body ->
+                    val html = body.string()
+                    val jsoup = Jsoup.parse(html)
+                    val list = getDataFromHTML(jsoup)
+                    url to list
                 }
             }
         }.execute { asyncLoad ->
             copy(
                 asyncLoadZingNewsDiscover = asyncLoad,
-                zingNewsDiscovers = asyncLoad.data?.map(Pair<String, List<ZingNewsDiscover>>::second)
-                    ?.flatten() ?: zingNewsDiscovers,
-                cache = cache.plus(asyncLoad.data.orEmpty())
+                zingNewsDiscovers = asyncLoad.data?.second ?: zingNewsDiscovers,
+                cache = asyncLoad.data?.let { listPair -> cache.plus(listPair.first to listPair.second) }
+                    ?: cache
             )
         }
     }
@@ -113,21 +102,14 @@ class ZingNewDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun setActiveCategory(zingNewsCategory: ZingNewsCategory) = getState { state ->
-        if (state.zingNewsCheckedCategories.contains(zingNewsCategory) && state.zingNewsCheckedCategories.size == 1) {
-            return@getState
-        }
-        setState {
-            copy(
-                zingNewsCheckedCategories = zingNewsCheckedCategories.toggleElement(zingNewsCategory)
-            )
-        }
+    fun setActiveCategory(zingNewsCategory: ZingNewsCategory) {
+        setState { copy(activeCategory = zingNewsCategory) }
     }
 
     fun refresh() {
         setState { copy(cache = emptyMap()) }
         getState { state ->
-            getZingNewsData(state.zingNewsCheckedCategories)
+            getZingNewsData(state.activeCategory)
         }
     }
 }
