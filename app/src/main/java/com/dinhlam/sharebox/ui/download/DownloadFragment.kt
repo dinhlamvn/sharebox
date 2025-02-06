@@ -79,14 +79,13 @@ class DownloadFragment :
                 videos.forEachIndexed { index, downloadData ->
                     DownloadItemListModel(
                         "download_video_$index",
-                        downloadData.downloadUrl,
+                        Icons.MP4_LOGO,
                         "${
                             getString(
                                 R.string.download_mimetype,
                                 downloadData.mimeType
                             )
                         } ${downloadData.suffix}",
-                        true,
                         BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadVideo(
                                 downloadData.id,
@@ -124,7 +123,6 @@ class DownloadFragment :
                                 downloadData.mimeType
                             )
                         } ${downloadData.suffix}",
-                        false,
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadAudio(
                                 downloadData.id,
@@ -162,7 +160,6 @@ class DownloadFragment :
                                 downloadData.mimeType
                             )
                         } ${downloadData.suffix}",
-                        false,
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadImages(
                                 downloadData.id,

@@ -7,7 +7,6 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.utils.FileUtils
-import wseemann.media.FFmpegMediaMetadataRetriever
 
 fun Context.getVideoThumbnail(videoUri: Uri): Bitmap? {
     return try {
@@ -28,7 +27,5 @@ private fun Context.getVideoThumbnailLocal(videoUri: Uri): Bitmap? {
 }
 
 private fun getVideoThumbnailNetwork(videoUri: Uri): Bitmap? {
-    val retriever = FFmpegMediaMetadataRetriever()
-    retriever.setDataSource(videoUri.toString())
-    return retriever.getFrameAtTime(1000L, FFmpegMediaMetadataRetriever.OPTION_CLOSEST)
+    return null
 }
