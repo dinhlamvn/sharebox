@@ -3,8 +3,12 @@ package com.dinhlam.sharebox.ui.download
 import android.net.Uri
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.downloader.Downloader
+import com.dinhlam.sharebox.extensions.ext
+import com.dinhlam.sharebox.extensions.isImageUrl
+import com.dinhlam.sharebox.extensions.mimeType
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.DownloadContent
+import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.model.VideoSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,13 +30,50 @@ class DownloadViewModel @Inject constructor(
     fun download(downloadLink: String) {
         suspend {
             val originUrl = getOriginUrl(downloadLink)
-            val videoSource = videoHelper.getVideoSource(originUrl) ?: error("No video source")
-            val videoOriginUrl =
-                videoHelper.getVideoOriginUrl(videoSource, originUrl) ?: error("No video url")
-            downloadVideo(videoSource, videoOriginUrl)
+            downloadInternal(originUrl)
         }.execute { asyncLoad ->
             copy(asyncLoadDownload = asyncLoad)
         }
+    }
+
+    private suspend fun downloadInternal(url: String): DownloadContent {
+        if (url.isImageUrl()) {
+            return downloadImage(url)
+        }
+        return downloadVideo(url)
+    }
+
+    private fun downloadImage(url: String): DownloadContent {
+        val ext = url.ext ?: return DownloadContent()
+        val mimetype = url.mimeType ?: return DownloadContent()
+        val images = listOf(DownloadData("image", mimetype, "(${ext.uppercase()})", url))
+        return DownloadContent(images = images)
+    }
+
+    private suspend fun downloadVideo(url: String): DownloadContent {
+        val videoSource = videoHelper.getVideoSource(url) ?: error("No video source")
+        val videoOriginUrl =
+            videoHelper.getVideoOriginUrl(videoSource, url) ?: error("No video url")
+        return downloadVideo(videoSource, videoOriginUrl)
+    }
+
+    private suspend fun downloadVideo(
+        videoSource: VideoSource,
+        downloadUrl: String
+    ): DownloadContent {
+        return when (videoSource) {
+            VideoSource.Directly -> downloadVideoDirectly(downloadUrl)
+            VideoSource.Tiktok -> tiktokDownloader.download(downloadUrl)
+            VideoSource.Youtube -> youtubeDownloader.download(downloadUrl)
+            VideoSource.Facebook -> facebookDownloader.download(downloadUrl)
+        }
+    }
+
+    private fun downloadVideoDirectly(url: String): DownloadContent {
+        val ext = url.ext ?: return DownloadContent()
+        val mimetype = url.mimeType ?: return DownloadContent()
+        val videos = listOf(DownloadData("video", mimetype, "(${ext.uppercase()})", url))
+        return DownloadContent(videos = videos)
     }
 
     private suspend fun getOriginUrl(s: String): String = withContext(Dispatchers.IO) {
@@ -49,17 +90,6 @@ class DownloadViewModel @Inject constructor(
             Uri.parse(url).getQueryParameter("next")!!
         } else {
             url
-        }
-    }
-
-    private suspend fun downloadVideo(
-        urlSource: VideoSource,
-        downloadUrl: String
-    ): DownloadContent {
-        return when (urlSource) {
-            VideoSource.Tiktok -> tiktokDownloader.download(downloadUrl)
-            VideoSource.Youtube -> youtubeDownloader.download(downloadUrl)
-            VideoSource.Facebook -> facebookDownloader.download(downloadUrl)
         }
     }
 }

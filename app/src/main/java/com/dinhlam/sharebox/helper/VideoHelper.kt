@@ -4,6 +4,11 @@ import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.extensions.ext
+import com.dinhlam.sharebox.extensions.isFacebookVideo
+import com.dinhlam.sharebox.extensions.isTiktokVideo
+import com.dinhlam.sharebox.extensions.isVideoUrl
+import com.dinhlam.sharebox.extensions.isYoutubeVideo
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.utils.WorkerUtils
@@ -22,18 +27,11 @@ class VideoHelper @Inject constructor(
 ) {
     fun getVideoSource(url: String): VideoSource? {
         return when {
-            isYoutubeVideo(url) -> VideoSource.Youtube
-            isTiktokVideo(url) -> VideoSource.Tiktok
-            isFacebookVideo(url) -> VideoSource.Facebook
+            url.isVideoUrl() -> VideoSource.Directly
+            url.isYoutubeVideo() -> VideoSource.Youtube
+            url.isTiktokVideo() -> VideoSource.Tiktok
+            url.isFacebookVideo() -> VideoSource.Facebook
             else -> null
-        }
-    }
-
-    private suspend fun getVideoSourceId(videoSource: VideoSource, url: String): String {
-        return when (videoSource) {
-            is VideoSource.Youtube -> getYoutubeVideoSourceId(url)
-            is VideoSource.Tiktok -> getTiktokVideoSourceId(url)
-            is VideoSource.Facebook -> getFacebookVideoSourceId(url)
         }
     }
 
@@ -55,32 +53,6 @@ class VideoHelper @Inject constructor(
         }
 
         body.use { responseBody -> responseBody.request.url.toString() }
-    }
-
-    private fun getYoutubeVideoSourceId(url: String): String {
-        val uri = Uri.parse(url)
-        return if (url.contains("/shorts/") || url.contains("youtu.be") || url.contains("youtube.com/live/")) {
-            uri.lastPathSegment!!
-        } else {
-            uri.getQueryParameter("v")!!
-        }
-    }
-
-    private suspend fun getTiktokVideoSourceId(url: String): String {
-        val tiktokUrl = getTiktokUrl(url)
-        return Uri.parse(tiktokUrl).lastPathSegment!!
-    }
-
-    private suspend fun getFacebookVideoSourceId(url: String): String {
-        val originalUri = Uri.parse(url)
-        if (originalUri.path?.contains("videos") == true || originalUri.path?.contains("reel") == true) {
-            return originalUri.lastPathSegment!!
-        }
-        val fullUrl = getFullFacebookUrl(url)
-        if (!fullUrl.contains("/videos/") && !fullUrl.contains("/reel/")) {
-            error("Facebook $url isn't contain videos in path")
-        }
-        return Uri.parse(fullUrl).lastPathSegment!!
     }
 
     suspend fun getFacebookUrl(url: String): String {
@@ -109,26 +81,13 @@ class VideoHelper @Inject constructor(
         }
     }
 
-    private fun isYoutubeVideo(url: String): Boolean {
-        return url.contains("youtube.com") || url.contains("youtu.be")
-    }
-
-    private fun isTiktokVideo(url: String): Boolean {
-        return url.contains("tiktok.com")
-    }
-
-    private fun isFacebookVideo(url: String): Boolean {
-        return (url.contains(Regex("facebook.com|fb.com|fb.watch")) && (url.contains("watch") || url.contains(
-            "/videos/"
-        ) || url.contains("reel") || url.contains("stories"))) || url.contains("fb.gg/v/")
-    }
-
     suspend fun getVideoOriginUrl(videoSource: VideoSource, url: String): String? {
         return try {
             when (videoSource) {
                 VideoSource.Tiktok -> getTiktokUrl(url)
                 VideoSource.Facebook -> getFullFacebookUrl(url)
                 VideoSource.Youtube -> url
+                else -> url
             }
         } catch (e: Exception) {
             null
@@ -157,6 +116,14 @@ class VideoHelper @Inject constructor(
                 id,
                 videoUri
             )
+
+            else -> videoUri.ext?.let { fileExt ->
+                DownloadHelper.enqueueDownload(
+                    context,
+                    videoUri,
+                    "sharebox_video_${id}_${System.currentTimeMillis()}.$fileExt"
+                )
+            }
         }
     }
 }

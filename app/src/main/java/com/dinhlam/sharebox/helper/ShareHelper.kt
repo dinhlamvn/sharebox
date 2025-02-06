@@ -204,6 +204,7 @@ class ShareHelper @Inject constructor(
 
     fun viewInSource(context: Context, videoSource: VideoSource, shareData: ShareData) {
         when (videoSource) {
+            is VideoSource.Directly -> {}
             is VideoSource.Tiktok -> viewInTiktok(context, shareData)
             is VideoSource.Youtube -> viewInYoutube(context, shareData)
             is VideoSource.Facebook -> viewInFacebook(context, shareData)
