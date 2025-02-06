@@ -12,13 +12,19 @@
         android:background="@android:color/black"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <VideoView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="2dp"
+        app:hide_on_touch="true"
         app:layout_constraintBottom_toBottomOf="@id/video_background"
-        app:layout_constraintTop_toTopOf="@id/video_background" />
+        app:layout_constraintTop_toTopOf="@id/video_background"
+        app:show_fastforward_button="false"
+        app:show_next_button="false"
+        app:show_previous_button="false"
+        app:show_rewind_button="false"
+        app:show_timeout="3000" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

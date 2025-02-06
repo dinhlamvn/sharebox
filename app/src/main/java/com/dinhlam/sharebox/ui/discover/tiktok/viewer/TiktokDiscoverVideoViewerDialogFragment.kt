@@ -1,13 +1,15 @@
 package com.dinhlam.sharebox.ui.discover.tiktok.viewer
 
 import android.content.Intent
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentTiktokDiscoverVideoViewerBinding
@@ -35,7 +37,19 @@ class TiktokDiscoverVideoViewerDialogFragment :
     @Inject
     lateinit var router: Router
 
-    private var mediaPlayer: MediaPlayer? = null
+    private val playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+            if (playbackState == ExoPlayer.STATE_READY) {
+                binding.progressBar.isVisible = false
+            }
+        }
+    }
+
+    private val player by lazy {
+        ExoPlayer.Builder(requireContext())
+            .build()
+    }
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -48,18 +62,34 @@ class TiktokDiscoverVideoViewerDialogFragment :
         )
     }
 
+    override fun onPause() {
+        super.onPause()
+        binding.videoView.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.videoView.onResume()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        player.release()
+        player.removeListener(playerListener)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.videoBackground.updateHeight(heightPercentage(80))
         val videoUrl = arguments?.getString(AppExtras.EXTRA_URL) ?: return dismiss()
+        binding.videoView.player = player
+        player.addListener(playerListener)
+        player.repeatMode = ExoPlayer.REPEAT_MODE_ALL
 
-        binding.videoView.setOnPreparedListener { mp ->
-            this.mediaPlayer = mp
-            binding.progressBar.isVisible = false
-        }
-        binding.videoView.setVideoURI(Uri.parse(videoUrl))
-        binding.videoView.requestFocus()
-        binding.videoView.start()
+        val mediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
+        player.setMediaItem(mediaItem)
+        player.prepare()
+        player.play()
 
         binding.textDesc.text = arguments?.getString(EXTRA_VIEW_DESC)
 
