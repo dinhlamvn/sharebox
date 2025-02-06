@@ -43,10 +43,25 @@ data class AppDLResponse(
     val likeCount: String,
     @SerializedName("origin_cover")
     val originCover: String,
-    @SerializedName("slides")
-    val slides: String,
     @SerializedName("signed")
     val signed: Long,
     @SerializedName("type")
     val type: Long,
-)
+    @SerializedName("slides")
+    val slides: Slides?
+) {
+
+    data class Slides(
+        val slideDataList: List<SlideData>,
+        val music: String?
+    )
+
+    data class SlideData(
+        @SerializedName("url")
+        val url: String,
+        @SerializedName("width")
+        val width: Int,
+        @SerializedName("height")
+        val height: Int
+    )
+}

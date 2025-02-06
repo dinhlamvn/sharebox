@@ -10,8 +10,10 @@ import com.dinhlam.sharebox.data.network.GetMyFBServices
 import com.dinhlam.sharebox.data.network.LibreTubeServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.data.network.TiktokServices
+import com.dinhlam.sharebox.data.network.response.AppDLResponse
 import com.dinhlam.sharebox.di.qualifier.UserAgentInterceptor
 import com.dinhlam.sharebox.helper.CronetHelper
+import com.dinhlam.sharebox.json.TiktokSlidesJsonDeserializer
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import com.google.gson.Gson
 import dagger.Module
@@ -126,18 +128,26 @@ object NetworkModule {
     fun provideAppDLServices(
         gson: Gson, httpClient: OkHttpClient
     ): AppDLServices {
-        return getRetrofitBuilder(gson, httpClient.newBuilder().addInterceptor { chain ->
-            val requestBuilder = chain.request().newBuilder()
-            requestBuilder.addHeader(
-                "User-Agent",
-                "ssstik.io/1.136/10.0.2.15/(com.video.videodownloader_appdl)"
-            )
-            requestBuilder.addHeader(
-                "Authorization",
-                "d9a97b094b5a1cdbfaab98d117031de5f01e4faec165c5a6bdc452d1a52fc268"
-            )
-            chain.proceed(requestBuilder.build())
-        }.build())
+        val gsonBuilder = gson.newBuilder()
+        gsonBuilder.registerTypeAdapter(
+            AppDLResponse.Slides::class.java,
+            TiktokSlidesJsonDeserializer
+        )
+        return getRetrofitBuilder(
+            gsonBuilder.create(),
+            httpClient.newBuilder().addInterceptor { chain ->
+                val requestBuilder = chain.request().newBuilder()
+                requestBuilder.addHeader(
+                    "User-Agent",
+                    "ssstik.io/1.136/10.0.2.15/(com.video.videodownloader_appdl)"
+                )
+                requestBuilder.addHeader(
+                    "Authorization",
+                    "d9a97b094b5a1cdbfaab98d117031de5f01e4faec165c5a6bdc452d1a52fc268"
+                )
+                chain.proceed(requestBuilder.build())
+            }.build()
+        )
             .baseUrl("https://appdl.pro")
             .build()
             .create(AppDLServices::class.java)

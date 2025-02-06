@@ -33,20 +33,36 @@ class TiktokDownloaderV2 @Inject constructor(
             val str4 = "%d%s".format(str3.length, str3)
             val tt = str4.md5()
             val response = appDLServices.fetch(tiktokUrl, "en", tt, ts)!!
-            val videos = listOf(
-                DownloadData(
-                    videoId, "video/mp4", "(No Watermark)", response.noWatermarkLink
-                ),
-                DownloadData(
-                    videoId, "video/mp4", "(No Watermark - HD)", response.noWatermarkLinkHd
-                )
-            )
+            val videos = buildList {
+                if (response.noWatermarkLink.isNotEmpty()) {
+                    add(
+                        DownloadData(
+                            videoId, "video/mp4", "(No Watermark)", response.noWatermarkLink
+                        )
+                    )
+                }
+                if (response.noWatermarkLinkHd.isNotEmpty()) {
+                    add(
+                        DownloadData(
+                            videoId, "video/mp4", "(No Watermark - HD)", response.noWatermarkLinkHd
+                        )
+                    )
+                }
+            }
             val audios = listOf(
                 DownloadData(
                     videoId, "audio/mp3", "(MP3)", response.musicLink
                 )
             )
-            return DownloadContent(videos, audios)
+            val images = response.slides?.slideDataList.orEmpty().mapIndexed { index, slideData ->
+                DownloadData(
+                    "${videoId}_$index",
+                    "image/jpg",
+                    "(${slideData.width}x${slideData.height})",
+                    slideData.url
+                )
+            }
+            return DownloadContent(videos, audios, images)
         } catch (e: Exception) {
             TrackerManager.logEvent(TiktokDownloadErrorEvent(e.message))
             DownloadContent()
