@@ -62,7 +62,7 @@ class YoutubeDownloader @Inject constructor(
                     val suffix = if (isVideoOnly) {
                         "($videoQuality) - No Sound"
                     } else {
-                        "($videoQuality})"
+                        "($videoQuality)"
                     }
                     videos.add(
                         DownloadData(

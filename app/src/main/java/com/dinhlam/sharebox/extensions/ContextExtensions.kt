@@ -2,8 +2,10 @@ package com.dinhlam.sharebox.extensions
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.utils.FileUtils
 import wseemann.media.FFmpegMediaMetadataRetriever
 
@@ -15,7 +17,7 @@ fun Context.getVideoThumbnail(videoUri: Uri): Bitmap? {
             getVideoThumbnailNetwork(videoUri)
         }
     } catch (e: Exception) {
-        null
+        BitmapFactory.decodeResource(resources, R.drawable.mp4)
     }
 }
 

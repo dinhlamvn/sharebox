@@ -13,7 +13,6 @@ import com.mikepenz.iconics.utils.colorRes
 import com.mikepenz.iconics.utils.sizeDp
 
 object Icons {
-    const val MP4_LOGO = "https://png.pngtree.com/element_our/png/20181227/mp4-vector-icon-png_287443.jpg"
     const val MP3_LOGO = "https://static.vecteezy.com/system/resources/thumbnails/024/694/509/small_2x/mp3-file-lossy-audio-format-icon-vector.jpg"
 
     data class IconBuilder(
