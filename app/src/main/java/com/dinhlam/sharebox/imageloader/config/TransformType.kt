@@ -4,6 +4,10 @@ sealed interface TransformType {
     class Normal(val scaleType: ImageLoadScaleType = ImageLoadScaleType.None) :
         TransformType
 
-    class Rounded(val radius: Int, val scaleType: ImageLoadScaleType) : TransformType
-    class Circle(val scaleType: ImageLoadScaleType) : TransformType
+    class Rounded(
+        val radius: Int,
+        val scaleType: ImageLoadScaleType = ImageLoadScaleType.CenterCrop
+    ) : TransformType
+
+    class Circle(val scaleType: ImageLoadScaleType = ImageLoadScaleType.CenterCrop) : TransformType
 }

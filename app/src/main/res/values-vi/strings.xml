@@ -107,12 +107,12 @@
     <string name="desc_image">Đây là một hình ảnh</string>
     <string name="go">Đi</string>
     <string name="download_failed">Không thể tải nội dung này, đang thử lại.</string>
-    <string name="download_audio">Tải âm thanh</string>
+    <string name="download_audios">Tải âm thanh</string>
     <string name="download_mimetype">Tải về %s</string>
-    <string name="download_video">Tải thước phim</string>
+    <string name="download_videos">Tải thước phim</string>
     <string name="download_all_images">Tải tất cả ảnh (%d)</string>
     <string name="downloading_all_image">Đang tải về…(%d/%d)</string>
-    <string name="download_image">Tải ảnh</string>
+    <string name="download_images">Tải ảnh</string>
     <string name="create_box">Tạo Box</string>
     <string name="tips_search_box">*Mẹo: Bạn có thể nhập mã box để truy cập vào Box.</string>
     <string name="access_box">Truy cập Box</string>

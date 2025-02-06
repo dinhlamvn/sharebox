@@ -116,10 +116,10 @@
     <string name="desc_image">This is an image</string>
     <string name="go">Go</string>
     <string name="download_failed">Can\'t download this content, trying again!</string>
-    <string name="download_audio">Download Audio</string>
+    <string name="download_audios">Download Audios</string>
     <string name="download_mimetype">Download %s</string>
-    <string name="download_video">Download Video</string>
-    <string name="download_image">Download Image</string>
+    <string name="download_videos">Download Videos</string>
+    <string name="download_images">Download Images</string>
     <string name="download_all_images">Download all images (%d)</string>
     <string name="downloading_all_image">Downloading…(%d/%d)</string>
     <string name="create_box">Create Box</string>

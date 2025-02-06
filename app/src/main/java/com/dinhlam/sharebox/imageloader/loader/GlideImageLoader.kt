@@ -33,11 +33,7 @@ object GlideImageLoader : ImageLoader() {
 
         val activity = context.cast<Activity>()
 
-        if (activity?.isFinishing == true) {
-            return false
-        }
-
-        return true
+        return activity?.isFinishing != true
     }
 
     private fun toActivityContext(context: Context): Activity? {

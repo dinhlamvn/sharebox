@@ -23,10 +23,11 @@ import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.DownloadHelper
+import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
-import com.dinhlam.sharebox.model.DownloadData
+import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -69,23 +70,24 @@ class DownloadFragment :
             if (videos.isNotEmpty()) {
                 TextListModel(
                     "title_video",
-                    getString(R.string.download_video),
-                    textAppearance = R.style.TextBodyMedium,
+                    getString(R.string.download_videos),
+                    textAppearance = R.style.TextTitleMedium,
                     height = 50.dp(),
                     gravity = Gravity.START
                 ).attachTo(this)
 
                 videos.forEachIndexed { index, downloadData ->
-                    TextListModel(
+                    DownloadItemListModel(
                         "download_video_$index",
+                        downloadData.downloadUrl,
                         "${
                             getString(
                                 R.string.download_mimetype,
                                 downloadData.mimeType
                             )
                         } ${downloadData.suffix}",
-                        height = 50.dp(),
-                        actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        true,
+                        BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadVideo(
                                 downloadData.id,
                                 downloadData.mimeType,
@@ -95,33 +97,34 @@ class DownloadFragment :
                     ).attachTo(this)
                     VerticalDividerListModel("video_divider_$index", height = 1.dp()).attachTo(this)
                 }
-            }
 
-            if (audios.isNotEmpty()) {
                 VerticalDividerListModel(
-                    "audio_spacing",
+                    "video_spacing",
                     height = 16.dp(),
                     dividerColor = android.R.color.transparent
                 ).attachTo(this)
+            }
 
+            if (audios.isNotEmpty()) {
                 TextListModel(
                     "title_audio",
-                    getString(R.string.download_audio),
-                    textAppearance = R.style.TextBodyMedium,
+                    getString(R.string.download_audios),
+                    textAppearance = R.style.TextTitleMedium,
                     height = 50.dp(),
                     gravity = Gravity.START
                 ).attachTo(this)
 
                 audios.forEachIndexed { index, downloadData ->
-                    TextListModel(
+                    DownloadItemListModel(
                         "download_audio_$index",
+                        Icons.MP3_LOGO,
                         "${
                             getString(
                                 R.string.download_mimetype,
                                 downloadData.mimeType
                             )
                         } ${downloadData.suffix}",
-                        height = 50.dp(),
+                        false,
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadAudio(
                                 downloadData.id,
@@ -132,45 +135,44 @@ class DownloadFragment :
                     ).attachTo(this)
                     VerticalDividerListModel("audio_divider_$index", height = 1.dp()).attachTo(this)
                 }
-            }
-
-            if (images.isNotEmpty()) {
-                val downloadData = images.first()
 
                 VerticalDividerListModel(
-                    "image_spacing",
+                    "audio_spacing",
                     height = 16.dp(),
                     dividerColor = android.R.color.transparent
                 ).attachTo(this)
+            }
 
+            if (images.isNotEmpty()) {
                 TextListModel(
                     "title_image",
-                    getString(R.string.download_image),
-                    textAppearance = R.style.TextBodyMedium,
+                    getString(R.string.download_images),
+                    textAppearance = R.style.TextTitleMedium,
                     height = 50.dp(),
                     gravity = Gravity.START
                 ).attachTo(this)
 
-                TextListModel(
-                    "download_all_image",
-                    "${getString(R.string.download_all_images, images.size)} (JPG)",
-                    textAppearance = R.style.TextBodyMedium,
-                    height = 50.dp(),
-                    gravity = Gravity.START,
-                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        downloadImages(
-                            downloadData.id,
-                            images.map(DownloadData::downloadUrl)
-                        )
-                    })
-                ).attachTo(this)
+                images.forEachIndexed { index, downloadData ->
+                    DownloadItemListModel(
+                        "download_image_$index",
+                        downloadData.downloadUrl,
+                        "${
+                            getString(
+                                R.string.download_mimetype,
+                                downloadData.mimeType
+                            )
+                        } ${downloadData.suffix}",
+                        false,
+                        actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                            downloadImages(
+                                downloadData.id,
+                                listOf(downloadData.downloadUrl)
+                            )
+                        })
+                    ).attachTo(this)
+                    VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
+                }
             }
-
-            VerticalDividerListModel(
-                "bottom_spacing",
-                height = 50.dp(),
-                dividerColor = android.R.color.transparent
-            ).attachTo(this)
         }
     }
 

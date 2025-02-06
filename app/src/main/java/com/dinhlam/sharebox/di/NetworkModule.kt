@@ -13,7 +13,7 @@ import com.dinhlam.sharebox.data.network.TiktokServices
 import com.dinhlam.sharebox.data.network.response.AppDLResponse
 import com.dinhlam.sharebox.di.qualifier.UserAgentInterceptor
 import com.dinhlam.sharebox.helper.CronetHelper
-import com.dinhlam.sharebox.json.TiktokSlidesJsonDeserializer
+import com.dinhlam.sharebox.json.AppDLResponseJsonDeserializer
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import com.google.gson.Gson
 import dagger.Module
@@ -130,8 +130,8 @@ object NetworkModule {
     ): AppDLServices {
         val gsonBuilder = gson.newBuilder()
         gsonBuilder.registerTypeAdapter(
-            AppDLResponse.Slides::class.java,
-            TiktokSlidesJsonDeserializer
+            AppDLResponse::class.java,
+            AppDLResponseJsonDeserializer(gson)
         )
         return getRetrofitBuilder(
             gsonBuilder.create(),

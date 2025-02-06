@@ -215,6 +215,10 @@ dependencies {
 
     // Facebook
     implementation 'com.facebook.android:facebook-login:latest.release'
+
+    // FFmpeg
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-core:1.0.19'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-native:1.0.19'
 }
 
 kapt {

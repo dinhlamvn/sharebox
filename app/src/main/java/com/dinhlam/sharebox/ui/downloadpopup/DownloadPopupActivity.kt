@@ -47,7 +47,7 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
         if (videos.isNotEmpty()) {
             TextListModel(
                 "title_video",
-                getString(R.string.download_video),
+                getString(R.string.download_videos),
                 textAppearance = R.style.TextBodyMedium,
                 height = 50.dp(),
                 gravity = Gravity.START
@@ -84,7 +84,7 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
 
             TextListModel(
                 "title_audio",
-                getString(R.string.download_audio),
+                getString(R.string.download_audios),
                 textAppearance = R.style.TextBodyMedium,
                 height = 50.dp(),
                 gravity = Gravity.START
@@ -123,7 +123,7 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
 
             TextListModel(
                 "title_image",
-                getString(R.string.download_image),
+                getString(R.string.download_images),
                 textAppearance = R.style.TextBodyMedium,
                 height = 50.dp(),
                 gravity = Gravity.START
