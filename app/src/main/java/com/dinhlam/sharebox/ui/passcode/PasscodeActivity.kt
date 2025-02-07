@@ -16,8 +16,10 @@ import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.vibrate
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.utils.Icons
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Stack
 
+@AndroidEntryPoint
 class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
     companion object {

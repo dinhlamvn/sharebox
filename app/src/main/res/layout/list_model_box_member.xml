@@ -22,6 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
         app:icon_code="f1f8"
         app:icon_size="24dp" />
 

@@ -292,9 +292,9 @@
         </service>
 
         <service
-            android:name=".services.PerformCopiedContentService"
+            android:name=".services.SyncRealtimeDataService"
             android:exported="false"
-            android:foregroundServiceType="specialUse"></service>
+            android:foregroundServiceType="dataSync" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

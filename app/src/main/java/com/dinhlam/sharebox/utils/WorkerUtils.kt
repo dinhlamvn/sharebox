@@ -28,7 +28,7 @@ object WorkerUtils {
     private fun getWorkerSyncDataUUID(): UUID =
         UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
 
-    fun enqueueJobSyncData(context: Context) {
+    fun enqueueJobSyncDataEveryDay(context: Context) {
         val syncDataWorkerRequest =
             PeriodicWorkRequestBuilder<SyncDataWorker>(1, TimeUnit.DAYS).setId(
                 getWorkerSyncDataUUID()

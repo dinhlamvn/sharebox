@@ -218,7 +218,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         binding.switchAutoSync.setOnCheckedChangeListener { _, isChecked ->
             appSettingHelper.setSyncDataInBackground(isChecked)
             if (isChecked) {
-                WorkerUtils.enqueueJobSyncData(applicationContext)
+                WorkerUtils.enqueueJobSyncDataEveryDay(applicationContext)
                 showToast(R.string.message_enqueue_sync_data)
             } else {
                 WorkerUtils.cancelJobSyncData(applicationContext)

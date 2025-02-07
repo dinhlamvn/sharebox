@@ -32,7 +32,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -60,6 +59,9 @@ class RealtimeDatabaseRepository @Inject constructor(
         Executors.newCachedThreadPool()
             .asCoroutineDispatcher() + CoroutineName("realtime-database-scope")
     )
+
+    private val shareListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onShareAdded)
+    private val boxListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onBoxAdded)
 
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
@@ -137,15 +139,16 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     fun sync() {
-        realtimeDatabaseScope.launch(Dispatchers.IO) {
-            if (!userHelper.isSignedIn()) {
-                return@launch
-            }
-            val shareListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onShareAdded)
-            val boxListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onBoxAdded)
-            shareRef.addListenerForSingleValueEvent(shareListener)
-            boxRef.addListenerForSingleValueEvent(boxListener)
+        if (!userHelper.isSignedIn()) {
+            return
         }
+        shareRef.addValueEventListener(shareListener)
+        boxRef.addValueEventListener(boxListener)
+    }
+
+    fun release() {
+        shareRef.removeEventListener(shareListener)
+        boxRef.removeEventListener(boxListener)
     }
 
     private suspend fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {

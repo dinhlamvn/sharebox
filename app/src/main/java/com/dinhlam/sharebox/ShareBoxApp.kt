@@ -2,6 +2,7 @@ package com.dinhlam.sharebox
 
 import android.app.Application
 import android.app.NotificationManager
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
@@ -9,7 +10,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.services.SyncRealtimeDataService
 import com.dinhlam.sharebox.tracking.TrackerManager
 import com.dinhlam.sharebox.tracking.trackers.FirebaseAnalysisTracker
 import com.dinhlam.sharebox.utils.UserUtils
@@ -55,9 +56,6 @@ class ShareBoxApp : Application(), Configuration.Provider {
     @Inject
     lateinit var userRepository: UserRepository
 
-    @Inject
-    lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
-
     private fun createAnonymousUser() {
         if (!userHelper.isSignedIn() && userHelper.getCurrentUserId().isEmpty()) {
             FirebaseInstallations.getInstance().id.addOnSuccessListener { instanceId ->
@@ -78,8 +76,6 @@ class ShareBoxApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         createAnonymousUser()
-
-        realtimeDatabaseRepository.sync()
         Iconics.registerFont(GoogleMaterial)
         Iconics.registerFont(FontAwesome)
         requestApplyTheme()
@@ -112,6 +108,8 @@ class ShareBoxApp : Application(), Configuration.Provider {
         }
 
         TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
+
+        startService(Intent(this, SyncRealtimeDataService::class.java))
     }
 
     private fun requestApplyTheme() {
