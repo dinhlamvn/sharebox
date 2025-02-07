@@ -9,7 +9,6 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxMember
@@ -21,7 +20,6 @@ import com.dinhlam.sharebox.model.realtimedb.RealtimeCommentObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeLikeObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeShareObj
 import com.dinhlam.sharebox.model.realtimedb.RealtimeUserObj
-import com.dinhlam.sharebox.utils.FileUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -33,9 +31,6 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.Executors
@@ -50,7 +45,6 @@ class RealtimeDatabaseRepository @Inject constructor(
     private val commentRepository: CommentRepository,
     private val likeRepository: LikeRepository,
     private val gson: Gson,
-    private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
     private val userHelper: UserHelper,
 ) {
@@ -60,8 +54,11 @@ class RealtimeDatabaseRepository @Inject constructor(
             .asCoroutineDispatcher() + CoroutineName("realtime-database-scope")
     )
 
-    private val shareListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onShareAdded)
-    private val boxListener = SimpleRealtimeEventListener(realtimeDatabaseScope, ::onBoxAdded)
+    private val shareEventListener =
+        SimpleRealtimeEventListener(realtimeDatabaseScope, ::onShareSnapshotDataReceived)
+
+    private val boxEventListener =
+        SimpleRealtimeEventListener(realtimeDatabaseScope, ::onBoxSnapshotDataReceived)
 
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
@@ -84,7 +81,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
         try {
             shareRef.child(share.shareId).setValue(RealtimeShareObj.from(gson, share)).await()
-            shareRepository.update(share.copy(synced = true))
+            shareRepository.update(share, true)
         } catch (e: Exception) {
             Logger.error(e)
         }
@@ -142,77 +139,79 @@ class RealtimeDatabaseRepository @Inject constructor(
         if (!userHelper.isSignedIn()) {
             return
         }
-        shareRef.addValueEventListener(shareListener)
-        boxRef.addValueEventListener(boxListener)
+        shareRef.addValueEventListener(shareEventListener)
+        boxRef.addValueEventListener(boxEventListener)
     }
 
     fun release() {
-        shareRef.removeEventListener(shareListener)
-        boxRef.removeEventListener(boxListener)
+        shareRef.removeEventListener(shareEventListener)
+        boxRef.removeEventListener(boxEventListener)
     }
 
-    private suspend fun onBoxAdded(boxId: String, jsonMap: Map<String, Any>) {
-        val box = boxRepository.findOneRaw(boxId) ?: RealtimeBoxObj.from(jsonMap).run {
-            boxRepository.insert(id, name, desc, createdBy, createdDate, passcode, synced = true)
-        }
-
-        if (box == null) {
-            Logger.error("Insert box from realtime-db to local failed")
-        }
-    }
-
-    private suspend fun onShareAdded(shareId: String, jsonMap: Map<String, Any>) = runCatching {
-        val share = shareRepository.findOneRaw(shareId) ?: run {
-            val realtimeShareObj = RealtimeShareObj.from(jsonMap)
-
-            val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
-            val shareData =
-                when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
-                    ShareType.URL -> gson.fromJson(json, ShareData.ShareUrl::class.java)
-                    ShareType.TEXT -> gson.fromJson(json, ShareData.ShareText::class.java)
-                    ShareType.IMAGE -> gson.fromJson(json, ShareData.ShareImage::class.java)
-                    ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
-                    else -> return@run null
-                }
-            shareRepository.insert(
-                shareId,
-                shareData,
-                realtimeShareObj.shareNote,
-                realtimeShareObj.shareBoxId,
-                realtimeShareObj.shareUserId,
-                realtimeShareObj.shareDate,
-                synced = true,
-                isVideoShare = realtimeShareObj.isVideoShare
+    private fun createNewBox(boxId: String, jsonMap: Map<String, Any>): Box {
+        return RealtimeBoxObj.from(jsonMap).run {
+            Box(
+                boxId = boxId,
+                boxName = name,
+                boxDesc = desc,
+                createdBy = createdBy,
+                createdDate = createdDate,
+                passcode = passcode,
+                lastSeen = System.currentTimeMillis(),
+                synced = true
             )
-        }!!
+        }
+    }
 
-        val newShareData = share.shareData.cast<ShareData.ShareImage>()?.let { shareImage ->
-            if (FileUtils.isNetworkFile(shareImage.uri)) {
-                shareImage
+    private suspend fun onBoxSnapshotDataReceived(boxId: String, jsonMap: Map<String, Any>) {
+        try {
+            val box = boxRepository.findOneRaw(boxId)
+            val snapshotDataBox = createNewBox(boxId, jsonMap)
+            if (box != null) {
+                boxRepository.update(snapshotDataBox.copy(id = box.id, synced = true))
             } else {
-                firebaseStorageHelper.runCatching {
-                    getImageDownloadUri(
-                        shareId, shareImage.uri
-                    )
-                }.getOrNull()?.let { downloadUri ->
-                    shareImage.copy(uri = downloadUri)
-                }
+                boxRepository.insert(snapshotDataBox.copy(synced = true))
             }
-        } ?: share.shareData.cast<ShareData.ShareImages>()?.let { shareImages ->
-            val downloadUris = shareImages.uris.asFlow().mapNotNull { uri ->
-                if (FileUtils.isNetworkFile(uri)) {
-                    uri
-                } else {
-                    firebaseStorageHelper.runCatching {
-                        getImageDownloadUri(
-                            shareId, uri
-                        )
-                    }.getOrNull()
-                }
-            }.toList()
-            shareImages.copy(uris = downloadUris)
-        } ?: share.shareData
-        shareRepository.update(share.copy(shareData = newShareData))
+        } catch (e: Exception) {
+            Logger.error(e)
+        }
+    }
+
+    private fun createNewShare(shareId: String, jsonMap: Map<String, Any>): Share? {
+        val realtimeShareObj = RealtimeShareObj.from(jsonMap)
+        val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
+        val shareData =
+            when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
+                ShareType.URL -> gson.fromJson(json, ShareData.ShareUrl::class.java)
+                ShareType.TEXT -> gson.fromJson(json, ShareData.ShareText::class.java)
+                ShareType.IMAGE -> gson.fromJson(json, ShareData.ShareImage::class.java)
+                ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
+                else -> return null
+            }
+        return Share(
+            shareId = shareId,
+            shareUserId = realtimeShareObj.shareUserId,
+            shareData = shareData,
+            shareNote = realtimeShareObj.shareNote,
+            shareBoxId = realtimeShareObj.shareBoxId,
+            shareDate = realtimeShareObj.shareDate,
+            synced = true,
+            isVideoShare = realtimeShareObj.isVideoShare
+        )
+    }
+
+    private suspend fun onShareSnapshotDataReceived(shareId: String, jsonMap: Map<String, Any>) {
+        try {
+            val share = shareRepository.findOneRaw(shareId)
+            val snapshotDataShare = createNewShare(shareId, jsonMap) ?: return
+            if (share != null) {
+                shareRepository.update(snapshotDataShare.copy(id = share.id), true)
+            } else {
+                shareRepository.insert(snapshotDataShare.copy(synced = true))
+            }
+        } catch (e: Exception) {
+            Logger.error(e)
+        }
     }
 
     private class SimpleRealtimeEventListener(

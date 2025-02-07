@@ -15,11 +15,10 @@ import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.storage.FirebaseStorageManager
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -32,7 +31,7 @@ class SyncDataWorker @AssistedInject constructor(
     private val boxRepository: BoxRepository,
     private val shareRepository: ShareRepository,
     private val router: Router,
-    private val firebaseStorageHelper: FirebaseStorageHelper,
+    private val firebaseStorageManager: FirebaseStorageManager,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -74,11 +73,11 @@ class SyncDataWorker @AssistedInject constructor(
                 break
             }
             shares.forEach { share ->
-                val shareImage = share.shareData.cast<ShareData.ShareImage>()
-                val shareImages = share.shareData.cast<ShareData.ShareImages>()
-                val newShare = shareImage?.let { shareData -> handleShareImage(share, shareData) }
-                    ?: shareImages?.let { shareData -> handleShareImages(share, shareData) }
-                    ?: share
+                val newShare = when (share.shareData) {
+                    is ShareData.ShareImage -> handleShareImage(share, share.shareData)
+                    is ShareData.ShareImages -> handleShareImages(share, share.shareData)
+                    else -> share
+                }
                 realtimeDatabaseRepository.push(newShare)
             }
         }
@@ -89,11 +88,9 @@ class SyncDataWorker @AssistedInject constructor(
         if (FileUtils.isNetworkFile(shareUri)) {
             return share
         }
-        val task = firebaseStorageHelper.uploadShareImageFile(appContext, share.shareId, shareUri)
-        if (task.task.isSuccessful) {
-            val uri =
-                firebaseStorageHelper.getImageDownloadUri(share.shareId, shareUri)
-            return share.copy(shareData = shareImage.copy(uri = uri))
+        val fileUri = firebaseStorageManager.uploadFileWithoutNotification(share.shareId, shareUri)
+        if (fileUri != null) {
+            return share.copy(shareData = shareImage.copy(uri = fileUri))
         }
         return share
     }
@@ -104,14 +101,15 @@ class SyncDataWorker @AssistedInject constructor(
         if (uploadUris.isEmpty()) {
             return share
         }
-
         repeat(uploadUris.size) { i ->
-            val task =
-                firebaseStorageHelper.uploadShareImageFile(appContext, share.shareId, uploadUris[i])
-            if (task.task.isSuccessful) {
-                val uri =
-                    firebaseStorageHelper.getImageDownloadUri(share.shareId, uploadUris[i])
-                shareUris.add(uri)
+            val fileUri =
+                firebaseStorageManager.uploadFileWithoutNotification(
+                    share.shareId,
+                    uploadUris[i],
+                    i
+                )
+            if (fileUri != null) {
+                shareUris.add(fileUri)
             } else {
                 shareUris.add(uploadUris[i])
             }

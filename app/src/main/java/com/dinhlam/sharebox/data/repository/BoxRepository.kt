@@ -43,6 +43,11 @@ class BoxRepository @Inject constructor(
         }.getOrNull()
     }
 
+    suspend fun insert(box: Box): Boolean = boxDao.runCatching {
+        insert(box)
+        true
+    }.getOrDefault(false)
+
     suspend fun update(box: Box): Boolean = boxDao.runCatching {
         update(box)
         true

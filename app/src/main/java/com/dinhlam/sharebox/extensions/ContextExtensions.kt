@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.utils.FileUtils
 
@@ -28,4 +29,13 @@ private fun Context.getVideoThumbnailLocal(videoUri: Uri): Bitmap? {
 
 private fun getVideoThumbnailNetwork(videoUri: Uri): Bitmap? {
     return null
+}
+
+fun Context.getMimeTypeFromUri(uri: Uri): String? {
+    return MimeTypeMap.getSingleton().getMimeTypeFromExtension(contentResolver.getType(uri))
+}
+
+fun Context.getExtensionFromUri(uri: Uri): String? {
+    val mimeType = getMimeTypeFromUri(uri)
+    return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
 }

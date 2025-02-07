@@ -1,14 +1,8 @@
 package com.dinhlam.sharebox.ui.sharereceive
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.webkit.MimeTypeMap
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -16,7 +10,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
@@ -36,7 +29,6 @@ class ShareReceiveViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val bookmarkCollectionRepository: BookmarkCollectionRepository,
     private val bookmarkRepository: BookmarkRepository,
-    private val firebaseStorageHelper: FirebaseStorageHelper,
     private val boxRepository: BoxRepository,
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
@@ -143,20 +135,7 @@ class ShareReceiveViewModel @Inject constructor(
             shareNote = note,
             shareBoxId = shareBox?.boxId,
             shareUserId = userHelper.getCurrentUserId()
-        )?.also { share ->
-            if (userHelper.isSignedIn()) {
-                val task = firebaseStorageHelper.uploadShareImageFile(
-                    context,
-                    share.shareId,
-                    newUri
-                )
-                if (task.task.isSuccessful) {
-                    val uri =
-                        firebaseStorageHelper.getImageDownloadUri(share.shareId, newUri)
-                    shareRepository.update(share.copy(shareData = shareData.copy(uri = uri)))
-                }
-            }
-        }
+        )
     }
 
     private suspend fun shareImages(
@@ -186,51 +165,7 @@ class ShareReceiveViewModel @Inject constructor(
             shareNote = note,
             shareBoxId = shareBox?.boxId,
             shareUserId = userHelper.getCurrentUserId()
-        )?.let { share ->
-            if (userHelper.isSignedIn()) {
-                val notificationManagerCompat = NotificationManagerCompat.from(context)
-
-                val notificationBuilder = NotificationCompat.Builder(
-                    context, AppConsts.NOTIFICATION_DOWNLOAD_CHANNEL_ID
-                ).setContentText(context.getString(R.string.distribute_images_content))
-                    .setSubText(context.getString(R.string.distribute_images_title))
-                    .setAutoCancel(false).setProgress(100, 0, false)
-                    .setSmallIcon(R.drawable.ic_file_upload_white)
-                val uploadId = 456789
-                val shareUris = buildList {
-                    uris.forEachIndexed { index, uri ->
-                        val progress = index.plus(1f).div(uris.size).times(100).toInt()
-                        notificationBuilder.setProgress(100, progress, false).setContentTitle(
-                            context.getString(
-                                R.string.complete_progress, "${index.plus(1)}/${uris.size}"
-                            )
-                        )
-                        if (ContextCompat.checkSelfPermission(
-                                context, android.Manifest.permission.POST_NOTIFICATIONS
-                            ) == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            notificationManagerCompat.notify(
-                                uploadId, notificationBuilder.build()
-                            )
-                        }
-                        val task = firebaseStorageHelper.uploadShareImageFileWithoutNotification(
-                            share.shareId, uri
-                        )
-                        if (task.task.isSuccessful) {
-                            val networkUri =
-                                firebaseStorageHelper.getImageDownloadUri(share.shareId, uri)
-                            add(networkUri)
-                        } else {
-                            add(uri)
-                        }
-                    }
-                }
-                notificationManagerCompat.cancel(uploadId)
-                share.copy(shareData = shareData.copy(uris = shareUris))
-            } else {
-                share
-            }
-        }
+        )
     }
 
     fun setBookmarkCollection(pickedId: String?) {

@@ -18,7 +18,6 @@ import javax.inject.Singleton
 @Singleton
 class ShareRepository @Inject constructor(
     private val shareDao: ShareDao,
-    private val userRepository: UserRepository,
     private val commentRepository: CommentRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
@@ -54,8 +53,13 @@ class ShareRepository @Inject constructor(
         countByUser(userId)
     }.getOrDefault(0)
 
-    suspend fun update(share: Share): Boolean = shareDao.runCatching {
-        update(share)
+    suspend fun insert(share: Share): Boolean = shareDao.runCatching {
+        insertAll(share)
+        true
+    }.getOrDefault(false)
+
+    suspend fun update(share: Share, synced: Boolean = false): Boolean = shareDao.runCatching {
+        update(share.copy(synced = synced))
         true
     }.getOrDefault(false)
 

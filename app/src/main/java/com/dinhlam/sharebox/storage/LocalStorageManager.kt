@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.helper
+package com.dinhlam.sharebox.storage
 
 import android.content.ContentValues
 import android.content.Context
@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.dinhlam.sharebox.extensions.appendIf
+import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.imageloader.get
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalStorageHelper @Inject constructor(
+class LocalStorageManager @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val appSettingHelper: AppSettingHelper
 

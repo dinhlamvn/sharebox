@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class BoxFormViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val userHelper: UserHelper,
-    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<BoxFormState>(BoxFormState(savedStateHandle[AppExtras.EXTRA_BOX_ID])) {
 
@@ -38,7 +36,7 @@ class BoxFormViewModel @Inject constructor(
         suspend {
             val createdBox =
                 state.boxDetail?.boxId?.let { boxId -> boxRepository.findOneRaw(boxId) }
-            val box = createdBox?.let { box ->
+            createdBox?.let { box ->
                 val newBox = if (state.isChangePasscode) {
                     box.copy(
                         boxName = name,
@@ -61,8 +59,6 @@ class BoxFormViewModel @Inject constructor(
                 nowUTCTimeInMillis(),
                 passcode.takeIfNotNullOrBlank()?.md5()
             )!!
-            realtimeDatabaseRepository.push(box)
-            box
         }.execute { asyncLoad -> copy(asyncLoadSave = asyncLoad) }
     }
 

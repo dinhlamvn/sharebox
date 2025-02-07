@@ -103,8 +103,8 @@
     <string name="alert_no_thanks">No, thanks</string>
     <string name="sync_data_done_first_install">Sync data is done…</string>
     <string name="error_save_image_to_gallery">Error save image to gallery</string>
-    <string name="distribute_images_content">Distributing images to other people</string>
-    <string name="distribute_images_title">Distribute images</string>
+    <string name="distribute_file_content">The file is uploading</string>
+    <string name="distribute_file_title">Upload File</string>
     <string name="complete_progress">Completed (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
     <string name="text_sync_data">Sync data</string>

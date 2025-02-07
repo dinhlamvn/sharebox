@@ -94,8 +94,8 @@
     <string name="alert_no_thanks">Không, cảm ơn</string>
     <string name="sync_data_done_first_install">Đã đồng bộ dữ liệu xong…</string>
     <string name="error_save_image_to_gallery">Có lỗi khi lưu ảnh</string>
-    <string name="distribute_images_content">Đang phân phối ảnh</string>
-    <string name="distribute_images_title">Phân phối ảnh</string>
+    <string name="distribute_file_content">Tệp tin đang được tải lên</string>
+    <string name="distribute_file_title">Tải tệp tin</string>
     <string name="complete_progress">Hoàn thành (%s)</string>
     <string name="nothing_to_download">Không có gì để tải xuống</string>
     <string name="text_sync_data">Đồng bộ dữ liệu</string>

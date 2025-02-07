@@ -15,7 +15,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.network.DownloadServices
-import com.dinhlam.sharebox.helper.LocalStorageHelper
+import com.dinhlam.sharebox.storage.LocalStorageManager
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -28,7 +28,7 @@ import kotlin.random.Random
 class DownloadImagesWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val localStorageHelper: LocalStorageHelper,
+    private val localStorageManager: LocalStorageManager,
     private val downloadServices: DownloadServices
 ) : CoroutineWorker(appContext, workerParams) {
 
@@ -67,8 +67,8 @@ class DownloadImagesWorker @AssistedInject constructor(
                             outputFile.outputStream().use { os ->
                                 ips.copyTo(os)
                                 val uri = FileUtils.getUriFromFile(appContext, outputFile)
-                                localStorageHelper.saveImageToGallery(uri, albumName)
-                                localStorageHelper.cleanUp(uri)
+                                localStorageManager.saveImageToGallery(uri, albumName)
+                                localStorageManager.cleanUp(uri)
                                 setForeground(
                                     createForegroundInfo(
                                         notificationId,
@@ -84,8 +84,8 @@ class DownloadImagesWorker @AssistedInject constructor(
                                 outputFile.outputStream().use { os ->
                                     bs.copyTo(os)
                                     val uri = FileUtils.getUriFromFile(appContext, outputFile)
-                                    localStorageHelper.saveImageToGallery(uri, albumName)
-                                    localStorageHelper.cleanUp(uri)
+                                    localStorageManager.saveImageToGallery(uri, albumName)
+                                    localStorageManager.cleanUp(uri)
                                     setForeground(
                                         createForegroundInfo(
                                             notificationId,

@@ -15,7 +15,7 @@ import com.dinhlam.sharebox.databinding.ActivityImageViewerBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.helper.LocalStorageHelper
+import com.dinhlam.sharebox.storage.LocalStorageManager
 import com.dinhlam.sharebox.listmodel.ImageListModel
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +28,7 @@ import javax.inject.Inject
 class ImageViewerActivity : BaseActivity<ActivityImageViewerBinding>() {
 
     @Inject
-    lateinit var localStorageHelper: LocalStorageHelper
+    lateinit var localStorageManager: LocalStorageManager
 
     val uris: List<Uri> by lazy {
         intent.getParcelableArrayListExtraCompat<Uri>(AppExtras.EXTRA_IMAGE_URIS)
@@ -74,7 +74,7 @@ class ImageViewerActivity : BaseActivity<ActivityImageViewerBinding>() {
             val uri = uris.getOrNull(currentPos) ?: return@setOnClickListener
             binding.viewLoading.show()
             activityScope.launch(Dispatchers.IO) {
-                localStorageHelper.saveImageToGallery(uri)
+                localStorageManager.saveImageToGallery(uri)
                 withContext(Dispatchers.Main) {
                     binding.viewLoading.hide()
                     showToast(R.string.success_save_image_to_gallery)

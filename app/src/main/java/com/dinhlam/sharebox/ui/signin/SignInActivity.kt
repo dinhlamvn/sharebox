@@ -22,14 +22,12 @@ import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.databinding.ActivitySignInBinding
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.helper.FirebaseStorageHelper
 import com.dinhlam.sharebox.helper.TransferDataHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
-import com.dinhlam.sharebox.utils.WorkerUtils
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
@@ -53,9 +51,6 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     @Inject
     lateinit var router: Router
-
-    @Inject
-    lateinit var firebaseStorageHelper: FirebaseStorageHelper
 
     @Inject
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
@@ -141,7 +136,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
             response?.error?.let { error ->
                 Log.e("DinhLam", error.message, error)
                 showToast(error.message)
-            } ?: showToast(com.firebase.ui.auth.R.string.fui_error_unknown)
+            } ?: showToast("Error")
         }
     }
 
@@ -160,7 +155,6 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         userHelper.createUser(userId, name, photoUrl, { user ->
             realtimeDatabaseRepository.push(user)
             transferDataHelper.transferData(userSharePref.getAnonymousUserId(), user.userId)
-            WorkerUtils.enqueueJobSyncDataOneTime(applicationContext)
             if (signInForResult) {
                 binding.viewLoading.hide()
                 setResult(Activity.RESULT_OK)
