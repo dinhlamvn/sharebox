@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -42,6 +43,13 @@ class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+
+    private val isFromInvite: Boolean by lazy {
+        intent.getBooleanExtra(
+            AppExtras.EXTRA_BOOLEAN,
+            false
+        )
+    }
 
     private val moveShareToBoxLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -257,7 +265,8 @@ class BoxDetailActivity :
             router.textInput(
                 this,
                 getString(R.string.note),
-                share.shareNote
+                share.shareNote,
+                true
             )
         )
     }
@@ -271,7 +280,41 @@ class BoxDetailActivity :
     }
 
     private fun showMore(share: ShareDetail) {
-        shareHelper.showMore(this, share, this)
+        if (isFromInvite) {
+            val arrayIcons = arrayOf(
+                "faw_share", "faw_download", "faw_copy"
+            )
+            val choiceItems =
+                resources.getStringArray(R.array.more_menu_invited)
+                    .mapIndexed { index, text ->
+                        OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                            arrayIcons[index], text
+                        )
+                    }.toTypedArray()
+
+            OptionMenuBottomSheetDialogFragment.show(
+                supportFragmentManager,
+                choiceItems,
+                bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
+            ) { position, _, args ->
+                getState(viewModel) { state ->
+                    val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
+                    val shareData =
+                        state.shares.firstOrNull { share -> share.shareId == shareId }
+                            ?: return@getState
+                    when (position) {
+                        0 -> shareHelper.shareToOther(shareData)
+                        1 -> WorkerUtils.enqueueDownloadShare(
+                            this, shareData.shareData.cast<ShareData.ShareUrl>()?.url, shareData
+                        )
+
+                        2 -> copy(shareData.boxDetail?.boxId)
+                    }
+                }
+            }
+        } else {
+            shareHelper.showMore(this, share, this)
+        }
     }
 
     private fun openShare(share: ShareDetail) {
@@ -285,8 +328,19 @@ class BoxDetailActivity :
             )
 
             is ShareData.ShareText -> {
-                viewModel.setCurrentShare(share)
-                openShareTextResultLauncher.launch(router.textInput(this, null, shareData.text))
+                if (isFromInvite) {
+                    shareHelper.openTextViewerDialog(this, shareData.text)
+                } else {
+                    viewModel.setCurrentShare(share)
+                    openShareTextResultLauncher.launch(
+                        router.textInput(
+                            this,
+                            null,
+                            shareData.text,
+                            true
+                        )
+                    )
+                }
             }
 
             is ShareData.ShareImage -> shareHelper.viewShareImage(

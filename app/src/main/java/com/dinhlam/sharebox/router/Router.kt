@@ -43,10 +43,10 @@ interface Router {
 
     fun settingCompose(): Intent
 
-    fun boxDetail(context: Context, boxId: String): Intent
+    fun boxDetail(context: Context, boxId: String, isFromInvited: Boolean): Intent
 
     fun profile(context: Context): Intent
-    fun textInput(context: Context, title: String?, text: String?): Intent
+    fun textInput(context: Context, title: String?, text: String?, isEdit: Boolean): Intent
 
     fun shareLink(context: Context, uri: Uri?): Intent
     fun downloadPopup(context: Context, url: String, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>, notificationId: Int): Intent

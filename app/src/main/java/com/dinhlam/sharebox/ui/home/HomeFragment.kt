@@ -271,7 +271,8 @@ class HomeFragment :
             router.textInput(
                 requireContext(),
                 getString(R.string.note),
-                share.shareNote
+                share.shareNote,
+                true
             )
         )
     }
@@ -320,7 +321,7 @@ class HomeFragment :
     }
 
     fun requestArchiveNote() {
-        archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null))
+        archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null, false))
     }
 
     fun requestArchiveWeb() {
@@ -356,7 +357,8 @@ class HomeFragment :
                     router.textInput(
                         requireContext(),
                         null,
-                        shareData.text
+                        shareData.text,
+                        true
                     )
                 )
             }
@@ -372,10 +374,10 @@ class HomeFragment :
     }
 
     fun openBox(boxId: String) {
-        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId))
+        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId, false))
     }
 
-    fun editBox(boxId: String) {
+    private fun editBox(boxId: String) {
         editBoxResultLauncher.launch(
             router.boxForm(
                 requireContext(),
@@ -384,7 +386,7 @@ class HomeFragment :
         )
     }
 
-    fun requestManageMembers(boxId: String) {
+    private fun requestManageMembers(boxId: String) {
         if (userHelper.isSignedIn()) {
             startActivity(router.boxMembers(requireContext(), boxId))
         } else {

@@ -202,20 +202,21 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, SettingComposeActivity::class.java)
     }
 
-    override fun boxDetail(context: Context, boxId: String): Intent {
-        return Intent(context, BoxDetailActivity::class.java).putExtra(
-            AppExtras.EXTRA_BOX_ID, boxId
-        )
+    override fun boxDetail(context: Context, boxId: String, isFromInvited: Boolean): Intent {
+        return Intent(context, BoxDetailActivity::class.java)
+            .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
+            .putExtra(AppExtras.EXTRA_BOOLEAN, isFromInvited)
     }
 
     override fun profile(context: Context): Intent {
         return Intent(context, ProfileFragment::class.java)
     }
 
-    override fun textInput(context: Context, title: String?, text: String?): Intent {
+    override fun textInput(context: Context, title: String?, text: String?, isEdit: Boolean): Intent {
         return Intent(context, TextInputActivity::class.java)
             .putExtra(AppExtras.EXTRA_TITLE, title)
             .putExtra(Intent.EXTRA_TEXT, text)
+            .putExtra(AppExtras.EXTRA_BOOLEAN, isEdit)
     }
 
     override fun shareLink(context: Context, uri: Uri?): Intent {

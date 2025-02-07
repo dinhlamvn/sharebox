@@ -35,7 +35,7 @@ fun ShareDetail.buildListItemListModel(
 
     fun getRecentlySubtitle(shareDetail: ShareDetail): String? {
         return when (val shareData = shareDetail.shareData) {
-            is ShareData.ShareText -> "[${shareDetail.createdAt.format("yyyy MMM d HH:mm")}] ${shareDetail.shareNote}"
+            is ShareData.ShareText -> "${shareDetail.createdAt.format("yyyy MMM d HH:mm")} ${shareDetail.shareNote}"
             is ShareData.ShareUrl -> shareDetail.shareNote
             is ShareData.ShareImage -> shareDetail.createdAt.format("yyyy MMM d HH:mm")
             is ShareData.ShareImages -> shareDetail.createdAt.format()

@@ -219,6 +219,12 @@
         <item>Move to trash</item>
     </string-array>
 
+    <string-array name="more_menu_invited">
+        <item>Share to other…</item>
+        <item>Download</item>
+        <item>Copy box\'s ID</item>
+    </string-array>
+
     <string-array name="trash_more_menu">
         <item>Restore to…</item>
     </string-array>

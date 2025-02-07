@@ -38,7 +38,7 @@ class BoxInvitedActivity :
                     gravity = Gravity.CENTER_VERTICAL,
                     padding = Spacing.Horizontal(16.dp(), 16.dp()),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        startActivity(router.boxDetail(this@BoxInvitedActivity, box.boxId))
+                        startActivity(router.boxDetail(this@BoxInvitedActivity, box.boxId, true))
                     })
                 ).attachTo(this)
                 VerticalDividerListModel("divider_${box.boxId}").attachTo(this)

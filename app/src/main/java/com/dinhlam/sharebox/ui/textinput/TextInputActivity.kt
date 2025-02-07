@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.ui.textinput
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,6 +13,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTextInputBinding
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
+import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.showKeyboard
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +23,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class TextInputActivity :
     BaseActivity<ActivityTextInputBinding>() {
+
+    private val isEdit by lazy { intent.getBooleanExtra(AppExtras.EXTRA_BOOLEAN, false) }
 
     override fun onCreateViewBinding(): ActivityTextInputBinding {
         return ActivityTextInputBinding.inflate(layoutInflater)
@@ -59,15 +63,29 @@ class TextInputActivity :
 
     private fun onDone() {
         hideKeyboard()
-        AlertDialog.Builder(this)
-            .setMessage(R.string.confirm_save_message)
-            .setPositiveButton(R.string.dialog_ok) { _, _ ->
-                val text = binding.editTextQuote.getTrimmedText()
-                setResult(RESULT_OK, Intent().putExtra(Intent.EXTRA_TEXT, text))
-                finish()
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
+        if (isEdit) {
+            AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_save_message)
+                .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                    returnData()
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        } else {
+            returnData()
+        }
+    }
+
+    private fun returnData() {
+        val text = binding.editTextQuote.getTrimmedText()
+        setResult(
+            text.isBlank().ifTrue(
+                isEdit.ifTrue(Activity.RESULT_OK, Activity.RESULT_CANCELED),
+                Activity.RESULT_OK
+            ),
+            Intent().putExtra(Intent.EXTRA_TEXT, text)
+        )
+        finish()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

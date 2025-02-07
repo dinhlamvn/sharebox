@@ -24,7 +24,10 @@ data class ListItemListModel(
         return ListItemViewHolderViewBinding(inflater, container)
     }
 
-    private class ListItemViewHolderViewBinding(layoutInflater: LayoutInflater, container: ViewGroup) :
+    private class ListItemViewHolderViewBinding(
+        layoutInflater: LayoutInflater,
+        container: ViewGroup
+    ) :
         BaseListAdapter.BaseViewHolderViewBinding<ListItemListModel, ListModelListItemBinding>(
             ListModelListItemBinding.inflate(layoutInflater, container, false)
         ) {

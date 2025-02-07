@@ -13,6 +13,9 @@ import com.dinhlam.sharebox.extensions.updateHeight
 
 class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
 
+    override val isUseMaterialDialog: Boolean
+        get() = false
+
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -22,7 +25,7 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogTextViewerBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.scrollView.updateHeight(heightPercentage(70))
+        binding.scrollView.updateHeight(heightPercentage(80))
 
         val textContent = arguments?.getString(Intent.EXTRA_TEXT) ?: ""
         val htmlText = textContent.replace("\n", "<br>")
