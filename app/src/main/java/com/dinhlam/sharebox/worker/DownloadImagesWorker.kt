@@ -14,7 +14,7 @@ import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.network.SSSTikServices
+import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.helper.LocalStorageHelper
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
@@ -28,8 +28,8 @@ import kotlin.random.Random
 class DownloadImagesWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val sssTikServices: SSSTikServices,
-    private val localStorageHelper: LocalStorageHelper
+    private val localStorageHelper: LocalStorageHelper,
+    private val downloadServices: DownloadServices
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val notificationId = Random.nextInt()
@@ -79,7 +79,7 @@ class DownloadImagesWorker @AssistedInject constructor(
                             }
                         }
                     } else {
-                        sssTikServices.downloadFile(url).use { body ->
+                        downloadServices.downloadFile(url).use { body ->
                             body.byteStream().use { bs ->
                                 outputFile.outputStream().use { os ->
                                     bs.copyTo(os)

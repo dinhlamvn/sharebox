@@ -69,7 +69,7 @@ class DirectDownloadShareWorker @AssistedInject constructor(
 
         val url = body.use { responseBody -> responseBody.request.url.toString() }
 
-        if (url.contains("login.php?next=")) {
+        if (url.contains("facebook") && url.contains("login")) {
             Uri.parse(url).getQueryParameter("next")!!
         } else {
             url

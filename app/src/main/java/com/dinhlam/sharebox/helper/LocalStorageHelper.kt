@@ -54,7 +54,7 @@ class LocalStorageHelper @Inject constructor(
             }
         }
 
-    suspend fun saveAutoToGallery(sourceAudioUri: Uri) =
+    suspend fun saveAudioToGallery(sourceAudioUri: Uri) =
         withContext(Dispatchers.IO) {
             val resolver = appContext.contentResolver
 
