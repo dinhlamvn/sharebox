@@ -21,6 +21,7 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.DrawableImageListModel
+import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.listmodel.profile.ProfileInfoListModel
@@ -48,6 +49,10 @@ class ProfileFragment :
 
     private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
+            if (state.firstLoading) {
+                LoadingListModel("first_loading").attachTo(this)
+                return@getState
+            }
             val nonNullUser = state.currentUser
             if (nonNullUser == null) {
                 TextListModel(

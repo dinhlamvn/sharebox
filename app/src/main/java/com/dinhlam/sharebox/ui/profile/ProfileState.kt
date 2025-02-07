@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.UserDetail
 
 data class ProfileState(
+    val firstLoading: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val currentUser: UserDetail? = null,
     val shareCount: Int = 0
