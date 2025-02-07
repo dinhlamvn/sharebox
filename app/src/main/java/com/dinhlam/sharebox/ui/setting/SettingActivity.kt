@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.ui.setting
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.widget.SeekBar
@@ -24,6 +23,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.coerceMinMax
+import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
@@ -229,7 +229,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         binding.switchAutoSync.isVisible = userHelper.isSignedIn()
         binding.textAbout.text = buildSpannedString {
             underline {
-                color(Color.BLUE) {
+                color(getColorCompat(R.color.md_theme_primary)) {
                     append(
                         getString(
                             R.string.setting_about,

@@ -30,7 +30,7 @@ import kotlin.random.Random
 class TiktokDownloadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    @Named("TiktokDownloader") private val tiktokDownloader: Downloader,
+    @Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader,
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
 

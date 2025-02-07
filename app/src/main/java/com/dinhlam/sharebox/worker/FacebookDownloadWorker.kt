@@ -14,7 +14,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
-import com.dinhlam.sharebox.data.network.FDownServices
 import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.pushNotification
 import com.dinhlam.sharebox.router.Router
@@ -31,8 +30,7 @@ import kotlin.random.Random
 class FacebookDownloadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    @Named("FacebookDownloader") private val facebookDownloader: Downloader,
-    private val fDownServices: FDownServices,
+    @Named("FacebookDownloaderV2") private val facebookDownloader: Downloader,
     private val router: Router,
 ) : CoroutineWorker(appContext, workerParams) {
 
