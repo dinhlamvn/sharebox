@@ -79,7 +79,7 @@
     <string name="archives">Lưu trữ</string>
     <string name="title_image_download_quality">Chất lượng ảnh khi lưu vào Bộ Sưu Tập</string>
     <string name="require_min_image_quality">Chất lượng ảnh phải từ %d</string>
-    <string name="title_setting_sync_background">Đồng bộ dữ liệu dưới nền</string>
+    <string name="title_setting_sync_background">Đồng bộ dữ liệu hằng ngày</string>
     <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi 6 giờ.</string>
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
     <string name="downloading">Đang tải</string>
@@ -124,7 +124,7 @@
     <string name="copied">Đã sao chép</string>
     <string name="dialog_confirm_remove_share_from_bookmark">Bạn có chắc muốn xóa nội dung này khỏi đánh dấu?</string>
     <string name="app_desc_more">(Bạn cần phải đăng nhập trước để có thể lưu trữ nội dung)</string>
-    <string name="auto_sync_data_desc">Dữ liệu của bạn sẽ được tự động đồng bộ để luôn là mới nhất</string>
+    <string name="auto_sync_data_desc">Dữ liệu của bạn sẽ được tự động đồng bộ hằng ngày để đảm bảo nó luôn được cập nhật mới nhất.</string>
     <string name="running">Đang chạy…</string>
     <string name="desc">Mô tả</string>
     <string name="desc_box_hint">Box này là gì? Nó để làm gì?…</string>

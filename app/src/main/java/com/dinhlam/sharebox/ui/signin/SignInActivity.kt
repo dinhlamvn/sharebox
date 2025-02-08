@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.TransferDataHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.Icons
@@ -146,17 +147,26 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         activityScope.launch(Dispatchers.IO) {
             val userName = displayName ?: "User-$email"
             val userPhotoUrl = photoUrl ?: UserUtils.ANONYMOUS_AVATAR_URL
-            createUser(userEmail, userName, userPhotoUrl)
+            try {
+                createUser(userEmail, userName, userPhotoUrl)
+            } catch (e: Exception) {
+                Logger.error(e)
+
+            } finally {
+                withContext(Dispatchers.Main) {
+                    binding.viewLoading.hide()
+                }
+            }
         }
     }
 
     private suspend fun createUser(email: String, name: String, photoUrl: String) {
         val userId = UserUtils.createUserId(email)
-        userHelper.createUser(userId, name, photoUrl, { user ->
+        val user = userHelper.createUser(userId, name, photoUrl)
+        if (user != null) {
             realtimeDatabaseRepository.push(user)
             transferDataHelper.transferData(userSharePref.getAnonymousUserId(), user.userId)
             if (signInForResult) {
-                binding.viewLoading.hide()
                 setResult(Activity.RESULT_OK)
                 finish()
             } else {
@@ -164,12 +174,12 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
                     goHome()
                 }
             }
-        }, {
+        } else {
             activityScope.launch(Dispatchers.Main) {
                 showToast(R.string.create_user_error)
                 signOut()
             }
-        })
+        }
     }
 
     private fun signOut() {
@@ -179,7 +189,6 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
     }
 
     private fun goHome() {
-        binding.viewLoading.hide()
         startActivity(
             router.home().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         )

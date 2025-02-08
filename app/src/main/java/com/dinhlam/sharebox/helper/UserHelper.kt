@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.helper
 
 import android.content.Context
-import android.util.Log
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.pref.UserSharePref
@@ -38,34 +37,20 @@ class UserHelper @Inject constructor(
     suspend fun createUser(
         userId: String,
         displayName: String,
-        avatarUrl: String,
-        onSuccess: suspend (User) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        try {
-            val existedUser = userRepository.findOneRaw(userId)
-                ?.copy(name = displayName, avatar = avatarUrl)
+        avatarUrl: String
+    ): User? {
+        val existedUser = userRepository.findOneRaw(userId)
+            ?.copy(name = displayName, avatar = avatarUrl)
 
-            val shareBoxUser = withContext(Dispatchers.IO) {
-                existedUser?.let { user -> userRepository.update(user) } ?: userRepository.insert(
-                    userId,
-                    displayName,
-                    avatarUrl
-                )
-            }
-
-            shareBoxUser?.let { createdUser ->
-                userSharePref.setCurrentUserId(createdUser.userId)
-                withContext(Dispatchers.Main) {
-                    onSuccess(createdUser)
-                }
-            } ?: error("Create user error")
-        } catch (e: Exception) {
-            Log.e("DinhLam", e.message, e)
-            withContext(Dispatchers.Main) {
-                onError(e)
-            }
+        val shareBoxUser = withContext(Dispatchers.IO) {
+            existedUser?.let { user -> userRepository.update(user) } ?: userRepository.insert(
+                userId,
+                displayName,
+                avatarUrl
+            )
         }
+
+        return shareBoxUser?.also { createdUser -> userSharePref.setCurrentUserId(createdUser.userId) }
     }
 
     suspend fun updateUserAvatar(userId: String, avatarUrl: String) = withContext(Dispatchers.IO) {

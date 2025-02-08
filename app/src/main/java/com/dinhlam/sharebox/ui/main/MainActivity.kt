@@ -15,6 +15,7 @@ import com.dinhlam.sharebox.ui.download.DownloadFragment
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.utils.LiveEvents
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
@@ -31,6 +32,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WorkerUtils.enqueueJobSyncDataOneTime(this)
 
         registerOnBackPressHandler {
             if (binding.bottomNavigationView.selectedItemId != R.id.home) {
