@@ -100,7 +100,12 @@ class TiktokDiscoverFragment :
 
     override fun onStateChanged(state: TiktokDiscoverState) {
         binding.loading.toggle(state.asyncLoadTiktokDiscover is BaseViewModel.AsyncLoad.Loading)
-        categoryAdapter.requestBuildListModels()
+        categoryAdapter.requestBuildListModels {
+            val activePosition = state.categories.indexOf(state.activeCategory)
+            if (activePosition >= 0) {
+                binding.recyclerViewCategory.scrollToPosition(activePosition)
+            }
+        }
         adapter.requestBuildListModels()
     }
 

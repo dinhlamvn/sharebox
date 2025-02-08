@@ -65,11 +65,17 @@ class TiktokDiscoverVideoViewerDialogFragment :
     override fun onPause() {
         super.onPause()
         binding.videoView.onPause()
+        if (player.isPlaying) {
+            player.pause()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         binding.videoView.onResume()
+        if (!player.isPlaying) {
+            player.play()
+        }
     }
 
     override fun onDestroyView() {

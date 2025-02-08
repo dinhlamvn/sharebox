@@ -20,10 +20,8 @@
         app:hide_on_touch="true"
         app:layout_constraintBottom_toBottomOf="@id/video_background"
         app:layout_constraintTop_toTopOf="@id/video_background"
-        app:show_fastforward_button="false"
         app:show_next_button="false"
         app:show_previous_button="false"
-        app:show_rewind_button="false"
         app:show_timeout="3000" />
 
     <ProgressBar
@@ -100,38 +98,37 @@
         android:id="@+id/button_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginVertical="4dp"
+        android:layout_marginStart="16dp"
         android:padding="4dp"
         app:icon_code="f019"
         app:icon_size="24dp"
-        app:layout_constraintStart_toStartOf="@id/button_share"
-        app:layout_constraintTop_toTopOf="@id/icon_like" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_desc" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/button_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginVertical="4dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="4dp"
         android:padding="4dp"
         app:icon_code="f064"
         app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_download" />
+        app:layout_constraintTop_toBottomOf="@id/text_desc" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/button_tiktok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:padding="4dp"
         app:icon_code="e07b"
-        app:icon_color="@color/white"
-        app:icon_size="28dp"
+        app:icon_size="24dp"
         app:icon_style="regular_brands"
-        app:layout_constraintEnd_toEndOf="@id/video_view"
-        app:layout_constraintTop_toTopOf="@id/video_view" />
+        app:layout_constraintEnd_toStartOf="@id/button_share"
+        app:layout_constraintTop_toTopOf="@id/button_share" />
 </androidx.constraintlayout.widget.ConstraintLayout>

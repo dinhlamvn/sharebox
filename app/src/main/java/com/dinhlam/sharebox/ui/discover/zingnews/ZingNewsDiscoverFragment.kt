@@ -86,7 +86,12 @@ class ZingNewsDiscoverFragment :
 
     override fun onStateChanged(state: ZingNewsDiscoverState) {
         binding.loading.toggle(state.asyncLoadZingNewsDiscover is BaseViewModel.AsyncLoad.Loading)
-        categoryAdapter.requestBuildListModels()
+        categoryAdapter.requestBuildListModels {
+            val activePosition = state.zingNewsCategories.indexOf(state.activeCategory)
+            if (activePosition >= 0) {
+                binding.recyclerViewCategory.scrollToPosition(activePosition)
+            }
+        }
         adapter.requestBuildListModels()
     }
 
