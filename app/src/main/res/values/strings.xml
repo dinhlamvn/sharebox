@@ -199,6 +199,7 @@
     <string name="me">Me</string>
     <string name="processing">Processing…</string>
     <string name="video_not_available">Video isn\'t available</string>
+    <string name="view_on_tiktok">View on Tiktok</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

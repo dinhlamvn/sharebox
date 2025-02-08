@@ -1,14 +1,18 @@
 package com.dinhlam.sharebox.ui.discover.tiktok.viewer
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.buildSpannedString
+import androidx.core.text.underline
 import androidx.core.view.isVisible
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentTiktokDiscoverVideoViewerBinding
@@ -115,23 +119,40 @@ class TiktokDiscoverVideoViewerDialogFragment :
         }
 
         binding.buttonSave.setOnClickListener {
-            arguments?.getString(EXTRA_VIEW_TIKTOK_URL)?.let(::shareVideo)
+            arguments?.getString(EXTRA_VIEW_TIKTOK_URL)?.let(::saveVideoUrl)
         }
 
-        binding.buttonTiktok.setOnClickListener {
+        binding.buttonShare.setOnClickListener {
+            val url = arguments?.getString(EXTRA_VIEW_TIKTOK_URL) ?: return@setOnClickListener
+            shareVideo(url)
+        }
+
+        binding.viewOnTiktok.text = buildSpannedString {
+            underline {
+                append(getString(R.string.view_on_tiktok))
+            }
+        }
+        binding.viewOnTiktok.setOnClickListener {
             val url = arguments?.getString(EXTRA_VIEW_TIKTOK_URL) ?: return@setOnClickListener
             startActivity(router.viewIntent(url))
         }
     }
 
     private fun downloadVideo(downloadUrl: String) {
-        val outputFile =
-            "sharebox_video_${id}_${System.currentTimeMillis()}.mp4"
+        val outputFile = "sharebox_video_${System.currentTimeMillis()}.mp4"
         DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 
-    private fun shareVideo(url: String) {
+    private fun saveVideoUrl(url: String) {
         parentFragment?.cast<OnDialogCallback>()?.onSave(url)
-        dismiss()
+    }
+
+    private fun shareVideo(url: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.putExtra(Intent.EXTRA_TEXT, url)
+        intent.type = "text/*"
+        val chooser = Intent.createChooser(intent, "Share To")
+        chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(chooser)
     }
 }
