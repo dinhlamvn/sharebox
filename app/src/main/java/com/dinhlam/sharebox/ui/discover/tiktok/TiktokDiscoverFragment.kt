@@ -28,7 +28,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class TiktokDiscoverFragment :
-    BaseViewModelFragment<TiktokDiscoverState, TiktokDiscoverViewModel, FragmentTiktokDiscoverBinding>() {
+    BaseViewModelFragment<TiktokDiscoverState, TiktokDiscoverViewModel, FragmentTiktokDiscoverBinding>(),
+    TiktokDiscoverVideoViewerDialogFragment.OnDialogCallback {
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater,
@@ -36,6 +37,9 @@ class TiktokDiscoverFragment :
     ): FragmentTiktokDiscoverBinding {
         return FragmentTiktokDiscoverBinding.inflate(layoutInflater)
     }
+
+    override val isOverrideBackPressedCallback: Boolean
+        get() = true
 
     private val gridLayoutManager by lazy {
         LoadMoreGridLayoutManager(
@@ -153,6 +157,18 @@ class TiktokDiscoverFragment :
                         TiktokDiscoverVideoViewerDialogFragment.EXTRA_LIKE_COUNT to tiktokDiscover.diggCount.toInt()
                     )
                 }.show(childFragmentManager, "tiktok_discover_video_viewer")
+        }
+    }
+
+    override fun onSave(url: String) {
+        onArchive(url)
+    }
+
+    override fun onBackPressed() {
+        if (binding.recyclerView.computeVerticalScrollOffset() == 0) {
+            activity?.finish()
+        } else {
+            binding.recyclerView.smoothScrollToPosition(0)
         }
     }
 }

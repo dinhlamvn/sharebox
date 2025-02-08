@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.discover.tiktok.viewer
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +13,7 @@ import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentTiktokDiscoverVideoViewerBinding
 import com.dinhlam.sharebox.extensions.asViewCount
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.updateHeight
 import com.dinhlam.sharebox.helper.DownloadHelper
@@ -24,6 +24,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TiktokDiscoverVideoViewerDialogFragment :
     BaseDialogFragment<DialogFragmentTiktokDiscoverVideoViewerBinding>() {
+
+    fun interface OnDialogCallback {
+        fun onSave(url: String)
+    }
+
     companion object {
         const val EXTRA_VIEW_TIKTOK_URL = "extra-view-tiktok-url"
         const val EXTRA_VIEW_DESC = "extra-view-desc"
@@ -109,7 +114,7 @@ class TiktokDiscoverVideoViewerDialogFragment :
             downloadVideo(videoUrl)
         }
 
-        binding.buttonShare.setOnClickListener {
+        binding.buttonSave.setOnClickListener {
             arguments?.getString(EXTRA_VIEW_TIKTOK_URL)?.let(::shareVideo)
         }
 
@@ -126,11 +131,7 @@ class TiktokDiscoverVideoViewerDialogFragment :
     }
 
     private fun shareVideo(url: String) {
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.putExtra(Intent.EXTRA_TEXT, url)
-        intent.type = "text/*"
-        val chooser = Intent.createChooser(intent, "Share To")
-        chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(chooser)
+        parentFragment?.cast<OnDialogCallback>()?.onSave(url)
+        dismiss()
     }
 }

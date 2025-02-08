@@ -81,43 +81,30 @@
         android:id="@+id/text_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="16dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:paddingHorizontal="16dp"
         android:paddingVertical="4dp"
         android:textAppearance="@style/TextBody"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/button_share"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_view_count"
         tools:text="Có ăn thì phải có làm chứ" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
-        android:id="@+id/button_download"
+        android:id="@+id/button_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="4dp"
         android:layout_marginStart="16dp"
         android:padding="4dp"
-        app:icon_code="f019"
+        app:icon_code="f0c7"
         app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_desc" />
-
-    <com.dinhlam.sharebox.view.FontAwesomeIconView
-        android:id="@+id/button_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        android:layout_marginEnd="16dp"
-        android:padding="4dp"
-        app:icon_code="f064"
-        app:icon_size="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_desc" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
@@ -129,6 +116,19 @@
         app:icon_code="e07b"
         app:icon_size="24dp"
         app:icon_style="regular_brands"
-        app:layout_constraintEnd_toStartOf="@id/button_share"
-        app:layout_constraintTop_toTopOf="@id/button_share" />
+        app:layout_constraintBottom_toBottomOf="@id/button_save"
+        app:layout_constraintEnd_toStartOf="@id/button_download"
+        app:layout_constraintTop_toTopOf="@id/button_save" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/button_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:padding="4dp"
+        app:icon_code="f019"
+        app:icon_size="24dp"
+        app:layout_constraintBottom_toBottomOf="@id/button_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_save" />
 </androidx.constraintlayout.widget.ConstraintLayout>

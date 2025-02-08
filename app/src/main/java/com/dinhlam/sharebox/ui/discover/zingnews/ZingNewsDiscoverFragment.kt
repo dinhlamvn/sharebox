@@ -35,6 +35,9 @@ class ZingNewsDiscoverFragment :
         return FragmentZingnewsDiscoverBinding.inflate(inflater, container, false)
     }
 
+    override val isOverrideBackPressedCallback: Boolean
+        get() = true
+
     private val chooseBoxLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -129,5 +132,13 @@ class ZingNewsDiscoverFragment :
                 R.string.please_choose_box
             )
         viewModel.archiveLink(url, box.boxId)
+    }
+
+    override fun onBackPressed() {
+        if (binding.recyclerView.computeVerticalScrollOffset() == 0) {
+            activity?.finish()
+        } else {
+            binding.recyclerView.smoothScrollToPosition(0)
+        }
     }
 }
