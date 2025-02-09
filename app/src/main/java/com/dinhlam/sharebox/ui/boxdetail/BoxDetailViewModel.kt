@@ -8,7 +8,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.extensions.orElse
@@ -100,7 +100,6 @@ class BoxDetailViewModel @Inject constructor(
     fun like(shareId: String) = doInBackground {
         val result =
             likeRepository.like(shareId, userHelper.getCurrentUserId()) ?: return@doInBackground
-        realtimeDatabaseRepository.push(result)
         setState {
             val shareList = shares.map { shareDetail ->
                 if (shareDetail.shareId == shareId) {

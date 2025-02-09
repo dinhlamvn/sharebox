@@ -1,14 +1,17 @@
 package com.dinhlam.sharebox.data.repository
 
+import android.content.Context
 import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.mapper.ShareToShareDetailMapper
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.TrendingShare
 import com.dinhlam.sharebox.utils.ShareUtils
+import com.dinhlam.sharebox.utils.WorkerUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
@@ -17,6 +20,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ShareRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val shareDao: ShareDao,
     private val commentRepository: CommentRepository,
     private val bookmarkRepository: BookmarkRepository,
@@ -24,7 +28,36 @@ class ShareRepository @Inject constructor(
     private val mapper: ShareToShareDetailMapper,
     private val userHelper: UserHelper,
     private val boxRepository: BoxRepository,
-) {
+) : BaseRepository<Share>() {
+
+    override suspend fun insertInternal(entity: Share): Share {
+        shareDao.insertAll(entity)
+        WorkerUtils.enqueueSyncShareToCloud(context, entity.shareId)
+        return entity
+    }
+
+    override suspend fun updateInternal(entity: Share, willBeSync: Boolean): Share {
+        shareDao.update(entity)
+        if (willBeSync) {
+            WorkerUtils.enqueueSyncShareToCloud(context, entity.shareId)
+        }
+        return entity
+    }
+
+    override suspend fun count(): Int {
+        return shareDao.count(userHelper.getCurrentUserId())
+    }
+
+    override suspend fun delete(entity: Share): Boolean {
+        try {
+            shareDao.delete(entity)
+            return true
+        } catch (e: Exception) {
+            Logger.error("Delete record $entity from database failed.")
+        }
+        return false
+    }
+
     suspend fun insert(
         shareId: String = ShareUtils.createShareId(),
         shareData: ShareData,
@@ -34,7 +67,7 @@ class ShareRepository @Inject constructor(
         shareDate: Long = nowUTCTimeInMillis(),
         synced: Boolean = false,
         isVideoShare: Boolean = false,
-    ): Share? = shareDao.runCatching {
+    ): Share? {
         val share = Share(
             shareId = shareId,
             shareUserId = shareUserId,
@@ -45,23 +78,12 @@ class ShareRepository @Inject constructor(
             synced = synced,
             isVideoShare = isVideoShare
         )
-        insertAll(share)
-        share
-    }.getOrNull()
+        return insert(share)
+    }
 
     suspend fun countByUser(userId: String): Int = shareDao.runCatching {
         countByUser(userId)
     }.getOrDefault(0)
-
-    suspend fun insert(share: Share): Boolean = shareDao.runCatching {
-        insertAll(share)
-        true
-    }.getOrDefault(false)
-
-    suspend fun update(share: Share, synced: Boolean = false): Boolean = shareDao.runCatching {
-        update(share.copy(synced = synced))
-        true
-    }.getOrDefault(false)
 
     suspend fun findOne(shareId: String) = shareDao.runCatching {
         findOne(shareId)?.let { share ->
@@ -69,66 +91,68 @@ class ShareRepository @Inject constructor(
         }
     }.getOrNull()
 
-    suspend fun findOneRaw(shareId: String) = shareDao.runCatching {
-        findOne(shareId)
-    }.getOrNull()
+    suspend fun findOneRaw(shareId: String): Share? {
+        return try {
+            shareDao.findOne(shareId)
+        } catch (e: Exception) {
+            Logger.error("Query share record: $shareId has error: $e")
+            return null
+        }
+    }
 
-    suspend fun find(shareUserId: String, limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = find(shareUserId, limit, offset)
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun find(shareUserId: String, limit: Int, offset: Int): List<ShareDetail> {
+        return try {
+            val shares = shareDao.find(shareUserId, limit, offset)
+            shares.asFlow().mapNotNull(::buildShareDetail).toList()
+        } catch (e: Exception) {
+            Logger.error("Query list share record $shareUserId has error: $e")
+            emptyList()
+        }
+    }
 
     suspend fun find(shareIds: List<String>) = shareDao.runCatching {
         val shares = find(shareIds)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
 
-    suspend fun findGeneralShares(limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findForGeneral(
-            limit = limit,
-            offset = offset
-        )
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
-
-    suspend fun findRecentlyShares(userId: String, limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findForRecently(
-            userId,
-            limit = limit,
-            offset = offset
-        )
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
-
-    suspend fun findTrendingShares(limit: Int, offset: Int) = shareDao.runCatching {
-        val trendingShares = findForTrending(
-            limit = limit,
-            offset = offset
-        )
-        val shares = find(trendingShares.map(TrendingShare::shareId))
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
-
-    suspend fun findForSyncToCloud() = shareDao.runCatching {
-        findForSyncToCloud()
-    }.getOrDefault(emptyList())
-
-    suspend fun findWhereInBox(userId: String, shareBoxId: String, limit: Int, offset: Int) =
-        shareDao.runCatching {
-            val shares = findWhereInBox(userId, shareBoxId, limit, offset)
+    suspend fun findRecentlyShares(userId: String, limit: Int, offset: Int): List<ShareDetail> {
+        return try {
+            val shares = shareDao.findForRecently(userId, limit, offset)
             shares.asFlow().mapNotNull(::buildShareDetail).toList()
-        }.getOrDefault(emptyList())
+        } catch (e: Exception) {
+            Logger.error("Query list share record $userId has error: $e")
+            emptyList()
+        }
+    }
 
-    suspend fun findWhereInBox(shareBoxId: String, limit: Int, offset: Int) = shareDao.runCatching {
-        val shares = findWhereInBox(shareBoxId, limit, offset)
-        shares.asFlow().mapNotNull(::buildShareDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun findForSyncToCloud(): List<Share> {
+        return try {
+            shareDao.findForSyncToCloud()
+        } catch (e: Exception) {
+            Logger.error("Query list share to sync to cloud has error: $e")
+            emptyList()
+        }
+    }
 
-    suspend fun findShareInTrash(limit: Int, offset: Int) =
-        shareDao.runCatching {
-            val shares = findShareInTrash(userHelper.getCurrentUserId(), limit, offset)
+    suspend fun findWhereInBox(shareBoxId: String, limit: Int, offset: Int): List<ShareDetail> {
+        return try {
+            val shares = shareDao.findWhereInBox(shareBoxId, limit, offset)
             shares.asFlow().mapNotNull(::buildShareDetail).toList()
-        }.getOrDefault(emptyList())
+        } catch (e: Exception) {
+            Logger.error("Query list share in box $shareBoxId has error: $e")
+            emptyList()
+        }
+    }
+
+    suspend fun findShareInTrash(limit: Int, offset: Int): List<ShareDetail> {
+        return try {
+            val shares = shareDao.findShareInTrash(userHelper.getCurrentUserId(), limit, offset)
+            shares.asFlow().mapNotNull(::buildShareDetail).toList()
+        } catch (e: Exception) {
+            Logger.error("Query list share in trash has error: $e")
+            emptyList()
+        }
+    }
 
     private suspend fun buildShareDetail(share: Share): ShareDetail? = share.runCatching {
         val commentNumber = commentRepository.count(share.shareId)

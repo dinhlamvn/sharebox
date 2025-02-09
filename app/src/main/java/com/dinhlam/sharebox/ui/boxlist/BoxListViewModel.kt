@@ -27,8 +27,7 @@ class BoxListViewModel @Inject constructor(
 
     private fun getListBoxes() = getState { state ->
         suspend {
-            boxRepository.findByUser(
-                userHelper.getCurrentUserId(),
+            boxRepository.find(
                 AppConsts.NUMBER_VISIBLE_BOX,
                 state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )
@@ -42,7 +41,7 @@ class BoxListViewModel @Inject constructor(
     }
 
     private fun fetchTotalBox() {
-        suspend { boxRepository.count(userHelper.getCurrentUserId()) }.execute { asyncLoad ->
+        suspend { boxRepository.count() }.execute { asyncLoad ->
             copy(totalBox = asyncLoad.data.orElse(0))
         }
     }
@@ -52,8 +51,7 @@ class BoxListViewModel @Inject constructor(
             return@getState
         }
         suspend {
-            boxRepository.findByUser(
-                userHelper.getCurrentUserId(),
+            boxRepository.find(
                 AppConsts.NUMBER_VISIBLE_BOX,
                 state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
             )

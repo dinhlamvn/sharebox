@@ -15,8 +15,8 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.databinding.ActivitySignInBinding

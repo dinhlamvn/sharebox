@@ -13,6 +13,12 @@ interface ShareDao {
     @Update
     suspend fun update(share: Share)
 
+    @Delete
+    suspend fun delete(share: Share)
+
+    @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
+    suspend fun count(userId: String): Int
+
     @Query("SELECT * FROM share ORDER BY id DESC")
     suspend fun find(): List<Share>
 

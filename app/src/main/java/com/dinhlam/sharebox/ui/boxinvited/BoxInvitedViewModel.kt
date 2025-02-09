@@ -2,8 +2,7 @@ package com.dinhlam.sharebox.ui.boxinvited
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BoxRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
-import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

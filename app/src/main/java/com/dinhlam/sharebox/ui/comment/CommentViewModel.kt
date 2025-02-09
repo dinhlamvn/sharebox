@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.CommentRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.helper.UserHelper
@@ -49,7 +49,6 @@ class CommentViewModel @Inject constructor(
                 userHelper.getCurrentUserId(),
                 comment
             )!!
-            realtimeDatabaseRepository.push(cmtEntity)
             commentRepository.findOne(cmtEntity.commentId)
         }.execute { asyncLoad ->
             asyncLoad.data?.let { cmtEntity ->

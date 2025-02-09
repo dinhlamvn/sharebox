@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -14,6 +15,9 @@ interface BoxDao {
 
     @Update
     suspend fun update(vararg box: Box)
+
+    @Delete
+    suspend fun delete(vararg box: Box)
 
     @Query("SELECT * FROM `box` WHERE box_id = :boxId")
     suspend fun find(boxId: String): Box?
@@ -38,9 +42,6 @@ interface BoxDao {
 
     @Query("SELECT * FROM `box` WHERE passcode IS NULL OR passcode = '' ORDER BY last_seen DESC LIMIT 6")
     suspend fun findLatestBoxesWithoutPasscode(): List<Box>
-
-    @Query("SELECT COUNT(*) FROM `box`")
-    suspend fun count(): Int
 
     @Query("SELECT COUNT(*) FROM `box` WHERE created_by = :userId")
     suspend fun count(userId: String): Int

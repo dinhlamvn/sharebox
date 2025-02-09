@@ -39,7 +39,6 @@ class CustomTabsShareBroadcastReceiver : BaseBroadcastReceiver() {
         coroutineScope.launch {
             val share = shareUrl(null, ShareData.ShareUrl(url), boxId)
             share?.let { insertedShare ->
-                WorkerUtils.enqueueSyncShareToCloud(context!!, insertedShare.shareId)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, R.string.shares_success, Toast.LENGTH_SHORT).show()
                 }

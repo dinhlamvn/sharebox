@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.model.BoxMember
 import com.dinhlam.sharebox.utils.UserUtils

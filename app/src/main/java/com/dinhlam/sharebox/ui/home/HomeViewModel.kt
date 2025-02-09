@@ -4,8 +4,6 @@ import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.orElse
@@ -22,11 +20,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val likeRepository: LikeRepository,
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
-    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val appSettingHelper: AppSettingHelper
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
@@ -35,7 +31,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getListBoxes() = suspend {
-        boxRepository.findByUser(userHelper.getCurrentUserId(), BOX_LIST_INIT_LOAD_SIZE_DEFAULT, 0)
+        boxRepository.find(BOX_LIST_INIT_LOAD_SIZE_DEFAULT, 0)
     }.execute { asyncLoad ->
         copy(boxes = asyncLoad.completed.ifTrue(asyncLoad.data.orEmpty(), boxes))
     }
@@ -56,20 +52,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun like(shareId: String) = doInBackground {
-        val result =
-            likeRepository.like(shareId, userHelper.getCurrentUserId()) ?: return@doInBackground
-        realtimeDatabaseRepository.push(result)
-        setState {
-            val shareList = shares.map { shareDetail ->
-                if (shareDetail.shareId == shareId) {
-                    shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
-                } else {
-                    shareDetail
-                }
+    fun like(shareId: String) = setState {
+        val shareList = shares.map { shareDetail ->
+            if (shareDetail.shareId == shareId) {
+                shareDetail.copy(likeNumber = shareDetail.likeNumber + 1, liked = true)
+            } else {
+                shareDetail
             }
-            copy(shares = shareList)
         }
+        copy(shares = shareList)
     }
 
     fun bookmark(shareId: String, bookmarkCollectionId: String?) = doInBackground {
@@ -149,17 +140,6 @@ class HomeViewModel @Inject constructor(
                 shareRepository.findOne(shareId)
             } ?: currentShare
         }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
-    }
-
-    fun updateShare(data: ShareDetail) = getState { state ->
-        val newShares = state.shares.map { shareDetail ->
-            if (shareDetail.shareId == data.shareId) {
-                data
-            } else {
-                shareDetail
-            }
-        }
-        setState { copy(shares = newShares) }
     }
 
     fun moveShareToBox(boxId: String) = getState { state ->

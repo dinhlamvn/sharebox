@@ -1,10 +1,15 @@
-package com.dinhlam.sharebox.data.repository
+package com.dinhlam.sharebox.data.realtime
 
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.data.local.entity.Comment
 import com.dinhlam.sharebox.data.local.entity.Like
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.local.entity.User
+import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.data.repository.CommentRepository
+import com.dinhlam.sharebox.data.repository.LikeRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
@@ -30,6 +35,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -75,19 +82,29 @@ class RealtimeDatabaseRepository @Inject constructor(
     )
     private val boxMemberInvitedRef: DatabaseReference by lazyOf(database.getReference("box-members-invited"))
 
-    suspend fun push(share: Share) {
+    suspend fun <T> push(record: T) {
         if (!userHelper.isSignedIn()) {
             return
         }
+        when (record) {
+            is Share -> pushShare(record)
+            is User -> pushUser(record)
+            is Comment -> pushComment(record)
+            is Like -> pushLike(record)
+            is Box -> pushBox(record)
+        }
+    }
+
+    private suspend fun pushShare(share: Share) {
         try {
             shareRef.child(share.shareId).setValue(RealtimeShareObj.from(gson, share)).await()
-            shareRepository.update(share, true)
+            shareRepository.update(share.copy(synced = true), false)
         } catch (e: Exception) {
             Logger.error(e)
         }
     }
 
-    suspend fun push(user: User) {
+    private suspend fun pushUser(user: User) {
         if (!userHelper.isSignedIn()) {
             return
         }
@@ -99,7 +116,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    suspend fun push(comment: Comment) {
+    private suspend fun pushComment(comment: Comment) {
         if (!userHelper.isSignedIn()) {
             return
         }
@@ -111,7 +128,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    suspend fun push(like: Like) {
+    private suspend fun pushLike(like: Like) {
         if (!userHelper.isSignedIn()) {
             return
         }
@@ -123,7 +140,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    suspend fun push(box: Box) {
+    private suspend fun pushBox(box: Box) {
         if (!userHelper.isSignedIn()) {
             return
         }
@@ -205,7 +222,7 @@ class RealtimeDatabaseRepository @Inject constructor(
             val share = shareRepository.findOneRaw(shareId)
             val snapshotDataShare = createNewShare(shareId, jsonMap) ?: return
             if (share != null) {
-                shareRepository.update(snapshotDataShare.copy(id = share.id), true)
+                shareRepository.update(snapshotDataShare.copy(id = share.id), false)
             } else {
                 shareRepository.insert(snapshotDataShare.copy(synced = true))
             }
@@ -218,26 +235,24 @@ class RealtimeDatabaseRepository @Inject constructor(
         private val scope: CoroutineScope,
         private val block: suspend (String, Map<String, Any>) -> Unit
     ) : ValueEventListener {
-        var completed: Boolean = false
-
         override fun onDataChange(snapshot: DataSnapshot) {
-            scope.launch {
-                val iterator = snapshot.children.iterator()
-                while (iterator.hasNext()) {
-                    val dataSnapshot = iterator.next()
-                    val dataKey = dataSnapshot.key ?: continue
-                    val value = dataSnapshot.value.cast<Map<String, Any>>() ?: continue
-                    block.invoke(dataKey, value)
+            scope.launch(Dispatchers.IO, start = CoroutineStart.UNDISPATCHED) {
+                try {
+                    val iterator = snapshot.children.iterator()
+                    while (iterator.hasNext()) {
+                        val dataSnapshot = iterator.next()
+                        val dataKey = dataSnapshot.key ?: continue
+                        val value = dataSnapshot.value.cast<Map<String, Any>>() ?: continue
+                        block(dataKey, value)
+                    }
+                } catch (e: Exception) {
+                    Logger.error("$this Listen data change has error: $e")
                 }
-            }.invokeOnCompletion {
-                completed = true
             }
         }
 
         override fun onCancelled(error: DatabaseError) {
-            Logger.error("consume data share error")
-            Logger.error(error.message)
-            completed = true
+            Logger.error("$this Listen data change has error: $error")
         }
     }
 

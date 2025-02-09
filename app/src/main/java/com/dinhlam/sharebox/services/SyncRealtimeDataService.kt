@@ -3,7 +3,7 @@ package com.dinhlam.sharebox.services
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import com.dinhlam.sharebox.data.repository.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

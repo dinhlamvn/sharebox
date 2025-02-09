@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.utils.FileUtils
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -74,7 +73,6 @@ class ShareReceiveViewModel @Inject constructor(
                 else -> null
             }
             share?.let { insertedShare ->
-                WorkerUtils.enqueueSyncShareToCloud(context, insertedShare.shareId)
                 state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
                     bookmarkRepository.bookmark(
                         0, insertedShare.shareId, pickedBookmarkCollectionId

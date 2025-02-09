@@ -86,10 +86,11 @@ object WorkerUtils {
     fun enqueueSyncShareToCloud(context: Context, shareId: String) {
         val syncShareToCloudRequest =
             OneTimeWorkRequestBuilder<SyncShareToCloudWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED).build()
             ).setInputData(
                 Data.Builder().putString(AppExtras.EXTRA_SHARE_ID, shareId).build()
-            ).setId(UUID.randomUUID()).build()
+            ).setId(UUID.fromString(shareId)).build()
         WorkManager.getInstance(context).enqueue(syncShareToCloudRequest)
     }
 

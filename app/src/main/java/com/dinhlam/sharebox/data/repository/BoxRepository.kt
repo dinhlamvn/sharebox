@@ -3,6 +3,8 @@ package com.dinhlam.sharebox.data.repository
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxDetail
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
@@ -13,8 +15,27 @@ import javax.inject.Singleton
 @Singleton
 class BoxRepository @Inject constructor(
     private val boxDao: BoxDao,
-    private val userRepository: UserRepository,
-) {
+    private val userHelper: UserHelper
+) : BaseRepository<Box>() {
+
+    override suspend fun insertInternal(entity: Box): Box {
+        boxDao.insert(entity)
+        return entity
+    }
+
+    override suspend fun updateInternal(entity: Box, willBeSync: Boolean): Box {
+        boxDao.update(entity)
+        return entity
+    }
+
+    override suspend fun delete(entity: Box): Boolean {
+        boxDao.delete(entity)
+        return true
+    }
+
+    override suspend fun count(): Int {
+        return boxDao.count(userHelper.getCurrentUserId())
+    }
 
     suspend fun insert(
         boxId: String,
@@ -36,73 +57,56 @@ class BoxRepository @Inject constructor(
             lastSeen = lastSeen,
             synced = synced
         )
-
-        return boxDao.runCatching {
-            insert(box)
-            box
-        }.getOrNull()
+        return insert(box)
     }
 
-    suspend fun insert(box: Box): Boolean = boxDao.runCatching {
-        insert(box)
-        true
-    }.getOrDefault(false)
-
-    suspend fun update(box: Box): Boolean = boxDao.runCatching {
-        update(box)
-        true
-    }.getOrDefault(false)
-
-    suspend fun updateLastSeen(boxId: String) {
-        val box = boxDao.find(boxId) ?: return
-        val newBox = box.copy(lastSeen = nowUTCTimeInMillis())
-        boxDao.update(newBox)
+    suspend fun search(query: String, userId: String): List<BoxDetail> {
+        try {
+            return boxDao.search(query, userId).asFlow().mapNotNull(::convertBoxToBoxDetail)
+                .toList()
+        } catch (e: Exception) {
+            Logger.error("Search box has error '$query': $e")
+        }
+        return emptyList()
     }
 
-    suspend fun search(query: String, userId: String): List<BoxDetail> = boxDao.runCatching {
-        search(query, userId).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun find(boxIdList: List<String>): List<BoxDetail> {
+        try {
+            return boxDao.find(boxIdList).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
+        } catch (e: Exception) {
+            Logger.error("Find box list with ids $boxIdList has error: $e")
+        }
+        return emptyList()
+    }
 
-    suspend fun find(limit: Int, offset: Int): List<BoxDetail> = boxDao.runCatching {
-        find(limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun find(limit: Int, offset: Int): List<BoxDetail> {
+        try {
+            return boxDao.find(userHelper.getCurrentUserId(), limit, offset).asFlow()
+                .mapNotNull(::convertBoxToBoxDetail).toList()
+        } catch (e: Exception) {
+            Logger.error("Find box list has error: $e")
+        }
+        return emptyList()
+    }
 
-    suspend fun find(boxIdList: List<String>): List<BoxDetail> = boxDao.runCatching {
-        find(boxIdList).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun findOne(boxId: String): BoxDetail? {
+        try {
+            val box = boxDao.find(boxId) ?: return null
+            return convertBoxToBoxDetail(box)
+        } catch (e: Exception) {
+            Logger.error("Find box with id $boxId has error: $e")
+        }
+        return null
+    }
 
-    suspend fun findByUser(userId: String, limit: Int, offset: Int): List<BoxDetail> =
-        boxDao.runCatching {
-            find(userId, limit, offset).asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-        }.getOrDefault(emptyList())
-
-    suspend fun count(): Int = boxDao.runCatching {
-        count()
-    }.getOrDefault(0)
-
-    suspend fun count(userId: String): Int = boxDao.count(userId)
-
-    suspend fun findOne(boxId: String): BoxDetail? = boxDao.runCatching {
-        val box = find(boxId) ?: return@runCatching null
-        convertBoxToBoxDetail(box)
-    }.getOrNull()
-
-    suspend fun findFirst(userId: String): BoxDetail? = boxDao.runCatching {
-        val box = findFirst(userId) ?: return@runCatching null
-        convertBoxToBoxDetail(box)
-    }.getOrNull()
-
-    suspend fun findOneRaw(boxId: String): Box? = boxDao.runCatching {
-        find(boxId)
-    }.getOrNull()
-
-    suspend fun findLatestBox(): List<BoxDetail> = boxDao.runCatching {
-        findLatestBoxes().asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-    }.getOrDefault(emptyList())
-
-    suspend fun findLatestBoxWithoutPasscode(): List<BoxDetail> = boxDao.runCatching {
-        findLatestBoxesWithoutPasscode().asFlow().mapNotNull(::convertBoxToBoxDetail).toList()
-    }.getOrDefault(emptyList())
+    suspend fun findOneRaw(boxId: String): Box? {
+        try {
+            return boxDao.find(boxId)
+        } catch (e: Exception) {
+            Logger.error("Find box with id $boxId has error: $e")
+        }
+        return null
+    }
 
     private fun convertBoxToBoxDetail(box: Box): BoxDetail {
         return BoxDetail(
@@ -116,9 +120,14 @@ class BoxRepository @Inject constructor(
         )
     }
 
-    suspend fun findForSyncToCloud(): List<Box> = boxDao.runCatching {
-        findForSyncToCloud()
-    }.getOrDefault(emptyList())
+    suspend fun findForSyncToCloud(): List<Box> {
+        try {
+            return boxDao.findForSyncToCloud()
+        } catch (e: Exception) {
+            Logger.error("Find box to sync to cloud has error: $e")
+        }
+        return emptyList()
+    }
 
     suspend fun transferData(anonymousUserId: String, userId: String) {
         boxDao.transferData(anonymousUserId, userId)
