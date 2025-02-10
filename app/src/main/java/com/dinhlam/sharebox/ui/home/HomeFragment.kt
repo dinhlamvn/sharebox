@@ -31,6 +31,7 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
@@ -165,6 +166,20 @@ class HomeFragment :
                         }
                         putParcelableArrayListExtra(Intent.EXTRA_STREAM, list)
                     }
+                }
+                archiveResultLauncher.launch(intent)
+            }
+        }
+
+    private val pickFileResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data ?: return@registerForActivityResult
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "*/*"
+                    component =
+                        ComponentName(packageName, ShareReceiveActivity::class.java.name)
+                    putExtra(Intent.EXTRA_STREAM, uri)
                 }
                 archiveResultLauncher.launch(intent)
             }
@@ -332,6 +347,10 @@ class HomeFragment :
         pickImagesResultLauncher.launch(router.pickImageIntent(true))
     }
 
+    fun requestArchiveFile() {
+        pickFileResultLauncher.launch(router.pickFile(requireContext()))
+    }
+
     fun requestViewAllBox() {
         viewModel.setChooseBoxFor(HomeState.ChooseBoxFor.Detail)
         showBoxList()
@@ -370,6 +389,8 @@ class HomeFragment :
             is ShareData.ShareImages -> shareHelper.viewShareImages(
                 requireContext(), shareData.uris
             )
+
+            else -> showToast("No support open this share")
         }
     }
 

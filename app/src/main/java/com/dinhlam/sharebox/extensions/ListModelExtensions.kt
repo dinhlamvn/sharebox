@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.utils.Icons
 import com.mikepenz.iconics.typeface.IIcon
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
-import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 
 fun ShareDetail.buildListItemListModel(
     onShowMore: (ShareDetail) -> Unit = { },
@@ -21,6 +20,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareUrl -> Icons.getWebIconByUrl(shareData.url)
             is ShareData.ShareImage -> FontAwesome.Icon.faw_image
             is ShareData.ShareImages -> FontAwesome.Icon.faw_images
+            is ShareData.ShareFile -> FontAwesome.Icon.faw_file
         }
     }
 
@@ -30,6 +30,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareUrl -> shareData.url
             is ShareData.ShareImage -> shareDetail.shareNote
             is ShareData.ShareImages -> shareDetail.shareNote
+            is ShareData.ShareFile -> shareData.fileName
         }
     }
 
@@ -39,6 +40,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareUrl -> shareDetail.shareNote
             is ShareData.ShareImage -> shareDetail.createdAt.format("yyyy MMM d HH:mm")
             is ShareData.ShareImages -> shareDetail.createdAt.format()
+            is ShareData.ShareFile -> shareData.fileSize.asHumanReadableSize()
         }
     }
 

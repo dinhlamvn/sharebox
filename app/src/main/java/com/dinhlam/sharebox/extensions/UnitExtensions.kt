@@ -54,3 +54,12 @@ fun Number.asViewCount(): String {
         this.toString()
     }
 }
+
+fun Double.asHumanReadableSize(): String {
+    return when {
+        this >= 1 shl 30 -> "%.1f GB".format(this / (1 shl 30))
+        this >= 1 shl 20 -> "%.1f MB".format(this / (1 shl 20))
+        this >= 1 shl 10 -> "%.0f kB".format(this / (1 shl 10))
+        else -> "$this bytes"
+    }
+}

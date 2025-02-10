@@ -5,6 +5,10 @@
         path="share_images/" />
 
     <external-files-path
+        name="share_files"
+        path="share_files/" />
+
+    <external-files-path
         name="bookmark_collection_thumbnails"
         path="bookmark_collection_thumbnails/" />
 

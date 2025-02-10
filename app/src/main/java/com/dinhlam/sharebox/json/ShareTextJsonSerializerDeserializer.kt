@@ -10,7 +10,7 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
-class ShareTextJsonSerializerDeserializer :
+object ShareTextJsonSerializerDeserializer :
     JsonSerializer<ShareData.ShareText>,
     JsonDeserializer<ShareData.ShareText> {
     override fun serialize(

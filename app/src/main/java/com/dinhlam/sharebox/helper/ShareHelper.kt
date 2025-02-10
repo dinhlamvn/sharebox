@@ -32,8 +32,6 @@ import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
-import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
-import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,9 +47,19 @@ class ShareHelper @Inject constructor(
     private val userHelper: UserHelper,
 ) {
 
-    fun showMore(activity: FragmentActivity, share: ShareDetail, callback: OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener) {
+    fun showMore(
+        activity: FragmentActivity,
+        share: ShareDetail,
+        callback: OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener
+    ) {
         val arrayIcons = arrayOf(
-            "faw_share", "faw_edit", "faw_arrow_right", "faw_download", "faw_bookmark", "faw_copy", "faw_trash"
+            "faw_share",
+            "faw_edit",
+            "faw_arrow_right",
+            "faw_download",
+            "faw_bookmark",
+            "faw_copy",
+            "faw_trash"
         )
         val choiceItems =
             activity.resources.getStringArray(R.array.more_menu)
@@ -85,21 +93,27 @@ class ShareHelper @Inject constructor(
             }
 
             is ShareData.ShareImage -> {
-                val shareImage = shareData.castNonNull<ShareData.ShareImage>()
                 intent.putExtra(
-                    Intent.EXTRA_STREAM, shareImage.uri
+                    Intent.EXTRA_STREAM, shareData.uri
                 )
-                intent.setDataAndType(shareImage.uri, "image/*")
+                intent.setDataAndType(shareData.uri, "image/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
 
             is ShareData.ShareImages -> {
-                val data = shareData.castNonNull<ShareData.ShareImages>()
                 intent.action = Intent.ACTION_SEND_MULTIPLE
                 intent.putParcelableArrayListExtra(
-                    Intent.EXTRA_STREAM, arrayListOf(*data.uris.toTypedArray())
+                    Intent.EXTRA_STREAM, arrayListOf(*shareData.uris.toTypedArray())
                 )
-                intent.setDataAndType(data.uris[0], "image/*")
+                intent.setDataAndType(shareData.uris[0], "image/*")
+                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+
+            is ShareData.ShareFile -> {
+                intent.putExtra(
+                    Intent.EXTRA_STREAM, shareData.uri
+                )
+                intent.setDataAndType(shareData.uri, "*/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
         }

@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.sharereceive.modelview
+package com.dinhlam.sharebox.ui.sharereceive.listmodel
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

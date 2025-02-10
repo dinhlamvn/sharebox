@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.dinhlam.sharebox.view.CardViewIconView
+    <androidx.cardview.widget.CardView
         android:id="@+id/button_archive_text"
         style="@style/AppMaterialCardView"
         android:layout_width="64dp"
@@ -14,7 +14,15 @@
         app:cardElevation="10dp"
         app:layout_constraintEnd_toStartOf="@id/button_archive_web"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:icon_code="f249"
+            app:icon_size="20dp" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_button_archive_text"
@@ -29,7 +37,7 @@
         app:layout_constraintStart_toStartOf="@id/button_archive_text"
         app:layout_constraintTop_toBottomOf="@id/button_archive_text" />
 
-    <com.dinhlam.sharebox.view.CardViewIconView
+    <androidx.cardview.widget.CardView
         android:id="@+id/button_archive_web"
         style="@style/AppMaterialCardView"
         android:layout_width="64dp"
@@ -38,7 +46,16 @@
         app:cardElevation="10dp"
         app:layout_constraintEnd_toStartOf="@id/button_archive_images"
         app:layout_constraintStart_toEndOf="@id/button_archive_text"
-        app:layout_constraintTop_toTopOf="@id/button_archive_text" />
+        app:layout_constraintTop_toTopOf="@id/button_archive_text">
+
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:icon_code="f26b"
+            app:icon_size="20dp"
+            app:icon_style="regular_brands" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_button_archive_url"
@@ -53,16 +70,24 @@
         app:layout_constraintStart_toStartOf="@id/button_archive_web"
         app:layout_constraintTop_toBottomOf="@id/button_archive_web" />
 
-    <com.dinhlam.sharebox.view.CardViewIconView
+    <androidx.cardview.widget.CardView
         android:id="@+id/button_archive_images"
         style="@style/AppMaterialCardView"
         android:layout_width="64dp"
         android:layout_height="64dp"
         app:cardCornerRadius="32dp"
         app:cardElevation="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_archive_file"
         app:layout_constraintStart_toEndOf="@id/button_archive_web"
-        app:layout_constraintTop_toTopOf="@id/button_archive_text" />
+        app:layout_constraintTop_toTopOf="@id/button_archive_text">
+
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:icon_code="f03e"
+            app:icon_size="20dp" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_button_archive_images"
@@ -76,5 +101,37 @@
         app:layout_constraintEnd_toEndOf="@id/button_archive_images"
         app:layout_constraintStart_toStartOf="@id/button_archive_images"
         app:layout_constraintTop_toBottomOf="@id/button_archive_images" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/button_archive_file"
+        style="@style/AppMaterialCardView"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_archive_images"
+        app:layout_constraintTop_toTopOf="@id/button_archive_text">
+
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:icon_code="f15c"
+            app:icon_size="20dp" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_button_archive_file"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/file"
+        android:textAppearance="@style/TextBodyMedium"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/button_archive_file"
+        app:layout_constraintStart_toStartOf="@id/button_archive_file"
+        app:layout_constraintTop_toBottomOf="@id/button_archive_file" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

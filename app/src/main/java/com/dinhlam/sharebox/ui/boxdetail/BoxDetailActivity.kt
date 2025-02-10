@@ -350,6 +350,8 @@ class BoxDetailActivity :
             is ShareData.ShareImages -> shareHelper.viewShareImages(
                 this, shareData.uris
             )
+
+            else -> showToast("No support open this share")
         }
     }
 }

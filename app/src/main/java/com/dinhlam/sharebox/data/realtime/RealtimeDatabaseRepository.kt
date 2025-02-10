@@ -203,6 +203,7 @@ class RealtimeDatabaseRepository @Inject constructor(
                 ShareType.TEXT -> gson.fromJson(json, ShareData.ShareText::class.java)
                 ShareType.IMAGE -> gson.fromJson(json, ShareData.ShareImage::class.java)
                 ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
+                ShareType.FILE -> gson.fromJson(json, ShareData.ShareFile::class.java)
                 else -> return null
             }
         return Share(

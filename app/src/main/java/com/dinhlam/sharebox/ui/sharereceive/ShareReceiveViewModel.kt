@@ -9,7 +9,7 @@ import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
-import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.getExtensionFromUri
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.BoxDetail
@@ -46,27 +46,34 @@ class ShareReceiveViewModel @Inject constructor(
             val share = when (val shareData = state.shareData) {
                 is ShareData.ShareUrl -> shareUrl(
                     note,
-                    shareData.castNonNull(),
+                    shareData,
                     state.currentBox,
                 )
 
                 is ShareData.ShareText -> shareText(
                     note,
-                    shareData.castNonNull(),
+                    shareData,
                     state.currentBox,
                 )
 
                 is ShareData.ShareImage -> shareImage(
                     context,
                     note,
-                    shareData.castNonNull(),
+                    shareData,
                     state.currentBox,
                 )
 
                 is ShareData.ShareImages -> shareImages(
                     context,
                     note,
-                    shareData.castNonNull(),
+                    shareData,
+                    state.currentBox,
+                )
+
+                is ShareData.ShareFile -> shareFile(
+                    context,
+                    note,
+                    shareData,
                     state.currentBox,
                 )
 
@@ -160,6 +167,31 @@ class ShareReceiveViewModel @Inject constructor(
         val saveShareImages = shareData.copy(uris = uris)
         return shareRepository.insert(
             shareData = saveShareImages,
+            shareNote = note,
+            shareBoxId = shareBox?.boxId,
+            shareUserId = userHelper.getCurrentUserId()
+        )
+    }
+
+    private suspend fun shareFile(
+        context: Context, note: String?, shareData: ShareData.ShareFile, shareBox: BoxDetail?
+    ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
+        val fileDir = FileUtils.createShareFilesDir(context) ?: return@use null
+        val extension = context.getExtensionFromUri(shareData.uri)
+            ?: return@use null
+        val file = File(fileDir, FileUtils.randomFileName(extension))
+        withContext(Dispatchers.IO) {
+            file.createNewFile()
+        }
+
+        file.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+
+        val newUri = FileUtils.getUriFromFile(context, file)
+        val newShareFile = shareData.copy(uri = newUri)
+        shareRepository.insert(
+            shareData = newShareFile,
             shareNote = note,
             shareBoxId = shareBox?.boxId,
             shareUserId = userHelper.getCurrentUserId()

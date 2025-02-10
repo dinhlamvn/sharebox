@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragmen
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -175,6 +176,8 @@ class TrashActivity :
             is ShareData.ShareImages -> shareHelper.viewShareImages(
                 this, shareData.uris
             )
+
+            else -> showToast("No support open this share")
         }
     }
 }

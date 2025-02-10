@@ -40,6 +40,7 @@ class SyncShareToCloudWorker @AssistedInject constructor(
         val newShare = when (share.shareData) {
             is ShareData.ShareImage -> handleShareImage(share, share.shareData)
             is ShareData.ShareImages -> handleShareImages(share, share.shareData)
+            is ShareData.ShareFile -> handleShareFile(share, share.shareData)
             else -> share
         }
         realtimeDatabaseRepository.push(newShare)
@@ -79,6 +80,18 @@ class SyncShareToCloudWorker @AssistedInject constructor(
         }
 
         return share.copy(shareData = shareImages.copy(uris = shareUris))
+    }
+
+    private suspend fun handleShareFile(share: Share, shareFile: ShareData.ShareFile): Share {
+        val shareUri = shareFile.uri
+        if (FileUtils.isNetworkFile(shareUri)) {
+            return share
+        }
+        val fileUri = firebaseStorageManager.uploadFileWithoutNotification(share.shareId, shareUri)
+        if (fileUri != null) {
+            return share.copy(shareData = shareFile.copy(uri = fileUri))
+        }
+        return share
     }
 
     private fun createForegroundInfo(): ForegroundInfo {

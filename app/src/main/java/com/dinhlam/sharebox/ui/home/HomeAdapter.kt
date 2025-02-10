@@ -3,14 +3,12 @@ package com.dinhlam.sharebox.ui.home
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.listmodel.BoxListModel
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
@@ -33,7 +31,6 @@ class HomeAdapter @Inject constructor(
 
     override fun buildListModels() = homeFragment.getState(homeFragment.viewModel) { state ->
         MainActionListModel(
-            ContextCompat.getColor(homeFragment.requireContext(), R.color.md_theme_primary),
             NoHashProp(View.OnClickListener {
                 homeFragment.requestArchiveNote()
             }),
@@ -42,6 +39,9 @@ class HomeAdapter @Inject constructor(
             }),
             NoHashProp(View.OnClickListener {
                 homeFragment.requestArchiveImages()
+            }),
+            NoHashProp(View.OnClickListener {
+                homeFragment.requestArchiveFile()
             }),
         ).attachTo(this)
 
@@ -159,8 +159,6 @@ class HomeAdapter @Inject constructor(
                 "tiktok",
                 homeFragment.requireContext().getDrawableCompat(R.drawable.ic_tiktok),
                 size = 32.dp(),
-                backgroundColor = homeFragment.requireContext()
-                    .getColorCompat(R.color.md_theme_primary),
                 onClick = NoHashProp(View.OnClickListener {
                     homeFragment.moveToDiscover(0)
                 })
@@ -172,8 +170,6 @@ class HomeAdapter @Inject constructor(
                 "zing_news",
                 homeFragment.requireContext().getDrawableCompat(R.drawable.ic_zing_news),
                 size = 32.dp(),
-                backgroundColor = homeFragment.requireContext()
-                    .getColorCompat(R.color.md_theme_primary),
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = NoHashProp(View.OnClickListener {
                     homeFragment.moveToDiscover(1)

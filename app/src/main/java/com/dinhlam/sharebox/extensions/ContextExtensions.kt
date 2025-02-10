@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.utils.FileUtils
@@ -32,10 +33,26 @@ private fun getVideoThumbnailNetwork(videoUri: Uri): Bitmap? {
 }
 
 fun Context.getMimeTypeFromUri(uri: Uri): String? {
-    return MimeTypeMap.getSingleton().getMimeTypeFromExtension(contentResolver.getType(uri))
+    return contentResolver.getType(uri)
 }
 
 fun Context.getExtensionFromUri(uri: Uri): String? {
     val mimeType = getMimeTypeFromUri(uri)
     return MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+}
+
+fun Context.getFileNameAndSize(uri: Uri): Pair<String, Double> {
+    return contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+        if (cursor.moveToFirst()) {
+            val indexName = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            val indexSize = cursor.getColumnIndex(OpenableColumns.SIZE)
+            if (indexName >= 0 && indexSize >= 0) {
+                cursor.getString(indexName) to cursor.getDouble(indexSize)
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    } ?: ("" to 0.0)
 }

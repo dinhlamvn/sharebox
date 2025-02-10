@@ -212,7 +212,12 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, ProfileFragment::class.java)
     }
 
-    override fun textInput(context: Context, title: String?, text: String?, isEdit: Boolean): Intent {
+    override fun textInput(
+        context: Context,
+        title: String?,
+        text: String?,
+        isEdit: Boolean
+    ): Intent {
         return Intent(context, TextInputActivity::class.java)
             .putExtra(AppExtras.EXTRA_TITLE, title)
             .putExtra(Intent.EXTRA_TEXT, text)
@@ -277,5 +282,12 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun clipboard(context: Context): Intent {
         return Intent(context, ClipboardActivity::class.java)
+    }
+
+    override fun pickFile(context: Context): Intent {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        return intent
     }
 }

@@ -12,7 +12,7 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
-class ShareImagesJsonSerializerDeserializer :
+object ShareImagesJsonSerializerDeserializer :
     JsonSerializer<ShareData.ShareImages>,
     JsonDeserializer<ShareData.ShareImages> {
     override fun serialize(

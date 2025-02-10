@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.json.ShareFileJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImagesJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareTextJsonSerializerDeserializer
@@ -18,9 +19,6 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.FragmentComponent
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
@@ -36,16 +34,19 @@ object AppModule {
     fun provideGson(): Gson {
         val gsonBuilder = GsonBuilder()
         gsonBuilder.registerTypeAdapter(
-            ShareData.ShareText::class.java, ShareTextJsonSerializerDeserializer()
+            ShareData.ShareText::class.java, ShareTextJsonSerializerDeserializer
         )
         gsonBuilder.registerTypeAdapter(
-            ShareData.ShareImage::class.java, ShareImageJsonSerializerDeserializer()
+            ShareData.ShareImage::class.java, ShareImageJsonSerializerDeserializer
         )
         gsonBuilder.registerTypeAdapter(
-            ShareData.ShareUrl::class.java, ShareUrlJsonSerializerDeserializer()
+            ShareData.ShareUrl::class.java, ShareUrlJsonSerializerDeserializer
         )
         gsonBuilder.registerTypeAdapter(
-            ShareData.ShareImages::class.java, ShareImagesJsonSerializerDeserializer()
+            ShareData.ShareImages::class.java, ShareImagesJsonSerializerDeserializer
+        )
+        gsonBuilder.registerTypeAdapter(
+            ShareData.ShareFile::class.java, ShareFileJsonSerializerDeserializer
         )
         return gsonBuilder.create()
     }

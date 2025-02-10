@@ -15,6 +15,15 @@ object FileUtils {
         }
     }
 
+    fun createShareFilesDir(context: Context): File? {
+        val imageFileDir =
+            context.getExternalFilesDir("share_files") ?: return null
+        if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
+            return null
+        }
+        return imageFileDir
+    }
+
     fun createShareImagesDir(context: Context): File? {
         val imageFileDir =
             context.getExternalFilesDir("share_images") ?: return null
@@ -39,6 +48,8 @@ object FileUtils {
     }
 
     fun randomImageFileName(extension: String) = "share_image_${UUID.randomUUID()}.$extension"
+
+    fun randomFileName(extension: String) = "share_file_${UUID.randomUUID()}.$extension"
 
     fun getFileNameFromUri(uri: Uri) =
         uri.lastPathSegment ?: error("No file name found in uri $uri")

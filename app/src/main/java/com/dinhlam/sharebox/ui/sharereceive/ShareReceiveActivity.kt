@@ -24,7 +24,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.getFileNameAndSize
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
@@ -47,8 +47,9 @@ import com.dinhlam.sharebox.model.UserDetail
 import com.dinhlam.sharebox.pref.AppSharePref
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalCirclePagerItemDecoration
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveTextListModel
-import com.dinhlam.sharebox.ui.sharereceive.modelview.ShareReceiveUrlListModel
+import com.dinhlam.sharebox.ui.sharereceive.listmodel.ShareReceiveFileListModel
+import com.dinhlam.sharebox.ui.sharereceive.listmodel.ShareReceiveTextListModel
+import com.dinhlam.sharebox.ui.sharereceive.listmodel.ShareReceiveUrlListModel
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -109,25 +110,31 @@ class ShareReceiveActivity :
         getState(viewModel) { state ->
             when (val shareData = state.shareData) {
                 is ShareData.ShareText -> ShareReceiveTextListModel(
-                    "shareText", shareData.castNonNull<ShareData.ShareText>().text
+                    "shareText", shareData.text
                 ).attachTo(this)
 
                 is ShareData.ShareUrl -> ShareReceiveUrlListModel(
-                    "shareWebLink", shareData.castNonNull<ShareData.ShareUrl>().url
+                    "shareWebLink", shareData.url
                 ).attachTo(this)
 
                 is ShareData.ShareImage -> ImageListModel(
-                    shareData.castNonNull<ShareData.ShareImage>().uri,
+                    shareData.uri,
                     screenHeight().times(0.5).toInt()
                 ).attachTo(this)
 
                 is ShareData.ShareImages -> {
-                    shareData.castNonNull<ShareData.ShareImages>().uris.map { uri ->
+                    shareData.uris.map { uri ->
                         ImageListModel(uri, height = screenHeight().times(0.5).toInt()).attachTo(
                             this
                         )
                     }
                 }
+
+                is ShareData.ShareFile -> ShareReceiveFileListModel(
+                    "share_file",
+                    shareData.fileName,
+                    shareData.fileSize,
+                ).attachTo(this)
 
                 else -> LoadingListModel("loading").attachTo(this)
             }
@@ -285,6 +292,10 @@ class ShareReceiveActivity :
                 handleProcessText(intent)
             }
 
+            action == Intent.ACTION_SEND -> {
+                handleShareFile(intent)
+            }
+
             else -> openHome()
         }
     }
@@ -332,6 +343,24 @@ class ShareReceiveActivity :
             )
         )
         viewModel.setShareData(ShareData.ShareImages(takenImages))
+    }
+
+    private fun handleShareFile(intent: Intent) {
+        intent.getParcelableExtraCompat<Parcelable>(Intent.EXTRA_STREAM).cast<Uri>()
+            ?.let { shareUri ->
+                val fileInfo = getFileNameAndSize(shareUri)
+                if (fileInfo.second > 10 * 1024 * 1024) {
+                    showToast(R.string.reach_limit_file_size)
+                    return@let finishAndRemoveTask()
+                }
+                viewModel.setShareData(
+                    ShareData.ShareFile(
+                        fileInfo.first,
+                        fileInfo.second,
+                        shareUri
+                    )
+                )
+            }
     }
 
     private fun openHome() {

@@ -12,8 +12,8 @@ import androidx.work.WorkerParameters
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.local.entity.Share
-import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
@@ -76,6 +76,7 @@ class SyncDataWorker @AssistedInject constructor(
                 val newShare = when (share.shareData) {
                     is ShareData.ShareImage -> handleShareImage(share, share.shareData)
                     is ShareData.ShareImages -> handleShareImages(share, share.shareData)
+                    is ShareData.ShareFile -> handleShareFile(share, share.shareData)
                     else -> share
                 }
                 realtimeDatabaseRepository.push(newShare)
@@ -118,6 +119,17 @@ class SyncDataWorker @AssistedInject constructor(
         return share.copy(shareData = shareImages.copy(uris = shareUris))
     }
 
+    private suspend fun handleShareFile(share: Share, shareFile: ShareData.ShareFile): Share {
+        val shareUri = shareFile.uri
+        if (FileUtils.isNetworkFile(shareUri)) {
+            return share
+        }
+        val fileUri = firebaseStorageManager.uploadFileWithoutNotification(share.shareId, shareUri)
+        if (fileUri != null) {
+            return share.copy(shareData = shareFile.copy(uri = fileUri))
+        }
+        return share
+    }
 
     private fun createForegroundInfo(): ForegroundInfo {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

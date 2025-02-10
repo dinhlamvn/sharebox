@@ -61,4 +61,6 @@ interface Router {
     fun boxInvited(context: Context): Intent
 
     fun clipboard(context: Context): Intent
+
+    fun pickFile(context: Context): Intent
 }
