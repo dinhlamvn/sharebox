@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.CircleIconListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -59,13 +60,12 @@ class HomeAdapter @Inject constructor(
             "title_your_boxes",
             text1 = homeFragment.requireContext().getString(R.string.your_boxes),
             textAppearance1 = R.style.TextTitleMedium,
-            text2 = homeFragment.requireContext().getString(R.string.view_all),
+            text2 = homeFragment.requireContext().getString(R.string.view_all, state.totalBox),
             textColor2 = R.color.md_theme_primary,
             actionClick2 = NoHashProp(View.OnClickListener {
                 homeFragment.requestViewAllBox()
             })
         ).attachTo(this)
-
 
         VerticalDividerListModel(
             "margin_bottom_title_your_boxes",
@@ -103,6 +103,17 @@ class HomeAdapter @Inject constructor(
                 height = 100.dp()
             ).attachTo(this)
         }
+
+        ButtonListModel(
+            "button_create_box",
+            "+",
+            margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0),
+            onClick = NoHashProp(View.OnClickListener {
+                homeFragment.requestCreateBox()
+            })
+        ).attachTo(
+            this
+        )
 
         TextListModel(
             "title_recently",

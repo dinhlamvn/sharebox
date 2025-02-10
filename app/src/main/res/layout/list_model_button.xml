@@ -6,9 +6,7 @@
     style="@style/Widget.Material3.Button"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTintMode="src_over"
     android:gravity="center"
     android:textAppearance="@style/TextBodyMedium"
-    app:backgroundTint="@color/md_theme_primary"
     app:elevation="4dp"
     tools:text="GOGO" />

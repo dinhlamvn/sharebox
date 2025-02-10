@@ -134,7 +134,7 @@
     <string name="permission_granted">Đã cấp quyền</string>
     <string name="permission_denied">Đã chặn quyền</string>
     <string name="archive_to">Lưu trữ vào</string>
-    <string name="view_all">Xem tất cả</string>
+    <string name="view_all">Xem tất cả (%d)</string>
     <string name="created_date">Đã tạo: %s</string>
     <string name="archive_text">Lưu trữ văn bản</string>
     <string name="archive_web">Lưu trữ địa chỉ web</string>

@@ -143,7 +143,7 @@
     <string name="permission_granted">Permission granted</string>
     <string name="permission_denied">Permission denied</string>
     <string name="archive_to">Archive to</string>
-    <string name="view_all">View all</string>
+    <string name="view_all">View all (%d)</string>
     <string name="created_date">Created: %s</string>
     <string name="archive_text">Archive a paragraph</string>
     <string name="archive_web">Archive a link</string>

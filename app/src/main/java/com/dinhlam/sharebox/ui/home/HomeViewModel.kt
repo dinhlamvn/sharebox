@@ -27,7 +27,19 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {
-        private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 5
+        private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 3
+    }
+
+    fun refresh() {
+        getTotalBox()
+        getListBoxes()
+        getRecentlyShares()
+    }
+
+    private fun getTotalBox() = suspend {
+        boxRepository.count()
+    }.execute { asyncLoad ->
+        copy(totalBox = asyncLoad.data ?: 0)
     }
 
     private fun getListBoxes() = suspend {
@@ -106,11 +118,6 @@ class HomeViewModel @Inject constructor(
                 block(bookmarkDetail?.bookmarkCollectionId)
             }
         }
-
-    fun refresh() {
-        getListBoxes()
-        getRecentlyShares()
-    }
 
     fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
         copy(chooseBoxFor = chooseBoxFor)

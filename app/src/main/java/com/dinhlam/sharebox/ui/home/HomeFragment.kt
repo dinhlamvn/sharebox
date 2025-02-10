@@ -50,6 +50,13 @@ class HomeFragment :
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
     OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.refresh()
+            }
+        }
+
     private val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -455,5 +462,9 @@ class HomeFragment :
 
     fun moveToDiscover(tab: Int) {
         activity?.cast<MainActivity>()?.moveToDiscover(tab)
+    }
+
+    fun requestCreateBox() {
+        createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
     }
 }

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.databinding.ModelViewButtonBinding
+import com.dinhlam.sharebox.databinding.ListModelButtonBinding
 import com.dinhlam.sharebox.model.Spacing
 
 data class ButtonListModel(
@@ -22,9 +22,10 @@ data class ButtonListModel(
         inflater: LayoutInflater,
         container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return object : BaseListAdapter.BaseViewHolderViewBinding<ButtonListModel, ModelViewButtonBinding>(
-            ModelViewButtonBinding.inflate(inflater, container, false)
-        ) {
+        return object :
+            BaseListAdapter.BaseViewHolderViewBinding<ButtonListModel, ListModelButtonBinding>(
+                ListModelButtonBinding.inflate(inflater, container, false)
+            ) {
             override fun onBind(model: ButtonListModel, position: Int) {
                 binding.root.updateLayoutParams<MarginLayoutParams> {
                     marginStart = model.margin.start
