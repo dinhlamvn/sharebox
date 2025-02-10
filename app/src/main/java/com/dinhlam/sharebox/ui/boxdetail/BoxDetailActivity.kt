@@ -17,7 +17,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
-import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
@@ -33,7 +33,6 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +42,7 @@ import javax.inject.Inject
 class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener {
 
     private val isFromInvite: Boolean by lazy {
         intent.getBooleanExtra(
@@ -102,7 +101,7 @@ class BoxDetailActivity :
         }
 
     override fun onStateChanged(state: BoxDetailState) {
-        binding.imageEdit.isVisible =
+        binding.iconEdit.isVisible =
             userHelper.getCurrentUserId() == state.boxDetail?.createdBy
         shareAdapter.requestBuildListModels()
         binding.toolbar.title = state.boxDetail?.boxName
@@ -171,8 +170,7 @@ class BoxDetailActivity :
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.imageEdit.setImageDrawable(Icons.editIcon2(this))
-        binding.imageEdit.setOnClickListener {
+        binding.iconEdit.setOnClickListener {
             val boxDetail =
                 getState(viewModel, BoxDetailState::boxDetail) ?: return@setOnClickListener
             editBoxResultLauncher.launch(router.boxForm(this, boxDetail.boxId))
@@ -283,17 +281,17 @@ class BoxDetailActivity :
     private fun showMore(share: ShareDetail) {
         if (isFromInvite) {
             val arrayIcons = arrayOf(
-                "faw_share", "faw_download", "faw_copy"
+                "f064", "f56d", "f0c5"
             )
             val choiceItems =
                 resources.getStringArray(R.array.more_menu_invited)
                     .mapIndexed { index, text ->
-                        OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                        BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
                             arrayIcons[index], text
                         )
                     }.toTypedArray()
 
-            OptionMenuBottomSheetDialogFragment.show(
+            BottomSheetOptionsMenuDialogFragment.show(
                 supportFragmentManager,
                 choiceItems,
                 bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)

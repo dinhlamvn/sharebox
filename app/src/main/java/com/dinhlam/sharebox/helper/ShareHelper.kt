@@ -19,7 +19,7 @@ import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
@@ -50,26 +50,26 @@ class ShareHelper @Inject constructor(
     fun showMore(
         activity: FragmentActivity,
         share: ShareDetail,
-        callback: OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener
+        callback: BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener
     ) {
         val arrayIcons = arrayOf(
-            "faw_share",
-            "faw_edit",
-            "faw_arrow_right",
-            "faw_download",
-            "faw_bookmark",
-            "faw_copy",
-            "faw_trash"
+            "f064",
+            "f044",
+            "f061",
+            "f56d",
+            "f02e",
+            "f0c5",
+            "f1f8"
         )
         val choiceItems =
             activity.resources.getStringArray(R.array.more_menu)
                 .mapIndexed { index, text ->
-                    OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                    BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
                         arrayIcons[index], text
                     )
                 }.toTypedArray()
 
-        OptionMenuBottomSheetDialogFragment.show(
+        BottomSheetOptionsMenuDialogFragment.show(
             activity.supportFragmentManager,
             choiceItems,
             bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId),

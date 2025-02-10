@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.sharelink
+package com.dinhlam.sharebox.ui.link
 
 import android.app.Activity
 import android.content.ClipboardManager
@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareLinkBinding
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getDrawableCompat
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
@@ -29,10 +28,11 @@ import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.listmodel.CircleIconListModel
+import com.dinhlam.sharebox.listmodel.CircleDrawableIconButtonListModel
+import com.dinhlam.sharebox.listmodel.CircleFontAwesomeIconButtonListModel
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
+import com.dinhlam.sharebox.view.FontAwesomeIconView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -57,72 +57,69 @@ class ShareLinkActivity :
     lateinit var router: Router
 
     private val adapter = BaseListAdapter.create {
-        CircleIconListModel(
+        CircleFontAwesomeIconButtonListModel(
             "google",
-            Icons.googleIcon(this@ShareLinkActivity),
-            size = 32.dp(),
+            "f1a0",
+            iconStyle = FontAwesomeIconView.IconStyle.BRANDS_REGULAR,
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 setWebLink("https://google.com")
             })
         ).attachTo(this)
 
-        CircleIconListModel(
-            "tiktok",
-            getDrawableCompat(R.drawable.ic_tiktok),
-            size = 32.dp(),
+        CircleFontAwesomeIconButtonListModel(
+            "reddit",
+            "f1a1",
+            iconStyle = FontAwesomeIconView.IconStyle.BRANDS_REGULAR,
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                setWebLink("https://tiktok.com")
+                setWebLink("https://www.reddit.com/")
             })
         ).attachTo(this)
 
-        CircleIconListModel(
-            "youtube",
-            Icons.youtubeIcon(this@ShareLinkActivity),
-            size = 32.dp(),
+        CircleFontAwesomeIconButtonListModel(
+            "medium",
+            "f23a",
+            iconStyle = FontAwesomeIconView.IconStyle.BRANDS_REGULAR,
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                setWebLink("https://youtube.com")
+                setWebLink("https://www.medium.com/")
             })
         ).attachTo(this)
 
-        CircleIconListModel(
+        CircleFontAwesomeIconButtonListModel(
+            "hacker_news",
+            "f1d4",
+            iconStyle = FontAwesomeIconView.IconStyle.BRANDS_REGULAR,
+            margin = Spacing.Only(start = 16.dp()),
+            onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                setWebLink("https://thehackernews.com/")
+            })
+        ).attachTo(this)
+
+        CircleDrawableIconButtonListModel(
             "cand",
-            getDrawableCompat(R.drawable.ic_cand),
-            size = 32.dp(),
+            R.drawable.ic_cand,
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 setWebLink("https://cand.com.vn")
             })
         ).attachTo(this)
 
-        CircleIconListModel(
+        CircleDrawableIconButtonListModel(
             "thanh_nien",
-            getDrawableCompat(R.drawable.ic_thanh_nien),
-            size = 32.dp(),
+            R.drawable.ic_thanh_nien,
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 setWebLink("https://thanhnien.vn")
             })
         ).attachTo(this)
 
-        CircleIconListModel(
+        CircleDrawableIconButtonListModel(
             "zing_news",
-            getDrawableCompat(R.drawable.ic_zing_news),
-            size = 32.dp(),
+            R.drawable.ic_zing_news,
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 setWebLink("https://zingnews.vn")
-            })
-        ).attachTo(this)
-
-        CircleIconListModel(
-            "tuoi_tre",
-            getDrawableCompat(R.drawable.ic_tuoi_tre),
-            size = 32.dp(),
-            margin = Spacing.Only(start = 16.dp()),
-            onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                setWebLink("https://tuoitre.vn")
             })
         ).attachTo(this)
     }

@@ -364,6 +364,20 @@ object Icons {
         return createIcon(context, FontAwesome.Icon.faw_google, block(IconBuilder(context)))
     }
 
+    fun redditIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_reddit, block(IconBuilder(context)))
+    }
+
+    fun mediumIcon(
+        context: Context,
+        block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }
+    ): IconicsDrawable {
+        return createIcon(context, FontAwesome.Icon.faw_medium, block(IconBuilder(context)))
+    }
+
     fun youtubeIcon(
         context: Context,
         block: IconBuilder.() -> IconBuilder = { IconBuilder(context) }

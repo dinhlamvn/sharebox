@@ -1,17 +1,15 @@
 package com.dinhlam.sharebox.listmodel.profile
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.databinding.ModelViewProfileInfoBinding
+import com.dinhlam.sharebox.databinding.ListModelProfileInfoBinding
 import com.dinhlam.sharebox.extensions.asDisplayPoint
 import com.dinhlam.sharebox.extensions.asProfileAge
 import com.dinhlam.sharebox.imageloader.config.ImageLoadScaleType
 import com.dinhlam.sharebox.imageloader.config.TransformType
 import com.dinhlam.sharebox.imageloader.load
-import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 
 data class ProfileInfoListModel(
@@ -21,29 +19,31 @@ data class ProfileInfoListModel(
     val drama: Int,
     val level: Int,
     val joinDate: Long,
-    val dramaIcon: Drawable,
-    val levelIcon: Drawable,
+    val dramaIcon: String,
+    val levelIcon: String,
     val actionSetting: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(null)
 ) : BaseListAdapter.BaseListModel("user_info_$id") {
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return UserInfoViewHolderViewBinding(ModelViewProfileInfoBinding.inflate(inflater, container, false))
+        return UserInfoViewHolderViewBinding(
+            ListModelProfileInfoBinding.inflate(
+                inflater,
+                container,
+                false
+            )
+        )
     }
 
     private class UserInfoViewHolderViewBinding(
-        binding: ModelViewProfileInfoBinding,
-    ) : BaseListAdapter.BaseViewHolderViewBinding<ProfileInfoListModel, ModelViewProfileInfoBinding>(
+        binding: ListModelProfileInfoBinding,
+    ) : BaseListAdapter.BaseViewHolderViewBinding<ProfileInfoListModel, ListModelProfileInfoBinding>(
         binding
     ) {
 
-        init {
-            binding.imageSetting.setImageDrawable(Icons.settingIcon(buildContext))
-        }
-
         override fun onBind(model: ProfileInfoListModel, position: Int) {
-            binding.imageSetting.setOnClickListener(model.actionSetting.prop)
+            binding.iconSetting.setOnClickListener(model.actionSetting.prop)
             binding.imageAvatar.load(buildContext, model.avatar) {
                 copy(transformType = TransformType.Circle(ImageLoadScaleType.CenterCrop))
             }

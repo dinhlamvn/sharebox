@@ -14,13 +14,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/choose_box">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_add"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:id="@+id/button_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="centerInside" />
+            android:padding="12dp"
+            app:icon_code="2b"
+            app:icon_size="24dp" />
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider

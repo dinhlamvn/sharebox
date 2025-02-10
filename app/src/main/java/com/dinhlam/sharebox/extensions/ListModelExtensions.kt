@@ -5,22 +5,19 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.listmodel.ListItemListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.utils.Icons
-import com.mikepenz.iconics.typeface.IIcon
-import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 
 fun ShareDetail.buildListItemListModel(
     onShowMore: (ShareDetail) -> Unit = { },
     onOpenShare: (ShareDetail) -> Unit = { }
 ): BaseListAdapter.BaseListModel {
 
-    fun getRecentlyIcon(shareData: ShareData): IIcon {
+    fun getRecentlyIcon(shareData: ShareData): String {
         return when (shareData) {
-            is ShareData.ShareText -> FontAwesome.Icon.faw_sticky_note
-            is ShareData.ShareUrl -> Icons.getWebIconByUrl(shareData.url)
-            is ShareData.ShareImage -> FontAwesome.Icon.faw_image
-            is ShareData.ShareImages -> FontAwesome.Icon.faw_images
-            is ShareData.ShareFile -> FontAwesome.Icon.faw_file
+            is ShareData.ShareText -> "f249"
+            is ShareData.ShareUrl -> "f0c1"
+            is ShareData.ShareImage -> "f03e"
+            is ShareData.ShareImages -> "f302"
+            is ShareData.ShareFile -> "f15c"
         }
     }
 

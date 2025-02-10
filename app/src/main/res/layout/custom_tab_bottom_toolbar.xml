@@ -28,6 +28,7 @@
         android:maxLines="1"
         android:paddingVertical="8dp"
         android:textAppearance="@style/TextBodyMedium"
+        android:textStyle="bold"
         tools:text="This is box name" />
 
     <ImageView

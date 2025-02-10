@@ -4,21 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="50dp"
     android:background="?attr/selectableItemBackground">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:padding="8dp"
-        android:scaleType="centerInside"
+        app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:icon_code="2b" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_title"
@@ -31,9 +31,9 @@
         android:maxLines="1"
         android:textAppearance="@style/TextBody"
         app:layout_constraintBottom_toTopOf="@id/text_subtitle"
-        app:layout_constraintEnd_toStartOf="@id/image_action"
-        app:layout_constraintStart_toEndOf="@id/image_icon"
-        app:layout_constraintTop_toTopOf="@id/image_icon"
+        app:layout_constraintEnd_toStartOf="@id/icon_more"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="@id/icon"
         tools:text="This is simple box" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -46,18 +46,20 @@
         android:maxLines="1"
         android:textAppearance="@style/TextCaption"
         android:textColor="?android:attr/textColorHint"
-        app:layout_constraintBottom_toBottomOf="@id/image_icon"
-        app:layout_constraintEnd_toStartOf="@id/image_action"
-        app:layout_constraintStart_toEndOf="@id/image_icon"
+        app:layout_constraintBottom_toBottomOf="@id/icon"
+        app:layout_constraintEnd_toStartOf="@id/icon_more"
+        app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toBottomOf="@id/text_title"
         tools:text="Share an image" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_action"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_more"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
+        app:icon_code="f142"
+        app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

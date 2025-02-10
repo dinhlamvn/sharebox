@@ -20,24 +20,19 @@ import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
-import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.BoxItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoxListActivity :
     BaseViewModelActivity<BoxListState, BoxListViewModel, ActivityBoxListBinding>() {
-
-    fun interface OnBoxSelectedListener {
-        fun onBoxSelected(boxId: String, boxName: String)
-    }
 
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -76,7 +71,7 @@ class BoxListActivity :
                     ).attachTo(this)
                 } else {
                     state.searchBoxes.forEachIndexed { idx, boxDetail ->
-                        BoxListModel(
+                        BoxItemListModel(
                             "box_${boxDetail.boxId}",
                             boxDetail.boxId,
                             boxDetail.boxName,
@@ -99,7 +94,7 @@ class BoxListActivity :
             }
 
             state.boxes.forEachIndexed { idx, boxDetail ->
-                BoxListModel(
+                BoxItemListModel(
                     "box_${boxDetail.boxId}",
                     boxDetail.boxId,
                     boxDetail.boxName,
@@ -160,9 +155,7 @@ class BoxListActivity :
             viewModel.search(editable.trimmedString())
         }
 
-        binding.imageAdd.setImageDrawable(Icons.plusIcon(this))
-
-        binding.imageAdd.setOnClickListener {
+        binding.buttonAdd.setOnClickListener {
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 

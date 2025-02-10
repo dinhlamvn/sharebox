@@ -140,32 +140,51 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="32dp"
                 android:orientation="horizontal">
+
+                <com.dinhlam.sharebox.view.FontAwesomeIconView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    app:icon_code="f466"
+                    app:icon_size="24dp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_share_box"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?attr/selectableItemBackground"
                     android:drawablePadding="6dp"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
-                    android:textAppearance="@style/TextBody"
+                    android:textAppearance="@style/TextBodyMedium"
                     tools:text="No box" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_add_box"
+                <com.dinhlam.sharebox.view.FontAwesomeIconView
+                    android:id="@+id/icon_lock"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone"
+                    app:icon_code="f023"
+                    app:icon_size="16dp"
+                    tools:visibility="visible" />
+
+                <com.dinhlam.sharebox.view.FontAwesomeIconView
+                    android:id="@+id/icon_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:scaleType="centerInside" />
+                    app:icon_code="f055"
+                    app:icon_size="24dp" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -175,25 +194,25 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/container_share_bookmark"
             style="@style/AppMaterialCardView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             app:layout_constraintBottom_toBottomOf="@id/container_share_box"
+            app:layout_constraintDimensionRatio="1,1"
             app:layout_constraintEnd_toStartOf="@id/container_button_share"
             app:layout_constraintTop_toTopOf="@id/container_share_box">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.dinhlam.sharebox.view.FontAwesomeIconView
                 android:id="@+id/image_share_bookmark"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="?attr/selectableItemBackground"
-                android:paddingHorizontal="8dp"
                 android:scaleType="centerInside"
-                tools:layout_height="24dp"
-                tools:layout_width="24dp" />
+                app:icon_code="f02e"
+                app:icon_size="24dp" />
 
         </com.google.android.material.card.MaterialCardView>
 

@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.databinding.ModelViewBoxBinding
+import com.dinhlam.sharebox.databinding.ListModelBoxItemBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.utils.Icons
 
-data class BoxListModel(
+data class BoxItemListModel(
     val id: String,
     val boxId: String,
     val name: String,
@@ -29,11 +29,11 @@ data class BoxListModel(
         container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolderViewBinding<BoxListModel, ModelViewBoxBinding>(
-                ModelViewBoxBinding.inflate(inflater, container, false)
+            BaseListAdapter.BaseViewHolderViewBinding<BoxItemListModel, ListModelBoxItemBinding>(
+                ListModelBoxItemBinding.inflate(inflater, container, false)
             ) {
-            override fun onBind(model: BoxListModel, position: Int) {
-                binding.imageAction.isVisible = model.isShowOptionAction
+            override fun onBind(model: BoxItemListModel, position: Int) {
+                binding.iconMore.isVisible = model.isShowOptionAction
                 binding.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     marginStart = model.margin.start
                     topMargin = model.margin.top
@@ -41,7 +41,7 @@ data class BoxListModel(
                     bottomMargin = model.margin.bottom
                 }
 
-                binding.imageAction.setOnClickListener(model.onOptionClick.prop)
+                binding.iconMore.setOnClickListener(model.onOptionClick.prop)
 
                 binding.container.setOnClickListener(model.onClick.prop)
                 binding.textName.text = model.name

@@ -23,7 +23,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
-import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
@@ -40,7 +40,6 @@ import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -48,7 +47,7 @@ import javax.inject.Inject
 class HomeFragment :
     BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>(),
     BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener {
 
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -433,28 +432,26 @@ class HomeFragment :
 
     fun showBoxOption(boxDetail: BoxDetail) {
         val items = arrayOf(
-            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
-                FontAwesome.Icon.faw_edit.name,
+            BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
+                "f044",
                 getString(R.string.title_edit_box)
             ),
-            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
-                FontAwesome.Icon.faw_users.name,
+            BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
+                "f0c0",
                 getString(R.string.members)
             ),
-            OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
-                FontAwesome.Icon.faw_copy.name,
+            BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
+                "f0c5",
                 getString(R.string.copy_id)
             )
         )
-        OptionMenuBottomSheetDialogFragment.show(
+        BottomSheetOptionsMenuDialogFragment.show(
             childFragmentManager,
             items
         ) { position, _, _ ->
             when (position) {
                 0 -> editBox(boxDetail.boxId)
-
                 1 -> requestManageMembers(boxDetail.boxId)
-
                 2 -> context?.copy(boxDetail.boxId)
             }
         }

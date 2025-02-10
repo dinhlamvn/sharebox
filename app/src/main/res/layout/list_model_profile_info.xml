@@ -25,18 +25,19 @@
         android:gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintBottom_toBottomOf="@id/image_avatar"
-        app:layout_constraintEnd_toStartOf="@id/image_setting"
+        app:layout_constraintEnd_toStartOf="@id/icon_setting"
         app:layout_constraintStart_toEndOf="@id/image_avatar"
         app:layout_constraintTop_toTopOf="@id/image_avatar"
         tools:text="Alice" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_setting"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
+        app:icon_code="f013"
+        app:icon_size="32dp"
         app:layout_constraintBottom_toBottomOf="@id/image_avatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/image_avatar" />

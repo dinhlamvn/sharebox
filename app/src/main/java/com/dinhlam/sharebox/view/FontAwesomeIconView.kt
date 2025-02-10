@@ -3,14 +3,12 @@ package com.dinhlam.sharebox.view
 import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.ViewGroup
+import android.view.Gravity
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.use
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getColorCompat
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 
 class FontAwesomeIconView @JvmOverloads constructor(
     context: Context,
@@ -18,7 +16,7 @@ class FontAwesomeIconView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : AppCompatTextView(context, attrs, defStyle) {
 
-    private enum class IconStyle {
+    enum class IconStyle {
         REGULAR, BRANDS_REGULAR, SOLID
     }
 
@@ -27,14 +25,12 @@ class FontAwesomeIconView @JvmOverloads constructor(
     private var iconStyle: IconStyle = IconStyle.SOLID
 
     @ColorInt
-    private var iconColor: Int = context.getColorCompat(R.color.md_theme_primary)
+    private var iconColor: Int = this.currentTextColor
 
     init {
+        gravity = Gravity.CENTER
         context.obtainStyledAttributes(attrs, R.styleable.FontAwesomeIconView).use { typedArray ->
-            iconCode = typedArray.getString(R.styleable.FontAwesomeIconView_icon_code)
-                .takeIfNotNullOrBlank()
-                ?: error("Require the iconCode attribute")
-
+            iconCode = typedArray.getString(R.styleable.FontAwesomeIconView_icon_code).orEmpty()
             setIconCode(iconCode)
 
             iconSize =
@@ -50,13 +46,17 @@ class FontAwesomeIconView @JvmOverloads constructor(
 
             iconColor = typedArray.getColor(
                 R.styleable.FontAwesomeIconView_icon_color,
-                context.getColorCompat(R.color.md_theme_primary)
+                this.currentTextColor
             )
             invalidateIconColor()
         }
     }
 
     private fun invalidateIcon() {
+        if (iconCode.isBlank()) {
+            super.setText(null)
+            return
+        }
         val hexVal = Integer.parseInt(iconCode, 16)
         val str = buildString {
             append(hexVal.toChar())
@@ -98,7 +98,11 @@ class FontAwesomeIconView @JvmOverloads constructor(
     }
 
     fun setIconSize(iconSize: Int) {
-        super.setLayoutParams(ViewGroup.LayoutParams(iconSize, iconSize))
         setTextSize(TypedValue.COMPLEX_UNIT_PX, iconSize * 1F)
+    }
+
+    fun setIconStyle(iconStyle: IconStyle) {
+        this.iconStyle = iconStyle
+        invalidateTextStyle()
     }
 }

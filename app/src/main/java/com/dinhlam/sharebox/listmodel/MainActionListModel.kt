@@ -5,7 +5,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ViewMainActionBinding
+import com.dinhlam.sharebox.databinding.ListModelMainActionBinding
 
 data class MainActionListModel(
     val onNoteClick: BaseListAdapter.NoHashProp<OnClickListener>,
@@ -19,8 +19,8 @@ data class MainActionListModel(
         container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
         return object :
-            BaseListAdapter.BaseViewHolderViewBinding<MainActionListModel, ViewMainActionBinding>(
-                ViewMainActionBinding.inflate(inflater, container, false)
+            BaseListAdapter.BaseViewHolderViewBinding<MainActionListModel, ListModelMainActionBinding>(
+                ListModelMainActionBinding.inflate(inflater, container, false)
             ) {
             override fun onBind(model: MainActionListModel, position: Int) {
                 binding.buttonArchiveText.setOnClickListener(model.onNoteClick.prop)

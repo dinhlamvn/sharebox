@@ -11,20 +11,18 @@ import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.databinding.DialogSingleChoiceBinding
+import com.dinhlam.sharebox.databinding.DialogFragmentBottomSheetOptionsMenuBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableArrayExtraCompat
 import com.dinhlam.sharebox.listmodel.IconTextListModel
-import com.dinhlam.sharebox.utils.Icons
-import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import kotlinx.parcelize.Parcelize
 
-class OptionMenuBottomSheetDialogFragment :
-    BaseBottomSheetDialogFragment<DialogSingleChoiceBinding>() {
+class BottomSheetOptionsMenuDialogFragment :
+    BaseBottomSheetDialogFragment<DialogFragmentBottomSheetOptionsMenuBinding>() {
 
     @Parcelize
     data class SingleChoiceItem(
-        val icon: String?,
+        val icon: String,
         val text: String,
     ) : Parcelable
 
@@ -33,11 +31,11 @@ class OptionMenuBottomSheetDialogFragment :
         @JvmStatic
         fun show(
             fragmentManager: FragmentManager,
-            items: Array<OptionMenuBottomSheetDialogFragment.SingleChoiceItem>,
+            items: Array<BottomSheetOptionsMenuDialogFragment.SingleChoiceItem>,
             args: Bundle = bundleOf(),
             itemSelectedListener: OnOptionItemSelectedListener? = null
         ) {
-            OptionMenuBottomSheetDialogFragment().apply {
+            BottomSheetOptionsMenuDialogFragment().apply {
                 arguments = bundleOf(
                     AppExtras.EXTRA_CHOICE_ITEMS to items
                 ).apply { putAll(args) }
@@ -54,8 +52,8 @@ class OptionMenuBottomSheetDialogFragment :
 
     override fun onCreateViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
-    ): DialogSingleChoiceBinding {
-        return DialogSingleChoiceBinding.inflate(inflater, container, false)
+    ): DialogFragmentBottomSheetOptionsMenuBinding {
+        return DialogFragmentBottomSheetOptionsMenuBinding.inflate(inflater, container, false)
     }
 
     private val choiceItems: Array<SingleChoiceItem> by lazy {
@@ -66,9 +64,8 @@ class OptionMenuBottomSheetDialogFragment :
         choiceItems.forEachIndexed { index, choiceItem ->
             IconTextListModel(
                 "choice_$index",
-                choiceItem.icon?.let { Icons.icon(requireContext(), FontAwesome.getIcon(it)) },
+                choiceItem.icon,
                 choiceItem.text,
-                height = 50.dp(),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     onItemSelected(index, choiceItem.text)
                 })

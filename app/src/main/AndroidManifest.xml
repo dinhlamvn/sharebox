@@ -225,7 +225,7 @@
             tools:ignore="LockedOrientationActivity" />
 
         <activity
-            android:name="com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity"
+            android:name="com.dinhlam.sharebox.ui.link.ShareLinkActivity"
             android:exported="true"
             android:label="@string/share_link_label"
             android:windowSoftInputMode="adjustResize"

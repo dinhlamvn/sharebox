@@ -36,7 +36,7 @@ import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
-import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
+import com.dinhlam.sharebox.ui.link.ShareLinkActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity

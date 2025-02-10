@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTrashBinding
 import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
-import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.dp
@@ -34,7 +34,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TrashActivity :
     BaseViewModelActivity<TrashState, TrashViewModel, ActivityTrashBinding>(),
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener {
 
     private val restoreShareToBoxLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -142,17 +142,17 @@ class TrashActivity :
 
     private fun showMore(share: ShareDetail) {
         val arrayIcons = arrayOf(
-            "faw_trash_restore"
+            "f2ea"
         )
         val choiceItems =
             resources.getStringArray(R.array.trash_more_menu)
                 .mapIndexed { index, text ->
-                    OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                    BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
                         arrayIcons[index], text
                     )
                 }.toTypedArray()
 
-        OptionMenuBottomSheetDialogFragment.show(
+        BottomSheetOptionsMenuDialogFragment.show(
             supportFragmentManager,
             choiceItems,
             bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId),

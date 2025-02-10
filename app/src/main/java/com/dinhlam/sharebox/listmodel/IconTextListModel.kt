@@ -1,27 +1,19 @@
 package com.dinhlam.sharebox.listmodel
 
-import android.graphics.drawable.Drawable
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.annotation.GravityInt
-import androidx.core.view.updateLayoutParams
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseSpanSizeLookup
-import com.dinhlam.sharebox.databinding.ModelViewIconTextBinding
-import com.dinhlam.sharebox.extensions.setDrawableCompat
+import com.dinhlam.sharebox.databinding.ListModelIconTextBinding
 import com.dinhlam.sharebox.extensions.setTextAppearanceCompat
 
 data class IconTextListModel(
     val id: String,
-    val icon: Drawable?,
+    val icon: String,
     val text: String,
-    val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
-    val height: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val textAppearance: Int = R.style.TextBody,
-    @GravityInt val gravity: Int = Gravity.CENTER_VERTICAL,
     val actionClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
         null
     ),
@@ -30,22 +22,16 @@ data class IconTextListModel(
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return object : BaseListAdapter.BaseViewHolderViewBinding<IconTextListModel, ModelViewIconTextBinding>(
-            ModelViewIconTextBinding.inflate(inflater, container, false)
-        ) {
+        return object :
+            BaseListAdapter.BaseViewHolderViewBinding<IconTextListModel, ListModelIconTextBinding>(
+                ListModelIconTextBinding.inflate(inflater, container, false)
+            ) {
 
             override fun onBind(model: IconTextListModel, position: Int) {
-                binding.root.updateLayoutParams {
-                    width = model.width
-                    height = model.height
-                }
-                binding.textView.gravity = model.gravity
-                binding.textView.setTextAppearanceCompat(model.textAppearance)
-                binding.textView.text = model.text
-                model.actionClick.prop?.let { listener ->
-                    binding.textView.setOnClickListener(listener)
-                }
-                binding.textView.setDrawableCompat(start = model.icon)
+                binding.root.setOnClickListener(model.actionClick.prop)
+                binding.icon.setIconCode(model.icon)
+                binding.text.setTextAppearanceCompat(model.textAppearance)
+                binding.text.text = model.text
             }
 
             override fun onUnBind() {

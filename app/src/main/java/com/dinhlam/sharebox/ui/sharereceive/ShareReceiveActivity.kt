@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
@@ -33,7 +34,6 @@ import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.screenHeight
-import com.dinhlam.sharebox.extensions.setDrawableCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
@@ -183,8 +183,7 @@ class ShareReceiveActivity :
             chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
-        binding.imageAddBox.setImageDrawable(Icons.addIcon(this))
-        binding.imageAddBox.setOnClickListener {
+        binding.iconAdd.setOnClickListener {
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 
@@ -207,16 +206,7 @@ class ShareReceiveActivity :
             val boxName = currentBox?.boxName
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
             binding.textShareBox.text = boxName
-            binding.textShareBox.setDrawableCompat(
-                start = Icons.boxIcon(this),
-                end = if (isLock) Icons.lockIcon(this) { copy(sizeDp = 16) } else null,
-            )
-        }
-
-        onChange(ShareReceiveState::bookmarkCollection) { collectionDetail ->
-            collectionDetail?.let {
-                binding.imageShareBookmark.setImageDrawable(Icons.bookmarkedIcon(this))
-            } ?: binding.imageShareBookmark.setImageDrawable(Icons.bookmarkIcon(this))
+            binding.iconLock.isVisible = isLock
         }
 
         onChange(ShareReceiveState::asyncLoadArchive) { asyncLoad ->

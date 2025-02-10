@@ -49,31 +49,43 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.dinhlam.sharebox.view.CardViewIconView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/button_download"
-                android:layout_width="40dp"
+                android:layout_width="48dp"
                 android:layout_height="32dp"
                 android:layout_marginEnd="4dp"
-                android:gravity="center"
-                android:textAppearance="@style/TextBodyMedium"
                 app:cardBackgroundColor="@color/md_theme_primary"
-                app:icon_code="faw_download"
-                app:icon_color="@android:color/white"
-                app:icon_size="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/text_layout"
                 app:layout_constraintEnd_toEndOf="@id/text_layout"
-                app:layout_constraintTop_toTopOf="@id/text_layout" />
+                app:layout_constraintTop_toTopOf="@id/text_layout">
 
-            <com.dinhlam.sharebox.view.CardViewIconView
+                <com.dinhlam.sharebox.view.FontAwesomeIconView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:icon_code="f019"
+                    app:icon_color="@color/white"
+                    app:icon_size="24dp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:id="@+id/button_paste"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                app:cardCornerRadius="16dp"
-                app:icon_code="faw_paste"
-                app:icon_size="20dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
                 app:layout_constraintBottom_toBottomOf="@id/text_layout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/text_layout" />
+                app:layout_constraintTop_toTopOf="@id/text_layout">
+
+                <com.dinhlam.sharebox.view.FontAwesomeIconView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:icon_code="f0ea"
+                    app:icon_size="20dp" />
+
+            </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.Toolbar>

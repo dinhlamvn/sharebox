@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.sharelink
+package com.dinhlam.sharebox.ui.link
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BoxRepository

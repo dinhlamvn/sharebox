@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.ui.profile
 
 import android.app.Activity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +20,7 @@ import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.DrawableImageListModel
+import com.dinhlam.sharebox.listmodel.IconTextListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
@@ -93,8 +93,8 @@ class ProfileFragment :
                 state.shareCount,
                 getLevel(state.shareCount),
                 nonNullUser.joinDate,
-                Icons.shareIcon(requireContext()),
-                Icons.levelIcon(requireContext()),
+                "f064",
+                "f017",
                 BaseListAdapter.NoHashProp(View.OnClickListener {
                     openSettingPage()
                 })
@@ -104,13 +104,10 @@ class ProfileFragment :
                 "divider_profile", height = 1.dp()
             ).attachTo(this)
 
-            TextListModel(
-                "title_bookmark_collection",
+            IconTextListModel(
+                "bookmark",
+                "f02e",
                 getString(R.string.title_bookmark_collection),
-                textAppearance = R.style.TextBodyMedium,
-                height = 50.dp(),
-                gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                startIcon = Icons.bookmarkIcon(requireContext()),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     startActivity(router.bookmark(requireContext()))
                 })
@@ -120,13 +117,10 @@ class ProfileFragment :
                 "divider_bookmark_collection", height = 1.dp()
             ).attachTo(this)
 
-            TextListModel(
-                "title_trash",
+            IconTextListModel(
+                "trash",
+                "f1f8",
                 getString(R.string.title_trash),
-                textAppearance = R.style.TextBodyMedium,
-                height = 50.dp(),
-                gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                startIcon = Icons.trashIcon(requireContext()),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                     startActivity(router.trash(requireContext()))
                 })
@@ -137,13 +131,10 @@ class ProfileFragment :
             ).attachTo(this)
 
             if (userHelper.isSignedIn()) {
-                TextListModel(
-                    "title_box_invited",
+                IconTextListModel(
+                    "invited",
+                    "f0c1",
                     getString(R.string.title_box_invited),
-                    textAppearance = R.style.TextBodyMedium,
-                    height = 50.dp(),
-                    gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                    startIcon = Icons.linkIcon(requireContext()),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                         startActivity(router.boxInvited(requireContext()))
                     })

@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.base.BaseSpanSizeLookup
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkBinding
-import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BookmarkActivity :
     BaseViewModelActivity<BookmarkState, BookmarkViewModel, ActivityBookmarkBinding>(),
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener {
 
     private val bookmarkCollectionResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -148,18 +148,18 @@ class BookmarkActivity :
                 state.findCollectionDetail(bookmarkCollectionId) ?: return@getState
 
             val arrayIcons = arrayOf(
-                "faw_edit",
-                "faw_trash"
+                "f044",
+                "f1f8"
             )
             val choiceItems =
                 resources.getStringArray(R.array.bookmark_collection_option_menu_items)
                     .mapIndexed { index, text ->
-                        OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                        BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
                             arrayIcons[index], text
                         )
                     }.toTypedArray()
 
-            OptionMenuBottomSheetDialogFragment.show(
+            BottomSheetOptionsMenuDialogFragment.show(
                 supportFragmentManager,
                 choiceItems,
                 bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to collectionDetail),

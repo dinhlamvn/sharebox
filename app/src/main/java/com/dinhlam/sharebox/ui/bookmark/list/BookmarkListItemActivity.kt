@@ -17,7 +17,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBookmarkListItemBinding
-import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
+import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -38,7 +38,7 @@ import kotlin.math.absoluteValue
 @AndroidEntryPoint
 class BookmarkListItemActivity :
     BaseViewModelActivity<BookmarkListItemState, BookmarkListItemViewModel, ActivityBookmarkListItemBinding>(),
-    OptionMenuBottomSheetDialogFragment.OnOptionItemSelectedListener {
+    BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener {
 
     override fun onCreateViewBinding(): ActivityBookmarkListItemBinding {
         return ActivityBookmarkListItemBinding.inflate(layoutInflater)
@@ -170,17 +170,17 @@ class BookmarkListItemActivity :
 
     private fun showMore(share: ShareDetail) {
         val arrayIcons = arrayOf(
-            "faw_trash"
+            "f1f8"
         )
         val choiceItems =
             resources.getStringArray(R.array.bookmark_collection_list_option_menu_items)
                 .mapIndexed { index, text ->
-                    OptionMenuBottomSheetDialogFragment.SingleChoiceItem(
+                    BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
                         arrayIcons[index], text
                     )
                 }.toTypedArray()
 
-        OptionMenuBottomSheetDialogFragment.show(
+        BottomSheetOptionsMenuDialogFragment.show(
             supportFragmentManager,
             choiceItems,
             bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId),

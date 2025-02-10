@@ -9,10 +9,10 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getDrawableCompat
-import com.dinhlam.sharebox.listmodel.BoxListModel
+import com.dinhlam.sharebox.listmodel.BoxItemListModel
 import com.dinhlam.sharebox.listmodel.ButtonListModel
-import com.dinhlam.sharebox.listmodel.CircleIconListModel
+import com.dinhlam.sharebox.listmodel.CircleDrawableIconButtonListModel
+import com.dinhlam.sharebox.listmodel.CircleFontAwesomeIconButtonListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.view.FontAwesomeIconView
 import javax.inject.Inject
 
 class HomeAdapter @Inject constructor(
@@ -75,7 +76,7 @@ class HomeAdapter @Inject constructor(
 
         if (state.boxes.isNotEmpty()) {
             state.boxes.forEachIndexed { idx, boxDetail ->
-                BoxListModel(
+                BoxItemListModel(
                     "box_${boxDetail.boxId}",
                     boxDetail.boxId,
                     boxDetail.boxName,
@@ -166,10 +167,10 @@ class HomeAdapter @Inject constructor(
 
     private fun getDiscoverList() = buildList {
         add(
-            CircleIconListModel(
+            CircleFontAwesomeIconButtonListModel(
                 "tiktok",
-                homeFragment.requireContext().getDrawableCompat(R.drawable.ic_tiktok),
-                size = 32.dp(),
+                "e07b",
+                iconStyle = FontAwesomeIconView.IconStyle.BRANDS_REGULAR,
                 onClick = NoHashProp(View.OnClickListener {
                     homeFragment.moveToDiscover(0)
                 })
@@ -177,10 +178,9 @@ class HomeAdapter @Inject constructor(
         )
 
         add(
-            CircleIconListModel(
+            CircleDrawableIconButtonListModel(
                 "zing_news",
-                homeFragment.requireContext().getDrawableCompat(R.drawable.ic_zing_news),
-                size = 32.dp(),
+                R.drawable.ic_zing_news,
                 margin = Spacing.Only(start = 16.dp()),
                 onClick = NoHashProp(View.OnClickListener {
                     homeFragment.moveToDiscover(1)

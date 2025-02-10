@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.view
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.use
@@ -19,11 +18,9 @@ class ShareBoxUserPointView @JvmOverloads constructor(
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.ShareBoxUserPointView).use { typedArray ->
-            val iconResource =
-                typedArray.getResourceId(R.styleable.ShareBoxUserPointView_point_icon, 0)
-            if (iconResource != 0) {
-                binding.imagePointIcon.setImageResource(iconResource)
-            }
+            val iconCode =
+                typedArray.getString(R.styleable.ShareBoxUserPointView_icon_code).orEmpty()
+            binding.icon.setIconCode(iconCode)
 
             val pointNameRes =
                 typedArray.getResourceId(R.styleable.ShareBoxUserPointView_point_name, 0)
@@ -41,7 +38,7 @@ class ShareBoxUserPointView @JvmOverloads constructor(
         binding.textPointName.text = pointNameText
     }
 
-    fun setPointIcon(drawable: Drawable?) {
-        binding.imagePointIcon.setImageDrawable(drawable)
+    fun setPointIcon(iconCode: String) {
+        binding.icon.setIconCode(iconCode)
     }
 }
