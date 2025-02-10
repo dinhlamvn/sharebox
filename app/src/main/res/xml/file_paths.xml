@@ -9,6 +9,10 @@
         path="share_files/" />
 
     <external-files-path
+        name="download_files"
+        path="download_files/" />
+
+    <external-files-path
         name="bookmark_collection_thumbnails"
         path="bookmark_collection_thumbnails/" />
 
@@ -23,4 +27,8 @@
     <cache-path
         name="okhttp_caches"
         path="okhttp_caches/" />
+
+    <external-path
+        name="app_download_dir"
+        path="Download/Sharebox" />
 </paths>

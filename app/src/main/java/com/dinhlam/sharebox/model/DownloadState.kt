@@ -1,7 +1,9 @@
 package com.dinhlam.sharebox.model
 
-sealed class DownloadState {
-    data class Downloading(val progress: Int) : DownloadState()
-    data object Finished : DownloadState()
-    data class Failed(val error: Throwable? = null) : DownloadState()
+import java.io.File
+
+sealed class DownloadState(open val progress: Int) {
+    data class Downloading(override val progress: Int) : DownloadState(progress)
+    data class Finished(val downloadFile: File) : DownloadState(100)
+    data class Failed(val error: Throwable? = null) : DownloadState(0)
 }

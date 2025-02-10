@@ -2,8 +2,12 @@ package com.dinhlam.sharebox
 
 import android.app.Application
 import android.app.NotificationManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Build
+import android.os.IBinder
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
@@ -15,6 +19,7 @@ import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.services.SyncRealtimeDataService
@@ -38,6 +43,24 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class ShareBoxApp : Application(), Configuration.Provider {
+
+    private lateinit var syncRealtimeDataService: SyncRealtimeDataService
+    private var isBound: Boolean = false
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            Logger.debug("Realtime service is connected.")
+            val binder = service as SyncRealtimeDataService.LocalBinder
+            syncRealtimeDataService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            Logger.debug("Realtime service is disconnected.")
+            isBound = false
+        }
+    }
 
     private val appScope by lazyOf(MainScope() + CoroutineName("AppScope") + Job())
 
@@ -109,7 +132,17 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
         TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
 
-        startService(Intent(this, SyncRealtimeDataService::class.java))
+        bindService(
+            Intent(this, SyncRealtimeDataService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
+        )
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        unbindService(connection)
+        isBound = false
     }
 
     private fun requestApplyTheme() {

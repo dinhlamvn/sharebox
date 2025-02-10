@@ -25,6 +25,7 @@ import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.getFileNameAndSize
+import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
@@ -357,6 +358,7 @@ class ShareReceiveActivity :
                     ShareData.ShareFile(
                         fileInfo.first,
                         fileInfo.second,
+                        getMimeTypeFromUri(shareUri),
                         shareUri
                     )
                 )

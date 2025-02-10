@@ -15,5 +15,5 @@ sealed interface ShareData : Parcelable {
     @Parcelize
     data class ShareImages(val uris: List<Uri>) : ShareData
     @Parcelize
-    data class ShareFile(val fileName: String, val fileSize: Double, val uri: Uri) : ShareData
+    data class ShareFile(val fileName: String, val fileSize: Double, val mimeType: String?, val uri: Uri) : ShareData
 }

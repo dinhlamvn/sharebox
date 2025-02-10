@@ -1,17 +1,21 @@
 package com.dinhlam.sharebox.router
 
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.RemoteViews
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.drawable.toBitmap
+import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
+import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver
@@ -33,6 +37,7 @@ import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharelink.ShareLinkActivity
+import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity
 import com.dinhlam.sharebox.ui.trash.TrashActivity
@@ -289,5 +294,46 @@ class AppRouter constructor(private val context: Context) : Router {
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "*/*"
         return intent
+    }
+
+    override fun shareToOtherIntent(context: Context, uri: Uri?, mimeType: String?): Intent? {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.putExtra(
+            Intent.EXTRA_STREAM, uri
+        )
+        intent.setDataAndType(uri, "*/*")
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val components = arrayOf(ComponentName(context, ShareReceiveActivity::class.java))
+            val chooser = Intent.createChooser(intent, "Share To")
+            chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, components)
+            chooser
+        } else {
+            val resolveInfoList = context.packageManager.queryIntentActivitiesCompat(intent, 0)
+            if (resolveInfoList.isNotEmpty()) {
+                val targetIntents = mutableListOf<Intent>()
+                resolveInfoList.forEach { resolveInfo ->
+                    val newIntent = Intent(intent)
+                    if (!resolveInfo.activityInfo.packageName.equals(
+                            BuildConfig.APPLICATION_ID, true
+                        )
+                    ) {
+                        newIntent.setPackage(resolveInfo.activityInfo.packageName)
+                        targetIntents.add(intent)
+                    }
+                }
+                if (targetIntents.isEmpty()) {
+                    return null
+                }
+
+                val chooserIntent = Intent.createChooser(targetIntents.removeAt(0), "Share To")
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toTypedArray())
+                chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                chooserIntent
+            } else {
+                null
+            }
+        }
     }
 }

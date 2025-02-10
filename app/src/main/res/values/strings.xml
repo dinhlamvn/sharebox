@@ -45,7 +45,7 @@
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
     <string name="shares_success">Archive successfully</string>
-    <string name="realtime_database_service_text">Your and others data is syncing realtime…</string>
+    <string name="realtime_database_service_text">App is running…</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
@@ -202,6 +202,9 @@
     <string name="view_on_tiktok">View on Tiktok</string>
     <string name="file">File</string>
     <string name="reach_limit_file_size">Max size limited: 10MB</string>
+    <string name="percentage" translatable="false">%d%%</string>
+    <string name="download_file_not_support">File isn\'t support to download.</string>
+    <string name="error_create_file">Can\'t create file.</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

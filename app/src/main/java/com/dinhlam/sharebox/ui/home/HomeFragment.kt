@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
@@ -31,7 +32,6 @@ import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
@@ -390,7 +390,15 @@ class HomeFragment :
                 requireContext(), shareData.uris
             )
 
-            else -> showToast("No support open this share")
+            is ShareData.ShareFile -> {
+                val downloadUrl = shareData.uri.toString()
+                DownloadFileDialogFragment.showDialog(
+                    childFragmentManager,
+                    downloadUrl,
+                    shareData.fileName,
+                    shareData.mimeType
+                )
+            }
         }
     }
 

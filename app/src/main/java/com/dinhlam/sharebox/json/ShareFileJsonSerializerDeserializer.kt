@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.json
 
 import android.net.Uri
+import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareType
 import com.google.gson.JsonDeserializationContext
@@ -25,6 +26,7 @@ object ShareFileJsonSerializerDeserializer :
         val fileObject = JsonObject()
         fileObject.addProperty("fileName", src.fileName)
         fileObject.addProperty("fileSize", src.fileSize)
+        fileObject.addProperty("mimeType", src.mimeType)
         fileObject.addProperty("fileUri", src.uri.toString())
         jsonObject.add("data", fileObject)
         return jsonObject
@@ -38,7 +40,8 @@ object ShareFileJsonSerializerDeserializer :
         val fileObject = json.asJsonObject.get("data").asJsonObject
         val fileName = fileObject.get("fileName").asString
         val fileSize = fileObject.get("fileSize").asDouble
+        val mimeType = fileObject.get("mimeType")?.asString
         val fileUri = fileObject.get("fileUri").asString
-        return ShareData.ShareFile(fileName, fileSize, Uri.parse(fileUri))
+        return ShareData.ShareFile(fileName, fileSize, mimeType, Uri.parse(fileUri))
     }
 }

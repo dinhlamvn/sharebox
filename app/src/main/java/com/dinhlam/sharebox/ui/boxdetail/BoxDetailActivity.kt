@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.cast
@@ -351,7 +352,15 @@ class BoxDetailActivity :
                 this, shareData.uris
             )
 
-            else -> showToast("No support open this share")
+            is ShareData.ShareFile -> {
+                val downloadUrl = shareData.uri.toString()
+                DownloadFileDialogFragment.showDialog(
+                    supportFragmentManager,
+                    downloadUrl,
+                    shareData.fileName,
+                    shareData.mimeType
+                )
+            }
         }
     }
 }

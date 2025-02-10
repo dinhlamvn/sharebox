@@ -13,11 +13,11 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTrashBinding
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.OptionMenuBottomSheetDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -177,7 +177,15 @@ class TrashActivity :
                 this, shareData.uris
             )
 
-            else -> showToast("No support open this share")
+            is ShareData.ShareFile -> {
+                val downloadUrl = shareData.uri.toString()
+                DownloadFileDialogFragment.showDialog(
+                    supportFragmentManager,
+                    downloadUrl,
+                    shareData.fileName,
+                    shareData.mimeType
+                )
+            }
         }
     }
 }

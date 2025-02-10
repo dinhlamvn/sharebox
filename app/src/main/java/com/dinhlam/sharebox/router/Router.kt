@@ -63,4 +63,6 @@ interface Router {
     fun clipboard(context: Context): Intent
 
     fun pickFile(context: Context): Intent
+
+    fun shareToOtherIntent(context: Context, uri: Uri?, mimeType: String?): Intent?
 }

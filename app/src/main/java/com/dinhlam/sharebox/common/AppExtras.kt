@@ -20,4 +20,6 @@ object AppExtras {
     const val EXTRA_TITLE = "extra-title"
     const val EXTRA_NOTIFICATION_ID = "extra-notification-id"
     const val EXTRA_BOOLEAN = "extra-boolean"
+    const val EXTRA_MIMETYPE = "extra-mimetype"
+    const val EXTRA_NAME = "extra-name"
 }

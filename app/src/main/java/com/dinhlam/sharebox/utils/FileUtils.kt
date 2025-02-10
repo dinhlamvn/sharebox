@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.utils
 
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import androidx.core.content.FileProvider
 import com.dinhlam.sharebox.BuildConfig
 import java.io.File
@@ -15,13 +16,22 @@ object FileUtils {
         }
     }
 
-    fun createShareFilesDir(context: Context): File? {
-        val imageFileDir =
-            context.getExternalFilesDir("share_files") ?: return null
-        if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
+    fun createDownloadFilesDir(context: Context): File? {
+        val fileDir =
+            context.getExternalFilesDir("download_files") ?: return null
+        if (!fileDir.exists() && !fileDir.mkdir()) {
             return null
         }
-        return imageFileDir
+        return fileDir
+    }
+
+    fun createShareFilesDir(context: Context): File? {
+        val fileDir =
+            context.getExternalFilesDir("share_files") ?: return null
+        if (!fileDir.exists() && !fileDir.mkdir()) {
+            return null
+        }
+        return fileDir
     }
 
     fun createShareImagesDir(context: Context): File? {
@@ -45,6 +55,21 @@ object FileUtils {
         } catch (e: Exception) {
             false
         }
+    }
+
+    fun createDownloadFile(fileName: String): File? {
+        val downloadPublicDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                ?: return null
+        val fileDir = File(downloadPublicDir, "Sharebox")
+        if (!fileDir.exists() && !fileDir.mkdirs()) {
+            return null
+        }
+        val file = File(fileDir, fileName)
+        if (!file.createNewFile() && !file.delete()) {
+            return null
+        }
+        return file
     }
 
     fun randomImageFileName(extension: String) = "share_image_${UUID.randomUUID()}.$extension"
