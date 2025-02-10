@@ -66,7 +66,7 @@ class TiktokDiscoverFragment :
                         onViewTiktokVideo(tiktokDiscover)
                     }),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
-                        onArchive(tiktokDiscover.url)
+                        onArchive(tiktokDiscover.url, tiktokDiscover.desc)
                     }),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
                         WorkerUtils.enqueueJobDownloadTiktokVideo(
@@ -133,11 +133,11 @@ class TiktokDiscoverFragment :
         }
     }
 
-    private fun onArchive(url: String) = getState(viewModel) {
+    private fun onArchive(url: String, note: String?) = getState(viewModel) {
         val box = getState(viewModel, TiktokDiscoverState::currentBox) ?: return@getState showToast(
             R.string.please_choose_box
         )
-        viewModel.archiveLink(url, box.boxId)
+        viewModel.archiveLink(url, note, box.boxId)
     }
 
     private fun onViewTiktokVideo(tiktokDiscover: TiktokDiscover) {
@@ -160,8 +160,8 @@ class TiktokDiscoverFragment :
         }
     }
 
-    override fun onSave(url: String) {
-        onArchive(url)
+    override fun onSave(url: String, note: String?) {
+        onArchive(url, note)
     }
 
     override fun onBackPressed() {

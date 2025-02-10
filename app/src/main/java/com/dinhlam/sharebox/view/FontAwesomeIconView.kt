@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.use
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.getColorCompat
 
 class FontAwesomeIconView @JvmOverloads constructor(
     context: Context,
@@ -25,7 +26,7 @@ class FontAwesomeIconView @JvmOverloads constructor(
     private var iconStyle: IconStyle = IconStyle.SOLID
 
     @ColorInt
-    private var iconColor: Int = this.currentTextColor
+    private var iconColor: Int = context.getColorCompat(R.color.md_theme_primary)
 
     init {
         gravity = Gravity.CENTER
@@ -46,7 +47,7 @@ class FontAwesomeIconView @JvmOverloads constructor(
 
             iconColor = typedArray.getColor(
                 R.styleable.FontAwesomeIconView_icon_color,
-                this.currentTextColor
+                context.getColorCompat(R.color.md_theme_primary)
             )
             invalidateIconColor()
         }

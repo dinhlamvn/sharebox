@@ -30,7 +30,7 @@ class TiktokDiscoverVideoViewerDialogFragment :
     BaseDialogFragment<DialogFragmentTiktokDiscoverVideoViewerBinding>() {
 
     fun interface OnDialogCallback {
-        fun onSave(url: String)
+        fun onSave(url: String, note: String?)
     }
 
     companion object {
@@ -106,7 +106,8 @@ class TiktokDiscoverVideoViewerDialogFragment :
         player.prepare()
         player.play()
 
-        binding.textDesc.text = arguments?.getString(EXTRA_VIEW_DESC)
+        val desc = arguments?.getString(EXTRA_VIEW_DESC)
+        binding.textDesc.text = desc
 
         val viewCount = arguments?.getInt(EXTRA_VIEW_COUNT) ?: 0
         val likeCount = arguments?.getInt(EXTRA_LIKE_COUNT) ?: 0
@@ -119,7 +120,7 @@ class TiktokDiscoverVideoViewerDialogFragment :
         }
 
         binding.buttonSave.setOnClickListener {
-            arguments?.getString(EXTRA_VIEW_TIKTOK_URL)?.let(::saveVideoUrl)
+            saveVideoUrl(videoUrl, desc)
         }
 
         binding.buttonShare.setOnClickListener {
@@ -143,8 +144,8 @@ class TiktokDiscoverVideoViewerDialogFragment :
         DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 
-    private fun saveVideoUrl(url: String) {
-        parentFragment?.cast<OnDialogCallback>()?.onSave(url)
+    private fun saveVideoUrl(url: String, desc: String?) {
+        parentFragment?.cast<OnDialogCallback>()?.onSave(url, desc)
     }
 
     private fun shareVideo(url: String) {

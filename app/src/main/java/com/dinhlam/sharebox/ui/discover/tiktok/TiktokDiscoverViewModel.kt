@@ -90,12 +90,12 @@ class TiktokDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun archiveLink(link: String, boxId: String) {
+    fun archiveLink(link: String, note: String?, boxId: String) {
         suspend {
             val shareData = ShareData.ShareUrl(link)
             shareRepository.insert(
                 shareData = shareData,
-                shareNote = null,
+                shareNote = note,
                 shareBoxId = boxId,
                 shareUserId = userHelper.getCurrentUserId(),
                 isVideoShare = true

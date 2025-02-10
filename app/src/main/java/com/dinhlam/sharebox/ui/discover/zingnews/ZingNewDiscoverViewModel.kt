@@ -50,12 +50,12 @@ class ZingNewDiscoverViewModel @Inject constructor(
         }
     }
 
-    fun archiveLink(link: String, boxId: String) {
+    fun archiveLink(link: String, title: String?, boxId: String) {
         suspend {
             val shareData = ShareData.ShareUrl(link)
             shareRepository.insert(
                 shareData = shareData,
-                shareNote = null,
+                shareNote = title,
                 shareBoxId = boxId,
                 shareUserId = userHelper.getCurrentUserId(),
                 isVideoShare = true

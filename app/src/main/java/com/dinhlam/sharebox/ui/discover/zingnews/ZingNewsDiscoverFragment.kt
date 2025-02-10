@@ -62,7 +62,7 @@ class ZingNewsDiscoverFragment :
                         onClick(zingNewsDiscover)
                     }),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
-                        onArchive(zingNewsDiscover.url)
+                        onArchive(zingNewsDiscover.url, zingNewsDiscover.title)
                     })
                 ).attachTo(this)
             }
@@ -126,12 +126,12 @@ class ZingNewsDiscoverFragment :
         )
     }
 
-    private fun onArchive(url: String) {
+    private fun onArchive(url: String, title: String?) {
         val box =
             getState(viewModel, ZingNewsDiscoverState::currentBox) ?: return showToast(
                 R.string.please_choose_box
             )
-        viewModel.archiveLink(url, box.boxId)
+        viewModel.archiveLink(url, title, box.boxId)
     }
 
     override fun onBackPressed() {
