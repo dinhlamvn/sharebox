@@ -16,5 +16,4 @@ class CustomTabsDownloadBroadcastReceiver : BaseBroadcastReceiver() {
             WorkerUtils.enqueueDownloadShare(ctx, url)
         }
     }
-
 }

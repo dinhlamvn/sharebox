@@ -149,8 +149,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
                 property2.get(state),
                 property3.get(state)
             )
-        }
-            .distinctUntilChanged()
+        }.distinctUntilChanged()
             .resolveObserver { observer ->
                 block(observer.value1, observer.value2, observer.value3)
             }
