@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
-import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.cast
@@ -38,16 +37,13 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
-import com.dinhlam.sharebox.utils.WorkerUtils
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.dinhlam.sharebox.utils.LiveEvents
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment :
-    BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>(),
-    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener,
-    BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener {
+    BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>() {
 
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -88,27 +84,10 @@ class HomeFragment :
             }
         }
 
-    private val moveShareToBoxLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data ?: return@registerForActivityResult
-                val boxId =
-                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
-                viewModel.moveShareToBox(boxId)
-            }
-        }
-
     private val openShareTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.saveShareText(result.data?.getStringExtra(Intent.EXTRA_TEXT))
-            }
-        }
-
-    private val changeShareNoteResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.saveShareNote(result.data?.getStringExtra(Intent.EXTRA_TEXT))
             }
         }
 
@@ -227,6 +206,10 @@ class HomeFragment :
                 viewModel.refresh()
             }
         }
+
+        LiveEvents.onBottomSheetShareActionRefreshEvent.observe(viewLifecycleOwner) {
+            viewModel.refresh()
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
@@ -239,71 +222,6 @@ class HomeFragment :
                 showToast(R.string.permission_denied)
             }.create().show()
 
-    }
-
-    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
-        viewModel.bookmark(shareId, bookmarkCollectionId)
-    }
-
-    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
-        getState(viewModel) { state ->
-            val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
-            val share =
-                state.shares.firstOrNull { share -> share.shareId == shareId } ?: return@getState
-
-            when (position) {
-                0 -> shareHelper.shareToOther(share)
-                1 -> onRequestChangeNote(share)
-                2 -> onRequestMoveShare(share)
-                3 -> WorkerUtils.enqueueDownloadShare(
-                    requireContext(), share.shareData.cast<ShareData.ShareUrl>()?.url, share
-                )
-
-                4 -> onBookmark(shareId)
-                5 -> context?.copy(share.boxDetail?.boxId)
-                6 -> moveToTrash(share)
-            }
-        }
-    }
-
-    private fun moveToTrash(share: ShareDetail) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setMessage(R.string.confirm_move_to_trash)
-            .setPositiveButton(R.string.dialog_ok) { _, _ ->
-                viewModel.moveShareToTrash(share.shareId)
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
-    }
-
-    private fun onRequestMoveShare(share: ShareDetail) {
-        viewModel.setCurrentShare(share)
-        moveShareToBoxLauncher.launch(
-            router.boxList(
-                requireContext(),
-                getString(R.string.move_share_to)
-            )
-        )
-    }
-
-    private fun onRequestChangeNote(share: ShareDetail) {
-        viewModel.setCurrentShare(share)
-        changeShareNoteResultLauncher.launch(
-            router.textInput(
-                requireContext(),
-                getString(R.string.note),
-                share.shareNote,
-                true
-            )
-        )
-    }
-
-    private fun onBookmark(shareId: String) {
-        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager, shareId, collectionId
-            )
-        }
     }
 
     private fun onArchiveNote(text: String) {
@@ -363,7 +281,7 @@ class HomeFragment :
     }
 
     fun showMore(shareDetail: ShareDetail) {
-        shareHelper.showMore(requireActivity(), shareDetail, this@HomeFragment)
+        shareHelper.showMore(requireActivity(), shareDetail)
     }
 
     fun openShare(shareDetail: ShareDetail) {

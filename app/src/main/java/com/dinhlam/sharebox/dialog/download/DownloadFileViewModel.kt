@@ -23,11 +23,10 @@ class DownloadFileViewModel @Inject constructor(
         fileName: String?,
         mimeType: String?
     ) {
-        val downloadFileName = fileName ?: buildString {
-            append("sharebox_file_${System.currentTimeMillis()}")
-            append(".")
-            append(MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType))
-        }
+        val downloadFileName = fileName ?: FileUtils.createFileName(
+            "file",
+            MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)!!
+        )
         val downloadFile = FileUtils.createDownloadFile(downloadFileName) ?: return setState {
             copy(
                 downloadState = DownloadState.Failed(IllegalStateException(context.getString(R.string.error_create_file)))

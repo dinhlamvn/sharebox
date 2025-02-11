@@ -85,7 +85,7 @@ object FileUtils {
             append("_")
             append(prefix)
             append("_")
-            append(System.currentTimeMillis().format("yyyyMMdd-HH:mm:ss"))
+            append(System.currentTimeMillis().format("yyyyMMdd-HH_mm_ss"))
             append(".")
             append(ext)
         }

@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.helper.DownloadHelper
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.DownloadData
+import com.dinhlam.sharebox.utils.FileUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -152,15 +153,13 @@ class DownloadPopupActivity : BaseActivity<ActivityDownloadPopupBinding>() {
     }
 
     private fun downloadVideo(id: String, mimeType: String, downloadUrl: String) {
-        val outputFile =
-            "sharebox_video_${id}_${System.currentTimeMillis()}.${mimeType.asFileExtension()}"
+        val outputFile = FileUtils.createFileName("video", mimeType.asFileExtension())
         DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
     private fun downloadAudio(id: String, mimeType: String, downloadUrl: String) {
-        val outputFile =
-            "sharebox_audio_${id}_${System.currentTimeMillis()}.${mimeType.asFileExtension()}"
+        val outputFile = FileUtils.createFileName("audio", mimeType.asFileExtension())
         DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }

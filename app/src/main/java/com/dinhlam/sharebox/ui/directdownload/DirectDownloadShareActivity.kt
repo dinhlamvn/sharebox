@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.utils.WorkerUtils
 
 class DirectDownloadShareActivity : AppCompatActivity() {
 
@@ -42,7 +41,6 @@ class DirectDownloadShareActivity : AppCompatActivity() {
             finishAndRemoveTask()
             return
         }
-        WorkerUtils.enqueueDownloadShare(this, text)
         finishAndRemoveTask()
     }
 }

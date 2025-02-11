@@ -11,7 +11,6 @@ import androidx.work.WorkManager
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.worker.DirectDownloadShareWorker
 import com.dinhlam.sharebox.worker.DownloadImagesWorker
 import com.dinhlam.sharebox.worker.FacebookDownloadWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
@@ -106,7 +105,7 @@ object WorkerUtils {
     }
 
     fun enqueueDownloadShare(
-        context: Context, shareUrl: String?, shareDetail: ShareDetail? = null
+        context: Context, shareDetail: ShareDetail? = null
     ) {
         val shareData = shareDetail?.shareData
         if (shareData is ShareData.ShareImage) {
@@ -121,12 +120,12 @@ object WorkerUtils {
             )
         }
 
-        val downloadShareRequest =
-            OneTimeWorkRequestBuilder<DirectDownloadShareWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            ).setInputData(
-                Data.Builder().putString(AppExtras.EXTRA_URL, shareUrl).build()
-            ).setId(UUID.randomUUID()).build()
-        WorkManager.getInstance(context).enqueue(downloadShareRequest)
+//        val downloadShareRequest =
+//            OneTimeWorkRequestBuilder<DirectDownloadShareWorker>().setConstraints(
+//                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//            ).setInputData(
+//                Data.Builder().putString(AppExtras.EXTRA_URL, shareUrl).build()
+//            ).setId(UUID.randomUUID()).build()
+//        WorkManager.getInstance(context).enqueue(downloadShareRequest)
     }
 }

@@ -18,7 +18,6 @@ import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.model.DownloadData
-import com.dinhlam.sharebox.receiver.CustomTabsDownloadBroadcastReceiver
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
@@ -32,11 +31,11 @@ import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
 import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
+import com.dinhlam.sharebox.ui.link.ShareLinkActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
-import com.dinhlam.sharebox.ui.link.ShareLinkActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity
@@ -94,29 +93,10 @@ class AppRouter constructor(private val context: Context) : Router {
 
         val clickableIds = intArrayOf(R.id.image_archive)
 
-        val downloadBroadcastReceiverIntent =
-            Intent(context, CustomTabsDownloadBroadcastReceiver::class.java)
-
-        val downloadPendingIntent = PendingIntent.getBroadcast(
-            context,
-            CustomTabsDownloadBroadcastReceiver.REQUEST_CODE,
-            downloadBroadcastReceiverIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-        )
-
         val customTabsIntent =
             CustomTabsIntent.Builder()
                 .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
                 .setSecondaryToolbarViews(remoteViews, clickableIds, pendingIntent)
-                .apply {
-                    if (supportDownload) {
-                        setActionButton(
-                            Icons.downloadIcon(context).toBitmap(),
-                            downloadDesc,
-                            downloadPendingIntent
-                        )
-                    }
-                }
                 .build()
 
         customTabsIntent.intent.setPackage("com.android.chrome")

@@ -7,19 +7,17 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
-import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.CommentRepository
 import com.dinhlam.sharebox.data.repository.LikeRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.dialog.action.BottomSheetShareActionDialogFragment
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
-import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
@@ -50,31 +48,8 @@ class ShareHelper @Inject constructor(
     fun showMore(
         activity: FragmentActivity,
         share: ShareDetail,
-        callback: BottomSheetOptionsMenuDialogFragment.OnOptionItemSelectedListener
     ) {
-        val arrayIcons = arrayOf(
-            "f064",
-            "f044",
-            "f061",
-            "f56d",
-            "f02e",
-            "f0c5",
-            "f1f8"
-        )
-        val choiceItems =
-            activity.resources.getStringArray(R.array.more_menu)
-                .mapIndexed { index, text ->
-                    BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
-                        arrayIcons[index], text
-                    )
-                }.toTypedArray()
-
-        BottomSheetOptionsMenuDialogFragment.show(
-            activity.supportFragmentManager,
-            choiceItems,
-            bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId),
-            callback
-        )
+        BottomSheetShareActionDialogFragment.showDialog(activity.supportFragmentManager, share.shareId)
     }
 
     fun shareToOther(share: ShareDetail) {

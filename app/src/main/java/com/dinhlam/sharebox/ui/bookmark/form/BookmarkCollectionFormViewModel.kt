@@ -57,7 +57,7 @@ class BookmarkCollectionFormViewModel @Inject constructor(
                     ?: return@use null
 
                 val imageFile =
-                    File(thumbnailFileDir, "thumbnail_${System.currentTimeMillis()}.$extension")
+                    File(thumbnailFileDir, FileUtils.createFileName("thumbnail", extension))
 
                 if (!imageFile.createNewFile()) {
                     return@use null

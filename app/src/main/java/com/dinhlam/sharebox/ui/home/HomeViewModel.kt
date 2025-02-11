@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home
 
-import androidx.annotation.UiThread
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
@@ -13,8 +12,6 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -111,14 +108,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
-        doInBackground {
-            val bookmarkDetail = bookmarkRepository.findOne(shareId)
-            withContext(Dispatchers.Main) {
-                block(bookmarkDetail?.bookmarkCollectionId)
-            }
-        }
-
     fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
         copy(chooseBoxFor = chooseBoxFor)
     }
@@ -135,44 +124,6 @@ class HomeViewModel @Inject constructor(
                 shareRepository.findOne(shareId)
             } ?: currentShare
         }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
-    }
-
-    fun saveShareNote(text: String?) = getState { state ->
-        val currentShare = state.currentShare ?: return@getState
-        val shareId = currentShare.shareId
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)
-            share?.let { updateShare ->
-                shareRepository.update(updateShare.copy(shareNote = text))
-                shareRepository.findOne(shareId)
-            } ?: currentShare
-        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
-    }
-
-    fun moveShareToBox(boxId: String) = getState { state ->
-        val currentShare = state.currentShare ?: return@getState
-        val shareId = currentShare.shareId
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)
-            share?.let { updateShare ->
-                shareRepository.update(updateShare.copy(shareBoxId = boxId))
-                shareRepository.findOne(shareId)
-            } ?: currentShare
-        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
-    }
-
-    fun moveShareToTrash(shareId: String) {
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)!!
-            shareRepository.update(share.copy(shareBoxId = null))
-            shareRepository.findOne(shareId)!!
-        }.execute { asyncLoad ->
-            if (asyncLoad.success) {
-                copy(shares = shares.filterNot { share -> share.shareId == shareId })
-            } else {
-                this
-            }
-        }
     }
 
     fun refreshBoxDetail(boxDetail: BoxDetail) = getState { state ->

@@ -37,7 +37,7 @@ class ShareRepository @Inject constructor(
     }
 
     override suspend fun updateInternal(entity: Share, willBeSync: Boolean): Share {
-        shareDao.update(entity)
+        shareDao.update(entity.copy(synced = !willBeSync))
         if (willBeSync) {
             WorkerUtils.enqueueSyncShareToCloud(context, entity.shareId)
         }

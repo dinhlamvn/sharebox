@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentDownloadBinding
 import com.dinhlam.sharebox.extensions.asFileExtension
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.ext
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.hideKeyboard
@@ -27,6 +28,7 @@ import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -161,10 +163,7 @@ class DownloadFragment :
                             )
                         } ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadImages(
-                                downloadData.id,
-                                listOf(downloadData.downloadUrl)
-                            )
+                            downloadImage(downloadData.downloadUrl)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
@@ -174,19 +173,19 @@ class DownloadFragment :
     }
 
     private fun downloadVideo(id: String, mimeType: String, downloadUrl: String) {
-        val outputFile =
-            "sharebox_video_${id}_${System.currentTimeMillis()}.${mimeType.asFileExtension()}"
+        val outputFile = FileUtils.createFileName("video", mimeType.asFileExtension())
         DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 
     private fun downloadAudio(id: String, mimeType: String, downloadUrl: String) {
-        val outputFile =
-            "sharebox_audio_${id}_${System.currentTimeMillis()}.${mimeType.asFileExtension()}"
+        val outputFile = FileUtils.createFileName("audio", mimeType.asFileExtension())
         DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 
-    private fun downloadImages(id: String, urls: List<String>) {
-        DownloadHelper.downloadImages(requireContext(), id, urls)
+    private fun downloadImage(url: String) {
+        val ext = url.ext ?: return showToast(R.string.error_file_format)
+        val outputFile = FileUtils.createFileName("image", ext)
+        DownloadHelper.enqueueDownload(requireContext(), url, outputFile)
     }
 
     override fun onStateChanged(state: DownloadState) {

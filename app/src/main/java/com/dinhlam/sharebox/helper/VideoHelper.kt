@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.extensions.isVideoUrl
 import com.dinhlam.sharebox.extensions.isYoutubeVideo
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.VideoSource
+import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.WorkerUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -121,7 +122,7 @@ class VideoHelper @Inject constructor(
                 DownloadHelper.enqueueDownload(
                     context,
                     videoUri,
-                    "sharebox_video_${id}_${System.currentTimeMillis()}.$fileExt"
+                    FileUtils.createFileName("video", fileExt)
                 )
             }
         }
