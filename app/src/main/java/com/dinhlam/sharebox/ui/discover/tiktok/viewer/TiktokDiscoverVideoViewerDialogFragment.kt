@@ -22,6 +22,7 @@ import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.updateHeight
 import com.dinhlam.sharebox.helper.DownloadHelper
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -95,7 +96,8 @@ class TiktokDiscoverVideoViewerDialogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.videoBackground.updateHeight(heightPercentage(80))
+        binding.root.updateHeight(heightPercentage(90))
+        val tiktokUrl = arguments?.getString(EXTRA_VIEW_TIKTOK_URL) ?: return dismiss()
         val videoUrl = arguments?.getString(AppExtras.EXTRA_URL) ?: return dismiss()
         binding.videoView.player = player
         player.addListener(playerListener)
@@ -115,17 +117,17 @@ class TiktokDiscoverVideoViewerDialogFragment :
         binding.textViewCount.text = viewCount.asViewCount()
         binding.textLikeCount.text = likeCount.asViewCount()
 
+
         binding.buttonDownload.setOnClickListener {
             downloadVideo(videoUrl)
         }
 
         binding.buttonSave.setOnClickListener {
-            saveVideoUrl(videoUrl, desc)
+            saveVideoUrl(tiktokUrl, desc)
         }
 
         binding.buttonShare.setOnClickListener {
-            val url = arguments?.getString(EXTRA_VIEW_TIKTOK_URL) ?: return@setOnClickListener
-            shareVideo(url)
+            shareVideo(tiktokUrl)
         }
 
         binding.viewOnTiktok.text = buildSpannedString {
@@ -134,13 +136,12 @@ class TiktokDiscoverVideoViewerDialogFragment :
             }
         }
         binding.viewOnTiktok.setOnClickListener {
-            val url = arguments?.getString(EXTRA_VIEW_TIKTOK_URL) ?: return@setOnClickListener
-            startActivity(router.viewIntent(url))
+            startActivity(router.viewIntent(tiktokUrl))
         }
     }
 
     private fun downloadVideo(downloadUrl: String) {
-        val outputFile = "sharebox_video_${System.currentTimeMillis()}.mp4"
+        val outputFile = FileUtils.createFileName("video", "mp4")
         DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
     }
 

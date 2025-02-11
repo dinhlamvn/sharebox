@@ -3,13 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:layout_height="500dp">
 
     <View
         android:id="@+id/video_background"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@id/icon_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.media3.ui.PlayerView
@@ -38,11 +41,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         app:icon_code="f06e"
         app:icon_size="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/video_background" />
+        app:layout_constraintBottom_toTopOf="@id/text_desc"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_view_count"
@@ -94,30 +97,28 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:ellipsize="end"
         android:maxLines="3"
         android:paddingVertical="4dp"
         android:textAppearance="@style/TextBody"
         app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/button_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_view_count"
         tools:text="Có ăn thì phải có làm chứ" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/button_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
         android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
         android:padding="4dp"
         app:icon_code="f0c7"
         app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_desc" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/button_share"

@@ -5,8 +5,8 @@ import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.extensions.format
 import java.io.File
-import java.util.UUID
 
 object FileUtils {
 
@@ -72,10 +72,22 @@ object FileUtils {
         return file
     }
 
-    fun randomImageFileName(extension: String) = "share_image_${UUID.randomUUID()}.$extension"
+    fun randomImageFileName(extension: String) = createFileName("image", extension)
 
-    fun randomFileName(extension: String) = "share_file_${UUID.randomUUID()}.$extension"
+    fun randomFileName(extension: String) = createFileName("file", extension)
 
     fun getFileNameFromUri(uri: Uri) =
         uri.lastPathSegment ?: error("No file name found in uri $uri")
+
+    fun createFileName(prefix: String, ext: String): String {
+        return buildString {
+            append("sharebox")
+            append("_")
+            append(prefix)
+            append("_")
+            append(System.currentTimeMillis().format("yyyyMMdd-HH:mm:ss"))
+            append(".")
+            append(ext)
+        }
+    }
 }
