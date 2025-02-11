@@ -27,6 +27,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.services.RealtimeServiceManager
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.UserUtils
 import com.firebase.ui.auth.AuthUI
@@ -70,6 +71,9 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
 
     @Inject
     lateinit var transferDataHelper: TransferDataHelper
+
+    @Inject
+    lateinit var realtimeServiceManager: RealtimeServiceManager
 
     private val signInForResult by lazy {
         intent.getBooleanExtra(
@@ -166,6 +170,7 @@ class SignInActivity : BaseActivity<ActivitySignInBinding>() {
         if (user != null) {
             realtimeDatabaseRepository.push(user)
             transferDataHelper.transferData(userSharePref.getAnonymousUserId(), user.userId)
+            realtimeServiceManager.bindRealtimeService()
             if (signInForResult) {
                 setResult(Activity.RESULT_OK)
                 finish()

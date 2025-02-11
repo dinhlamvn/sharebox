@@ -33,6 +33,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.services.RealtimeServiceManager
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -65,6 +66,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
     @Inject
     lateinit var transferDataHelper: TransferDataHelper
+
+    @Inject
+    lateinit var realtimeServiceManager: RealtimeServiceManager
 
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
@@ -261,6 +265,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                         userSharePref.getAnonymousUserId()
                     )
                     userHelper.signOut(this@SettingActivity, this, {
+                        realtimeServiceManager.unbindRealtimeService()
                         binding.textAction.setText(R.string.sign_in)
                         showToast(R.string.logged_out)
                     }, {

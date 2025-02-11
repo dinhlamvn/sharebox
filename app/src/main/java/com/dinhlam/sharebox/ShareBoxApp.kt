@@ -2,12 +2,7 @@ package com.dinhlam.sharebox
 
 import android.app.Application
 import android.app.NotificationManager
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Build
-import android.os.IBinder
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
@@ -19,10 +14,9 @@ import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
-import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.services.SyncRealtimeDataService
+import com.dinhlam.sharebox.services.RealtimeServiceManager
 import com.dinhlam.sharebox.tracking.TrackerManager
 import com.dinhlam.sharebox.tracking.trackers.FirebaseAnalysisTracker
 import com.dinhlam.sharebox.utils.UserUtils
@@ -44,24 +38,6 @@ import javax.inject.Inject
 @HiltAndroidApp
 class ShareBoxApp : Application(), Configuration.Provider {
 
-    private lateinit var syncRealtimeDataService: SyncRealtimeDataService
-    private var isBound: Boolean = false
-
-    private val connection = object : ServiceConnection {
-
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            Logger.debug("Realtime service is connected.")
-            val binder = service as SyncRealtimeDataService.LocalBinder
-            syncRealtimeDataService = binder.getService()
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(arg0: ComponentName) {
-            Logger.debug("Realtime service is disconnected.")
-            isBound = false
-        }
-    }
-
     private val appScope by lazyOf(MainScope() + CoroutineName("AppScope") + Job())
 
     @Inject
@@ -78,6 +54,9 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var userRepository: UserRepository
+
+    @Inject
+    lateinit var realtimeServiceManager: RealtimeServiceManager
 
     private fun createAnonymousUser() {
         if (!userHelper.isSignedIn() && userHelper.getCurrentUserId().isEmpty()) {
@@ -98,6 +77,7 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+
         createAnonymousUser()
         Iconics.registerFont(GoogleMaterial)
         Iconics.registerFont(FontAwesome)
@@ -132,18 +112,9 @@ class ShareBoxApp : Application(), Configuration.Provider {
 
         TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
 
-        bindService(
-            Intent(this, SyncRealtimeDataService::class.java),
-            connection,
-            Context.BIND_AUTO_CREATE
-        )
+        realtimeServiceManager.bindRealtimeService()
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-        unbindService(connection)
-        isBound = false
-    }
 
     private fun requestApplyTheme() {
         when (appSettingHelper.getTheme()) {

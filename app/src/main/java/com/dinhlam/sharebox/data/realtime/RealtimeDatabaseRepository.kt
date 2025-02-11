@@ -234,7 +234,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         private val block: suspend (String, Map<String, Any>) -> Unit
     ) : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
-            scope.launch(Dispatchers.IO, start = CoroutineStart.UNDISPATCHED) {
+            scope.launch(Dispatchers.IO) {
                 try {
                     val iterator = snapshot.children.iterator()
                     while (iterator.hasNext()) {
