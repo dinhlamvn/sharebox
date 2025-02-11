@@ -55,8 +55,7 @@ class DownloadImagesWorker @AssistedInject constructor(
             var downloaded = 0
 
             urls.forEachIndexed { index, url ->
-                val outputFile =
-                    File(outputDir, "sharebox_image_${id}_${System.currentTimeMillis()}_$index.jpg")
+                val outputFile = File(outputDir, FileUtils.createFileName("image_$index", "jpg"))
                 if (outputFile.exists()) {
                     outputFile.delete()
                 }

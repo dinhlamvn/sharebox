@@ -1,18 +1,11 @@
 package com.dinhlam.sharebox.helper
 
-import android.content.Context
 import android.net.Uri
-import android.widget.Toast
-import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.extensions.ext
 import com.dinhlam.sharebox.extensions.isFacebookVideo
 import com.dinhlam.sharebox.extensions.isTiktokVideo
 import com.dinhlam.sharebox.extensions.isVideoUrl
 import com.dinhlam.sharebox.extensions.isYoutubeVideo
-import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.VideoSource
-import com.dinhlam.sharebox.utils.FileUtils
-import com.dinhlam.sharebox.utils.WorkerUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -22,9 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class VideoHelper @Inject constructor(
-    private val okHttpClient: OkHttpClient,
-    private val networkHelper: NetworkHelper,
-    private val appSettingHelper: AppSettingHelper,
+    private val okHttpClient: OkHttpClient
 ) {
     fun getVideoSource(url: String): VideoSource? {
         return when {
@@ -92,39 +83,6 @@ class VideoHelper @Inject constructor(
             }
         } catch (e: Exception) {
             null
-        }
-    }
-
-    suspend fun downloadVideo(
-        context: Context,
-        id: Int,
-        videoSource: VideoSource,
-        videoUri: String
-    ) {
-        if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, R.string.network_wifi_only_warning, Toast.LENGTH_SHORT)
-                    .show()
-            }
-            return
-        }
-
-        when (videoSource) {
-            VideoSource.Tiktok -> WorkerUtils.enqueueJobDownloadTiktokVideo(context, id, videoUri)
-            VideoSource.Youtube -> WorkerUtils.enqueueJobDownloadYoutube(context, id, videoUri)
-            VideoSource.Facebook -> WorkerUtils.enqueueJobDownloadFacebookVideo(
-                context,
-                id,
-                videoUri
-            )
-
-            else -> videoUri.ext?.let { fileExt ->
-                DownloadHelper.enqueueDownload(
-                    context,
-                    videoUri,
-                    FileUtils.createFileName("video", fileExt)
-                )
-            }
         }
     }
 }

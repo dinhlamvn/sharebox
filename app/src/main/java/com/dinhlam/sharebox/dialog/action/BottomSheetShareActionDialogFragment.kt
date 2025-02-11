@@ -29,7 +29,6 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.LiveEvents
-import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -113,7 +112,7 @@ class BottomSheetShareActionDialogFragment :
             1 -> showDialogInputShareNote(share.shareNote)
             2 -> onRequestMoveShare()
             3 -> copyShare(share)
-            4 -> WorkerUtils.enqueueDownloadShare(requireContext(), share)
+            4 -> shareHelper.downloadShareContent(requireContext(), share)
             5 -> onBookmark(share.shareId)
             6 -> copyBoxID(share)
             7 -> moveToTrash(share)

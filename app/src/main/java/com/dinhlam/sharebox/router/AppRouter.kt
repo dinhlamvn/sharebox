@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
@@ -28,7 +27,7 @@ import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
 import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
-import com.dinhlam.sharebox.ui.downloadpopup.DownloadPopupActivity
+import com.dinhlam.sharebox.ui.downloadpopup.BottomSheetDownloadActivity
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.link.ShareLinkActivity
@@ -213,27 +212,15 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, ShareLinkActivity::class.java).setData(uri)
     }
 
-    override fun downloadPopup(
+    override fun downloadBottomSheet(
         context: Context,
-        url: String,
-        videos: List<DownloadData>,
-        audios: List<DownloadData>,
-        images: List<DownloadData>,
-        notificationId: Int
+        urls: List<String>
     ): Intent {
         return Intent(
-            context, DownloadPopupActivity::class.java
-        ).putExtra(
-            AppExtras.EXTRA_URL, url
-        ).putParcelableArrayListExtra(
-            AppExtras.EXTRA_DOWNLOAD_VIDEOS, arrayListOf(*videos.toTypedArray())
-        ).putParcelableArrayListExtra(
-            AppExtras.EXTRA_DOWNLOAD_AUDIOS, arrayListOf(*audios.toTypedArray())
-        ).putParcelableArrayListExtra(
-            AppExtras.EXTRA_DOWNLOAD_IMAGES, arrayListOf(*images.toTypedArray())
-        ).putExtra(AppExtras.EXTRA_NOTIFICATION_ID, notificationId)
-
-            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            context, BottomSheetDownloadActivity::class.java
+        ).putStringArrayListExtra(
+            AppExtras.EXTRA_URLS, arrayListOf(*urls.toTypedArray())
+        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
     override fun bookmark(context: Context): Intent {

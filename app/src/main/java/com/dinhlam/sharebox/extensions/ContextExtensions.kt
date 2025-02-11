@@ -1,5 +1,6 @@
 package com.dinhlam.sharebox.extensions
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,6 +8,8 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import android.widget.Toast
+import androidx.annotation.StringRes
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.utils.FileUtils
 
@@ -55,4 +58,16 @@ fun Context.getFileNameAndSize(uri: Uri): Pair<String, Double> {
             null
         }
     } ?: ("" to 0.0)
+}
+
+fun Context.showToast(@StringRes text: Int, duration: Int = Toast.LENGTH_SHORT) {
+    showToast(getString(text, duration))
+}
+
+fun Context.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT): Toast? {
+    return text.takeIfNotNullOrBlank()?.let { toastContent ->
+        val toast = Toast.makeText(this, toastContent, duration)
+        toast.show()
+        toast
+    }
 }

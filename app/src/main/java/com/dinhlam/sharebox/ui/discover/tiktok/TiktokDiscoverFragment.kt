@@ -22,7 +22,6 @@ import com.dinhlam.sharebox.recyclerview.LoadMoreGridLayoutManager
 import com.dinhlam.sharebox.recyclerview.decoration.HorizontalSpacingDecoration
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.discover.tiktok.viewer.TiktokDiscoverVideoViewerDialogFragment
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -69,10 +68,11 @@ class TiktokDiscoverFragment :
                         onArchive(tiktokDiscover.url, tiktokDiscover.desc)
                     }),
                     BaseListAdapter.NoHashProp(View.OnClickListener {
-                        WorkerUtils.enqueueJobDownloadTiktokVideo(
-                            requireContext(),
-                            tiktokDiscover.hashCode(),
-                            tiktokDiscover.url
+                        startActivity(
+                            router.downloadBottomSheet(
+                                requireContext(),
+                                listOf(tiktokDiscover.url)
+                            )
                         )
                     }),
                 ).attachTo(this)

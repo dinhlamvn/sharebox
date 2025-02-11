@@ -13,6 +13,7 @@ object AppExtras {
     const val EXTRA_BOX_NAME = "extra-box-name"
     const val EXTRA_BOX_DETAIL = "extra-box-detail"
     const val EXTRA_URL = "extra-url"
+    const val EXTRA_URLS = "extra-urls"
     const val EXTRA_DOWNLOAD_VIDEOS = "extra-download-videos"
     const val EXTRA_DOWNLOAD_AUDIOS = "extra-download-audios"
     const val EXTRA_DOWNLOAD_IMAGES = "extra-download-images"

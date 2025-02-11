@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.download
+package com.dinhlam.sharebox.ui.downloadpopup
 
 import android.net.Uri
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -23,18 +23,31 @@ import javax.inject.Inject
 import javax.inject.Named
 
 @HiltViewModel
-class DownloadViewModel @Inject constructor(
+class BottomSheetDownloadViewModel @Inject constructor(
     private val videoHelper: VideoHelper,
     private val okHttpClient: OkHttpClient,
     @Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader,
     @Named("FacebookDownloaderV2") private val facebookDownloader: Downloader,
     @Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
-) : BaseViewModel<DownloadState>(DownloadState()) {
+) : BaseViewModel<BottomSheetDownloadState>(BottomSheetDownloadState()) {
 
-    fun download(downloadLink: String) {
+    fun download(downloadLinks: List<String>) {
         suspend {
-            val originUrlPair = getOriginUrl(downloadLink)
-            downloadInternal(originUrlPair.first, originUrlPair.second)
+            val videos = mutableListOf<DownloadData>()
+            val images = mutableListOf<DownloadData>()
+            val audios = mutableListOf<DownloadData>()
+            val files = mutableListOf<DownloadData>()
+            val links = downloadLinks.distinct()
+            repeat(links.size) { idx ->
+                val downloadUrl = links[idx]
+                val originUrlPair = getOriginUrl(downloadUrl)
+                val downloadContent = downloadInternal(originUrlPair.first, originUrlPair.second)
+                videos.addAll(downloadContent.videos)
+                images.addAll(downloadContent.images)
+                audios.addAll(downloadContent.audios)
+                files.addAll(downloadContent.files)
+            }
+            DownloadContent(videos, audios, images, files)
         }.execute { asyncLoad ->
             copy(asyncLoadDownload = asyncLoad)
         }
@@ -108,7 +121,7 @@ class DownloadViewModel @Inject constructor(
     private fun downloadImage(url: String): DownloadContent {
         val ext = url.ext ?: return DownloadContent()
         val mimetype = url.mimeType ?: return DownloadContent()
-        val images = listOf(DownloadData("image", mimetype, "(${ext.uppercase()})", url))
+        val images = listOf(DownloadData("image_$url", mimetype, "(${ext.uppercase()})", url))
         return DownloadContent(images = images)
     }
 
@@ -134,7 +147,7 @@ class DownloadViewModel @Inject constructor(
     private fun downloadVideoDirectly(url: String): DownloadContent {
         val ext = url.ext ?: return DownloadContent()
         val mimetype = url.mimeType ?: return DownloadContent()
-        val videos = listOf(DownloadData("video", mimetype, "(${ext.uppercase()})", url))
+        val videos = listOf(DownloadData("video_$url", mimetype, "(${ext.uppercase()})", url))
         return DownloadContent(videos = videos)
     }
 

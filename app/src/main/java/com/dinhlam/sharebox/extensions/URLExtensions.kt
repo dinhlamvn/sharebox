@@ -18,11 +18,27 @@ fun String.isFacebookVideo(): Boolean {
 
 fun String.isImageUrl() = arrayOf(
     ".png", ".jpg", ".jpeg", ".webp", ".gif"
-).any { ext -> endsWith(ext) }
+).any { ext -> endsWith(ext, true) }
+
+fun String.isImageMimeType() = arrayOf(
+    "png", "jpg", "jpeg", "webp", "gif"
+).any { ext -> endsWith(ext, true) }
 
 fun String.isVideoUrl() = arrayOf(
     ".mp4", ".avi", ".webm", ".flv", ".mov", ".m4v", ".3gp"
-).any { ext -> endsWith(ext) }
+).any { ext -> endsWith(ext, true) }
+
+fun String.isVideoMimeType() = arrayOf(
+    "mp4", "avi", "webm", "flv", "mov", "m4v", "3gp"
+).any { ext -> endsWith(ext, true) }
+
+fun String.isAudioUrl() = arrayOf(
+    ".mp3", ".wav",
+).any { ext -> endsWith(ext, true) }
+
+fun String.isAudioMimeType() = arrayOf(
+    "mp3", "wav",
+).any { ext -> endsWith(ext, true) }
 
 val String.ext: String?
     get() = MimeTypeMap.getFileExtensionFromUrl(this)

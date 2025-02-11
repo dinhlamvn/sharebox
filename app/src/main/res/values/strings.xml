@@ -217,6 +217,7 @@
     <string name="hint_note">Your note...</string>
     <string name="share_note">Share Note</string>
     <string name="nothing_to_copy">Nothing to copy</string>
+    <string name="download_files">Download Files</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

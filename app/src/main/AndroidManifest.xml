@@ -141,7 +141,7 @@
         </activity>
 
         <activity
-            android:name=".ui.directdownload.DirectDownloadShareActivity"
+            android:name=".ui.downloadpopup.BottomSheetDownloadActivity"
             android:exported="true"
             android:label="@string/share_direct_download_activity_title"
             android:launchMode="singleInstance"
@@ -159,12 +159,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.downloadpopup.DownloadPopupActivity"
-            android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.Transparent"
-            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".ui.bookmark.form.BookmarkCollectionFormActivity"

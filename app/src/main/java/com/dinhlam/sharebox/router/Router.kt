@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.DownloadData
 
 interface Router {
     fun home(isNewTask: Boolean = false): Intent
@@ -49,7 +48,7 @@ interface Router {
     fun textInput(context: Context, title: String?, text: String?, isEdit: Boolean): Intent
 
     fun shareLink(context: Context, uri: Uri?): Intent
-    fun downloadPopup(context: Context, url: String, videos: List<DownloadData>, audios: List<DownloadData>, images: List<DownloadData>, notificationId: Int): Intent
+    fun downloadBottomSheet(context: Context, urls: List<String>): Intent
 
     fun bookmark(context: Context): Intent
 

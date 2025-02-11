@@ -5,12 +5,10 @@ import android.content.Context
 import android.os.Build
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.annotation.IntRange
-import androidx.annotation.StringRes
 
 fun Context.screenWidth() = resources.displayMetrics.widthPixels
 
@@ -33,18 +31,6 @@ fun ComponentActivity.registerOnBackPressHandler(handler: () -> Unit) {
         onBackPressedDispatcher.addCallback(this) {
             handler.invoke()
         }
-    }
-}
-
-fun Activity.showToast(@StringRes text: Int, duration: Int = Toast.LENGTH_SHORT) {
-    showToast(getString(text, duration))
-}
-
-fun Activity.showToast(text: String?, duration: Int = Toast.LENGTH_SHORT): Toast? {
-    return text.takeIfNotNullOrBlank()?.let { toastContent ->
-        val toast = Toast.makeText(this, toastContent, duration)
-        toast.show()
-        toast
     }
 }
 

@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -21,8 +22,8 @@ import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPi
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
@@ -49,7 +50,10 @@ class ShareHelper @Inject constructor(
         activity: FragmentActivity,
         share: ShareDetail,
     ) {
-        BottomSheetShareActionDialogFragment.showDialog(activity.supportFragmentManager, share.shareId)
+        BottomSheetShareActionDialogFragment.showDialog(
+            activity.supportFragmentManager,
+            share.shareId
+        )
     }
 
     fun shareToOther(share: ShareDetail) {
@@ -162,35 +166,6 @@ class ShareHelper @Inject constructor(
         }.show(fragmentManager, "CommentFragment")
     }
 
-    suspend fun calcTrendingScore(shareId: String): Int {
-        val share = shareRepository.findOneRaw(shareId) ?: return 0
-
-        var trendingScore = 0
-
-        val commentCountByCurrentUser =
-            commentRepository.count(shareId, userId = userHelper.getCurrentUserId())
-        trendingScore += commentCountByCurrentUser.times(2)
-
-        if (likeRepository.liked(shareId, userHelper.getCurrentUserId())) {
-            trendingScore += 10
-        }
-
-        if (bookmarkRepository.bookmarked(shareId)) {
-            trendingScore += 15
-        }
-
-        val commentCount = commentRepository.count(shareId)
-        trendingScore += (commentCount / 5)
-
-        val likeCount = likeRepository.count(shareId)
-        trendingScore += likeCount
-
-        val elapsed = nowUTCTimeInMillis() - share.shareDate
-        val hours = elapsed.div(3600 * 1000).toInt()
-
-        return trendingScore.minus(hours)
-    }
-
     fun viewInSource(context: Context, videoSource: VideoSource, shareData: ShareData) {
         when (videoSource) {
             is VideoSource.Directly -> {}
@@ -260,5 +235,22 @@ class ShareHelper @Inject constructor(
             "facebook.com",
             "you.tube"
         ).any { supportLink -> url.contains(supportLink, true) }
+    }
+
+    fun downloadShareContent(context: Context, share: ShareDetail) {
+        val urls = when (val shareData = share.shareData) {
+            is ShareData.ShareUrl -> listOf(shareData.url)
+            is ShareData.ShareImage -> listOf(shareData.uri.toString())
+            is ShareData.ShareImages -> shareData.uris.map(Uri::toString)
+            is ShareData.ShareFile -> listOf(shareData.uri.toString())
+            else -> emptyList()
+        }
+
+        if (urls.isEmpty()) {
+            context.showToast(R.string.nothing_to_download)
+            return
+        }
+
+        context.startActivity(router.downloadBottomSheet(context, urls))
     }
 }

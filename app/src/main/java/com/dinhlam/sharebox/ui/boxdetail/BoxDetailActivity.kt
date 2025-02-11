@@ -32,7 +32,6 @@ import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.LiveEvents
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -225,7 +224,7 @@ class BoxDetailActivity :
                             ?: return@getState
                     when (position) {
                         0 -> shareHelper.shareToOther(shareData)
-                        1 -> WorkerUtils.enqueueDownloadShare(this, shareData)
+                        1 -> shareHelper.downloadShareContent(this, shareData)
                         2 -> copy(shareData.boxDetail?.boxId)
                     }
                 }

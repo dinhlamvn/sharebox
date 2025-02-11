@@ -1,27 +1,22 @@
-package com.dinhlam.sharebox.ui.download
+package com.dinhlam.sharebox.ui.downloadpopup
 
-import android.content.ClipboardManager
-import android.content.Context
-import android.net.Uri
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.databinding.FragmentDownloadBinding
+import com.dinhlam.sharebox.base.BaseViewModelActivity
+import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.databinding.ActivityDownloadBottomSheetBinding
 import com.dinhlam.sharebox.extensions.asFileExtension
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.getSystemServiceCompat
-import com.dinhlam.sharebox.extensions.getTrimmedText
-import com.dinhlam.sharebox.extensions.hideKeyboard
+import com.dinhlam.sharebox.extensions.ext
 import com.dinhlam.sharebox.extensions.isWebLink
+import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.DownloadHelper
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -29,26 +24,25 @@ import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DownloadFragment :
-    BaseViewModelFragment<DownloadState, DownloadViewModel, FragmentDownloadBinding>() {
-    override fun onCreateViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentDownloadBinding {
-        return FragmentDownloadBinding.inflate(layoutInflater, container, false)
-    }
+class BottomSheetDownloadActivity :
+    BaseViewModelActivity<BottomSheetDownloadState, BottomSheetDownloadViewModel, ActivityDownloadBottomSheetBinding>() {
 
-    override val viewModel: DownloadViewModel by viewModels()
+    override val viewModel: BottomSheetDownloadViewModel by viewModels()
+
+    override fun onStateChanged(state: BottomSheetDownloadState) {
+        adapter.requestBuildListModels()
+    }
 
     private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
             if (state.asyncLoadDownload is BaseViewModel.AsyncLoad.Loading) {
                 LoadingListModel(
                     "loading",
-                    height = ViewGroup.LayoutParams.MATCH_PARENT,
+                    height = 200.dp,
                     message = getString(R.string.processing)
                 ).attachTo(
                     this
@@ -65,6 +59,7 @@ class DownloadFragment :
                     "empty",
                     getString(R.string.nothing_to_download),
                     textAppearance = R.style.TextBodyMedium,
+                    height = 200.dp,
                     gravity = Gravity.CENTER
                 ).attachTo(this)
             }
@@ -89,10 +84,7 @@ class DownloadFragment :
                             )
                         } ${downloadData.suffix}",
                         BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadVideo(
-                                downloadData.mimeType,
-                                downloadData.downloadUrl
-                            )
+                            downloadVideo(downloadData.mimeType, downloadData.downloadUrl)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("video_divider_$index", height = 1.dp()).attachTo(this)
@@ -125,10 +117,7 @@ class DownloadFragment :
                             )
                         } ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadAudio(
-                                downloadData.mimeType,
-                                downloadData.downloadUrl
-                            )
+                            downloadAudio(downloadData.mimeType, downloadData.downloadUrl)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("audio_divider_$index", height = 1.dp()).attachTo(this)
@@ -199,78 +188,97 @@ class DownloadFragment :
 
     private fun downloadVideo(mimeType: String, downloadUrl: String) {
         val outputFile = FileUtils.createFileName("video", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
     }
 
     private fun downloadAudio(mimeType: String, downloadUrl: String) {
         val outputFile = FileUtils.createFileName("audio", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
     }
 
     private fun downloadImage(mimeType: String, url: String) {
         val outputFile = FileUtils.createFileName("image", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), url, outputFile)
+        DownloadHelper.enqueueDownload(this, url, outputFile)
     }
 
     private fun downloadFile(mimeType: String, downloadUrl: String) {
         val outputFile = FileUtils.createFileName("file", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
     }
 
-    override fun onStateChanged(state: DownloadState) {
-        adapter.requestBuildListModels()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        adapter.attachTo(binding.recyclerView, viewLifecycleOwner)
-
-        binding.buttonPaste.setOnClickListener {
-            val clipboardData = pickWebLinkFromClipboard()?.toString() ?: return@setOnClickListener
-            binding.editLink.setText(clipboardData)
-        }
-
-        binding.buttonDownload.setOnClickListener {
-            binding.editLink.hideKeyboard()
-            val correctLink =
-                getCorrectLink().takeIfNotNullOrBlank() ?: return@setOnClickListener showToast(
-                    getString(R.string.require_input_link)
-                )
-
-            if (!correctLink.isWebLink()) {
-                return@setOnClickListener showToast(getString(R.string.require_input_link))
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                finishAndRemoveTask()
             }
-            viewModel.download(correctLink)
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
         }
     }
 
-    private fun getCorrectLink(): String {
-        val link = binding.editLink.getTrimmedText().takeIfNotNullOrBlank() ?: return ""
-        return if (link.startsWith("http://") || link.startsWith("https://")) {
-            link
-        } else {
-            "https://$link"
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
+    override fun onCreateViewBinding(): ActivityDownloadBottomSheetBinding {
+        return ActivityDownloadBottomSheetBinding.inflate(layoutInflater)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding.background.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        registerOnBackPressHandler {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        binding.recyclerView.adapter = adapter
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.container)
+        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        handleShareData()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleShareData()
+    }
+
+    private fun handleShareData() {
+        val (action, type) = intent.action to intent.type
+        when {
+            action == Intent.ACTION_SEND && type?.startsWith("text/") == true -> {
+                val shareContent = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                handleShareData(shareContent)
+            }
+
+            else -> {
+                val urls = intent.getStringArrayListExtra(AppExtras.EXTRA_URLS).orEmpty()
+                if (urls.isEmpty()) {
+                    showToast(R.string.nothing_to_download)
+                    if (isTaskRoot) {
+                        finishAndRemoveTask()
+                    } else {
+                        finish()
+                    }
+                }
+                viewModel.download(urls)
+            }
         }
     }
 
-    private fun pickWebLinkFromClipboard(): Uri? {
-        val clipboardManager =
-            context?.getSystemServiceCompat<ClipboardManager>(Context.CLIPBOARD_SERVICE)
-                ?: return null
-        if (!clipboardManager.hasPrimaryClip()) {
-            return null
+    private fun handleShareData(text: String) {
+        if (!text.isWebLink()) {
+            showToast(R.string.no_support_download_this_content)
+            return if (isTaskRoot) {
+                finishAndRemoveTask()
+            } else {
+                finish()
+            }
         }
-        val clipItemCount = clipboardManager.primaryClip?.itemCount ?: 0
-        if (clipItemCount == 0) {
-            return null
-        }
-        val text = clipboardManager.primaryClip?.getItemAt(0)?.text?.toString()
-            ?: return null
-
-        if (text.isWebLink()) {
-            return Uri.parse(text)
-        }
-
-        return null
+        viewModel.download(listOf(text))
     }
 }

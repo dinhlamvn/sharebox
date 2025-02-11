@@ -24,7 +24,7 @@ class BoxRepository @Inject constructor(
     }
 
     override suspend fun updateInternal(entity: Box, willBeSync: Boolean): Box {
-        boxDao.update(entity)
+        boxDao.update(entity.copy(synced = !willBeSync))
         return entity
     }
 
