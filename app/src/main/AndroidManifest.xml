@@ -299,8 +299,8 @@
 
         <service
             android:name=".services.SyncRealtimeDataService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
+            android:enabled="true"
+            android:exported="false" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

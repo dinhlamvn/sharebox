@@ -22,19 +22,20 @@ class SyncRealtimeDataService : Service() {
     lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
 
     override fun onBind(intent: Intent?): IBinder {
+        Logger.debug("Realtime service is running.")
+        realtimeDatabaseRepository.sync()
         return binder
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onRebind(intent: Intent?) {
+        super.onRebind(intent)
         Logger.debug("Realtime service is running.")
         realtimeDatabaseRepository.sync()
-        return START_STICKY
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        stopSelf()
-        realtimeDatabaseRepository.release()
+    override fun onUnbind(intent: Intent?): Boolean {
         Logger.debug("Realtime service is stopped.")
+        realtimeDatabaseRepository.release()
+        return super.onUnbind(intent)
     }
 }

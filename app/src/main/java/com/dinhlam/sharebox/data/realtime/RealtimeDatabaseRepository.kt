@@ -153,9 +153,6 @@ class RealtimeDatabaseRepository @Inject constructor(
     }
 
     fun sync() {
-        if (!userHelper.isSignedIn()) {
-            return
-        }
         shareRef.addValueEventListener(shareEventListener)
         boxRef.addValueEventListener(boxEventListener)
     }
