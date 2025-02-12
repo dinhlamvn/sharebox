@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.storage.FirebaseStorageManager
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
@@ -30,7 +29,6 @@ class SyncDataWorker @AssistedInject constructor(
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
     private val boxRepository: BoxRepository,
     private val shareRepository: ShareRepository,
-    private val router: Router,
     private val firebaseStorageManager: FirebaseStorageManager,
 ) : CoroutineWorker(appContext, params) {
 
@@ -140,7 +138,10 @@ class SyncDataWorker @AssistedInject constructor(
                     .setSubText(appContext.getString(R.string.app_name))
                     .setSmallIcon(R.drawable.ic_cloud_upload).setAutoCancel(false).setContentIntent(
                         PendingIntent.getActivity(
-                            appContext, 1122, router.setting(), PendingIntent.FLAG_IMMUTABLE
+                            appContext,
+                            1122,
+                            appContext.packageManager.getLaunchIntentForPackage(appContext.packageName),
+                            PendingIntent.FLAG_IMMUTABLE
                         )
                     ).build(),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
@@ -153,7 +154,10 @@ class SyncDataWorker @AssistedInject constructor(
                     .setSubText(appContext.getString(R.string.app_name))
                     .setSmallIcon(R.drawable.ic_cloud_upload).setAutoCancel(false).setContentIntent(
                         PendingIntent.getActivity(
-                            appContext, 1122, router.setting(), PendingIntent.FLAG_IMMUTABLE
+                            appContext,
+                            1122,
+                            appContext.packageManager.getLaunchIntentForPackage(appContext.packageName),
+                            PendingIntent.FLAG_IMMUTABLE
                         )
                     ).build()
             )

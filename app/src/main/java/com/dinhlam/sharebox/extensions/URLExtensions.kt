@@ -16,6 +16,10 @@ fun String.isFacebookVideo(): Boolean {
     ) || contains("reel") || contains("stories"))) || contains("fb.gg/v/")
 }
 
+fun String.isNetworkUrl() = startsWith("http", true) || startsWith("ftp", true)
+
+fun String.isLocalUri() = startsWith("content://", true)
+
 fun String.isImageUrl() = arrayOf(
     ".png", ".jpg", ".jpeg", ".webp", ".gif"
 ).any { ext -> endsWith(ext, true) }

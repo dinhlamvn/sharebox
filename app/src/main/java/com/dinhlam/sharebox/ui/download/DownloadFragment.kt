@@ -82,12 +82,7 @@ class DownloadFragment :
                     DownloadItemListModel(
                         "download_video_$index",
                         Icons.MP4_LOGO,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download Video - ${downloadData.suffix}",
                         BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadVideo(
                                 downloadData.mimeType,
@@ -118,12 +113,7 @@ class DownloadFragment :
                     DownloadItemListModel(
                         "download_audio_$index",
                         Icons.MP3_LOGO,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download Audio - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadAudio(
                                 downloadData.mimeType,
@@ -154,12 +144,7 @@ class DownloadFragment :
                     DownloadItemListModel(
                         "download_image_$index",
                         downloadData.downloadUrl,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download Image - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadImage(downloadData.mimeType, downloadData.downloadUrl)
                         })
@@ -181,12 +166,7 @@ class DownloadFragment :
                     DownloadItemListModel(
                         "download_file_$index",
                         Icons.FILE_LOGO,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download File - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             downloadFile(downloadData.mimeType, downloadData.downloadUrl)
                         })

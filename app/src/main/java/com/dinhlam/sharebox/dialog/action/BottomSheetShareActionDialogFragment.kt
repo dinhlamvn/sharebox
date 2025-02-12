@@ -112,7 +112,7 @@ class BottomSheetShareActionDialogFragment :
             1 -> showDialogInputShareNote(share.shareNote)
             2 -> onRequestMoveShare()
             3 -> copyShare(share)
-            4 -> shareHelper.downloadShareContent(requireContext(), share)
+            4 -> downloadShare(share)
             5 -> onBookmark(share.shareId)
             6 -> copyBoxID(share)
             7 -> moveToTrash(share)
@@ -171,6 +171,11 @@ class BottomSheetShareActionDialogFragment :
             ?: share.shareData.cast<ShareData.ShareUrl>()?.url
             ?: return showToast(R.string.nothing_to_copy)
         context?.copy(content)
+        dismiss()
+    }
+
+    private fun downloadShare(share: ShareDetail) {
+        shareHelper.downloadShareContent(requireContext(), share)
         dismiss()
     }
 

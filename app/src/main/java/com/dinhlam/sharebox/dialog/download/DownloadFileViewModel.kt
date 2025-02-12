@@ -17,7 +17,32 @@ class DownloadFileViewModel @Inject constructor(
     private val downloadServices: DownloadServices,
 ) : BaseViewModel<DownloadFileState>(DownloadFileState()) {
 
-    suspend fun downloadFile(
+    suspend fun download(
+        context: Context,
+        downloadUrl: String,
+        fileName: String?,
+        mimeType: String?
+    ) {
+        if (downloadUrl.startsWith("http")) {
+            downloadNetworkFile(context, downloadUrl, fileName, mimeType)
+        } else if (downloadUrl.startsWith("content:")) {
+            downloadLocalFile(context, downloadUrl, fileName, mimeType)
+        } else {
+            setState {
+                copy(
+                    downloadState = DownloadState.Failed(
+                        IllegalStateException(
+                            context.getString(
+                                R.string.download_file_not_support
+                            )
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    private fun downloadLocalFile(
         context: Context,
         downloadUrl: String,
         fileName: String?,
@@ -32,29 +57,31 @@ class DownloadFileViewModel @Inject constructor(
                 downloadState = DownloadState.Failed(IllegalStateException(context.getString(R.string.error_create_file)))
             )
         }
-        if (downloadUrl.startsWith("http")) {
-            downloadServices.downloadFile(downloadUrl).saveFile(downloadFile) { downloadState ->
-                setState { copy(downloadState = downloadState) }
+        context.contentResolver.openInputStream(Uri.parse(downloadUrl))?.use { inputStream ->
+            downloadFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
             }
-        } else if (downloadUrl.startsWith("content:")) {
-            context.contentResolver.openInputStream(Uri.parse(downloadUrl))?.use { inputStream ->
-                downloadFile.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-            setState { copy(downloadState = DownloadState.Finished(downloadFile)) }
-        } else {
-            setState {
-                copy(
-                    downloadState = DownloadState.Failed(
-                        IllegalStateException(
-                            context.getString(
-                                R.string.download_file_not_support
-                            )
-                        )
-                    )
-                )
-            }
+        }
+        setState { copy(downloadState = DownloadState.Finished(downloadFile)) }
+    }
+
+    private suspend fun downloadNetworkFile(
+        context: Context,
+        downloadUrl: String,
+        fileName: String?,
+        mimeType: String?
+    ) {
+        val downloadFileName = fileName ?: FileUtils.createFileName(
+            "file",
+            MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)!!
+        )
+        val downloadFile = FileUtils.createDownloadFile(downloadFileName) ?: return setState {
+            copy(
+                downloadState = DownloadState.Failed(IllegalStateException(context.getString(R.string.error_create_file)))
+            )
+        }
+        downloadServices.downloadFile(downloadUrl).saveFile(downloadFile) { downloadState ->
+            setState { copy(downloadState = downloadState) }
         }
     }
 }

@@ -55,11 +55,12 @@ fun Number.asViewCount(): String {
     }
 }
 
-fun Double.asHumanReadableSize(): String {
+fun Number.asHumanReadableSize(): String {
+    val bytes = this.toDouble()
     return when {
-        this >= 1 shl 30 -> "%.1f GB".format(this / (1 shl 30))
-        this >= 1 shl 20 -> "%.1f MB".format(this / (1 shl 20))
-        this >= 1 shl 10 -> "%.0f kB".format(this / (1 shl 10))
+        bytes >= 1 shl 30 -> "%.1f GB".format(bytes / (1 shl 30))
+        bytes >= 1 shl 20 -> "%.1f MB".format(bytes / (1 shl 20))
+        bytes >= 1 shl 10 -> "%.0f kB".format(bytes / (1 shl 10))
         else -> "$this bytes"
     }
 }

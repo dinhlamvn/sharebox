@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,17 @@ class BoxDetailViewModel @Inject constructor(
 ) : BaseViewModel<BoxDetailState>(BoxDetailState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))) {
 
     init {
+        onChange(BoxDetailState::boxDetail) { boxDetail ->
+            if (boxDetail != null) {
+                updateLastSeen(boxDetail.boxId)
+            }
+        }
         loadBoxDetail()
+    }
+
+    private fun updateLastSeen(boxId: String) = doInBackground {
+        val box = boxRepository.findOneRaw(boxId) ?: return@doInBackground
+        boxRepository.update(box.copy(lastSeen = nowUTCTimeInMillis()))
     }
 
     private fun loadBoxDetail() = getState { state ->

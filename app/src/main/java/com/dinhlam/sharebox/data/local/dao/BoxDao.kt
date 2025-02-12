@@ -37,11 +37,8 @@ interface BoxDao {
     @Query("SELECT * FROM `box` WHERE box_id IN (:boxIdList) ORDER BY created_at DESC")
     suspend fun find(boxIdList: List<String>): List<Box>
 
-    @Query("SELECT * FROM `box` ORDER BY last_seen DESC LIMIT 6")
-    suspend fun findLatestBoxes(): List<Box>
-
-    @Query("SELECT * FROM `box` WHERE passcode IS NULL OR passcode = '' ORDER BY last_seen DESC LIMIT 6")
-    suspend fun findLatestBoxesWithoutPasscode(): List<Box>
+    @Query("SELECT * FROM `box` WHERE passcode IS NULL OR passcode = '' ORDER BY last_seen DESC LIMIT 1")
+    suspend fun findLatestBoxWithoutPasscode(): Box?
 
     @Query("SELECT COUNT(*) FROM `box` WHERE created_by = :userId")
     suspend fun count(userId: String): Int

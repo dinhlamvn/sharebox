@@ -132,4 +132,14 @@ class BoxRepository @Inject constructor(
     suspend fun transferData(anonymousUserId: String, userId: String) {
         boxDao.transferData(anonymousUserId, userId)
     }
+
+    suspend fun findLastActiveBox(): BoxDetail? {
+        try {
+            val box = boxDao.findLatestBoxWithoutPasscode() ?: return null
+            return convertBoxToBoxDetail(box)
+        } catch (e: Exception) {
+            Logger.error("Find last active box has error: $e")
+        }
+        return null
+    }
 }

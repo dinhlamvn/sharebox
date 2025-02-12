@@ -32,6 +32,18 @@ class ShareReceiveViewModel @Inject constructor(
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
 
+    init {
+        getBoxToArchiveContent()
+    }
+
+    private fun getBoxToArchiveContent() {
+        suspend {
+            boxRepository.findLastActiveBox()
+        }.execute { asyncLoad ->
+            copy(currentBox = asyncLoad.data)
+        }
+    }
+
     fun getCurrentUserProfile() {
         suspend { userRepository.findOne(userHelper.getCurrentUserId()) }
             .execute { asyncLoad ->

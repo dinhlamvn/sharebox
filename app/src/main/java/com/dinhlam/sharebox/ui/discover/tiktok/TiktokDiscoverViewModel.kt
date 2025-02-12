@@ -10,7 +10,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.TiktokCategory
 import com.dinhlam.sharebox.model.TiktokDiscover
-import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.UserAgentUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,17 +27,13 @@ class TiktokDiscoverViewModel @Inject constructor(
 ) : BaseViewModel<TiktokDiscoverState>(TiktokDiscoverState()) {
 
     init {
-        getDefaultBox()
+        getBoxToArchiveContent()
         onChange(TiktokDiscoverState::activeCategory, ::getTiktokTrending)
     }
 
-    private fun getDefaultBox() {
+    private fun getBoxToArchiveContent() {
         suspend {
-            val boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-tiktok-box")
-            boxRepository.findOne(boxId) ?: boxRepository.run {
-                boxRepository.insert(boxId, "Tiktok Discover", null, userHelper.getCurrentUserId())
-                boxRepository.findOne(boxId)
-            }
+            boxRepository.findLastActiveBox()
         }.execute { asyncLoad ->
             copy(currentBox = asyncLoad.data)
         }
@@ -146,6 +141,12 @@ class TiktokDiscoverViewModel @Inject constructor(
             } else {
                 copy(isLoadingMore = asyncLoad is AsyncLoad.Loading)
             }
+        }
+    }
+
+    fun setCurrentBoxId(boxId: String) {
+        suspend { boxRepository.findOne(boxId) }.execute { asyncLoad ->
+            copy(currentBox = asyncLoad.data)
         }
     }
 }

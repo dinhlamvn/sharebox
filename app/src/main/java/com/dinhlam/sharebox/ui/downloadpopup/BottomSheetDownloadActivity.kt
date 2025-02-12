@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.ui.downloadpopup
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.webkit.MimeTypeMap
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -13,7 +15,8 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityDownloadBottomSheetBinding
 import com.dinhlam.sharebox.extensions.asFileExtension
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.ext
+import com.dinhlam.sharebox.extensions.isLocalUri
+import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
@@ -77,14 +80,9 @@ class BottomSheetDownloadActivity :
                     DownloadItemListModel(
                         "download_video_$index",
                         Icons.MP4_LOGO,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download Video - ${downloadData.suffix}",
                         BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadVideo(downloadData.mimeType, downloadData.downloadUrl)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 1)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("video_divider_$index", height = 1.dp()).attachTo(this)
@@ -110,14 +108,9 @@ class BottomSheetDownloadActivity :
                     DownloadItemListModel(
                         "download_audio_$index",
                         Icons.MP3_LOGO,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download Audio - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadAudio(downloadData.mimeType, downloadData.downloadUrl)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 2)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("audio_divider_$index", height = 1.dp()).attachTo(this)
@@ -143,14 +136,9 @@ class BottomSheetDownloadActivity :
                     DownloadItemListModel(
                         "download_image_$index",
                         downloadData.downloadUrl,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download Image - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadImage(downloadData.mimeType, downloadData.downloadUrl)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 3)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
@@ -170,19 +158,41 @@ class BottomSheetDownloadActivity :
                     DownloadItemListModel(
                         "download_file_$index",
                         Icons.FILE_LOGO,
-                        "${
-                            getString(
-                                R.string.download_mimetype,
-                                downloadData.mimeType.asFileExtension()
-                            )
-                        } ${downloadData.suffix}",
+                        "Download File - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadFile(downloadData.mimeType, downloadData.downloadUrl)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 4)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("file_divider_$index", height = 1.dp()).attachTo(this)
                 }
             }
+        }
+    }
+
+    private fun download(mimeType: String, downloadUrl: String, type: Int) {
+        if (downloadUrl.isNetworkUrl()) {
+            when (type) {
+                1 -> downloadVideo(mimeType, downloadUrl)
+                2 -> downloadAudio(mimeType, downloadUrl)
+                3 -> downloadImage(mimeType, downloadUrl)
+                4 -> downloadFile(mimeType, downloadUrl)
+            }
+        } else if (downloadUrl.isLocalUri()) {
+            downloadLocalContent(downloadUrl, mimeType)
+        }
+    }
+
+    private fun downloadLocalContent(downloadUrl: String, mimeType: String) {
+        val downloadFileName = FileUtils.createFileName(
+            "file",
+            MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)!!
+        )
+        val downloadFile = FileUtils.createDownloadFile(downloadFileName) ?: return
+        contentResolver.openInputStream(Uri.parse(downloadUrl))?.use { inputStream ->
+            downloadFile.outputStream().use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+            showToast(getString(R.string.downloaded, downloadFile.path))
         }
     }
 
@@ -225,6 +235,7 @@ class BottomSheetDownloadActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding.background.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -265,7 +276,7 @@ class BottomSheetDownloadActivity :
                         finish()
                     }
                 }
-                viewModel.download(urls)
+                viewModel.download(this, urls)
             }
         }
     }
@@ -279,6 +290,6 @@ class BottomSheetDownloadActivity :
                 finish()
             }
         }
-        viewModel.download(listOf(text))
+        viewModel.download(this, listOf(text))
     }
 }

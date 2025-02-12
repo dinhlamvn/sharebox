@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentDownloadFileBinding
+import com.dinhlam.sharebox.extensions.asHumanReadableSize
 import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.model.DownloadState
@@ -60,8 +61,22 @@ class DownloadFileDialogFragment :
     private var downloadJob: Job? = null
 
     override fun onStateChanged(state: DownloadFileState) {
-        binding.textProgress.text = getString(R.string.percentage, state.downloadState.progress)
-        binding.progressBar.progress = state.downloadState.progress
+        if (state.downloadState is DownloadState.Downloading) {
+            if (state.downloadState.progress > 0) {
+                binding.textProgress.text =
+                    getString(R.string.percentage, state.downloadState.progress)
+                binding.progressBar.progress = state.downloadState.progress
+            } else {
+                binding.progressBar.progress = 100
+                binding.textProgress.text = getString(
+                    R.string.downloaded,
+                    state.downloadState.totalBytesDownloaded.asHumanReadableSize()
+                )
+            }
+        } else {
+            binding.progressBar.progress = 0
+            binding.textProgress.text = null
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -93,7 +108,7 @@ class DownloadFileDialogFragment :
         val mimeType = arguments?.getString(AppExtras.EXTRA_MIMETYPE)
 
         downloadJob = fragmentScope.launch(Dispatchers.IO) {
-            viewModel.downloadFile(requireContext(), downloadUrl, fileName, mimeType)
+            viewModel.download(requireContext(), downloadUrl, fileName, mimeType)
         }
     }
 

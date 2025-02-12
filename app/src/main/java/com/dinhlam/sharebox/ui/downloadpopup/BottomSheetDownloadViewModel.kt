@@ -1,12 +1,18 @@
 package com.dinhlam.sharebox.ui.downloadpopup
 
+import android.content.Context
 import android.net.Uri
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.downloader.Downloader
+import com.dinhlam.sharebox.extensions.asHumanReadableSize
 import com.dinhlam.sharebox.extensions.ext
+import com.dinhlam.sharebox.extensions.getFileNameAndSize
+import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
 import com.dinhlam.sharebox.extensions.isAudioMimeType
 import com.dinhlam.sharebox.extensions.isImageMimeType
 import com.dinhlam.sharebox.extensions.isImageUrl
+import com.dinhlam.sharebox.extensions.isLocalUri
+import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.isVideoMimeType
 import com.dinhlam.sharebox.extensions.mimeType
 import com.dinhlam.sharebox.helper.VideoHelper
@@ -31,7 +37,7 @@ class BottomSheetDownloadViewModel @Inject constructor(
     @Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
 ) : BaseViewModel<BottomSheetDownloadState>(BottomSheetDownloadState()) {
 
-    fun download(downloadLinks: List<String>) {
+    fun download(context: Context, downloadLinks: List<String>) {
         suspend {
             val videos = mutableListOf<DownloadData>()
             val images = mutableListOf<DownloadData>()
@@ -40,8 +46,14 @@ class BottomSheetDownloadViewModel @Inject constructor(
             val links = downloadLinks.distinct()
             repeat(links.size) { idx ->
                 val downloadUrl = links[idx]
-                val originUrlPair = getOriginUrl(downloadUrl)
-                val downloadContent = downloadInternal(originUrlPair.first, originUrlPair.second)
+                val downloadContent = if (downloadUrl.isNetworkUrl()) {
+                    val originUrlPair = getOriginUrl(downloadUrl)
+                    downloadNetworkFile(originUrlPair.first, originUrlPair.second)
+                } else if (downloadUrl.isLocalUri()) {
+                    downloadLocalFile(context, downloadUrl)
+                } else {
+                    DownloadContent()
+                }
                 videos.addAll(downloadContent.videos)
                 images.addAll(downloadContent.images)
                 audios.addAll(downloadContent.audios)
@@ -53,7 +65,62 @@ class BottomSheetDownloadViewModel @Inject constructor(
         }
     }
 
-    private suspend fun downloadInternal(url: String, mimeType: String?): DownloadContent {
+    private fun downloadLocalFile(context: Context, url: String): DownloadContent {
+        val uri = Uri.parse(url)
+        val mimeType = context.getMimeTypeFromUri(uri) ?: return DownloadContent()
+        val pair = context.getFileNameAndSize(uri)
+        return when {
+            mimeType.isImageMimeType() -> {
+                val images = listOf(
+                    DownloadData(
+                        "image_$url",
+                        mimeType,
+                        "(${pair.second.asHumanReadableSize()})",
+                        url
+                    )
+                )
+                DownloadContent(images = images)
+            }
+
+            mimeType.isVideoMimeType() -> {
+                val videos = listOf(
+                    DownloadData(
+                        "video_$url",
+                        mimeType,
+                        "(${pair.second.asHumanReadableSize()})",
+                        url
+                    )
+                )
+                DownloadContent(videos = videos)
+            }
+
+            mimeType.isAudioMimeType() -> {
+                val audios = listOf(
+                    DownloadData(
+                        "audio_$url",
+                        mimeType,
+                        "(${pair.second.asHumanReadableSize()})",
+                        url
+                    )
+                )
+                DownloadContent(audios = audios)
+            }
+
+            else -> {
+                val files = listOf(
+                    DownloadData(
+                        "file_$url",
+                        mimeType,
+                        "(${pair.second.asHumanReadableSize()})",
+                        url
+                    )
+                )
+                DownloadContent(files = files)
+            }
+        }
+    }
+
+    private suspend fun downloadNetworkFile(url: String, mimeType: String?): DownloadContent {
         if (url.isImageUrl()) {
             return downloadImage(url)
         }

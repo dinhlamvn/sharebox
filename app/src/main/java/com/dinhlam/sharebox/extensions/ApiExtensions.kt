@@ -8,7 +8,7 @@ suspend fun ResponseBody.saveFile(
     dest: File,
     callback: suspend (DownloadState) -> Unit
 ) {
-    callback(DownloadState.Downloading(0))
+    callback(DownloadState.Downloading(0, 0, 0))
     try {
         byteStream().use { inputSteam ->
             dest.outputStream().use { outputStream ->
@@ -23,7 +23,9 @@ suspend fun ResponseBody.saveFile(
                     byes = inputSteam.read(buffer)
                     callback(
                         DownloadState.Downloading(
-                            bytesProgressed.times(100).div(totalBytes).toInt()
+                            bytesProgressed.times(100).div(totalBytes).toInt(),
+                            totalBytes,
+                            bytesProgressed
                         )
                     )
                 }

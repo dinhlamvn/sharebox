@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ZingNewsCategory
 import com.dinhlam.sharebox.model.ZingNewsDiscover
-import com.dinhlam.sharebox.utils.BoxUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -23,22 +22,13 @@ class ZingNewDiscoverViewModel @Inject constructor(
 ) : BaseViewModel<ZingNewsDiscoverState>(ZingNewsDiscoverState()) {
 
     init {
-        getDefaultBox()
+        getBoxToArchiveContent()
         onChange(ZingNewsDiscoverState::activeCategory, ::getZingNewsData)
     }
 
-    private fun getDefaultBox() {
+    private fun getBoxToArchiveContent() {
         suspend {
-            val boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-zingnews-box")
-            boxRepository.findOne(boxId) ?: boxRepository.run {
-                boxRepository.insert(
-                    boxId,
-                    "ZingNews Discover",
-                    null,
-                    userHelper.getCurrentUserId()
-                )
-                boxRepository.findOne(boxId)
-            }
+            boxRepository.findLastActiveBox()
         }.execute { asyncLoad ->
             copy(currentBox = asyncLoad.data)
         }

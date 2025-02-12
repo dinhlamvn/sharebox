@@ -28,7 +28,6 @@ import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.ShareHelper
-import com.dinhlam.sharebox.listmodel.CircleDrawableIconButtonListModel
 import com.dinhlam.sharebox.listmodel.CircleFontAwesomeIconButtonListModel
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
@@ -93,33 +92,6 @@ class ShareLinkActivity :
             margin = Spacing.Only(start = 16.dp()),
             onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                 setWebLink("https://thehackernews.com/")
-            })
-        ).attachTo(this)
-
-        CircleDrawableIconButtonListModel(
-            "cand",
-            R.drawable.ic_cand,
-            margin = Spacing.Only(start = 16.dp()),
-            onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                setWebLink("https://cand.com.vn")
-            })
-        ).attachTo(this)
-
-        CircleDrawableIconButtonListModel(
-            "thanh_nien",
-            R.drawable.ic_thanh_nien,
-            margin = Spacing.Only(start = 16.dp()),
-            onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                setWebLink("https://thanhnien.vn")
-            })
-        ).attachTo(this)
-
-        CircleDrawableIconButtonListModel(
-            "zing_news",
-            R.drawable.ic_zing_news,
-            margin = Spacing.Only(start = 16.dp()),
-            onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                setWebLink("https://zingnews.vn")
             })
         ).attachTo(this)
     }

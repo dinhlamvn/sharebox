@@ -220,7 +220,8 @@ class AppRouter constructor(private val context: Context) : Router {
             context, BottomSheetDownloadActivity::class.java
         ).putStringArrayListExtra(
             AppExtras.EXTRA_URLS, arrayListOf(*urls.toTypedArray())
-        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
     }
 
     override fun bookmark(context: Context): Intent {

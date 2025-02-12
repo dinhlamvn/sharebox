@@ -7,13 +7,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
@@ -179,11 +177,11 @@ class ShareReceiveActivity :
             showBookmarkCollectionPicker()
         }
 
-        binding.textShareBox.setOnClickListener {
+        binding.boxSectionButton.setOnClickListener {
             chooseBoxLauncher.launch(router.boxList(this, null))
         }
 
-        binding.iconAdd.setOnClickListener {
+        binding.boxSectionButton.setOnAddIconClickListener {
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 
@@ -205,8 +203,8 @@ class ShareReceiveActivity :
         onChange(ShareReceiveState::currentBox) { currentBox ->
             val boxName = currentBox?.boxName
             val isLock = currentBox?.passcode?.isNotBlank() ?: false
-            binding.textShareBox.text = boxName
-            binding.iconLock.isVisible = isLock
+            binding.boxSectionButton.setBoxName(boxName)
+            binding.boxSectionButton.showLock(isLock)
         }
 
         onChange(ShareReceiveState::asyncLoadArchive) { asyncLoad ->
@@ -250,12 +248,7 @@ class ShareReceiveActivity :
 
         if (state.currentBox == null) {
             showToast(R.string.require_choose_box)
-            binding.containerShareBox.startAnimation(
-                AnimationUtils.loadAnimation(
-                    this,
-                    R.anim.zoom_in
-                )
-            )
+            binding.boxSectionButton.playZoomAnimation()
             return@getState
         }
 

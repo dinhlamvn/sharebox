@@ -1,9 +1,11 @@
 package com.dinhlam.sharebox.ui.discover.tiktok
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
@@ -48,6 +50,25 @@ class TiktokDiscoverFragment :
             viewModel::loadMore
         )
     }
+
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { boxId ->
+                    viewModel.setCurrentBoxId(boxId)
+                }
+            }
+        }
+
+    private val chooseBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.setCurrentBoxId(boxId)
+            }
+        }
 
     @Inject
     lateinit var router: Router
@@ -126,17 +147,35 @@ class TiktokDiscoverFragment :
             viewModel.refresh()
         }
 
+        binding.boxSectionButton.setOnClickListener {
+            chooseBoxLauncher.launch(router.boxList(requireContext(), null))
+        }
+
+        binding.boxSectionButton.setOnAddIconClickListener {
+            createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+        }
+
         onChange(TiktokDiscoverState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad.success) {
                 showToast(getString(R.string.archive_url_success, asyncLoad.data))
             }
         }
+
+        onChange(TiktokDiscoverState::currentBox) { currentBox ->
+            val boxName = currentBox?.boxName
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            binding.boxSectionButton.setBoxName(boxName)
+            binding.boxSectionButton.showLock(isLock)
+        }
     }
 
     private fun onArchive(url: String, note: String?) = getState(viewModel) {
-        val box = getState(viewModel, TiktokDiscoverState::currentBox) ?: return@getState showToast(
-            R.string.please_choose_box
-        )
+        val box = getState(viewModel, TiktokDiscoverState::currentBox)
+        if (box == null) {
+            showToast(R.string.please_choose_box)
+            binding.boxSectionButton.playZoomAnimation()
+            return@getState
+        }
         viewModel.archiveLink(url, note, box.boxId)
     }
 

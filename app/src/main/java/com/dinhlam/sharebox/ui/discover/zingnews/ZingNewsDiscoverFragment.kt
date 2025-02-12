@@ -38,6 +38,15 @@ class ZingNewsDiscoverFragment :
     override val isOverrideBackPressedCallback: Boolean
         get() = true
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { boxId ->
+                    viewModel.setCurrentBoxId(boxId)
+                }
+            }
+        }
+
     private val chooseBoxLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -109,10 +118,25 @@ class ZingNewsDiscoverFragment :
             viewModel.refresh()
         }
 
+        binding.boxSectionButton.setOnClickListener {
+            chooseBoxLauncher.launch(router.boxList(requireContext(), null))
+        }
+
+        binding.boxSectionButton.setOnAddIconClickListener {
+            createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+        }
+
         onChange(ZingNewsDiscoverState::asyncLoadArchive) { asyncLoad ->
             if (asyncLoad.success) {
                 showToast(getString(R.string.archive_url_success, asyncLoad.data))
             }
+        }
+
+        onChange(ZingNewsDiscoverState::currentBox) { currentBox ->
+            val boxName = currentBox?.boxName
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            binding.boxSectionButton.setBoxName(boxName)
+            binding.boxSectionButton.showLock(isLock)
         }
     }
 
@@ -127,10 +151,12 @@ class ZingNewsDiscoverFragment :
     }
 
     private fun onArchive(url: String, title: String?) {
-        val box =
-            getState(viewModel, ZingNewsDiscoverState::currentBox) ?: return showToast(
-                R.string.please_choose_box
-            )
+        val box = getState(viewModel, ZingNewsDiscoverState::currentBox)
+        if (box == null) {
+            showToast(R.string.please_choose_box)
+            binding.boxSectionButton.playZoomAnimation()
+            return
+        }
         viewModel.archiveLink(url, title, box.boxId)
     }
 
