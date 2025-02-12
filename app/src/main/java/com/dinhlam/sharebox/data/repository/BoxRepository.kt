@@ -135,7 +135,7 @@ class BoxRepository @Inject constructor(
 
     suspend fun findLastActiveBox(): BoxDetail? {
         try {
-            val box = boxDao.findLatestBoxWithoutPasscode() ?: return null
+            val box = boxDao.findLatestBoxWithoutPasscode(userHelper.getCurrentUserId()) ?: return null
             return convertBoxToBoxDetail(box)
         } catch (e: Exception) {
             Logger.error("Find last active box has error: $e")
