@@ -143,6 +143,23 @@ class ProfileFragment :
                 VerticalDividerListModel(
                     "divider_box_invited", height = 1.dp()
                 ).attachTo(this)
+            } else {
+                TextListModel(
+                    "text_sign_in_message",
+                    getString(R.string.sign_in_message),
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT,
+                    textAppearance = R.style.TextBody,
+                    textColor = R.color.grey_500,
+                    padding = Spacing.All(16.dp)
+                ).attachTo(this)
+                ButtonListModel(
+                    "button_sign_in",
+                    getString(R.string.sign_in),
+                    Spacing.Horizontal(16.dp()),
+                    BaseListAdapter.NoHashProp(View.OnClickListener {
+                        signInLauncher.launch(router.signIn(true))
+                    })
+                ).attachTo(this)
             }
         }
     }

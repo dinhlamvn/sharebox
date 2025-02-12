@@ -65,13 +65,13 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_auto">Automatic</string>
-    <string name="title_network_condition_video">Network condition for download video</string>
+    <string name="title_network_condition">Network condition for download</string>
     <string name="network_condition_wifi">Wifi only</string>
     <string name="network_condition_wifi_and_cellular">Both Wifi and cellular data</string>
     <string name="sign_out">Sign out</string>
     <string name="sign_out_confirm_message">Are you sure to sign out?</string>
     <string name="setting_about">%s • Version %s</string>
-    <string name="app_desc">Sharebox is a simple app to archive all contents you want and share those to others.</string>
+    <string name="app_desc">Sharebox is an app that helps you store all the content you want to save and easily share it with your friends.</string>
     <string name="box_general">General</string>
     <string name="complete">Complete</string>
     <string name="edit_avatar">Edit avatar</string>
@@ -82,7 +82,7 @@
     <string name="require_input_correct_weblink">Please input correct weblink</string>
     <string name="synchronize_data_message">Synchronizing data…</string>
     <string name="sign_in">Sign In</string>
-    <string name="sign_in_message">Sign in to reach more features in app: archive a content, comment, like,…</string>
+    <string name="sign_in_message">Please log in to the app to ensure your content is backed up and share your content with friends through Box Member.</string>
     <string name="sign_in_to_comment">Sign in to comment</string>
     <string name="success_save_image_to_gallery">Save this image to Gallery successfully</string>
     <string name="archives">Archive</string>
@@ -97,7 +97,7 @@
     <string name="limit_share_image">We just allow archive maximum 10 images</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
     <string name="sync_data_share_to_cloud">Syncing data to cloud…</string>
-    <string name="network_wifi_only_warning">Wifi isn\'t connected. Try download later or change setting to using cellular data.</string>
+    <string name="network_wifi_only_warning">Wi-Fi is not connected. Do you want to use mobile data to download this content?</string>
     <string name="alert_notice">Notice</string>
     <string name="alert_request_post_notification_permission_message">App needs POST NOTIFICATION permission to display notifications until do some jobs: sync data, download network contents,…</string>
     <string name="alert_no_thanks">No, thanks</string>
@@ -203,18 +203,18 @@
     <string name="file">File</string>
     <string name="reach_limit_file_size">Max size limited: 10MB</string>
     <string name="percentage" translatable="false">%d%%</string>
-    <string name="download_file_not_support">File isn\'t support to download.</string>
+    <string name="download_file_not_support">File doesn\'t support to download.</string>
     <string name="error_create_file">Can\'t create file.</string>
     <string name="error_file_format">The file format not found</string>
-    <string name="share_to">Share to...</string>
+    <string name="share_to">Share to…</string>
     <string name="edit_note">Edit note</string>
-    <string name="move_to">Move to...</string>
+    <string name="move_to">Move to…</string>
     <string name="copy">Copy</string>
     <string name="bookmark">Bookmark</string>
     <string name="copy_box_id">Copy Box\'s ID</string>
     <string name="move_to_trash">Move to trash</string>
     <string name="share_not_found">Share not found</string>
-    <string name="hint_note">Your note...</string>
+    <string name="hint_note">Your note…</string>
     <string name="share_note">Share Note</string>
     <string name="nothing_to_copy">Nothing to copy</string>
     <string name="download_files">Download Files</string>

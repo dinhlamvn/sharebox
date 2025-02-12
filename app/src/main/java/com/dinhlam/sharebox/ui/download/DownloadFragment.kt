@@ -22,14 +22,19 @@ import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
+import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.DownloadHelper
+import com.dinhlam.sharebox.helper.NetworkHelper
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DownloadFragment :
@@ -40,6 +45,12 @@ class DownloadFragment :
     ): FragmentDownloadBinding {
         return FragmentDownloadBinding.inflate(layoutInflater, container, false)
     }
+
+    @Inject
+    lateinit var appSettingHelper: AppSettingHelper
+
+    @Inject
+    lateinit var networkHelper: NetworkHelper
 
     override val viewModel: DownloadViewModel by viewModels()
 
@@ -84,9 +95,10 @@ class DownloadFragment :
                         Icons.MP4_LOGO,
                         "Download Video - ${downloadData.suffix}",
                         BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadVideo(
+                            download(
                                 downloadData.mimeType,
-                                downloadData.downloadUrl
+                                downloadData.downloadUrl,
+                                1
                             )
                         })
                     ).attachTo(this)
@@ -115,9 +127,10 @@ class DownloadFragment :
                         Icons.MP3_LOGO,
                         "Download Audio - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadAudio(
+                            download(
                                 downloadData.mimeType,
-                                downloadData.downloadUrl
+                                downloadData.downloadUrl,
+                                2
                             )
                         })
                     ).attachTo(this)
@@ -146,7 +159,7 @@ class DownloadFragment :
                         downloadData.downloadUrl,
                         "Download Image - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadImage(downloadData.mimeType, downloadData.downloadUrl)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 3)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
@@ -168,12 +181,35 @@ class DownloadFragment :
                         Icons.FILE_LOGO,
                         "Download File - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            downloadFile(downloadData.mimeType, downloadData.downloadUrl)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 4)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("file_divider_$index", height = 1.dp()).attachTo(this)
                 }
             }
+        }
+    }
+
+    private fun download(mimeType: String, downloadUrl: String, type: Int) {
+        if (appSettingHelper.getNetworkCondition() == AppSettings.NetworkCondition.WIFI_ONLY && !networkHelper.isNetworkWifiConnected()) {
+            return MaterialAlertDialogBuilder(requireContext())
+                .setMessage(R.string.network_wifi_only_warning)
+                .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                    when (type) {
+                        1 -> downloadVideo(mimeType, downloadUrl)
+                        2 -> downloadAudio(mimeType, downloadUrl)
+                        3 -> downloadImage(mimeType, downloadUrl)
+                        4 -> downloadFile(mimeType, downloadUrl)
+                    }
+                }.setNegativeButton(R.string.dialog_cancel, null)
+                .create()
+                .show()
+        }
+        when (type) {
+            1 -> downloadVideo(mimeType, downloadUrl)
+            2 -> downloadAudio(mimeType, downloadUrl)
+            3 -> downloadImage(mimeType, downloadUrl)
+            4 -> downloadFile(mimeType, downloadUrl)
         }
     }
 
