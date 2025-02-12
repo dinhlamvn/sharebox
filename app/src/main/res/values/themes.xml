@@ -46,29 +46,6 @@
         <item name="strokeColor">@android:color/transparent</item>
     </style>
 
-    <style name="MaterialCardView.TopLeftRightCorners" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/ShapeCardViewTopLeftRightCorners</item>
-        <item name="strokeWidth">0dp</item>
-        <item name="strokeColor">@android:color/transparent</item>
-    </style>
-
-    <style name="ShapeCardViewTopLeftRightCorners">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopRight">20dp</item>
-        <item name="cornerSizeTopLeft">20dp</item>
-    </style>
-
-    <style name="AppTheme.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="dialogCornerRadius">0dp</item>
-        <item name="shapeAppearanceOverlay">@style/DialogNonCorners</item>
-        <item name="contentPadding">0dp</item>
-    </style>
-
-    <style name="DialogNonCorners">
-        <item name="cornerFamily">cut</item>
-        <item name="cornerSize">0dp</item>
-    </style>
-
     <style name="AppTheme.Transparent" parent="AppTheme">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>

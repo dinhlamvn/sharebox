@@ -45,17 +45,10 @@
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
     <string name="shares_success">Archive successfully</string>
-    <string name="realtime_database_service_text">App is running…</string>
     <string name="logged_out">Logged out</string>
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
-    <string name="sign_in_error">Require sign in before snap archive</string>
-    <string name="sign_in_hint_user_name">Your name</string>
-    <string name="sign_in_title_user_name">What should we call you?</string>
-    <string name="create">Create</string>
-    <string name="error_create_box">Duplicated box name.</string>
     <string name="error_require_name">Name can\'t be empty</string>
-    <string name="title_box_create">Create a new box</string>
     <string name="error_require_passcode">Please verify this box</string>
     <string name="choose_box">Choose box</string>
     <string name="total_box">+%d more box…</string>
@@ -73,26 +66,20 @@
     <string name="setting_about">%s • Version %s</string>
     <string name="app_desc">Sharebox is an app that helps you store all the content you want to save and easily share it with your friends.</string>
     <string name="box_general">General</string>
-    <string name="complete">Complete</string>
-    <string name="edit_avatar">Edit avatar</string>
     <string name="share_text_quote_hint">Type here…</string>
     <string name="share_link_hint">Enter URL</string>
     <string name="require_input_link">Please input the link</string>
-    <string name="require_input_text_quote">Please input the text quote to archive</string>
     <string name="require_input_correct_weblink">Please input correct weblink</string>
-    <string name="synchronize_data_message">Synchronizing data…</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_message">Please log in to the app to ensure your content is backed up and share your content with friends through Box Member.</string>
     <string name="sign_in_to_comment">Sign in to comment</string>
     <string name="success_save_image_to_gallery">Save this image to Gallery successfully</string>
-    <string name="archives">Archive</string>
     <string name="title_image_download_quality">Image quality save to Gallery</string>
     <string name="require_min_image_quality">Quality must be from %d</string>
     <string name="title_setting_sync_background">Sync data daily</string>
     <string name="message_enqueue_sync_data">Auto sync data to cloud everyday.</string>
     <string name="message_cancel_enqueue_sync_data">Canceled auto sync data</string>
     <string name="downloading">Downloading</string>
-    <string name="download_preparing">Preparing download for %s…</string>
     <string name="cancel">Cancel</string>
     <string name="limit_share_image">We just allow archive maximum 10 images</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
@@ -101,11 +88,9 @@
     <string name="alert_notice">Notice</string>
     <string name="alert_request_post_notification_permission_message">App needs POST NOTIFICATION permission to display notifications until do some jobs: sync data, download network contents,…</string>
     <string name="alert_no_thanks">No, thanks</string>
-    <string name="sync_data_done_first_install">Sync data is done…</string>
     <string name="error_save_image_to_gallery">Error save image to gallery</string>
     <string name="distribute_file_content">The file is uploading</string>
     <string name="distribute_file_title">Upload File</string>
-    <string name="complete_progress">Completed (%s)</string>
     <string name="nothing_to_download">Nothing to download</string>
     <string name="text_sync_data">Sync data</string>
     <string name="note">Note</string>
@@ -114,49 +99,26 @@
     <string name="recently_shares">Recently</string>
     <string name="no_boxes">You don\'t have any box.\nClick on button (+) to create a new one.</string>
     <string name="desc_image">This is an image</string>
-    <string name="go">Go</string>
-    <string name="download_failed">Can\'t download this content, trying again!</string>
     <string name="download_audios">Download Audios</string>
-    <string name="download_mimetype">Download %s</string>
     <string name="download_videos">Download Videos</string>
     <string name="download_images">Download Images</string>
-    <string name="download_all_images">Download all images (%d)</string>
     <string name="downloading_all_image">Downloading…(%d/%d)</string>
-    <string name="create_box">Create Box</string>
     <string name="tips_search_box">*Tip: You can input the Box\'s ID to access it.</string>
-    <string name="access_box">Access Box</string>
     <string name="require_choose_box">Please choose box to archive</string>
     <string name="your_boxes">Your Boxes</string>
-    <string name="tips_share_link">*Tip: You can enter the Tiktok, Facebook, Youtube… url to download that content.</string>
-    <string name="share_link_guide_1">* You can archive the website\'s link to selected box.</string>
-    <string name="share_link_guide_2">* Copy and send box\'s ID to friends to access archived content.</string>
     <string name="copied">Copied</string>
-    <string name="dialog_confirm_remove_share_from_bookmark">Are you sure to remove this share from this bookmark?</string>
-    <string name="app_desc_more">(You must sign in before to archive content)</string>
     <string name="auto_sync_data_desc">*Your data will be auto sync to cloud daily to keep it always up-to-date.</string>
-    <string name="running">Running…</string>
     <string name="desc">Description</string>
     <string name="desc_box_hint">What is this Box? What does it to do?…</string>
     <string name="passcode_desc">*Secure your content to restrict other people access those.</string>
     <string name="copy_id">Copy ID</string>
     <string name="share_link_label">Browse</string>
-    <string name="permission_granted">Permission granted</string>
     <string name="permission_denied">Permission denied</string>
-    <string name="archive_to">Archive to</string>
     <string name="view_all">View all (%d)</string>
-    <string name="created_date">Created: %s</string>
-    <string name="archive_text">Archive a paragraph</string>
-    <string name="archive_web">Archive a link</string>
-    <string name="archive_image">You archived an image</string>
-    <string name="archive_images">You archived some images</string>
-    <string name="unknown">Unknown</string>
-    <string name="no_note">No note</string>
     <string name="view_image_activity_title">View Images</string>
-    <string name="create_box_2">Create Box…</string>
     <string name="confirm_save_message">Are you sure to save this?</string>
     <string name="title_alert">Alert</string>
     <string name="require_sign_to_sync_cloud">You need sign in to sync the data to cloud!</string>
-    <string name="title_profile">Your Profile</string>
     <string name="app_policy_desc">By sign in to app, you agree to our</string>
     <string name="discover">Discover</string>
     <string name="discover_subtitle">Discover interesting videos, images, musics, news and more</string>
@@ -178,21 +140,14 @@
     <string name="add">Add</string>
     <string name="duplicate_member">Duplicate member</string>
     <string name="hint_input_email">Email</string>
-    <string name="invited">Invited</string>
     <string name="title_box_invited">Invited Boxes</string>
     <string name="invited_boxes">Invited Boxes</string>
     <string name="require_sign_in_to_manage_member">You need sign in to manage box member</string>
     <string name="error_add_yourself">You can\'t add yourself</string>
     <string name="download">Download</string>
-    <string name="download_ready">Ready download %s</string>
-    <string name="perform_copied_content_desc">You can tap on the button below to archive the content you\'ve copied</string>
     <string name="title_num_of_recently">Number of recently share to show</string>
     <string name="require_min_num_recently">Number of recently must be from %d</string>
-    <string name="title_tiktok_discover" translatable="false">Tiktok Discover</string>
-    <string name="view_count">%s views</string>
-    <string name="completed">Completed</string>
     <string name="archive_url_success">"Archived %s "</string>
-    <string name="title_znews_discover">ZNews</string>
     <string name="nothing">Nothing</string>
     <string name="no_support_download_this_content">No support download this content</string>
     <string name="home">Home</string>
@@ -205,7 +160,6 @@
     <string name="percentage" translatable="false">%d%%</string>
     <string name="download_file_not_support">File doesn\'t support to download.</string>
     <string name="error_create_file">Can\'t create file.</string>
-    <string name="error_file_format">The file format not found</string>
     <string name="share_to">Share to…</string>
     <string name="edit_note">Edit note</string>
     <string name="move_to">Move to…</string>
@@ -228,16 +182,6 @@
 
     <string-array name="bookmark_collection_list_option_menu_items">
         <item>Remove</item>
-    </string-array>
-
-    <string-array name="more_menu">
-        <item>Share to other…</item>
-        <item>Edit note…</item>
-        <item>Move to…</item>
-        <item>Download</item>
-        <item>Bookmark</item>
-        <item>Copy box\'s ID</item>
-        <item>Move to trash</item>
     </string-array>
 
     <string-array name="more_menu_invited">
