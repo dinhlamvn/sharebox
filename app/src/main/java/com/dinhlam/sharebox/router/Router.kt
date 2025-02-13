@@ -64,4 +64,6 @@ interface Router {
     fun pickFile(context: Context): Intent
 
     fun shareToOtherIntent(context: Context, uri: Uri?, mimeType: String?): Intent?
+
+    fun guideline(context: Context): Intent
 }

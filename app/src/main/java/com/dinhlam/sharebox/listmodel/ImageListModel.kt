@@ -20,21 +20,22 @@ data class ImageListModel(
     val actionClick: BaseListAdapter.NoHashProp<View.OnClickListener?>? = BaseListAdapter.NoHashProp(
         null
     ),
-) : BaseListAdapter.BaseListModel("image_model_view_$uri") {
+) : BaseListAdapter.BaseListModel("image_$uri") {
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup
     ): BaseListAdapter.BaseViewHolder<*> {
-        return object : BaseListAdapter.BaseViewHolderViewBinding<ImageListModel, ModelViewImageBinding>(
-            ModelViewImageBinding.inflate(inflater, container, false)
-        ) {
+        return object :
+            BaseListAdapter.BaseViewHolderViewBinding<ImageListModel, ModelViewImageBinding>(
+                ModelViewImageBinding.inflate(inflater, container, false)
+            ) {
 
             override fun onBind(model: ImageListModel, position: Int) {
                 binding.image.updateSize(model.width, model.height)
                 binding.image.setOnClickListener(model.actionClick?.prop)
 
                 binding.image.load(buildContext, model.uri) {
-                    copy(transformType = TransformType.Normal(ImageLoadScaleType.CenterCrop))
+                    copy(transformType = TransformType.Normal(ImageLoadScaleType.FitCenter))
                 }
             }
 

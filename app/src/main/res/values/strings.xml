@@ -174,6 +174,23 @@
     <string name="download_files">Download Files</string>
     <string name="no_box_selected">No Selected Box</string>
     <string name="downloaded">Downloaded %s</string>
+    <string name="delete_source">Delete source content</string>
+    <string name="guideline_title_1">Archive</string>
+    <string name="guideline_subtitle_1">Archive Note, Web Link, Image and File</string>
+    <string name="guideline_title_2">Easy</string>
+    <string name="guideline_subtitle_2">Easy To Archive Your Content</string>
+    <string name="guideline_title_3">Manage</string>
+    <string name="guideline_subtitle_3">Easy To Manage Your Content</string>
+    <string name="guideline_title_4">Discover</string>
+    <string name="guideline_subtitle_4">Discovery More Interesting Content Around The World</string>
+    <string name="guideline_title_5">Download</string>
+    <string name="guideline_subtitle_5">Easy To Download Content Just By Link</string>
+    <string name="guideline_title_6">Invite</string>
+    <string name="guideline_subtitle_6">Invite Your Friend To A Box, Then They Can What You Share In That Box</string>
+    <string name="guideline_title_7">Privacy</string>
+    <string name="guideline_subtitle_7">Protect Your Content By Box Passcode Feature</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

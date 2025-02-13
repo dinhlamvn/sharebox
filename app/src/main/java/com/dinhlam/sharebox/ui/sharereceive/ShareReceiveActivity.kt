@@ -291,6 +291,8 @@ class ShareReceiveActivity :
             val content = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT) ?: ""
             val nonNullContent = content.toString().takeIfNotNullOrBlank() ?: return openHome()
             handleShareText(nonNullContent)
+        } else {
+            return openHome()
         }
     }
 

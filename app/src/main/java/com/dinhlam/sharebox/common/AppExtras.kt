@@ -23,4 +23,5 @@ object AppExtras {
     const val EXTRA_BOOLEAN = "extra-boolean"
     const val EXTRA_MIMETYPE = "extra-mimetype"
     const val EXTRA_NAME = "extra-name"
+    const val EXTRA_DATA = "extra-data"
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -15,13 +14,13 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.network.DownloadServices
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.storage.LocalStorageManager
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 import kotlin.random.Random
 
 @HiltWorker
@@ -44,22 +43,18 @@ class DownloadImagesWorker @AssistedInject constructor(
             val id = workerParams.inputData.getString(AppExtras.EXTRA_ID)
             val urls = workerParams.inputData.getStringArray(AppExtras.EXTRA_DOWNLOAD_IMAGES)
                 ?: emptyArray()
-            val outputDir =
-                FileUtils.createShareImagesDir(appContext) ?: return@withContext Result.success()
-            if (!outputDir.exists() && !outputDir.mkdir()) {
-                return@withContext Result.failure()
+
+            if (urls.isEmpty()) {
+                return@withContext Result.success()
             }
 
             val size = urls.size
             val albumName = "sharebox_images_$id"
             var downloaded = 0
 
-            urls.forEachIndexed { index, url ->
-                val outputFile = File(outputDir, FileUtils.createFileName("image_$index", "jpg"))
-                if (outputFile.exists()) {
-                    outputFile.delete()
-                }
-
+            urls.forEach { url ->
+                val outputFile = FileUtils.createShareImageFile(appContext, "jpg")
+                    ?: return@withContext Result.success()
                 try {
                     if (url.startsWith("content://")) {
                         appContext.contentResolver.openInputStream(Uri.parse(url))?.use { ips ->
@@ -98,22 +93,15 @@ class DownloadImagesWorker @AssistedInject constructor(
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            appContext,
-                            R.string.error_save_image_to_gallery,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        appContext.showToast(R.string.error_save_image_to_gallery)
                     }
                 }
             }
 
             if (downloaded > 0) {
+                appContext.showToast(R.string.success_save_image_to_gallery)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        appContext,
-                        R.string.success_save_image_to_gallery,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    appContext.showToast(R.string.success_save_image_to_gallery)
                 }
             }
             Result.success()

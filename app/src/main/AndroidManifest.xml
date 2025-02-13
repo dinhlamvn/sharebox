@@ -272,6 +272,11 @@
             android:theme="@style/AppTheme.Transparent"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name="com.dinhlam.sharebox.ui.guideline.GuidelineActivity"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity" />
+
         <provider
             android:name=".provider.ShareBoxFileProvider"
             android:authorities="${applicationId}.file_provider"

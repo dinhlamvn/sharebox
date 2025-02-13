@@ -10,6 +10,8 @@ import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.databinding.ActivityMainBinding
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
+import com.dinhlam.sharebox.pref.AppSharePref
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.discover.DiscoverFragment
 import com.dinhlam.sharebox.ui.download.DownloadFragment
 import com.dinhlam.sharebox.ui.home.HomeFragment
@@ -26,6 +28,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @Inject
     lateinit var adapter: ViewPagerAdapter
 
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var appSharePref: AppSharePref
+
     override fun onCreateViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
     }
@@ -33,6 +41,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WorkerUtils.enqueueJobSyncDataOneTime(this)
+
+        if (appSharePref.isAppFirstInstall()) {
+            appSharePref.setAppFirstInstall(false)
+            startActivity(router.guideline(this))
+        }
 
         registerOnBackPressHandler {
             if (binding.bottomNavigationView.selectedItemId != R.id.home) {

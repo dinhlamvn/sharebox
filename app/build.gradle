@@ -220,6 +220,9 @@ dependencies {
 
     // Facebook
     implementation 'com.facebook.android:facebook-login:latest.release'
+
+    // Zoomable PhotoView
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }
 
 kapt {

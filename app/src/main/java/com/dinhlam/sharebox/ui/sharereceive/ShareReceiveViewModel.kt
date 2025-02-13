@@ -16,9 +16,6 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,7 +69,7 @@ class ShareReceiveViewModel @Inject constructor(
                     context,
                     note,
                     shareData,
-                    state.currentBox,
+                    state.currentBox
                 )
 
                 is ShareData.ShareImages -> shareImages(
@@ -129,18 +126,14 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareImage(
-        context: Context, note: String?, shareData: ShareData.ShareImage, shareBox: BoxDetail?
+        context: Context,
+        note: String?,
+        shareData: ShareData.ShareImage,
+        shareBox: BoxDetail?
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
-        val imageFileDir = FileUtils.createShareImagesDir(context) ?: return@use null
-        val extension = MimeTypeMap.getSingleton()
-            .getExtensionFromMimeType(context.contentResolver.getType(shareData.uri))
+        val extension = context.getExtensionFromUri(shareData.uri)
             ?: return@use null
-        val imageFile = File(imageFileDir, FileUtils.randomImageFileName(extension))
-
-        withContext(Dispatchers.IO) {
-            imageFile.createNewFile()
-        }
-
+        val imageFile = FileUtils.createShareImageFile(context, extension) ?: return@use null
         imageFile.outputStream().use { outputStream ->
             inputStream.copyTo(outputStream)
         }
@@ -158,16 +151,13 @@ class ShareReceiveViewModel @Inject constructor(
     private suspend fun shareImages(
         context: Context, note: String?, shareData: ShareData.ShareImages, shareBox: BoxDetail?
     ): Share? {
-        val imageFileDir = FileUtils.createShareImagesDir(context) ?: return null
         val uris = shareData.uris.mapNotNull { uri ->
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 val extension = MimeTypeMap.getSingleton()
                     .getExtensionFromMimeType(context.contentResolver.getType(uri))
                     ?: return@use null
-
-                val imageFile = File(imageFileDir, FileUtils.randomImageFileName(extension))
-                imageFile.createNewFile()
-
+                val imageFile =
+                    FileUtils.createShareImageFile(context, extension) ?: return@use null
                 imageFile.outputStream().use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
@@ -188,14 +178,9 @@ class ShareReceiveViewModel @Inject constructor(
     private suspend fun shareFile(
         context: Context, note: String?, shareData: ShareData.ShareFile, shareBox: BoxDetail?
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
-        val fileDir = FileUtils.createShareFilesDir(context) ?: return@use null
         val extension = context.getExtensionFromUri(shareData.uri)
             ?: return@use null
-        val file = File(fileDir, FileUtils.randomFileName(extension))
-        withContext(Dispatchers.IO) {
-            file.createNewFile()
-        }
-
+        val file = FileUtils.createShareFile(context, extension) ?: return@use null
         file.outputStream().use { outputStream ->
             inputStream.copyTo(outputStream)
         }

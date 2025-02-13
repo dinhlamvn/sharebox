@@ -17,6 +17,7 @@ class AppSharePref @Inject constructor(
         private const val KEY_SETTING_IMAGE_DOWNLOAD_QUALITY = "setting-download-image-quality"
         private const val KEY_SETTING_SYNC_IN_BACKGROUND = "setting-sync-in-background"
         private const val KEY_SETTING_NUM_OF_RECENTLY = "setting-num-of-recently"
+        private const val KEY_FIRST_INSTALL = "app-first-install"
     }
 
     fun setTheme(@IntRange(from = 0, to = 2) theme: Int) {
@@ -56,5 +57,13 @@ class AppSharePref @Inject constructor(
 
     fun getNumOfRecently(): Int {
         return get(KEY_SETTING_NUM_OF_RECENTLY, 10)
+    }
+
+    fun setAppFirstInstall(isFirstInstall: Boolean) {
+        put(KEY_FIRST_INSTALL, isFirstInstall)
+    }
+
+    fun isAppFirstInstall(): Boolean {
+        return get(KEY_FIRST_INSTALL, true)
     }
 }

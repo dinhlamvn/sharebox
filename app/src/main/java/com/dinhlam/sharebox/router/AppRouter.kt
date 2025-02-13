@@ -28,6 +28,7 @@ import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
 import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
 import com.dinhlam.sharebox.ui.downloadpopup.BottomSheetDownloadActivity
+import com.dinhlam.sharebox.ui.guideline.GuidelineActivity
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.link.ShareLinkActivity
@@ -303,5 +304,9 @@ class AppRouter constructor(private val context: Context) : Router {
                 null
             }
         }
+    }
+
+    override fun guideline(context: Context): Intent {
+        return Intent(context, GuidelineActivity::class.java)
     }
 }

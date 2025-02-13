@@ -25,22 +25,36 @@ object FileUtils {
         return fileDir
     }
 
-    fun createShareFilesDir(context: Context): File? {
+    fun createShareFile(context: Context, ext: String): File? {
         val fileDir =
             context.getExternalFilesDir("share_files") ?: return null
         if (!fileDir.exists() && !fileDir.mkdir()) {
             return null
         }
-        return fileDir
+
+        val file = File(fileDir, createFileName("file", ext))
+
+        if (file.exists() && !file.delete()) {
+            return null
+        }
+
+        return file.apply { createNewFile() }
     }
 
-    fun createShareImagesDir(context: Context): File? {
+    fun createShareImageFile(context: Context, ext: String): File? {
         val imageFileDir =
             context.getExternalFilesDir("share_images") ?: return null
         if (!imageFileDir.exists() && !imageFileDir.mkdir()) {
             return null
         }
-        return imageFileDir
+
+        val file = File(imageFileDir, createFileName("image", ext))
+
+        if (file.exists() && !file.delete()) {
+            return null
+        }
+
+        return file.apply { createNewFile() }
     }
 
     fun getUriFromFile(context: Context, targetFile: File): Uri {
@@ -72,10 +86,6 @@ object FileUtils {
         return file
     }
 
-    fun randomImageFileName(extension: String) = createFileName("image", extension)
-
-    fun randomFileName(extension: String) = createFileName("file", extension)
-
     fun getFileNameFromUri(uri: Uri) =
         uri.lastPathSegment ?: error("No file name found in uri $uri")
 
@@ -85,7 +95,7 @@ object FileUtils {
             append("_")
             append(prefix)
             append("_")
-            append(System.currentTimeMillis().format("yyyyMMdd-HH_mm_ss"))
+            append(System.currentTimeMillis().format("yyyyMMdd-HH_mm_ss.SSS"))
             append(".")
             append(ext)
         }
