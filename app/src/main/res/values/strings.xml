@@ -174,7 +174,6 @@
     <string name="download_files">Download Files</string>
     <string name="no_box_selected">No Selected Box</string>
     <string name="downloaded">Downloaded %s</string>
-    <string name="delete_source">Delete source content</string>
     <string name="guideline_title_1">Archive</string>
     <string name="guideline_subtitle_1">Archive Note, Web Link, Image and File</string>
     <string name="guideline_title_2">Easy</string>

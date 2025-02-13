@@ -36,17 +36,10 @@
     <string name="collapsed_text">Xem thêm</string>
     <string name="expanded_text">Thu gọn</string>
     <string name="shares_success">Đã lưu trữ</string>
-    <string name="realtime_database_service_text">App đang chạy…</string>
     <string name="logged_out">Đã đăng xuất</string>
     <string name="create_user_error">Có lỗi xảy ra khi tạo mới người dùng.</string>
     <string name="logged_out_error">Lỗi, vui lòng thử lại.</string>
-    <string name="sign_in_error">Cần phải đăng nhập trước khi SNAP</string>
-    <string name="sign_in_hint_user_name">Tên của bạn</string>
-    <string name="sign_in_title_user_name">Chúng tôi sẽ gọi bạn là gì?</string>
-    <string name="create">Tạo</string>
-    <string name="error_create_box">Tên box đã tồn tại.</string>
     <string name="error_require_name">Tên không thể trống</string>
-    <string name="title_box_create">Tạo mới một Box</string>
     <string name="error_require_passcode">Vui lòng xác nhận Box này</string>
     <string name="choose_box">Chọn Box</string>
     <string name="total_box">+%d box nữa…</string>
@@ -64,26 +57,20 @@
     <string name="setting_about">%s • Phiên bản %s</string>
     <string name="app_desc">Sharebox là ứng dụng đơn giản để lưu trữ tất cả nội dung bạn muốn và chia sẻ chúng cho mọi người khác.</string>
     <string name="box_general">Cộng đồng</string>
-    <string name="complete">Hoàn thành</string>
-    <string name="edit_avatar">Sửa ảnh đại diện</string>
     <string name="share_text_quote_hint">Nhập vào đây…</string>
     <string name="share_link_hint">Nhập địa chỉ vào đây…</string>
     <string name="require_input_link">Vui lòng nhập địa chỉ</string>
-    <string name="require_input_text_quote">Vui lòng nhập nội dung trích dẫn</string>
     <string name="require_input_correct_weblink">Vui lòng nhập địa chỉ hợp lệ</string>
-    <string name="synchronize_data_message">Đang đồng bộ dữ liệu…</string>
     <string name="sign_in">Đăng nhập</string>
     <string name="sign_in_message">Hãy đăng nhập vào ứng dụng để đảm bảo các nội dung của bạn được sao lưu và chia sẻ nội dung của bạn với bạn bè thông qua Box Member.</string>
     <string name="sign_in_to_comment">Đăng nhập để bình luận</string>
     <string name="success_save_image_to_gallery">Đã lưu ảnh vào Bộ Sưu Tập</string>
-    <string name="archives">Lưu trữ</string>
     <string name="title_image_download_quality">Chất lượng ảnh khi lưu vào Bộ Sưu Tập</string>
     <string name="require_min_image_quality">Chất lượng ảnh phải từ %d</string>
     <string name="title_setting_sync_background">Đồng bộ dữ liệu hằng ngày</string>
     <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi 6 giờ.</string>
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
     <string name="downloading">Đang tải</string>
-    <string name="download_preparing">Đang chuẩn bị tải %s…</string>
     <string name="cancel">Hủy</string>
     <string name="limit_share_image">Chúng tôi chỉ cho phép chia sẻ tối đa 10 ảnh cùng lúc</string>
     <string name="sync_data_to_cloud">Ứng dụng đang đồng bộ dữ liệu lên đám mây</string>
@@ -92,11 +79,9 @@
     <string name="alert_notice">Thông báo</string>
     <string name="alert_request_post_notification_permission_message">Ứng dụng cần quyền Gửi Thông Báo để hiện thị thông báo trong khi thực hiện một số tác vụ: đồng bộ dữ liệu, tải nội dung trực tuyến,…</string>
     <string name="alert_no_thanks">Không, cảm ơn</string>
-    <string name="sync_data_done_first_install">Đã đồng bộ dữ liệu xong…</string>
     <string name="error_save_image_to_gallery">Có lỗi khi lưu ảnh</string>
     <string name="distribute_file_content">Tệp tin đang được tải lên</string>
     <string name="distribute_file_title">Tải tệp tin</string>
-    <string name="complete_progress">Hoàn thành (%s)</string>
     <string name="nothing_to_download">Không có gì để tải xuống</string>
     <string name="text_sync_data">Đồng bộ dữ liệu</string>
     <string name="note">Chú thích</string>
@@ -105,48 +90,25 @@
     <string name="images">Một số ảnh</string>
     <string name="no_boxes">Hiện tại bạn chưa có Box nào.\nHãy nhấp vào nút (+) để tạo mới 1 box.</string>
     <string name="desc_image">Đây là một hình ảnh</string>
-    <string name="go">Đi</string>
-    <string name="download_failed">Không thể tải nội dung này, đang thử lại.</string>
     <string name="download_audios">Tải âm thanh</string>
-    <string name="download_mimetype">Tải về %s</string>
     <string name="download_videos">Tải thước phim</string>
-    <string name="download_all_images">Tải tất cả ảnh (%d)</string>
     <string name="downloading_all_image">Đang tải về…(%d/%d)</string>
     <string name="download_images">Tải ảnh</string>
-    <string name="create_box">Tạo Box</string>
     <string name="tips_search_box">*Mẹo: Bạn có thể nhập mã box để truy cập vào Box.</string>
-    <string name="access_box">Truy cập Box</string>
     <string name="require_choose_box">Chọn box để lưu trữ</string>
     <string name="your_boxes">Box của bạn</string>
-    <string name="tips_share_link">*Mẹo: Bạn có thể nhập địa chỉ TikTok, Facebook, Youtube… để tải nội dung đó.</string>
-    <string name="share_link_guide_1">* Bạn có thể lưu trữ địa chỉ trang web vào Box đã chọn.</string>
-    <string name="share_link_guide_2">* Sao chép và gửi mã Box cho bạn bè để cùng truy cập nội dung đã lưu.</string>
     <string name="copied">Đã sao chép</string>
-    <string name="dialog_confirm_remove_share_from_bookmark">Bạn có chắc muốn xóa nội dung này khỏi đánh dấu?</string>
-    <string name="app_desc_more">(Bạn cần phải đăng nhập trước để có thể lưu trữ nội dung)</string>
     <string name="auto_sync_data_desc">Dữ liệu của bạn sẽ được tự động đồng bộ hằng ngày để đảm bảo nó luôn được cập nhật mới nhất.</string>
-    <string name="running">Đang chạy…</string>
     <string name="desc">Mô tả</string>
     <string name="desc_box_hint">Box này là gì? Nó để làm gì?…</string>
     <string name="passcode_desc">*Bảo vệ nội dung của bạn để hạn chế người khác có thể truy cập chúng.</string>
     <string name="copy_id">Sao chép mã</string>
     <string name="share_link_label">Truy cập</string>
-    <string name="permission_granted">Đã cấp quyền</string>
     <string name="permission_denied">Đã chặn quyền</string>
-    <string name="archive_to">Lưu trữ vào</string>
     <string name="view_all">Xem tất cả (%d)</string>
-    <string name="created_date">Đã tạo: %s</string>
-    <string name="archive_text">Lưu trữ văn bản</string>
-    <string name="archive_web">Lưu trữ địa chỉ web</string>
-    <string name="archive_image">Lưu trữ một ảnh</string>
-    <string name="archive_images">Lưu trữ vài ảnh</string>
-    <string name="unknown">Chưa rõ</string>
-    <string name="no_note">Không có chú thích</string>
-    <string name="create_box_2">Tạo một Box…</string>
     <string name="confirm_save_message">Bạn có chắc muốn lưu?</string>
     <string name="title_alert">Thông báo</string>
     <string name="require_sign_to_sync_cloud">Bạn cần đăng nhập để lưu trữ dữ liệu lên Cloud.</string>
-    <string name="title_profile">Hồ sơ của bạn</string>
     <string name="app_policy_desc">Bằng việc đăng nhập, bạn đã đồng ý với</string>
     <string name="view_image_activity_title">Xem ảnh</string>
     <string name="discover">Khám phá</string>
@@ -168,21 +130,15 @@
     <string name="add">Thêm</string>
     <string name="duplicate_member">Trùng thành viên</string>
     <string name="hint_input_email">Email</string>
-    <string name="invited">Được mời</string>
     <string name="title_box_invited">Danh sách Box được mời</string>
     <string name="invited_boxes">Danh sách Box được mời</string>
     <string name="require_sign_in_to_manage_member">Bạn cần đăng nhập để quản lý thành viên của Box</string>
     <string name="error_add_yourself">Bạn không thể thêm chính mình</string>
     <string name="download">Tải vể</string>
-    <string name="download_ready">Sẵn sàng tải %s</string>
-    <string name="perform_copied_content_desc">Bạn có thể nhấp vào nút phía dưới để lưu trữ nội dung vừa sao chép</string>
     <string name="title_add_member">Thêm thành viên</string>
     <string name="title_num_of_recently">Số lượng chia sẻ gần đây được hiển thị</string>
     <string name="require_min_num_recently">Số chia sẻ gần đây phải từ %d</string>
-    <string name="view_count">%s lượt xem</string>
-    <string name="completed">Đã hoàn thành</string>
     <string name="archive_url_success">Đã lưu trữ %s</string>
-    <string name="title_znews_discover">ZNews</string>
     <string name="nothing">Không có gì</string>
     <string name="no_support_download_this_content">Không hỗ trợ tải nội dung này</string>
     <string name="home">Trang chủ</string>
@@ -194,7 +150,6 @@
     <string name="reach_limit_file_size">Kích thước tối đa: 10MB</string>
     <string name="download_file_not_support">Tệp tin không hỗ trợ để tải xuống.</string>
     <string name="error_create_file">Không thể tạo tệp tin.</string>
-    <string name="error_file_format">Định dạng tệp tin không tìm thấy.</string>
     <string name="share_to">Chia sẻ…</string>
     <string name="edit_note">Sửa ghi chú</string>
     <string name="move_to">Di chuyển…</string>
@@ -209,23 +164,22 @@
     <string name="no_box_selected">Chưa chọn Box nào</string>
     <string name="downloaded">Đã tải %s</string>
     <string name="download_files">Tải tệp tin</string>
-    <string name="delete_source">Delete source content</string>
-    <string name="guideline_title_1">Archive</string>
-    <string name="guideline_subtitle_1">Archive Note, Web Link, Image and File</string>
-    <string name="guideline_title_2">Easy</string>
-    <string name="guideline_subtitle_2">Easy To Archive Your Content</string>
-    <string name="guideline_title_3">Manage</string>
-    <string name="guideline_subtitle_3">Easy To Manage Your Content</string>
-    <string name="guideline_title_4">Discover</string>
-    <string name="guideline_subtitle_4">Discovery More Interesting Content Around The World</string>
-    <string name="guideline_title_5">Download</string>
-    <string name="guideline_subtitle_5">Easy To Download Content Just By Link</string>
-    <string name="guideline_title_6">Invite</string>
-    <string name="guideline_subtitle_6">Invite Your Friend To A Box, Then They Can What You Share In That Box</string>
-    <string name="guideline_title_7">Privacy</string>
-    <string name="guideline_subtitle_7">Protect Your Content By Box Passcode Feature</string>
-    <string name="next">Next</string>
-    <string name="skip">Skip</string>
+    <string name="guideline_title_1">Lưu trữ</string>
+    <string name="guideline_subtitle_1">Lưu trữ Ghi chú, Địa chỉ Web, Ảnh and Tệp tin</string>
+    <string name="guideline_title_2">Dễ dàng</string>
+    <string name="guideline_subtitle_2">Lưu trữ một cách dễ dàng</string>
+    <string name="guideline_title_3">Quản lý</string>
+    <string name="guideline_subtitle_3">Dễ dàng quản lý các nội dung đã lưu</string>
+    <string name="guideline_title_4">Khám phá</string>
+    <string name="guideline_subtitle_4">Khám phá nhiều nội dung thú vị xung quang</string>
+    <string name="guideline_title_5">Tải</string>
+    <string name="guideline_subtitle_5">Dễ dàng tải nội dung chỉ với đường dẫn Web</string>
+    <string name="guideline_title_6">Mời</string>
+    <string name="guideline_subtitle_6">Mời bạn bè tham gia vào Box, họ sẽ xem được nhưn nội dung mà bạn chia sẻ</string>
+    <string name="guideline_title_7">Bảo mật</string>
+    <string name="guideline_subtitle_7">Bảo vệ nội dung bạn chia sẻ với tính năng mật mã</string>
+    <string name="next">Tiếp</string>
+    <string name="skip">Bỏ qua</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>
@@ -234,16 +188,6 @@
 
     <string-array name="bookmark_collection_list_option_menu_items">
         <item>Xóa</item>
-    </string-array>
-
-    <string-array name="more_menu">
-        <item>Chia sẻ tới…</item>
-        <item>Sửa ghi chú</item>
-        <item>Chuyển tới…</item>
-        <item>Tải nội dung</item>
-        <item>Đánh dấu</item>
-        <item>Sao chép mã Box</item>
-        <item>Chuyển vào thùng rác</item>
     </string-array>
 
     <string-array name="trash_more_menu">
