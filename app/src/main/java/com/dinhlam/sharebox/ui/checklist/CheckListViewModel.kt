@@ -92,10 +92,10 @@ class CheckListViewModel @Inject constructor(
         }
     }
 
-    fun toggleDone(checkListData: ShareData.ShareCheckList.CheckListData) = setState {
+    fun markTaskDone(checkListData: ShareData.ShareCheckList.CheckListData) = setState {
         copy(checkListDataList = checkListDataList.map { data ->
             if (data == checkListData) {
-                data.copy(done = !data.done)
+                data.copy(done = true)
             } else {
                 data
             }

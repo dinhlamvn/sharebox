@@ -1,8 +1,10 @@
 package com.dinhlam.sharebox.listmodel
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.core.view.children
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelCheckListBinding
 import com.dinhlam.sharebox.extensions.format
@@ -33,6 +35,7 @@ data class CheckListListModel(
             binding
         ) {
         override fun onBind(model: CheckListListModel, position: Int) {
+            binding.root.enableWithAllChildren(!model.done)
             binding.root.setOnClickListener(model.onClickListener.prop)
             binding.textTitle.text = model.title
             binding.iconDone.setOnClickListener(model.onDoneClickListener.prop)
@@ -51,6 +54,15 @@ data class CheckListListModel(
             )
             binding.textDatetime.text =
                 model.datetime.ifNotZero.ifTrue(model.datetime.format("dd MMM yyyy, hh:mm a"), "-")
+        }
+
+        private fun View.enableWithAllChildren(enable: Boolean) {
+            isEnabled = enable
+            if (this is ViewGroup) {
+                children.forEach { view ->
+                    view.enableWithAllChildren(enable)
+                }
+            }
         }
 
         override fun onUnBind() {

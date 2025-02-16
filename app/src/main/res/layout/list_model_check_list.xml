@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/checklist_color_state_list">
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/icon_done"
@@ -68,6 +69,5 @@
         app:layout_constraintStart_toEndOf="@id/icon_calendar"
         app:layout_constraintTop_toTopOf="@id/icon_calendar"
         tools:text="15 Jan 2025, 09:00 AM" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

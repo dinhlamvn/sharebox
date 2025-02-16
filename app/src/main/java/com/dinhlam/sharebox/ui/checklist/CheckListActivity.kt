@@ -82,7 +82,7 @@ class CheckListActivity :
                         showCheckListDataForm(checkListData)
                     }),
                     NoHashProp(View.OnClickListener {
-                        viewModel.toggleDone(checkListData)
+                        showConfirmDoneCheckList(checkListData)
                     }),
                     NoHashProp(View.OnClickListener {
                         showReminderDateTimePicker(checkListData)
@@ -103,6 +103,16 @@ class CheckListActivity :
                 this
             )
         }
+    }
+
+    private fun showConfirmDoneCheckList(checkListData: ShareData.ShareCheckList.CheckListData) {
+        MaterialAlertDialogBuilder(this)
+            .setMessage(R.string.confirm_done_checklist)
+            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                viewModel.markTaskDone(checkListData)
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun showCheckListDataForm(checkListData: ShareData.ShareCheckList.CheckListData?) {
@@ -147,7 +157,12 @@ class CheckListActivity :
                     binding.boxSectionButton.playZoomAnimation()
                     return@getState
                 }
-                showDialogInputTitle(state.shareDetail?.shareNote)
+
+                if (state.shareDetail?.shareNote.isNullOrBlank()) {
+                    showDialogInputTitle(state.shareDetail?.shareNote)
+                } else {
+                    viewModel.saveCheckList(state.shareDetail?.shareNote)
+                }
             }
         }
 
