@@ -7,4 +7,5 @@ enum class ShareType(val type: String) {
     TEXT("text"),
     IMAGES("images"),
     FILE("file"),
+    CHECK_LIST("check_list"),
 }

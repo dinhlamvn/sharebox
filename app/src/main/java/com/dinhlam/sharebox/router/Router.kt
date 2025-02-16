@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.ShareData
+import com.dinhlam.sharebox.model.ShareDetail
 
 interface Router {
     fun home(isNewTask: Boolean = false): Intent
@@ -13,8 +15,7 @@ interface Router {
         context: Context,
         url: String,
         boxId: String?,
-        boxName: String?,
-        supportDownload: Boolean
+        boxName: String?
     )
     fun moveToBrowser(url: String)
     fun bookmarkCollectionFormIntent(context: Context): Intent
@@ -66,4 +67,6 @@ interface Router {
     fun shareToOtherIntent(context: Context, uri: Uri?, mimeType: String?): Intent?
 
     fun guideline(context: Context): Intent
+
+    fun checkList(context: Context, shareDetail: ShareDetail?): Intent
 }

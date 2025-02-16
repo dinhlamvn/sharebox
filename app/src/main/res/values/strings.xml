@@ -190,6 +190,11 @@
     <string name="guideline_subtitle_7">Protect Your Content By Box Passcode Feature</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
+    <string name="checklist">Check List</string>
+    <string name="text">Text</string>
+    <string name="hint_input_check_list_title">Work title</string>
+    <string name="require_check_list_title">Work title can\'t be empty</string>
+    <string name="nothing_to_save">Nothing to save</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

@@ -6,7 +6,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.downloader.Downloader
 import com.dinhlam.sharebox.extensions.ifTrue
-import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.TiktokCategory
 import com.dinhlam.sharebox.model.TiktokDiscover
@@ -21,7 +20,6 @@ import javax.inject.Named
 class TiktokDiscoverViewModel @Inject constructor(
     private val tiktokServices: TiktokServices,
     private val boxRepository: BoxRepository,
-    private val userHelper: UserHelper,
     private val shareRepository: ShareRepository,
     @Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader
 ) : BaseViewModel<TiktokDiscoverState>(TiktokDiscoverState()) {
@@ -92,7 +90,6 @@ class TiktokDiscoverViewModel @Inject constructor(
                 shareData = shareData,
                 shareNote = note,
                 shareBoxId = boxId,
-                shareUserId = userHelper.getCurrentUserId(),
                 isVideoShare = true
             )
             link

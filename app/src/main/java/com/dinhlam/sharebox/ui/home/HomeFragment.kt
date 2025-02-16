@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -244,8 +245,7 @@ class HomeFragment :
                 requireContext(),
                 chooseBoxFor.link,
                 boxId,
-                boxName,
-                shareHelper.isSupportDownloadLink(chooseBoxFor.link)
+                boxName
             )
         }
     }
@@ -259,8 +259,25 @@ class HomeFragment :
         viewModel.refresh()
     }
 
-    fun requestArchiveNote() {
-        archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null, false))
+    fun requestArchiveNote(view: View) {
+        val popupMenu = PopupMenu(requireActivity(), view)
+        popupMenu.menuInflater.inflate(R.menu.menu_archive_note, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.text -> archiveTextResultLauncher.launch(
+                    router.textInput(
+                        requireContext(),
+                        null,
+                        null,
+                        false
+                    )
+                )
+
+                R.id.checklist -> startActivity(router.checkList(requireContext(), null))
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     fun requestArchiveWeb() {
@@ -290,8 +307,7 @@ class HomeFragment :
                 requireContext(),
                 shareData.url,
                 shareDetail.boxDetail?.boxId,
-                shareDetail.boxDetail?.boxName,
-                false
+                shareDetail.boxDetail?.boxName
             )
 
             is ShareData.ShareText -> {
@@ -322,6 +338,11 @@ class HomeFragment :
                     shareData.fileName,
                     shareData.mimeType
                 )
+            }
+
+            is ShareData.ShareCheckList -> {
+                val checkList = shareData.checkListDataList
+                startActivity(router.checkList(requireContext(), shareDetail))
             }
         }
     }

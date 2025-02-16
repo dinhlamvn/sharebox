@@ -183,8 +183,7 @@ class ShareLinkActivity :
             this,
             link,
             boxId,
-            boxName,
-            shareHelper.isSupportDownloadLink(link)
+            boxName
         )
     }
 

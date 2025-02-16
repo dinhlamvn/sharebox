@@ -4,7 +4,6 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ZingNewsCategory
 import com.dinhlam.sharebox.model.ZingNewsDiscover
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class ZingNewDiscoverViewModel @Inject constructor(
     private val downloadServices: DownloadServices,
     private val boxRepository: BoxRepository,
-    private val userHelper: UserHelper,
     private val shareRepository: ShareRepository,
 ) : BaseViewModel<ZingNewsDiscoverState>(ZingNewsDiscoverState()) {
 
@@ -47,7 +45,6 @@ class ZingNewDiscoverViewModel @Inject constructor(
                 shareData = shareData,
                 shareNote = title,
                 shareBoxId = boxId,
-                shareUserId = userHelper.getCurrentUserId(),
                 isVideoShare = true
             )
             link

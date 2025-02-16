@@ -33,8 +33,8 @@ class HomeAdapter @Inject constructor(
 
     override fun buildListModels() = homeFragment.getState(homeFragment.viewModel) { state ->
         MainActionListModel(
-            NoHashProp(View.OnClickListener {
-                homeFragment.requestArchiveNote()
+            NoHashProp(View.OnClickListener { view ->
+                homeFragment.requestArchiveNote(view)
             }),
             NoHashProp(View.OnClickListener {
                 homeFragment.requestArchiveWeb()

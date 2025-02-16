@@ -17,6 +17,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
+import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
@@ -26,6 +27,7 @@ import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
 import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
+import com.dinhlam.sharebox.ui.checklist.CheckListActivity
 import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
 import com.dinhlam.sharebox.ui.downloadpopup.BottomSheetDownloadActivity
 import com.dinhlam.sharebox.ui.guideline.GuidelineActivity
@@ -59,9 +61,8 @@ class AppRouter constructor(private val context: Context) : Router {
     }
 
     override fun moveToChromeCustomTab(
-        context: Context, url: String, boxId: String?, boxName: String?, supportDownload: Boolean
+        context: Context, url: String, boxId: String?, boxName: String?
     ) {
-        val downloadDesc = context.getString(R.string.download_content)
         val broadcastReceiverIntent = Intent(
             context,
             CustomTabsShareBroadcastReceiver::class.java
@@ -308,5 +309,16 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun guideline(context: Context): Intent {
         return Intent(context, GuidelineActivity::class.java)
+    }
+
+    override fun checkList(
+        context: Context,
+        shareDetail: ShareDetail?
+    ): Intent {
+        return Intent(context, CheckListActivity::class.java)
+            .putExtra(
+                AppExtras.EXTRA_DATA,
+                shareDetail
+            )
     }
 }

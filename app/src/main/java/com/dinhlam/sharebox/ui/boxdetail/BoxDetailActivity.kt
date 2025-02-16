@@ -240,8 +240,7 @@ class BoxDetailActivity :
                 this,
                 shareData.url,
                 share.boxDetail?.boxId,
-                share.boxDetail?.boxName,
-                false
+                share.boxDetail?.boxName
             )
 
             is ShareData.ShareText -> {
@@ -276,6 +275,11 @@ class BoxDetailActivity :
                     shareData.fileName,
                     shareData.mimeType
                 )
+            }
+
+            is ShareData.ShareCheckList -> {
+                val checkList = shareData.checkListDataList
+                startActivity(router.checkList(this, share))
             }
         }
     }

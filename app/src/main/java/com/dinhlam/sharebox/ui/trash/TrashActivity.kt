@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragme
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -185,6 +186,19 @@ class TrashActivity :
                     shareData.fileName,
                     shareData.mimeType
                 )
+            }
+
+            is ShareData.ShareCheckList -> {
+                TextViewerDialogFragment().apply {
+                    arguments =
+                        bundleOf(Intent.EXTRA_TEXT to shareData.checkListDataList.joinToString("\n") { checkListData ->
+                            "${checkListData.done} - ${checkListData.title} - (${
+                                checkListData.datetime.format(
+                                    "dd MMM yyyy, hh:mm a"
+                                )
+                            })"
+                        })
+                }.show(supportFragmentManager, "TextViewerDialogFragment")
             }
         }
     }

@@ -50,40 +50,40 @@ class ShareReceiveViewModel @Inject constructor(
 
     fun setShareData(shareData: ShareData) = setState { copy(shareData = shareData) }
 
-    fun share(note: String?, context: Context) = getState { state ->
+    fun share(note: String?, context: Context, box: BoxDetail) = getState { state ->
         suspend {
             val share = when (val shareData = state.shareData) {
                 is ShareData.ShareUrl -> shareUrl(
                     note,
                     shareData,
-                    state.currentBox,
+                    box.boxId,
                 )
 
                 is ShareData.ShareText -> shareText(
                     note,
                     shareData,
-                    state.currentBox,
+                    box.boxId,
                 )
 
                 is ShareData.ShareImage -> shareImage(
                     context,
                     note,
                     shareData,
-                    state.currentBox
+                    box.boxId,
                 )
 
                 is ShareData.ShareImages -> shareImages(
                     context,
                     note,
                     shareData,
-                    state.currentBox,
+                    box.boxId,
                 )
 
                 is ShareData.ShareFile -> shareFile(
                     context,
                     note,
                     shareData,
-                    state.currentBox,
+                    box.boxId,
                 )
 
                 else -> null
@@ -102,26 +102,24 @@ class ShareReceiveViewModel @Inject constructor(
     }
 
     private suspend fun shareUrl(
-        note: String?, shareData: ShareData.ShareUrl, shareBox: BoxDetail?
+        note: String?, shareData: ShareData.ShareUrl, boxId: String
     ): Share? {
         val isVideoShare = videoHelper.getVideoSource(shareData.url) != null
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareBoxId = shareBox?.boxId,
-            shareUserId = userHelper.getCurrentUserId(),
+            shareBoxId = boxId,
             isVideoShare = isVideoShare
         )
     }
 
     private suspend fun shareText(
-        note: String?, shareData: ShareData.ShareText, shareBox: BoxDetail?
+        note: String?, shareData: ShareData.ShareText, boxId: String
     ): Share? {
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareBoxId = shareBox?.boxId,
-            shareUserId = userHelper.getCurrentUserId()
+            shareBoxId = boxId
         )
     }
 
@@ -129,7 +127,7 @@ class ShareReceiveViewModel @Inject constructor(
         context: Context,
         note: String?,
         shareData: ShareData.ShareImage,
-        shareBox: BoxDetail?
+        boxId: String
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
         val extension = context.getExtensionFromUri(shareData.uri)
             ?: return@use null
@@ -143,13 +141,12 @@ class ShareReceiveViewModel @Inject constructor(
         shareRepository.insert(
             shareData = saveShareImage,
             shareNote = note,
-            shareBoxId = shareBox?.boxId,
-            shareUserId = userHelper.getCurrentUserId()
+            shareBoxId = boxId,
         )
     }
 
     private suspend fun shareImages(
-        context: Context, note: String?, shareData: ShareData.ShareImages, shareBox: BoxDetail?
+        context: Context, note: String?, shareData: ShareData.ShareImages, boxId: String
     ): Share? {
         val uris = shareData.uris.mapNotNull { uri ->
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
@@ -170,13 +167,12 @@ class ShareReceiveViewModel @Inject constructor(
         return shareRepository.insert(
             shareData = saveShareImages,
             shareNote = note,
-            shareBoxId = shareBox?.boxId,
-            shareUserId = userHelper.getCurrentUserId()
+            shareBoxId = boxId
         )
     }
 
     private suspend fun shareFile(
-        context: Context, note: String?, shareData: ShareData.ShareFile, shareBox: BoxDetail?
+        context: Context, note: String?, shareData: ShareData.ShareFile, boxId: String
     ): Share? = context.contentResolver.openInputStream(shareData.uri)?.use { inputStream ->
         val extension = context.getExtensionFromUri(shareData.uri)
             ?: return@use null
@@ -190,8 +186,7 @@ class ShareReceiveViewModel @Inject constructor(
         shareRepository.insert(
             shareData = newShareFile,
             shareNote = note,
-            shareBoxId = shareBox?.boxId,
-            shareUserId = userHelper.getCurrentUserId()
+            shareBoxId = boxId,
         )
     }
 

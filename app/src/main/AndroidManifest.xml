@@ -274,7 +274,12 @@
 
         <activity
             android:name="com.dinhlam.sharebox.ui.guideline.GuidelineActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustNothing"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
+            android:name="com.dinhlam.sharebox.ui.checklist.CheckListActivity"
+            android:windowSoftInputMode="adjustNothing"
             tools:ignore="LockedOrientationActivity" />
 
         <provider

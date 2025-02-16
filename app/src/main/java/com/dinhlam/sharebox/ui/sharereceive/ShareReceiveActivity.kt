@@ -245,15 +245,13 @@ class ShareReceiveActivity :
 
     private fun share() = getState(viewModel) { state ->
         hideKeyboard()
-
-        if (state.currentBox == null) {
+        val box = state.currentBox ?: run {
             showToast(R.string.require_choose_box)
             binding.boxSectionButton.playZoomAnimation()
             return@getState
         }
-
         val shareNote = binding.textInputNote.getTrimmedText()
-        viewModel.share(shareNote, this@ShareReceiveActivity)
+        viewModel.share(shareNote, this@ShareReceiveActivity, box)
     }
 
     private fun handleShareData() {

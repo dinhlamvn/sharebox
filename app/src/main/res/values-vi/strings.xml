@@ -175,11 +175,16 @@
     <string name="guideline_title_5">Tải</string>
     <string name="guideline_subtitle_5">Dễ dàng tải nội dung chỉ với đường dẫn Web</string>
     <string name="guideline_title_6">Mời</string>
-    <string name="guideline_subtitle_6">Mời bạn bè tham gia vào Box, họ sẽ xem được nhưn nội dung mà bạn chia sẻ</string>
+    <string name="guideline_subtitle_6">Mời bạn bè tham gia vào Box, họ sẽ xem được những nội dung mà bạn chia sẻ</string>
     <string name="guideline_title_7">Bảo mật</string>
     <string name="guideline_subtitle_7">Bảo vệ nội dung bạn chia sẻ với tính năng mật mã</string>
     <string name="next">Tiếp</string>
     <string name="skip">Bỏ qua</string>
+    <string name="checklist">Danh sách công việc</string>
+    <string name="text">Văn bản</string>
+    <string name="hint_input_check_list_title">Nội dung công việc</string>
+    <string name="require_check_list_title">Nội dung công việc không thể trống</string>
+    <string name="nothing_to_save">Không có gì để lưu</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>

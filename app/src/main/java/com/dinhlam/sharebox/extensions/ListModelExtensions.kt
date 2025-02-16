@@ -18,6 +18,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareImage -> "f03e"
             is ShareData.ShareImages -> "f302"
             is ShareData.ShareFile -> "f15c"
+            is ShareData.ShareCheckList -> "f0ae"
         }
     }
 
@@ -28,6 +29,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareImage -> shareDetail.shareNote
             is ShareData.ShareImages -> shareDetail.shareNote
             is ShareData.ShareFile -> shareData.fileName
+            is ShareData.ShareCheckList -> shareDetail.shareNote
         }
     }
 
@@ -38,6 +40,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareImage -> shareDetail.createdAt.format("yyyy MMM d HH:mm")
             is ShareData.ShareImages -> shareDetail.createdAt.format()
             is ShareData.ShareFile -> shareData.fileSize.asHumanReadableSize()
+            is ShareData.ShareCheckList -> shareData.checkListDataList.firstOrNull()?.title
         }
     }
 

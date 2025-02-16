@@ -49,6 +49,6 @@ fun Long.asElapsedTimeDisplay(): String {
 }
 
 fun Long.format(format: String = "yyyy MMM d"): String {
-    val df = SimpleDateFormat(format, Locale.US)
+    val df = SimpleDateFormat(format, Locale.getDefault())
     return df.format(this)
 }

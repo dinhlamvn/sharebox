@@ -10,7 +10,6 @@ import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.helper.VideoHelper
 import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +37,7 @@ class CustomTabsShareBroadcastReceiver : BaseBroadcastReceiver() {
         val boxId = intent.getStringExtra(AppExtras.EXTRA_BOX_ID)
         coroutineScope.launch {
             val share = shareUrl(null, ShareData.ShareUrl(url), boxId)
-            share?.let { insertedShare ->
+            share?.let {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, R.string.shares_success, Toast.LENGTH_SHORT).show()
                 }
@@ -53,8 +52,7 @@ class CustomTabsShareBroadcastReceiver : BaseBroadcastReceiver() {
         return shareRepository.insert(
             shareData = shareData,
             shareNote = note,
-            shareBoxId = boxId,
-            shareUserId = userHelper.getCurrentUserId(),
+            shareBoxId = boxId!!,
             isVideoShare = isVideoShare
         )
     }

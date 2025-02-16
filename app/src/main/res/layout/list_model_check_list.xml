@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:icon_code="f14a"
+        app:icon_size="24dp"
+        app:icon_style="regular"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_title" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextBody"
+        app:layout_constraintEnd_toStartOf="@id/icon_reminder"
+        app:layout_constraintStart_toEndOf="@id/icon_done"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Meeting with the QC Team" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_reminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        app:icon_code="f0f3"
+        app:icon_size="24dp"
+        app:icon_style="regular"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_title" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:barrierMargin="8dp"
+        app:constraint_referenced_ids="icon_done,text_title,icon_reminder" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:icon_code="f133"
+        app:icon_size="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_title"
+        app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textAppearance="@style/TextCaptionMedium"
+        app:layout_constraintBottom_toBottomOf="@id/icon_calendar"
+        app:layout_constraintStart_toEndOf="@id/icon_calendar"
+        app:layout_constraintTop_toTopOf="@id/icon_calendar"
+        tools:text="15 Jan 2025, 09:00 AM" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

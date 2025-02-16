@@ -73,6 +73,7 @@ class FontAwesomeIconView @JvmOverloads constructor(
         }
         super.setTextAppearance(context, textStyle)
         setIconSize(iconSize)
+        invalidateIconColor()
     }
 
     private fun invalidateIconColor() {

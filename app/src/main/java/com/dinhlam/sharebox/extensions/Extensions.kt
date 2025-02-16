@@ -131,3 +131,6 @@ fun Context.copy(text: String?) {
 fun <T> Boolean.ifTrue(data: T, other: T): T {
     return if (this) data else other
 }
+
+val Number.ifNotZero: Boolean
+    get() = this.toInt() != 0

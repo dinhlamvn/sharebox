@@ -145,8 +145,7 @@ class ZingNewsDiscoverFragment :
             requireContext(),
             zingNewsDiscover.url,
             state.currentBox?.boxId,
-            state.currentBox?.boxName,
-            false
+            state.currentBox?.boxName
         )
     }
 

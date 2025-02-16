@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.json.ShareCheckListJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareFileJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImagesJsonSerializerDeserializer
@@ -47,6 +48,9 @@ object AppModule {
         )
         gsonBuilder.registerTypeAdapter(
             ShareData.ShareFile::class.java, ShareFileJsonSerializerDeserializer
+        )
+        gsonBuilder.registerTypeAdapter(
+            ShareData.ShareCheckList::class.java, ShareCheckListJsonSerializerDeserializer
         )
         return gsonBuilder.create()
     }

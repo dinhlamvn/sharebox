@@ -59,22 +59,19 @@ class ShareRepository @Inject constructor(
     }
 
     suspend fun insert(
-        shareId: String = ShareUtils.createShareId(),
         shareData: ShareData,
         shareNote: String?,
-        shareBoxId: String?,
-        shareUserId: String,
-        shareDate: Long = nowUTCTimeInMillis(),
+        shareBoxId: String,
         synced: Boolean = false,
         isVideoShare: Boolean = false,
     ): Share? {
         val share = Share(
-            shareId = shareId,
-            shareUserId = shareUserId,
+            shareId = ShareUtils.createShareId(),
+            shareUserId = userHelper.getCurrentUserId(),
             shareData = shareData,
             shareNote = shareNote,
             shareBoxId = shareBoxId,
-            shareDate = shareDate,
+            shareDate = nowUTCTimeInMillis(),
             synced = synced,
             isVideoShare = isVideoShare
         )

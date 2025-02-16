@@ -21,7 +21,7 @@ import com.dinhlam.sharebox.dialog.action.BottomSheetShareActionDialogFragment
 import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
-import com.dinhlam.sharebox.extensions.castNonNull
+import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.logger.Logger
@@ -60,13 +60,13 @@ class ShareHelper @Inject constructor(
         val intent = Intent(Intent.ACTION_SEND)
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> {
-                intent.putExtra(Intent.EXTRA_TEXT, shareData.castNonNull<ShareData.ShareUrl>().url)
+                intent.putExtra(Intent.EXTRA_TEXT, shareData.url)
                 intent.type = "text/*"
             }
 
             is ShareData.ShareText -> {
                 intent.putExtra(
-                    Intent.EXTRA_TEXT, shareData.castNonNull<ShareData.ShareText>().text
+                    Intent.EXTRA_TEXT, shareData.text
                 )
                 intent.type = "text/*"
             }
@@ -94,6 +94,20 @@ class ShareHelper @Inject constructor(
                 )
                 intent.setDataAndType(shareData.uri, "*/*")
                 intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+
+            is ShareData.ShareCheckList -> {
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    shareData.checkListDataList.joinToString("\n") { checkListData ->
+                        "${checkListData.done} - ${checkListData.title} - (${
+                            checkListData.datetime.format(
+                                "dd MMM yyyy, hh:mm a"
+                            )
+                        })"
+                    }
+                )
+                intent.type = "text/*"
             }
         }
 

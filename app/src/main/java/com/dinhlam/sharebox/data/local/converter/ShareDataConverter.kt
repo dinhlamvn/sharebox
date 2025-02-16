@@ -14,25 +14,29 @@ class ShareDataConverter constructor(
 ) {
     @TypeConverter
     fun shareDataToString(shareData: ShareData): String {
-        return when (shareData) {
-            is ShareData.ShareUrl -> gson.toJson(shareData, ShareData.ShareUrl::class.java)
-            is ShareData.ShareText -> gson.toJson(shareData, ShareData.ShareText::class.java)
-            is ShareData.ShareImage -> gson.toJson(shareData, ShareData.ShareImage::class.java)
-            is ShareData.ShareImages -> gson.toJson(shareData, ShareData.ShareImages::class.java)
-            is ShareData.ShareFile -> gson.toJson(shareData, ShareData.ShareFile::class.java)
+        val clazz = when (shareData) {
+            is ShareData.ShareUrl -> ShareData.ShareUrl::class.java
+            is ShareData.ShareText -> ShareData.ShareText::class.java
+            is ShareData.ShareImage -> ShareData.ShareImage::class.java
+            is ShareData.ShareImages -> ShareData.ShareImages::class.java
+            is ShareData.ShareFile -> ShareData.ShareFile::class.java
+            is ShareData.ShareCheckList -> ShareData.ShareCheckList::class.java
         }
+        return gson.toJson(shareData, clazz)
     }
 
     @TypeConverter
     fun stringToShareData(str: String): ShareData {
         val json = gson.fromJson(str, JsonObject::class.java)
-        return when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
-            ShareType.URL -> gson.fromJson(json, ShareData.ShareUrl::class.java)
-            ShareType.TEXT -> gson.fromJson(json, ShareData.ShareText::class.java)
-            ShareType.IMAGE -> gson.fromJson(json, ShareData.ShareImage::class.java)
-            ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
-            ShareType.FILE -> gson.fromJson(json, ShareData.ShareFile::class.java)
-            else -> error("Error while parse json string $str to ShareData")
+        val clazz = when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
+            ShareType.URL -> ShareData.ShareUrl::class.java
+            ShareType.TEXT -> ShareData.ShareText::class.java
+            ShareType.IMAGE -> ShareData.ShareImage::class.java
+            ShareType.IMAGES -> ShareData.ShareImages::class.java
+            ShareType.FILE -> ShareData.ShareFile::class.java
+            ShareType.CHECK_LIST -> ShareData.ShareCheckList::class.java
+            else -> error("No share type this data $str")
         }
+        return gson.fromJson(json, clazz)
     }
 }
