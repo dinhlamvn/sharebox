@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
@@ -53,6 +54,7 @@ class CheckListDataFormDialogFragment :
             field = value
             binding.textDatetime.text =
                 value.ifNotZero.ifTrue(value.format("dd MMM yyyy, hh:mm a"), "-")
+            binding.iconClearDatetime.isVisible = value.ifNotZero
         }
 
     private var checkListReminder: Long = 0L
@@ -60,6 +62,7 @@ class CheckListDataFormDialogFragment :
             field = value
             binding.textReminder.text =
                 value.ifNotZero.ifTrue(value.format("dd MMM yyyy, hh:mm a"), "-")
+            binding.iconClearReminder.isVisible = value.ifNotZero
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,6 +79,14 @@ class CheckListDataFormDialogFragment :
 
         binding.textReminder.setOnClickListener {
             showCheckListReminderPicker()
+        }
+
+        binding.iconClearDatetime.setOnClickListener {
+            checkListDateTime = 0L
+        }
+
+        binding.iconClearReminder.setOnClickListener {
+            checkListReminder = 0L
         }
 
         binding.buttonSave.setOnClickListener {

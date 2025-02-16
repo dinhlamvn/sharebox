@@ -29,16 +29,29 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_datetime"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
+        android:minWidth="100dp"
         android:textAppearance="@style/TextBodyMedium"
         app:layout_constraintBottom_toBottomOf="@id/icon_calendar"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon_calendar"
         app:layout_constraintTop_toTopOf="@id/icon_calendar"
         tools:text="-" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_clear_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        app:icon_code="f057"
+        app:icon_size="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/text_datetime"
+        app:layout_constraintStart_toEndOf="@id/text_datetime"
+        app:layout_constraintTop_toTopOf="@id/text_datetime"
+        tools:visibility="visible" />
 
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/icon_reminder"
@@ -53,16 +66,29 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_reminder"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
+        android:minWidth="100dp"
         android:textAppearance="@style/TextBodyMedium"
         app:layout_constraintBottom_toBottomOf="@id/icon_reminder"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon_reminder"
         app:layout_constraintTop_toTopOf="@id/icon_reminder"
         tools:text="-" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_clear_reminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        app:icon_code="f057"
+        app:icon_size="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/text_reminder"
+        app:layout_constraintStart_toEndOf="@id/text_reminder"
+        app:layout_constraintTop_toTopOf="@id/text_reminder"
+        tools:visibility="visible" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_save"
