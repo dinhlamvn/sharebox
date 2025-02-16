@@ -18,6 +18,9 @@ import com.dinhlam.sharebox.databinding.ActivityCheckListBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.extensions.ifNotZero
+import com.dinhlam.sharebox.extensions.ifTrue
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.listmodel.ButtonListModel
@@ -27,8 +30,12 @@ import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.checklist.dialog.CheckListDataFormDialogFragment
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.timepicker.MaterialTimePicker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Calendar
+import java.util.TimeZone
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -73,6 +80,12 @@ class CheckListActivity :
                     checkListData.reminder,
                     NoHashProp(View.OnClickListener {
                         showCheckListDataForm(checkListData)
+                    }),
+                    NoHashProp(View.OnClickListener {
+                        viewModel.toggleDone(checkListData)
+                    }),
+                    NoHashProp(View.OnClickListener {
+                        showReminderDateTimePicker(checkListData)
                     })
                 ).attachTo(this)
 
@@ -191,5 +204,42 @@ class CheckListActivity :
         val oldCheckList =
             params.getParcelableExtraCompat<ShareData.ShareCheckList.CheckListData>(AppExtras.EXTRA_DATA)
         viewModel.saveCheckListData(oldCheckList, checkListData)
+    }
+
+    private fun showReminderDateTimePicker(checkListData: ShareData.ShareCheckList.CheckListData) {
+        val datetime = checkListData.datetime
+        val reminder = checkListData.reminder
+        var timestamp = reminder.ifNotZero.ifTrue(
+            reminder,
+            datetime.ifNotZero.ifTrue(datetime, nowUTCTimeInMillis())
+        )
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+        }
+
+        val timezone = TimeZone.getDefault()
+        timestamp += timezone.getOffset(timestamp)
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select Date")
+            .setSelection(timestamp)
+            .build()
+
+        val timePicker = MaterialTimePicker.Builder()
+            .setTitleText("Select Time")
+            .setHour(calendar.get(Calendar.HOUR_OF_DAY))
+            .setMinute(calendar.get(Calendar.MINUTE))
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { pickedDatetime ->
+            calendar.timeInMillis = pickedDatetime
+            timePicker.addOnDismissListener {
+                calendar.set(Calendar.HOUR, timePicker.hour)
+                calendar.set(Calendar.MINUTE, timePicker.minute)
+                viewModel.setCheckListDataReminder(checkListData, calendar.timeInMillis)
+            }
+            timePicker.show(supportFragmentManager, "dialog_time_picker")
+        }
+
+        datePicker.show(supportFragmentManager, "dialog_date_picker")
     }
 }

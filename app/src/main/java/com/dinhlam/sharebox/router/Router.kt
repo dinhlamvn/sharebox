@@ -5,8 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
 
 interface Router {
     fun home(isNewTask: Boolean = false): Intent
@@ -68,5 +66,5 @@ interface Router {
 
     fun guideline(context: Context): Intent
 
-    fun checkList(context: Context, shareDetail: ShareDetail?): Intent
+    fun checkList(context: Context, shareId: String?): Intent
 }

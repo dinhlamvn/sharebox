@@ -40,7 +40,16 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareImage -> shareDetail.createdAt.format("yyyy MMM d HH:mm")
             is ShareData.ShareImages -> shareDetail.createdAt.format()
             is ShareData.ShareFile -> shareData.fileSize.asHumanReadableSize()
-            is ShareData.ShareCheckList -> shareData.checkListDataList.firstOrNull()?.title
+            is ShareData.ShareCheckList -> shareData.checkListDataList.run {
+                val totalDone = count { checkListData -> checkListData.done }
+                val totalUnDone = count { checkListData -> !checkListData.done }
+                "%d tasks [%d ☑, %d ⓧ] - %s".format(
+                    size,
+                    totalDone,
+                    totalUnDone,
+                    shareDetail.createdAt.format("yyyy MMM d HH:mm")
+                )
+            }
         }
     }
 

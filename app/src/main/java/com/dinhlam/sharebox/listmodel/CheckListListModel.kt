@@ -16,7 +16,9 @@ data class CheckListListModel(
     val done: Boolean,
     val datetime: Long,
     val reminder: Long,
-    val onClickListener: BaseListAdapter.NoHashProp<OnClickListener>
+    val onClickListener: BaseListAdapter.NoHashProp<OnClickListener>,
+    val onDoneClickListener: BaseListAdapter.NoHashProp<OnClickListener>,
+    val onReminderClickListener: BaseListAdapter.NoHashProp<OnClickListener>,
 ) : BaseListAdapter.BaseListModel(id) {
 
     override fun createViewHolder(
@@ -33,12 +35,14 @@ data class CheckListListModel(
         override fun onBind(model: CheckListListModel, position: Int) {
             binding.root.setOnClickListener(model.onClickListener.prop)
             binding.textTitle.text = model.title
+            binding.iconDone.setOnClickListener(model.onDoneClickListener.prop)
             binding.iconDone.setIconStyle(
                 model.done.ifTrue(
                     FontAwesomeIconView.IconStyle.SOLID,
                     FontAwesomeIconView.IconStyle.REGULAR
                 )
             )
+            binding.iconReminder.setOnClickListener(model.onReminderClickListener.prop)
             binding.iconReminder.setIconStyle(
                 model.reminder.ifNotZero.ifTrue(
                     FontAwesomeIconView.IconStyle.SOLID,

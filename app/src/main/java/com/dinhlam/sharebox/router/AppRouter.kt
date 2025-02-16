@@ -17,7 +17,6 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.model.BookmarkCollectionDetail
-import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
 import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
@@ -313,12 +312,12 @@ class AppRouter constructor(private val context: Context) : Router {
 
     override fun checkList(
         context: Context,
-        shareDetail: ShareDetail?
+        shareId: String?
     ): Intent {
         return Intent(context, CheckListActivity::class.java)
             .putExtra(
-                AppExtras.EXTRA_DATA,
-                shareDetail
+                AppExtras.EXTRA_SHARE_ID,
+                shareId
             )
     }
 }

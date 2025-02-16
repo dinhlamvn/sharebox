@@ -5,6 +5,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.model.ShareData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,10 +15,27 @@ class CheckListViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val boxRepository: BoxRepository,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel<CheckListState>(CheckListState(savedStateHandle[AppExtras.EXTRA_DATA])) {
+) : BaseViewModel<CheckListState>(CheckListState(savedStateHandle[AppExtras.EXTRA_SHARE_ID])) {
 
     init {
+        onChange(CheckListState::shareId) { shareId ->
+            getShareDetail(shareId)
+        }
         getBoxToArchiveContent()
+    }
+
+    private fun getShareDetail(shareId: String?) {
+        val id = shareId ?: return
+        suspend {
+            shareRepository.findOne(id)
+        }.execute { asyncLoad ->
+            val shareDetail = asyncLoad.data
+            copy(
+                shareDetail = shareDetail,
+                currentBox = shareDetail?.boxDetail,
+                checkListDataList = shareDetail?.shareData?.cast<ShareData.ShareCheckList>()?.checkListDataList.orEmpty()
+            )
+        }
     }
 
     private fun getBoxToArchiveContent() {
@@ -72,5 +90,28 @@ class CheckListViewModel @Inject constructor(
         suspend { boxRepository.findOne(boxId) }.execute { asyncLoad ->
             copy(currentBox = asyncLoad.data)
         }
+    }
+
+    fun toggleDone(checkListData: ShareData.ShareCheckList.CheckListData) = setState {
+        copy(checkListDataList = checkListDataList.map { data ->
+            if (data == checkListData) {
+                data.copy(done = !data.done)
+            } else {
+                data
+            }
+        })
+    }
+
+    fun setCheckListDataReminder(
+        checkListData: ShareData.ShareCheckList.CheckListData,
+        timeInMillis: Long
+    ) = setState {
+        copy(checkListDataList = checkListDataList.map { data ->
+            if (data == checkListData) {
+                data.copy(reminder = timeInMillis)
+            } else {
+                data
+            }
+        })
     }
 }

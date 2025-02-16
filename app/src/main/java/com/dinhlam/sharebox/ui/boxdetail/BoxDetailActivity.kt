@@ -279,7 +279,7 @@ class BoxDetailActivity :
 
             is ShareData.ShareCheckList -> {
                 val checkList = shareData.checkListDataList
-                startActivity(router.checkList(this, share))
+                startActivity(router.checkList(this, share.shareId))
             }
         }
     }

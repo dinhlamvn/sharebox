@@ -342,7 +342,7 @@ class HomeFragment :
 
             is ShareData.ShareCheckList -> {
                 val checkList = shareData.checkListDataList
-                startActivity(router.checkList(requireContext(), shareDetail))
+                startActivity(router.checkList(requireContext(), shareDetail.shareId))
             }
         }
     }
