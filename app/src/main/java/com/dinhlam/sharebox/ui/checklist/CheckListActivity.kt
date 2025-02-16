@@ -185,7 +185,10 @@ class CheckListActivity :
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 showToast(
                     getString(
-                        R.string.archive_url_success,
+                        (getState(
+                            viewModel,
+                            CheckListState::shareId
+                        ) != null).ifTrue(R.string.saved, R.string.archive_url_success),
                         asyncLoad.data?.shareNote.orEmpty()
                     )
                 )

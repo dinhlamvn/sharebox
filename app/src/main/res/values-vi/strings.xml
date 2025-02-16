@@ -186,6 +186,7 @@
     <string name="require_check_list_title">Nội dung công việc không thể trống</string>
     <string name="nothing_to_save">Không có gì để lưu</string>
     <string name="confirm_done_checklist">Are you sure to mark this task is done?</string>
+    <string name="saved">Saved</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Sửa</item>
