@@ -29,6 +29,7 @@ object ShareCheckListJsonSerializerDeserializer :
             checkListObj.addProperty("done", checkListData.done)
             checkListObj.addProperty("datetime", checkListData.datetime)
             checkListObj.addProperty("reminder", checkListData.reminder)
+            checkListObj.addProperty("updated_at", checkListData.updatedAt)
             jsonArray.add(checkListObj)
         }
 
@@ -50,7 +51,8 @@ object ShareCheckListJsonSerializerDeserializer :
             val done = checkListObj.get("done").asBoolean
             val datetime = checkListObj.get("datetime").asLong
             val reminder = checkListObj.get("reminder").asLong
-            ShareData.ShareCheckList.CheckListData(title, done, datetime, reminder)
+            val updatedAt = checkListObj.get("updated_at")?.asLong
+            ShareData.ShareCheckList.CheckListData(title, done, datetime, reminder, updatedAt ?: 0L)
         }
 
         return ShareData.ShareCheckList(checkList)

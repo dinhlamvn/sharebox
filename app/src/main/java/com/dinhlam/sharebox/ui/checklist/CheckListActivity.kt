@@ -78,6 +78,7 @@ class CheckListActivity :
                     checkListData.done,
                     checkListData.datetime,
                     checkListData.reminder,
+                    checkListData.updatedAt,
                     NoHashProp(View.OnClickListener {
                         showCheckListDataForm(checkListData)
                     }),
@@ -85,7 +86,11 @@ class CheckListActivity :
                         showConfirmDoneCheckList(checkListData)
                     }),
                     NoHashProp(View.OnClickListener {
-                        showReminderDateTimePicker(checkListData)
+                        if (checkListData.reminder.ifNotZero) {
+                            viewModel.setCheckListDataReminder(checkListData, 0)
+                        } else {
+                            showReminderDateTimePicker(checkListData)
+                        }
                     })
                 ).attachTo(this)
 

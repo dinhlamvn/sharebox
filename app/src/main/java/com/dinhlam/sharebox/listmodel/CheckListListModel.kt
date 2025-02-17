@@ -18,6 +18,7 @@ data class CheckListListModel(
     val done: Boolean,
     val datetime: Long,
     val reminder: Long,
+    val updatedAt: Long,
     val onClickListener: BaseListAdapter.NoHashProp<OnClickListener>,
     val onDoneClickListener: BaseListAdapter.NoHashProp<OnClickListener>,
     val onReminderClickListener: BaseListAdapter.NoHashProp<OnClickListener>,
@@ -54,6 +55,12 @@ data class CheckListListModel(
             )
             binding.textDatetime.text =
                 model.datetime.ifNotZero.ifTrue(model.datetime.format("dd MMM yyyy, hh:mm a"), "-")
+
+            binding.textUpdatedAt.text =
+                model.updatedAt.ifNotZero.ifTrue(
+                    model.updatedAt.format("dd MMM yyyy, hh:mm a"),
+                    "-"
+                )
         }
 
         private fun View.enableWithAllChildren(enable: Boolean) {

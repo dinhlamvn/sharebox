@@ -34,7 +34,8 @@ sealed interface ShareData : Parcelable {
             val title: String,
             val done: Boolean,
             val datetime: Long,
-            val reminder: Long
+            val reminder: Long,
+            val updatedAt: Long
         ) :
             Parcelable
     }

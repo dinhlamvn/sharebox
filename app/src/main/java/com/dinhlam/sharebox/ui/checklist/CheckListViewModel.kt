@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.model.ShareData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -95,7 +96,7 @@ class CheckListViewModel @Inject constructor(
     fun markTaskDone(checkListData: ShareData.ShareCheckList.CheckListData) = setState {
         copy(checkListDataList = checkListDataList.map { data ->
             if (data == checkListData) {
-                data.copy(done = true)
+                data.copy(done = true, updatedAt = nowUTCTimeInMillis())
             } else {
                 data
             }
@@ -108,7 +109,7 @@ class CheckListViewModel @Inject constructor(
     ) = setState {
         copy(checkListDataList = checkListDataList.map { data ->
             if (data == checkListData) {
-                data.copy(reminder = timeInMillis)
+                data.copy(reminder = timeInMillis, updatedAt = nowUTCTimeInMillis())
             } else {
                 data
             }

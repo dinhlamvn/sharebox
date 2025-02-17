@@ -195,7 +195,7 @@
     <string name="hint_input_check_list_title">Task title</string>
     <string name="require_check_list_title">Task title can\'t be empty</string>
     <string name="nothing_to_save">Nothing to save</string>
-    <string name="confirm_done_checklist">Are you sure to mark this task is done? You can\'t fallback after marked it done.</string>
+    <string name="confirm_done_checklist">Are you sure you want to mark this task as complete? You will not be able to undo this action once the task is marked as complete.</string>
     <string name="saved">Saved</string>
 
     <string-array name="bookmark_collection_option_menu_items">

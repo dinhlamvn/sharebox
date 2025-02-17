@@ -167,7 +167,11 @@ class CheckListDataFormDialogFragment :
             return
         }
         val data = ShareData.ShareCheckList.CheckListData(
-            title, checkListData?.done ?: false, checkListDateTime, checkListReminder
+            title,
+            checkListData?.done ?: false,
+            checkListDateTime,
+            checkListReminder,
+            nowUTCTimeInMillis()
         )
         val bundle = arguments ?: bundleOf()
         saveCheckListListener?.onSaveCheckListData(data, bundle)
