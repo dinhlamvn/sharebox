@@ -10,7 +10,6 @@
         style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:textAppearance="@style/TextTitleMedium"
         app:layout_constraintTop_toTopOf="parent"
         app:title="@string/invited_boxes" />
 

@@ -116,12 +116,12 @@ class ShareRepository @Inject constructor(
         }
     }
 
-    suspend fun find(shareUserId: String, limit: Int, offset: Int): List<ShareDetail> {
+    suspend fun findAll(tagId: Int): List<ShareDetail> {
         return try {
-            val shares = shareDao.find(shareUserId, limit, offset)
+            val shares = shareDao.findAll(userHelper.getCurrentUserId(), tagId)
             shares.asFlow().mapNotNull(::buildShareDetail).toList()
         } catch (e: Exception) {
-            Logger.error("Query list share record $shareUserId has error: $e")
+            Logger.error("Query list share record $tagId has error: $e")
             emptyList()
         }
     }

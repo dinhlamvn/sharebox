@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -119,20 +118,6 @@ class BoxDetailViewModel @Inject constructor(
                 mustInputPasscode = false
             )
         }
-    }
-
-    fun setCurrentShare(shareDetail: ShareDetail?) = setState { copy(currentShare = shareDetail) }
-
-    fun saveShareText(text: String?) = getState { state ->
-        val currentShare = state.currentShare ?: return@getState
-        val shareId = currentShare.shareId
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)
-            share?.let { updateShare ->
-                shareRepository.update(updateShare.copy(shareData = ShareData.ShareText(text.orEmpty())))
-                shareRepository.findOne(shareId)
-            } ?: currentShare
-        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
     }
 
     fun updateShare(data: ShareDetail) = getState { state ->

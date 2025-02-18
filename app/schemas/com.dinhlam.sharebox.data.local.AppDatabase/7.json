@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "535ccee74e92332b0e4282ad3673fe86",
+    "identityHash": "1e51911ac8757b7c3f858f26b6306f07",
     "entities": [
       {
         "tableName": "Share",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_data` TEXT NOT NULL, `is_video_share` INTEGER NOT NULL, `share_note` TEXT, `share_box_id` TEXT, `share_date` INTEGER NOT NULL, `synced` INTEGER NOT NULL DEFAULT 0, `tagId` INTEGER, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`tagId`) REFERENCES `Tag`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `share_id` TEXT NOT NULL, `share_user_id` TEXT NOT NULL, `share_data` TEXT NOT NULL, `is_video_share` INTEGER NOT NULL, `share_note` TEXT, `share_box_id` TEXT, `share_date` INTEGER NOT NULL, `synced` INTEGER NOT NULL DEFAULT 0, `tag_id` INTEGER, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, FOREIGN KEY(`tag_id`) REFERENCES `Tag`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,7 +65,7 @@
           },
           {
             "fieldPath": "tagId",
-            "columnName": "tagId",
+            "columnName": "tag_id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -114,7 +114,7 @@
             "onDelete": "NO ACTION",
             "onUpdate": "NO ACTION",
             "columns": [
-              "tagId"
+              "tag_id"
             ],
             "referencedColumns": [
               "id"
@@ -582,12 +582,18 @@
       },
       {
         "tableName": "Tag",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tagColor` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tagName` TEXT NOT NULL, `tagColor` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tagName",
+            "columnName": "tagName",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -616,7 +622,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '535ccee74e92332b0e4282ad3673fe86')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1e51911ac8757b7c3f858f26b6306f07')"
     ]
   }
 }

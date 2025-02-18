@@ -10,7 +10,6 @@
         style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextTitle"
         app:contentInsetEnd="16dp"
         app:contentInsetStart="16dp"
         app:layout_constraintTop_toTopOf="parent"

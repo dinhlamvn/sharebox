@@ -28,8 +28,8 @@ interface ShareDao {
     @Query("SELECT * FROM share WHERE share_id = :shareId")
     suspend fun findOne(shareId: String): Share?
 
-    @Query("SELECT * FROM share AS s WHERE share_user_id = :shareUserId ORDER BY share_date DESC LIMIT :limit OFFSET :offset")
-    suspend fun find(shareUserId: String, limit: Int, offset: Int): List<Share>
+    @Query("SELECT * FROM share AS s WHERE share_user_id = :shareUserId AND tag_id = :tagId ORDER BY share_date DESC")
+    suspend fun findAll(shareUserId: String, tagId: Int): List<Share>
 
     @Query(
         """

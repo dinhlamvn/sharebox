@@ -24,10 +24,11 @@ class TagPickerDialogFragment :
 
     companion object {
         @JvmStatic
-        fun showDialog(fragmentManager: FragmentManager, shareId: String) {
-            TagPickerDialogFragment().apply {
+        fun showDialog(fragmentManager: FragmentManager, shareId: String): TagPickerDialogFragment {
+            return TagPickerDialogFragment().apply {
                 arguments = bundleOf(AppExtras.EXTRA_SHARE_ID to shareId)
-            }.show(fragmentManager, "dialog_tag_picker")
+                show(fragmentManager, "dialog_tag_picker")
+            }
         }
     }
 

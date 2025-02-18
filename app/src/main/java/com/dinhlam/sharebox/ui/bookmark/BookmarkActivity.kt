@@ -152,7 +152,7 @@ class BookmarkActivity :
                 "f1f8"
             )
             val choiceItems =
-                resources.getStringArray(R.array.bookmark_collection_option_menu_items)
+                resources.getStringArray(R.array.tags_option_menu_items)
                     .mapIndexed { index, text ->
                         BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
                             arrayIcons[index], text

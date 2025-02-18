@@ -106,11 +106,11 @@ class ProfileFragment :
             ).attachTo(this)
 
             IconTextListModel(
-                "bookmark",
-                "f02e",
-                getString(R.string.title_bookmark_collection),
+                "tags",
+                "f02b",
+                getString(R.string.tags),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    startActivity(router.bookmark(requireContext()))
+                    startActivity(router.tags(requireContext()))
                 })
             ).attachTo(this)
 

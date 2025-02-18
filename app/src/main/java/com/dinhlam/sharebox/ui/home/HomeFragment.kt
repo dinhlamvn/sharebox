@@ -22,18 +22,17 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
-import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.extensions.packageName
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.main.MainActivity
@@ -82,13 +81,6 @@ class HomeFragment :
                 val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
                     ?: return@registerForActivityResult
                 onBoxSelected(boxId, boxName)
-            }
-        }
-
-    private val openShareTextResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.saveShareText(result.data?.getStringExtra(Intent.EXTRA_TEXT))
             }
         }
 
@@ -301,52 +293,6 @@ class HomeFragment :
         shareHelper.showMore(requireActivity(), shareDetail)
     }
 
-    fun openShare(shareDetail: ShareDetail) {
-        when (val shareData = shareDetail.shareData) {
-            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
-                requireContext(),
-                shareData.url,
-                shareDetail.boxDetail?.boxId,
-                shareDetail.boxDetail?.boxName
-            )
-
-            is ShareData.ShareText -> {
-                viewModel.setCurrentShare(shareDetail)
-                openShareTextResultLauncher.launch(
-                    router.textInput(
-                        requireContext(),
-                        null,
-                        shareData.text,
-                        true
-                    )
-                )
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                requireContext(), shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                requireContext(), shareData.uris
-            )
-
-            is ShareData.ShareFile -> {
-                val downloadUrl = shareData.uri.toString()
-                DownloadFileDialogFragment.showDialog(
-                    childFragmentManager,
-                    downloadUrl,
-                    shareData.fileName,
-                    shareData.mimeType
-                )
-            }
-
-            is ShareData.ShareCheckList -> {
-                val checkList = shareData.checkListDataList
-                startActivity(router.checkList(requireContext(), shareDetail.shareId))
-            }
-        }
-    }
-
     fun openBox(boxId: String) {
         viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId, false))
     }
@@ -402,5 +348,9 @@ class HomeFragment :
 
     fun requestCreateBox() {
         createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+    }
+
+    fun openShare(shareDetail: ShareDetail) {
+        context?.openShare(childFragmentManager, shareDetail, router, shareHelper)
     }
 }

@@ -59,7 +59,7 @@ class BottomSheetShareActionViewModel @Inject constructor(
                     )
                 )
             }
-            add(BottomSheetShareActionState.Action(5, "f02e", context.getString(R.string.bookmark)))
+            add(BottomSheetShareActionState.Action(5, "f02b", context.getString(R.string.tags)))
             add(
                 BottomSheetShareActionState.Action(
                     6,

@@ -198,10 +198,11 @@
     <string name="confirm_done_checklist">Are you sure you want to mark this task as complete? You will not be able to undo this action once the task is marked as complete.</string>
     <string name="saved">Saved</string>
     <string name="tag_picker_dialog_title">Choose a tag</string>
+    <string name="tags">Tags</string>
 
-    <string-array name="bookmark_collection_option_menu_items">
-        <item>Edit</item>
-        <item>Delete</item>
+    <string-array name="tags_option_menu_items">
+        <item>Remove tag</item>
+        <item>Move to…</item>
     </string-array>
 
     <string-array name="bookmark_collection_list_option_menu_items">

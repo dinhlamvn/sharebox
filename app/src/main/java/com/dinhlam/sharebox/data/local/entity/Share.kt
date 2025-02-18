@@ -14,7 +14,7 @@ import com.dinhlam.sharebox.model.ShareData
         ForeignKey(
             entity = Tag::class,
             parentColumns = ["id"],
-            childColumns = ["tagId"]
+            childColumns = ["tag_id"]
         )
     ]
 )
@@ -28,7 +28,7 @@ data class Share(
     @ColumnInfo("share_box_id") val shareBoxId: String?,
     @ColumnInfo("share_date") val shareDate: Long,
     @ColumnInfo(name = "synced", defaultValue = "0") val synced: Boolean,
-    @ColumnInfo(name = "tagId") val tagId: Int? = null,
+    @ColumnInfo(name = "tag_id") val tagId: Int? = null,
     @ColumnInfo("created_at") val createdAt: Long = nowUTCTimeInMillis(),
     @ColumnInfo("updated_at") val updatedAt: Long = nowUTCTimeInMillis()
 )

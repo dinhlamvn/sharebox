@@ -63,8 +63,12 @@
     </style>
 
     <style name="AppToolbar" parent="Widget.Material3.Toolbar">
-        <item name="titleTextAppearance">@style/TextBodyMedium</item>
+        <item name="titleTextAppearance">@style/TextTitleMedium</item>
         <item name="subtitleTextAppearance">@style/TextCaption</item>
+        <item name="android:contentInsetStart">16dp</item>
+        <item name="android:contentInsetEnd">16dp</item>
+        <item name="contentInsetEnd">16dp</item>
+        <item name="contentInsetStart">16dp</item>
     </style>
 
 </resources>

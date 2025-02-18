@@ -39,6 +39,7 @@ import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
+import com.dinhlam.sharebox.ui.tags.TagsActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity
 import com.dinhlam.sharebox.ui.trash.TrashActivity
 import com.dinhlam.sharebox.utils.Icons
@@ -319,5 +320,9 @@ class AppRouter constructor(private val context: Context) : Router {
                 AppExtras.EXTRA_SHARE_ID,
                 shareId
             )
+    }
+
+    override fun tags(context: Context): Intent {
+        return Intent(context, TagsActivity::class.java)
     }
 }

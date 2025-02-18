@@ -15,6 +15,7 @@ data class RealtimeShareObj(
     @get:PropertyName("share_box_id") val shareBoxId: String?,
     @get:PropertyName("share_date") val shareDate: Long,
     @get:PropertyName("is_video_share") val isVideoShare: Boolean,
+    @get:PropertyName("tag_id") val tagId: Int?,
 ) {
 
     companion object {
@@ -29,6 +30,7 @@ data class RealtimeShareObj(
                 share.shareBoxId,
                 share.shareDate,
                 share.isVideoShare,
+                share.tagId
             )
         }
 
@@ -41,9 +43,17 @@ data class RealtimeShareObj(
             val shareBoxId = jsonMap["share_box_id"].cast<String>()
             val shareDate = jsonMap.getOrThrow("share_date").castNonNull<Long>()
             val isVideoShare = jsonMap["is_video_share"].cast<Boolean>() ?: false
+            val tagId = jsonMap["tag_id"].cast<Int>()
 
             return RealtimeShareObj(
-                shareId, shareUserId, shareNote, shareData, shareBoxId, shareDate, isVideoShare
+                shareId,
+                shareUserId,
+                shareNote,
+                shareData,
+                shareBoxId,
+                shareDate,
+                isVideoShare,
+                tagId
             )
         }
     }

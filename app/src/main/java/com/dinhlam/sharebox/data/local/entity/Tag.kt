@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Tag(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo("tagName") val tagName: String,
     @ColumnInfo("tagColor") val tagColor: Int,
     @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis(),
 )

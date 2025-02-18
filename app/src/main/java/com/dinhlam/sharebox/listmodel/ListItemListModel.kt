@@ -42,10 +42,10 @@ data class ListItemListModel(
 
             if (model.tagColor != null) {
                 binding.iconTag.isVisible = true
-                binding.iconTag.setCardBackgroundColor(model.tagColor.asColorInt())
+                binding.iconTag.setIconColor(model.tagColor.asColorInt())
             } else {
                 binding.iconTag.isVisible = false
-                binding.iconTag.setCardBackgroundColor(null)
+                binding.iconTag.setIconColor(0)
             }
         }
     }
