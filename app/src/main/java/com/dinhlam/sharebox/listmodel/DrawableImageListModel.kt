@@ -13,13 +13,14 @@ import com.dinhlam.sharebox.imageloader.release
 import com.dinhlam.sharebox.model.Spacing
 
 data class DrawableImageListModel(
+    val id: String,
     val drawable: Drawable,
     val width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
     val height: Int = ViewGroup.LayoutParams.WRAP_CONTENT,
     val actionClick: BaseListAdapter.NoHashProp<(() -> Unit)?>? = null,
     val scaleType: ImageView.ScaleType = ImageView.ScaleType.CENTER_CROP,
     val margin: Spacing = Spacing.None
-) : BaseListAdapter.BaseListModel("image_model_view_$drawable") {
+) : BaseListAdapter.BaseListModel("image_list_model_$id") {
 
     override fun createViewHolder(
         inflater: LayoutInflater, container: ViewGroup

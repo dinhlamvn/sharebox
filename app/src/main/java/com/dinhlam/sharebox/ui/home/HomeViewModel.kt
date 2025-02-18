@@ -4,6 +4,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.data.repository.TagRepository
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.AppSettingHelper
@@ -20,7 +21,8 @@ class HomeViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
-    private val appSettingHelper: AppSettingHelper
+    private val appSettingHelper: AppSettingHelper,
+    private val tagRepository: TagRepository,
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {

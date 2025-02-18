@@ -18,4 +18,5 @@ data class ShareDetail(
     val commentDetail: CommentDetail?,
     val boxDetail: BoxDetail?,
     val isVideoShare: Boolean,
+    val tagColor: Int?
 ) : Parcelable

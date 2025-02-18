@@ -2,18 +2,19 @@ package com.dinhlam.sharebox.recyclerview.decoration
 
 import android.graphics.Rect
 import android.view.View
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dinhlam.sharebox.extensions.cast
 
-class HorizontalSpacingDecoration(
+class GridItemSpacingDecoration(
     private val spacing: Int,
-    private val gridConfig: GridConfig = GridConfig.None
+    private val spanCount: Int
 ) : RecyclerView.ItemDecoration() {
 
-    sealed class GridConfig {
-        data object None : GridConfig()
-        data class GridSpanCount(val spanCount: Int) : GridConfig()
+    init {
+        require(spanCount > 0) {
+            "$this require spanCount greater than 0"
+        }
     }
 
     override fun getItemOffsets(
@@ -22,20 +23,19 @@ class HorizontalSpacingDecoration(
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        parent.layoutManager?.cast<LinearLayoutManager>()?.takeIf { linearLayoutManager ->
-            linearLayoutManager.orientation == LinearLayoutManager.HORIZONTAL
-        } ?: error("$this only support LinearLayoutManager with HORIZONTAL orientation")
+        parent.layoutManager?.cast<GridLayoutManager>()
+            ?: error("$this only support GridLayoutManager")
 
         val itemCount = parent.adapter?.itemCount ?: 0
 
         val spacingValue = spacing / 2
         val viewAdapterPosition = parent.getChildAdapterPosition(view)
-        when (viewAdapterPosition) {
-            0 -> {
+        when {
+            viewAdapterPosition == 0 || viewAdapterPosition % spanCount == 0 -> {
                 outRect.right = spacingValue
             }
 
-            itemCount - 1 -> {
+            viewAdapterPosition == itemCount - 1 || viewAdapterPosition % spanCount == (spanCount - 1) -> {
                 outRect.left = spacingValue
             }
 
@@ -43,6 +43,11 @@ class HorizontalSpacingDecoration(
                 outRect.left = spacingValue
                 outRect.right = spacingValue
             }
+        }
+
+        val isNotGridFirstLine = viewAdapterPosition >= spanCount
+        if (isNotGridFirstLine) {
+            outRect.top = spacing
         }
     }
 }

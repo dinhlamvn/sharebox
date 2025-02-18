@@ -19,8 +19,8 @@ interface ShareDao {
     @Query("SELECT COUNT(*) FROM share WHERE share_user_id = :userId")
     suspend fun count(userId: String): Int
 
-    @Query("SELECT * FROM share ORDER BY id DESC")
-    suspend fun find(): List<Share>
+    @Query("SELECT * FROM share WHERE share_user_id = :shareUserId ORDER BY id DESC")
+    suspend fun find(shareUserId: String): List<Share>
 
     @Query("SELECT * FROM share ORDER BY id ASC LIMIT :limit OFFSET :offset")
     suspend fun find(limit: Int, offset: Int): List<Share>

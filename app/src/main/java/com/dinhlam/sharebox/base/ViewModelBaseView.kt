@@ -39,6 +39,20 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
 
     fun <R> getState(viewModel: VM, block: (S) -> R) = block.invoke(viewModel.currentState)
 
+    fun <T> onAsyncChange(
+        property: KProperty1<S, BaseViewModel.AsyncLoad<T>>,
+        onFail: (Throwable) -> Unit = {},
+        onSuccess: (T) -> Unit
+    ) = viewModel.stateFlow
+        .map { state -> Observer1(property.get(state)) }
+        .resolveObserver(subscriptionLifecycleOwner) { observer ->
+            if (observer.value is BaseViewModel.AsyncLoad.Success<T>) {
+                onSuccess(observer.value.value)
+            } else if (observer.value is BaseViewModel.AsyncLoad.Failed) {
+                onFail(observer.value.error)
+            }
+        }
+
     fun onChange(block: (S) -> Unit) = viewModel.stateFlow
         .map { state -> Observer1(state) }
         .resolveObserver(subscriptionLifecycleOwner) { observer ->

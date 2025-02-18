@@ -197,6 +197,7 @@
     <string name="nothing_to_save">Nothing to save</string>
     <string name="confirm_done_checklist">Are you sure you want to mark this task as complete? You will not be able to undo this action once the task is marked as complete.</string>
     <string name="saved">Saved</string>
+    <string name="tag_picker_dialog_title">Choose a tag</string>
 
     <string-array name="bookmark_collection_option_menu_items">
         <item>Edit</item>

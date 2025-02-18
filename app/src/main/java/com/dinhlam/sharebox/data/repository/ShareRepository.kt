@@ -28,7 +28,8 @@ class ShareRepository @Inject constructor(
     private val mapper: ShareToShareDetailMapper,
     private val userHelper: UserHelper,
     private val boxRepository: BoxRepository,
-) : BaseRepository<Share>() {
+    private val tagRepository: TagRepository,
+) : BaseRepository<String, Share>() {
 
     override suspend fun insertInternal(entity: Share): Share {
         shareDao.insertAll(entity)
@@ -56,6 +57,24 @@ class ShareRepository @Inject constructor(
             Logger.error("Delete record $entity from database failed.")
         }
         return false
+    }
+
+    override suspend fun readAll(): List<Share> {
+        try {
+            return shareDao.find(userHelper.getCurrentUserId())
+        } catch (e: Exception) {
+            Logger.error("Read all record $this from database failed.")
+        }
+        return emptyList()
+    }
+
+    override suspend fun readOne(id: String): Share? {
+        try {
+            return shareDao.findOne(id)
+        } catch (e: Exception) {
+            Logger.error("Read one record $this from database failed.")
+        }
+        return null
     }
 
     suspend fun insert(
@@ -158,6 +177,12 @@ class ShareRepository @Inject constructor(
         val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
         val boxDetail = share.shareBoxId?.let { id -> boxRepository.findOne(id) }
+        val tagColor = if (share.tagId != null) {
+            val tag = tagRepository.readOne(share.tagId)
+            tag?.tagColor
+        } else {
+            null
+        }
         mapper.map(
             share,
             commentNumber,
@@ -166,7 +191,8 @@ class ShareRepository @Inject constructor(
             liked,
             topComment,
             boxDetail,
-            share.isVideoShare
+            share.isVideoShare,
+            tagColor
         )
     }.getOrNull()
 

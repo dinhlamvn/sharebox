@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.data.repository
 
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.entity.Box
+import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -16,7 +17,7 @@ import javax.inject.Singleton
 class BoxRepository @Inject constructor(
     private val boxDao: BoxDao,
     private val userHelper: UserHelper
-) : BaseRepository<Box>() {
+) : BaseRepository<String, Box>() {
 
     override suspend fun insertInternal(entity: Box): Box {
         boxDao.insert(entity)
@@ -33,8 +34,26 @@ class BoxRepository @Inject constructor(
         return true
     }
 
+    override suspend fun readOne(id: String): Box? {
+        try {
+            return boxDao.find(id)
+        } catch (e: Exception) {
+            Logger.error("Read one record $this from database failed.")
+        }
+        return null
+    }
+
     override suspend fun count(): Int {
         return boxDao.count(userHelper.getCurrentUserId())
+    }
+
+    override suspend fun readAll(): List<Box> {
+        try {
+            return boxDao.findAll(userHelper.getCurrentUserId())
+        } catch (e: Exception) {
+            Logger.error("Read all record $this from database failed.")
+        }
+        return emptyList()
     }
 
     suspend fun insert(
@@ -135,7 +154,8 @@ class BoxRepository @Inject constructor(
 
     suspend fun findLastActiveBox(): BoxDetail? {
         try {
-            val box = boxDao.findLatestBoxWithoutPasscode(userHelper.getCurrentUserId()) ?: return null
+            val box =
+                boxDao.findLatestBoxWithoutPasscode(userHelper.getCurrentUserId()) ?: return null
             return convertBoxToBoxDetail(box)
         } catch (e: Exception) {
             Logger.error("Find last active box has error: $e")

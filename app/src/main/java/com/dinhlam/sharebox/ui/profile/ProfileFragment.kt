@@ -73,6 +73,7 @@ class ProfileFragment :
                 val margin = screenWidth.minus(48.dp()).div(2)
 
                 DrawableImageListModel(
+                    "setting",
                     Icons.settingIcon(requireContext()),
                     width = 48.dp(),
                     height = 48.dp(),

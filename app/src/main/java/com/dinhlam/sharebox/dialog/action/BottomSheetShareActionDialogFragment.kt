@@ -18,6 +18,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentBottomSheetShareActionBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
+import com.dinhlam.sharebox.dialog.tag.TagPickerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.showToast
@@ -185,11 +186,7 @@ class BottomSheetShareActionDialogFragment :
     }
 
     private fun onBookmark(shareId: String) {
-        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager, shareId, collectionId
-            )
-        }
+        TagPickerDialogFragment.showDialog(childFragmentManager, shareId)
     }
 
     private fun moveToTrash(share: ShareDetail) {

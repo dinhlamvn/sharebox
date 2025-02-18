@@ -7,17 +7,32 @@
     android:layout_height="50dp"
     android:background="?attr/selectableItemBackground">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/icon_tag"
+        style="@style/AppMaterialCardView"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="4dp"
+        android:visibility="gone"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:cardBackgroundColor="#000"
+        tools:visibility="visible" />
+
     <com.dinhlam.sharebox.view.FontAwesomeIconView
         android:id="@+id/icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:icon_size="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon_tag"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginStart="16dp"
         tools:icon_code="2b" />
 
     <androidx.appcompat.widget.AppCompatTextView

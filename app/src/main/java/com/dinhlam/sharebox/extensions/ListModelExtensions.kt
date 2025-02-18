@@ -59,6 +59,7 @@ fun ShareDetail.buildListItemListModel(
         getRecentlyIcon(this.shareData),
         getRecentlyTitle(this),
         getRecentlySubtitle(this),
+        this.tagColor,
         BaseListAdapter.NoHashProp(View.OnClickListener {
             onShowMore(this)
         }),

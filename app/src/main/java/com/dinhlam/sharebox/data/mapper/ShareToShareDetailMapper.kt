@@ -4,7 +4,6 @@ import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.CommentDetail
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.UserDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +19,7 @@ class ShareToShareDetailMapper @Inject constructor() {
         commentDetail: CommentDetail?,
         boxDetail: BoxDetail?,
         isVideoShare: Boolean,
+        tagColor: Int?,
     ): ShareDetail {
         return ShareDetail(
             share.id,
@@ -34,7 +34,8 @@ class ShareToShareDetailMapper @Inject constructor() {
             liked,
             commentDetail,
             boxDetail,
-            isVideoShare
+            isVideoShare,
+            tagColor,
         )
     }
 }
