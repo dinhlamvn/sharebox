@@ -184,4 +184,9 @@ class TagsActivity : BaseViewModelActivity<TagsState, TagsViewModel, ActivityTag
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
+    }
 }
