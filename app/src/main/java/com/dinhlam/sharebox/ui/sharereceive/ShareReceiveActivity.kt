@@ -21,7 +21,6 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
-import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.getFileNameAndSize
 import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
@@ -59,8 +58,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareReceiveActivity :
-    BaseViewModelActivity<ShareReceiveState, ShareReceiveViewModel, ActivityShareReceiveBinding>(),
-    BookmarkCollectionPickerDialogFragment.OnBookmarkCollectionPickListener {
+    BaseViewModelActivity<ShareReceiveState, ShareReceiveViewModel, ActivityShareReceiveBinding>() {
 
     private val chooseBoxLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -171,10 +169,6 @@ class ShareReceiveActivity :
 
         binding.containerButtonShare.setOnClickListener {
             share()
-        }
-
-        binding.imageShareBookmark.setOnClickListener {
-            showBookmarkCollectionPicker()
         }
 
         binding.boxSectionButton.setOnClickListener {
@@ -353,16 +347,6 @@ class ShareReceiveActivity :
             router.home()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
-    }
-
-    private fun showBookmarkCollectionPicker() = getState(viewModel) { state ->
-        shareHelper.showBookmarkCollectionPickerDialog(
-            supportFragmentManager, "", state.bookmarkCollection?.id
-        )
-    }
-
-    override fun onBookmarkCollectionDone(shareId: String, bookmarkCollectionId: String?) {
-        viewModel.setBookmarkCollection(bookmarkCollectionId)
     }
 }
 

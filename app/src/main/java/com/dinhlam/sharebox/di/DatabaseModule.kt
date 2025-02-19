@@ -6,8 +6,6 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dinhlam.sharebox.data.local.AppDatabase
 import com.dinhlam.sharebox.data.local.converter.ShareDataConverter
-import com.dinhlam.sharebox.data.local.dao.BookmarkCollectionDao
-import com.dinhlam.sharebox.data.local.dao.BookmarkDao
 import com.dinhlam.sharebox.data.local.dao.BoxDao
 import com.dinhlam.sharebox.data.local.dao.CommentDao
 import com.dinhlam.sharebox.data.local.dao.LikeDao
@@ -74,20 +72,6 @@ object DatabaseModule {
         appDatabase: AppDatabase
     ): CommentDao {
         return appDatabase.commentDao()
-    }
-
-    @Provides
-    fun provideBookmarkCollectionDao(
-        appDatabase: AppDatabase
-    ): BookmarkCollectionDao {
-        return appDatabase.bookmarkCollectionDao()
-    }
-
-    @Provides
-    fun provideBookmarkDao(
-        appDatabase: AppDatabase
-    ): BookmarkDao {
-        return appDatabase.bookmarkDao()
     }
 
     @Provides

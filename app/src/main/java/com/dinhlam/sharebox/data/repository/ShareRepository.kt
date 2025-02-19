@@ -23,7 +23,6 @@ class ShareRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val shareDao: ShareDao,
     private val commentRepository: CommentRepository,
-    private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
     private val mapper: ShareToShareDetailMapper,
     private val userHelper: UserHelper,
@@ -173,10 +172,13 @@ class ShareRepository @Inject constructor(
     private suspend fun buildShareDetail(share: Share): ShareDetail? = share.runCatching {
         val commentNumber = commentRepository.count(share.shareId)
         val likeNumber = likeRepository.count(share.shareId)
-        val bookmarked = bookmarkRepository.bookmarked(share.shareId)
         val liked = likeRepository.liked(share.shareId, userHelper.getCurrentUserId())
         val topComment = commentRepository.findTopComment(share.shareId)
-        val boxDetail = share.shareBoxId?.let { id -> boxRepository.findOne(id) }
+        val boxDetail = if (share.shareBoxId != null) {
+            boxRepository.findOne(share.shareBoxId)
+        } else {
+            null
+        }
         val tagColor = if (share.tagId != null) {
             val tag = tagRepository.readOne(share.tagId)
             tag?.tagColor
@@ -187,7 +189,6 @@ class ShareRepository @Inject constructor(
             share,
             commentNumber,
             likeNumber,
-            bookmarked,
             liked,
             topComment,
             boxDetail,

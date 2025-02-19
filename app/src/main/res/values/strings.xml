@@ -3,7 +3,6 @@
     <string name="share_activity_title">Archive</string>
     <string name="share_direct_download_activity_title">Download</string>
     <string name="text_input_note_hint_desc">What\'s this?</string>
-    <string name="confirmation">Confirmation</string>
 
     <!-- Facebook declare -->
     <string name="facebook_app_id" translatable="false">647232403661006</string>
@@ -23,25 +22,13 @@
     <string name="comments_input_hint">Comments…</string>
     <string name="title_bookmark_collection">Bookmark Collections</string>
     <string name="button_add_bookmark_collection">Add new bookmark collection</string>
-    <string name="no_bookmark_collections">No bookmark collections found.\nTap button (+) to create one.</string>
-    <string name="title_bookmark_creator">New bookmark collection</string>
     <string name="bookmark_collection_hint_name">Name</string>
-    <string name="bookmark_collection_hint_desc">Description</string>
-    <string name="bookmark_collection_error_require_name">Name can\'t be empty</string>
-    <string name="bookmark_collection_error_require_desc">Desc can\'t be empty</string>
-    <string name="bookmark_collection_error_require_thumbnail">Thumbnail must be set</string>
     <string name="bookmark_collection_hint_passcode">Passcode</string>
-    <string name="action_done">Done</string>
     <string name="action_clear_passcode">Clear passcode</string>
-    <string name="desc_image_bookmark_list_thumbnail">The thumbnail of bookmark collection</string>
-    <string name="dialog_bookmark_collection_picker_title">Bookmark share to…</string>
-    <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
-    <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
     <string name="dialog_confirm">Confirmation</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="bookmark_collection_delete_confirm_message">Are you sure to delete this collection?</string>
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
     <string name="shares_success">Archive successfully</string>
@@ -65,7 +52,6 @@
     <string name="sign_out_confirm_message">Are you sure to sign out?</string>
     <string name="setting_about">%s • Version %s</string>
     <string name="app_desc">Sharebox is an app that helps you store all the content you want to save and easily share it with your friends.</string>
-    <string name="box_general">General</string>
     <string name="share_text_quote_hint">Type here…</string>
     <string name="share_link_hint">Enter URL</string>
     <string name="require_input_link">Please input the link</string>
@@ -123,14 +109,12 @@
     <string name="discover">Discover</string>
     <string name="discover_subtitle">Discover interesting videos, images, musics, news and more</string>
     <string name="choose_box_for_web">Archive WebLink To</string>
-    <string name="download_content">Download this content</string>
     <string name="please_choose_box">Please choose a box</string>
     <string name="move_share_to">Move share to…</string>
     <string name="save">Save</string>
     <string name="title_edit_box">Edit Box</string>
     <string name="title_create_box">Create Box</string>
     <string name="use_passcode">Use Passcode</string>
-    <string name="removed_item">Removed %s</string>
     <string name="confirm_move_to_trash">Are you sure to move this share to trash?</string>
     <string name="title_trash">Trash</string>
     <string name="restore_share_to">Restore to…</string>
@@ -164,7 +148,6 @@
     <string name="edit_note">Edit note</string>
     <string name="move_to">Move to…</string>
     <string name="copy">Copy</string>
-    <string name="bookmark">Bookmark</string>
     <string name="copy_box_id">Copy Box\'s ID</string>
     <string name="move_to_trash">Move to trash</string>
     <string name="share_not_found">Share not found</string>
@@ -206,10 +189,6 @@
     <string-array name="tags_option_menu_items">
         <item>Remove tag</item>
         <item>Change tag</item>
-    </string-array>
-
-    <string-array name="bookmark_collection_list_option_menu_items">
-        <item>Remove</item>
     </string-array>
 
     <string-array name="more_menu_invited">

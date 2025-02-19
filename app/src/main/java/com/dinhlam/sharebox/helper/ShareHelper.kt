@@ -14,12 +14,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.repository.BookmarkRepository
-import com.dinhlam.sharebox.data.repository.CommentRepository
-import com.dinhlam.sharebox.data.repository.LikeRepository
-import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.dialog.action.BottomSheetShareActionDialogFragment
-import com.dinhlam.sharebox.dialog.bookmarkcollectionpicker.BookmarkCollectionPickerDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.format
@@ -40,11 +35,6 @@ import javax.inject.Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
     private val router: Router,
-    private val shareRepository: ShareRepository,
-    private val commentRepository: CommentRepository,
-    private val likeRepository: LikeRepository,
-    private val bookmarkRepository: BookmarkRepository,
-    private val userHelper: UserHelper,
 ) {
 
     fun showMore(
@@ -159,19 +149,6 @@ class ShareHelper @Inject constructor(
 
     fun viewShareImages(context: Context, uris: List<Uri>) {
         context.startActivity(router.imageViewer(context, uris))
-    }
-
-    fun showBookmarkCollectionPickerDialog(
-        fragmentManager: FragmentManager,
-        shareId: String,
-        collectionId: String?,
-    ) {
-        BookmarkCollectionPickerDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString(AppExtras.EXTRA_SHARE_ID, shareId)
-                putString(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, collectionId)
-            }
-        }.show(fragmentManager, "BookmarkCollectionPickerDialogFragment")
     }
 
     fun showCommentDialog(fragmentManager: FragmentManager, shareId: String) {

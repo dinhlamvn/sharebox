@@ -125,8 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:hint="@string/passcode_desc"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_passcode" />
+                android:hint="@string/passcode_desc" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox_use_passcode"
@@ -174,9 +173,6 @@
                     android:contentDescription="@string/action_clear_passcode"
                     app:icon_code="f06e"
                     app:icon_size="20dp"
-                    app:layout_constraintBottom_toBottomOf="@id/text_layout_passcode"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/text_layout_passcode"
                     tools:visibility="visible" />
 
             </LinearLayout>

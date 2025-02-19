@@ -16,11 +16,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
-import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
-import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
-import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
-import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
 import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
@@ -44,7 +40,7 @@ import com.dinhlam.sharebox.ui.textinput.TextInputActivity
 import com.dinhlam.sharebox.ui.trash.TrashActivity
 import com.dinhlam.sharebox.utils.Icons
 
-class AppRouter constructor(private val context: Context) : Router {
+class AppRouter(private val context: Context) : Router {
 
     override fun home(isNewTask: Boolean): Intent {
         return Intent(context, HomeFragment::class.java).apply {
@@ -111,24 +107,6 @@ class AppRouter constructor(private val context: Context) : Router {
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
-    }
-
-    override fun bookmarkCollectionFormIntent(context: Context): Intent {
-        return Intent(context, BookmarkCollectionFormActivity::class.java)
-    }
-
-    override fun bookmarkCollectionFormIntent(
-        context: Context, bookmarkCollection: BookmarkCollectionDetail
-    ): Intent {
-        return Intent(context, BookmarkCollectionFormActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
-        }
-    }
-
-    override fun bookmarkListItemIntent(context: Context, bookmarkCollectionId: String): Intent {
-        return Intent(context, BookmarkListItemActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollectionId)
-        }
     }
 
     override fun pickImageIntent(isMultiple: Boolean): Intent {
@@ -211,10 +189,6 @@ class AppRouter constructor(private val context: Context) : Router {
             AppExtras.EXTRA_URLS, arrayListOf(*urls.toTypedArray())
         ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-    }
-
-    override fun bookmark(context: Context): Intent {
-        return Intent(context, BookmarkActivity::class.java)
     }
 
     override fun imageViewer(context: Context, uris: List<Uri>): Intent {

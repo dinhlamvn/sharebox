@@ -4,8 +4,6 @@ import android.content.Context
 import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.local.entity.Share
-import com.dinhlam.sharebox.data.repository.BookmarkCollectionRepository
-import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.UserRepository
@@ -23,8 +21,6 @@ class ShareReceiveViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val userHelper: UserHelper,
     private val userRepository: UserRepository,
-    private val bookmarkCollectionRepository: BookmarkCollectionRepository,
-    private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
     private val videoHelper: VideoHelper,
 ) : BaseViewModel<ShareReceiveState>(ShareReceiveState()) {
@@ -88,14 +84,7 @@ class ShareReceiveViewModel @Inject constructor(
 
                 else -> null
             }
-            share?.let { insertedShare ->
-                state.bookmarkCollection?.id?.let { pickedBookmarkCollectionId ->
-                    bookmarkRepository.bookmark(
-                        0, insertedShare.shareId, pickedBookmarkCollectionId
-                    )
-                }
-                true
-            } ?: false
+            share != null
         }.execute { asyncLoad ->
             copy(asyncLoadArchive = asyncLoad)
         }
@@ -188,15 +177,6 @@ class ShareReceiveViewModel @Inject constructor(
             shareNote = note,
             shareBoxId = boxId,
         )
-    }
-
-    fun setBookmarkCollection(pickedId: String?) {
-        pickedId?.let { collectionId ->
-            doInBackground {
-                val bookmarkCollection = bookmarkCollectionRepository.find(collectionId)
-                setState { copy(bookmarkCollection = bookmarkCollection) }
-            }
-        } ?: setState { copy(bookmarkCollection = null) }
     }
 
     fun setBox(boxId: String) {

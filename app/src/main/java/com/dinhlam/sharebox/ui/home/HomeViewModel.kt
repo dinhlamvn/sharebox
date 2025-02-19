@@ -1,12 +1,9 @@
 package com.dinhlam.sharebox.ui.home
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
-import com.dinhlam.sharebox.data.repository.TagRepository
 import com.dinhlam.sharebox.extensions.ifTrue
-import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
@@ -17,10 +14,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val userHelper: UserHelper,
-    private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
     private val appSettingHelper: AppSettingHelper,
-    private val tagRepository: TagRepository,
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {
@@ -70,42 +65,6 @@ class HomeViewModel @Inject constructor(
             }
         }
         copy(shares = shareList)
-    }
-
-    fun bookmark(shareId: String, bookmarkCollectionId: String?) = doInBackground {
-        bookmarkCollectionId?.let { id ->
-            val bookmarkDetail = bookmarkRepository.findOne(shareId)
-            if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {
-                val bookmarked =
-                    bookmarkRepository.bookmark(bookmarkDetail?.id.orElse(0), shareId, id)
-                if (bookmarked) {
-                    setState {
-                        val shareList = shares.map { shareDetail ->
-                            if (shareDetail.shareId == shareId) {
-                                shareDetail.copy(bookmarked = true)
-                            } else {
-                                shareDetail
-                            }
-                        }
-                        copy(shares = shareList)
-                    }
-                }
-            }
-        } ?: run {
-            val deleted = bookmarkRepository.delete(shareId)
-            if (deleted) {
-                setState {
-                    val shareList = shares.map { shareDetail ->
-                        if (shareDetail.shareId == shareId) {
-                            shareDetail.copy(bookmarked = false)
-                        } else {
-                            shareDetail
-                        }
-                    }
-                    copy(shares = shareList)
-                }
-            }
-        }
     }
 
     fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
