@@ -5,10 +5,9 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.ShareDetail
 
 data class BoxDetailState(
-    val boxId: String,
-    val asyncLoadBoxDetail: BaseViewModel.AsyncLoad<BoxDetail> = BaseViewModel.AsyncLoad.UnInitialized,
     val boxDetail: BoxDetail? = null,
-    val mustInputPasscode: Boolean = true,
+    val asyncLoadBoxDetail: BaseViewModel.AsyncLoad<BoxDetail> = BaseViewModel.AsyncLoad.UnInitialized,
+    val requirePasscode: Boolean = true,
     val isRefreshing: Boolean = true,
     val shares: List<ShareDetail> = emptyList(),
     val currentPage: Int = 1,

@@ -89,6 +89,10 @@ class BoxDetailActivity :
 
     private val shareAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
+            if (state.boxDetail == null || state.requirePasscode) {
+                return@getState LoadingListModel("loading", height = 100.dp).attachTo(this)
+            }
+
             if (state.isRefreshing) {
                 LoadingListModel("top_loading", height = 50.dp).attachTo(this)
             }
@@ -101,6 +105,7 @@ class BoxDetailActivity :
                 state.shares.forEachIndexed { idx, shareDetail ->
                     shareDetail.buildListItemListModel(::showMore, ::openShare)
                         .attachTo(this)
+
                     VerticalDividerListModel(
                         "share_divider_$idx",
                         margin = Spacing.Horizontal(16.dp(), 16.dp())
@@ -148,15 +153,19 @@ class BoxDetailActivity :
         shareAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.doOnRefresh()
             binding.swipeRefreshLayout.isRefreshing = false
+            if (getState(viewModel, BoxDetailState::requirePasscode)) {
+                return@setOnRefreshListener
+            }
+            viewModel.doOnRefresh()
         }
 
-        onChange(
-            BoxDetailState::boxDetail,
-            BoxDetailState::mustInputPasscode
-        ) { boxDetail, mustInputPasscode ->
-            if (boxDetail?.isHasPasscode == true && mustInputPasscode) {
+        onChange(BoxDetailState::boxDetail) { boxDetail ->
+            if (boxDetail == null) {
+                return@onChange
+            }
+            val isRequirePasscode = getState(viewModel, BoxDetailState::requirePasscode)
+            if (boxDetail.isHasPasscode && isRequirePasscode) {
                 val intent = router.passcodeIntent(
                     this, boxDetail.passcode,
                     desc = getString(
@@ -223,5 +232,10 @@ class BoxDetailActivity :
 
     private fun openShare(shareDetail: ShareDetail) {
         openShare(supportFragmentManager, shareDetail, router, shareHelper)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
     }
 }
