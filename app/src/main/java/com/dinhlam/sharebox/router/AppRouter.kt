@@ -139,21 +139,8 @@ class AppRouter constructor(private val context: Context) : Router {
         }
     }
 
-    override fun passcodeIntent(context: Context, desc: String?): Intent {
-        return Intent(context, PasscodeActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_PASSCODE, desc)
-        }
-    }
-
-    override fun passcodeIntent(context: Context, passcode: String, desc: String?): Intent {
-        return Intent(context, PasscodeActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_PASSCODE, passcode)
-            putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
-        }
-    }
-
     override fun passcodeIntent(
-        context: Context, passcode: String, extras: Bundle, desc: String?
+        context: Context, passcode: String?, extras: Bundle, desc: String?
     ): Intent {
         return Intent(context, PasscodeActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_PASSCODE, passcode)

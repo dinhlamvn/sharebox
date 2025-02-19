@@ -181,11 +181,13 @@ class BookmarkActivity :
                             this, bookmarkCollection
                         )
                     )
-                requestPasscodeEditResultLauncher.launch(router.passcodeIntent(
-                    this, passcode
-                ).apply {
-                    putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
-                })
+                requestPasscodeEditResultLauncher.launch(
+                    router.passcodeIntent(
+                        this,
+                        passcode,
+                        bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION to bookmarkCollection)
+                    )
+                )
             }
 
             1 -> {
@@ -196,13 +198,13 @@ class BookmarkActivity :
                             ?: return@setPositiveButton viewModel.deleteBookmarkCollection(
                                 bookmarkCollection.id
                             )
-                        requestPasscodeDeleteResultLauncher.launch(router.passcodeIntent(
-                            this, passcode
-                        ).apply {
-                            putExtra(
-                                AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollection.id
+                        requestPasscodeDeleteResultLauncher.launch(
+                            router.passcodeIntent(
+                                this,
+                                passcode,
+                                bundleOf(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID to bookmarkCollection.id)
                             )
-                        })
+                        )
                     }.setNegativeButton(R.string.dialog_cancel, null)
                     .show()
             }

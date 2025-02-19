@@ -24,13 +24,11 @@ interface Router {
 
     fun bookmarkListItemIntent(context: Context, bookmarkCollectionId: String): Intent
     fun pickImageIntent(isMultiple: Boolean = false): Intent
-    fun passcodeIntent(context: Context, desc: String? = null): Intent
-    fun passcodeIntent(context: Context, passcode: String, desc: String? = null): Intent
 
     fun passcodeIntent(
         context: Context,
-        passcode: String,
-        extras: Bundle,
+        passcode: String? = null,
+        extras: Bundle = Bundle(),
         desc: String? = null
     ): Intent
 

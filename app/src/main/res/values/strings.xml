@@ -49,7 +49,7 @@
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
     <string name="error_require_name">Name can\'t be empty</string>
-    <string name="error_require_passcode">Please verify this box</string>
+    <string name="error_require_passcode">Verify box failed.</string>
     <string name="choose_box">Choose box</string>
     <string name="total_box">+%d more box…</string>
     <string name="search_box_result_empty">No found any box.</string>

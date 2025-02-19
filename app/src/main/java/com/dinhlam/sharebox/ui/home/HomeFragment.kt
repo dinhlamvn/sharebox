@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
@@ -51,15 +52,6 @@ class HomeFragment :
             }
         }
 
-    private val editBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { id ->
-                    viewModel.reloadBoxDetail(id)
-                }
-            }
-        }
-
     private val viewBoxDetailLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -87,6 +79,18 @@ class HomeFragment :
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (!isGranted) {
                 showAlertDialog()
+            }
+        }
+
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                onEditBox(boxId)
+            } else {
+                showToast(R.string.error_require_passcode)
             }
         }
 
@@ -292,13 +296,26 @@ class HomeFragment :
         viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId, false))
     }
 
-    private fun editBox(boxId: String) {
-        editBoxResultLauncher.launch(
-            router.boxForm(
-                requireContext(),
-                boxId
+    private fun editBox(boxDetail: BoxDetail) {
+        if (boxDetail.isHasPasscode) {
+            passcodeConfirmResultLauncher.launch(
+                router.passcodeIntent(
+                    requireContext(),
+                    boxDetail.passcode,
+                    bundleOf(AppExtras.EXTRA_BOX_ID to boxDetail.boxId),
+                    getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode,
+                        boxDetail.boxName
+                    )
+                )
             )
-        )
+        } else {
+            onEditBox(boxDetail.boxId)
+        }
+    }
+
+    private fun onEditBox(boxId: String) {
+        startActivity(router.boxForm(requireContext(), boxId))
     }
 
     private fun requestManageMembers(boxId: String) {
@@ -330,7 +347,7 @@ class HomeFragment :
             items
         ) { position, _, _ ->
             when (position) {
-                0 -> editBox(boxDetail.boxId)
+                0 -> editBox(boxDetail)
                 1 -> requestManageMembers(boxDetail.boxId)
                 2 -> context?.copy(boxDetail.boxId)
             }

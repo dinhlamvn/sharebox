@@ -85,13 +85,13 @@ class BoxMemberActivity :
         }
 
         onChange(BoxMemberState::boxDetail) { boxDetail ->
-            val box = boxDetail ?: return@onChange
-            if (!box.passcode.isNullOrBlank()) {
+            if (boxDetail?.isHasPasscode == true) {
                 val intent = router.passcodeIntent(
-                    this, box.passcode, getString(
+                    this, boxDetail.passcode,
+                    desc = getString(
                         R.string.dialog_bookmark_collection_picker_verify_passcode,
-                        box.boxName
-                    )
+                        boxDetail.boxName
+                    ),
                 )
                 passcodeConfirmResultLauncher.launch(intent)
             } else {

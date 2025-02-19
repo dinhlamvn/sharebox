@@ -156,13 +156,13 @@ class BoxDetailActivity :
             BoxDetailState::boxDetail,
             BoxDetailState::mustInputPasscode
         ) { boxDetail, mustInputPasscode ->
-            if (!boxDetail?.passcode.isNullOrBlank() && mustInputPasscode) {
-                val takeBox = boxDetail ?: return@onChange finish()
+            if (boxDetail?.isHasPasscode == true && mustInputPasscode) {
                 val intent = router.passcodeIntent(
-                    this, takeBox.passcode!!, getString(
+                    this, boxDetail.passcode,
+                    desc = getString(
                         R.string.dialog_bookmark_collection_picker_verify_passcode,
-                        takeBox.boxName
-                    )
+                        boxDetail.boxName
+                    ),
                 )
                 passcodeConfirmResultLauncher.launch(intent)
             } else {

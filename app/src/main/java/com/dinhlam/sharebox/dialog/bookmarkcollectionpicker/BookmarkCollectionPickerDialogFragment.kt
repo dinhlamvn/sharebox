@@ -143,10 +143,12 @@ class BookmarkCollectionPickerDialogFragment :
     private fun requestVerifyOriginalPasscode(bookmarkCollectionDetail: BookmarkCollectionDetail) {
         resultLauncherVerifyOriginalPasscode.launch(
             router.passcodeIntent(
-                requireContext(), bookmarkCollectionDetail.passcode!!, getString(
+                requireContext(),
+                bookmarkCollectionDetail.passcode!!,
+                desc = getString(
                     R.string.dialog_bookmark_collection_picker_verify_passcode,
                     bookmarkCollectionDetail.name.takeWithEllipsizeEnd(10)
-                )
+                ),
             )
         )
     }
@@ -161,10 +163,11 @@ class BookmarkCollectionPickerDialogFragment :
         }
         resultLauncherVerifyPasscode.launch(
             router.passcodeIntent(
-                requireContext(), passcode, getString(
+                requireContext(), passcode,
+                desc = getString(
                     R.string.dialog_bookmark_collection_picker_verify_passcode,
                     bookmarkCollectionName.takeWithEllipsizeEnd(10)
-                )
+                ),
             )
         )
     }
