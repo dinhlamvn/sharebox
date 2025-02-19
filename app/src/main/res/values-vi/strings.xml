@@ -189,6 +189,7 @@
     <string name="saved">Đã lưu</string>
     <string name="tag_picker_dialog_title">Choose a tag</string>
     <string name="tags">Tags</string>
+    <string name="view_tags">View shares with tag</string>
 
     <string-array name="tags_option_menu_items">
         <item>Sửa</item>

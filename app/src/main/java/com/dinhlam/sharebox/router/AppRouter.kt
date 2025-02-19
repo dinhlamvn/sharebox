@@ -322,7 +322,8 @@ class AppRouter constructor(private val context: Context) : Router {
             )
     }
 
-    override fun tags(context: Context): Intent {
+    override fun tags(context: Context, tagId: Int?): Intent {
         return Intent(context, TagsActivity::class.java)
+            .putExtra(AppExtras.EXTRA_ID, tagId)
     }
 }

@@ -1,6 +1,8 @@
 package com.dinhlam.sharebox.ui.tags
 
+import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.local.entity.Tag
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.data.repository.TagRepository
@@ -11,13 +13,14 @@ import javax.inject.Inject
 class TagsViewModel @Inject constructor(
     private val tagRepository: TagRepository,
     private val shareRepository: ShareRepository,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel<TagsState>(TagsState()) {
 
     init {
         onChange(TagsState::tagActive) { tag ->
             getShares(tag)
         }
-        getTags()
+        getTags(savedStateHandle[AppExtras.EXTRA_ID])
     }
 
     private fun getShares(tag: Tag?) {
@@ -29,13 +32,19 @@ class TagsViewModel @Inject constructor(
         }
     }
 
-    private fun getTags() {
+    private fun getTags(tagId: Int?) {
         suspend {
-            tagRepository.readAll()
+            val tags = tagRepository.readAll()
+            val tagActive = if (tagId != null) {
+                tagRepository.readOne(tagId)
+            } else {
+                tags.first()
+            }
+            tagActive to tags
         }.execute { asyncLoad ->
             copy(
-                tags = asyncLoad.data ?: tags,
-                tagActive = asyncLoad.data?.firstOrNull() ?: tagActive
+                tags = asyncLoad.data?.second ?: tags,
+                tagActive = asyncLoad.data?.first ?: tagActive
             )
         }
     }

@@ -192,6 +192,7 @@ class ShareRepository @Inject constructor(
             topComment,
             boxDetail,
             share.isVideoShare,
+            share.tagId,
             tagColor
         )
     }.getOrNull()

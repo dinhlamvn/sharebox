@@ -68,5 +68,5 @@ interface Router {
 
     fun checkList(context: Context, shareId: String?): Intent
 
-    fun tags(context: Context): Intent
+    fun tags(context: Context, tagId: Int? = null): Intent
 }

@@ -35,41 +35,45 @@ class BottomSheetShareActionViewModel @Inject constructor(
         }
     }
 
-    fun buildActions(context: Context, shareDetail: ShareDetail?) {
-        val shareData = shareDetail ?: return setState { copy(actions = emptyList()) }
+    fun buildActions(context: Context, share: ShareDetail?) {
+        val shareDetail = share ?: return setState { copy(actions = emptyList()) }
         val actions = buildList {
-            add(BottomSheetShareActionState.Action(0, "f064", context.getString(R.string.share_to)))
+            add(BottomSheetShareActionState.Action(BottomSheetShareActionState.ActionId.SHARE_TO, "f064", context.getString(R.string.share_to)))
             add(
                 BottomSheetShareActionState.Action(
-                    1,
+                    BottomSheetShareActionState.ActionId.EDIT_NOTE,
                     "f044",
                     context.getString(R.string.edit_note)
                 )
             )
-            add(BottomSheetShareActionState.Action(2, "f061", context.getString(R.string.move_to)))
+            add(BottomSheetShareActionState.Action(BottomSheetShareActionState.ActionId.MOVE_TO_OTHER_BOX, "f061", context.getString(R.string.move_to)))
 
-            if (shareData.shareData is ShareData.ShareText || shareData.shareData is ShareData.ShareUrl) {
-                add(BottomSheetShareActionState.Action(3, "f0c5", context.getString(R.string.copy)))
+            if (shareDetail.shareData is ShareData.ShareText || shareDetail.shareData is ShareData.ShareUrl) {
+                add(BottomSheetShareActionState.Action(BottomSheetShareActionState.ActionId.COPY, "f0c5", context.getString(R.string.copy)))
             } else {
                 add(
                     BottomSheetShareActionState.Action(
-                        4,
+                        BottomSheetShareActionState.ActionId.DOWNLOAD,
                         "f56d",
                         context.getString(R.string.download)
                     )
                 )
             }
-            add(BottomSheetShareActionState.Action(5, "f02b", context.getString(R.string.tags)))
+            add(BottomSheetShareActionState.Action(BottomSheetShareActionState.ActionId.TAGS, "f02b", context.getString(R.string.tags)))
+            if (shareDetail.tagId != null) {
+                add(BottomSheetShareActionState.Action(BottomSheetShareActionState.ActionId.VIEW_TAGS, "f03a", context.getString(R.string.view_tags)))
+            }
+
             add(
                 BottomSheetShareActionState.Action(
-                    6,
+                    BottomSheetShareActionState.ActionId.COPY_BOX_ID,
                     "f0c5",
                     context.getString(R.string.copy_box_id)
                 )
             )
             add(
                 BottomSheetShareActionState.Action(
-                    7,
+                    BottomSheetShareActionState.ActionId.MOVE_TO_TRASH,
                     "f1f8",
                     context.getString(R.string.move_to_trash)
                 )

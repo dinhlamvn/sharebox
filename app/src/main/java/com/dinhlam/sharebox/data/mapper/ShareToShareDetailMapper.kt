@@ -19,6 +19,7 @@ class ShareToShareDetailMapper @Inject constructor() {
         commentDetail: CommentDetail?,
         boxDetail: BoxDetail?,
         isVideoShare: Boolean,
+        tagId: Int?,
         tagColor: Int?,
     ): ShareDetail {
         return ShareDetail(
@@ -35,6 +36,7 @@ class ShareToShareDetailMapper @Inject constructor() {
             commentDetail,
             boxDetail,
             isVideoShare,
+            tagId,
             tagColor,
         )
     }

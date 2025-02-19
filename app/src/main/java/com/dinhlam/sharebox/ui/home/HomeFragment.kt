@@ -37,7 +37,6 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
-import com.dinhlam.sharebox.utils.LiveEvents
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -199,10 +198,6 @@ class HomeFragment :
                 viewModel.refresh()
             }
         }
-
-        LiveEvents.onBottomSheetShareActionRefreshEvent.observe(viewLifecycleOwner) {
-            viewModel.refresh()
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
@@ -290,7 +285,7 @@ class HomeFragment :
     }
 
     fun showMore(shareDetail: ShareDetail) {
-        shareHelper.showMore(requireActivity(), shareDetail)
+        shareHelper.showMore(requireActivity(), shareDetail, viewModel::refresh)
     }
 
     fun openBox(boxId: String) {

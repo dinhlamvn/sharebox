@@ -30,7 +30,6 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.LiveEvents
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -177,10 +176,6 @@ class BoxDetailActivity :
                 viewModel.updateShare(asyncLoad.value)
             }
         }
-
-        LiveEvents.onBottomSheetShareActionRefreshEvent.observe(this) {
-            viewModel.loadShares()
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -222,7 +217,7 @@ class BoxDetailActivity :
                 }
             }
         } else {
-            shareHelper.showMore(this, share)
+            shareHelper.showMore(this, share, viewModel::loadShares)
         }
     }
 

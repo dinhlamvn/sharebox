@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BookmarkRepository
@@ -49,11 +50,12 @@ class ShareHelper @Inject constructor(
     fun showMore(
         activity: FragmentActivity,
         share: ShareDetail,
+        onBottomSheetDismissListener: BaseBottomSheetDialogFragment.OnBottomSheetDismissListener
     ) {
         BottomSheetShareActionDialogFragment.showDialog(
             activity.supportFragmentManager,
             share.shareId
-        )
+        ).bottomSheetDismissListener = onBottomSheetDismissListener
     }
 
     fun shareToOther(share: ShareDetail) {
