@@ -12,4 +12,8 @@ data class BoxDetail(
     val createdDate: Long,
     val passcode: String?,
     val lastSeen: Long
-) : Parcelable
+) : Parcelable {
+
+    val isHasPasscode: Boolean
+        get() = !passcode.isNullOrBlank()
+}

@@ -15,7 +15,6 @@ import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.extensions.vibrate
 import com.dinhlam.sharebox.listmodel.TextListModel
-import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Stack
 
@@ -115,10 +114,6 @@ class PasscodeActivity : BaseActivity<ActivityPasscodeBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding.imageLock.setImageDrawable(Icons.lockIcon(this) {
-            copy(sizeDp = 32)
-        })
 
         binding.recyclerViewCode.itemAnimator = null
         binding.recyclerViewCode.adapter = passcodeAdapter

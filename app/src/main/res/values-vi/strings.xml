@@ -120,7 +120,7 @@
     <string name="save">Lưu</string>
     <string name="title_edit_box">Sửa Box</string>
     <string name="title_create_box">Tạo Box</string>
-    <string name="change_passcode">Thay đổi mã</string>
+    <string name="use_passcode">Sử dụng mã bảo mật</string>
     <string name="removed_item">Đã xóa %s</string>
     <string name="confirm_move_to_trash">Bạn có chắc di chuyển mục này vào thùng rác?</string>
     <string name="title_trash">Thùng rác</string>
@@ -190,6 +190,7 @@
     <string name="tag_picker_dialog_title">Choose a tag</string>
     <string name="tags">Tags</string>
     <string name="view_tags">View shares with tag</string>
+    <string name="update_passcode_desc">Your passcode has been set. If you want to change it, please tap the \"Use Passcode\" button.</string>
 
     <string-array name="tags_option_menu_items">
         <item>Sửa</item>

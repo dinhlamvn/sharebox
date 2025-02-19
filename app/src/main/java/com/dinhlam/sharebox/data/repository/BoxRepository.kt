@@ -7,6 +7,7 @@ import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.utils.BoxUtils
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
@@ -57,17 +58,16 @@ class BoxRepository @Inject constructor(
     }
 
     suspend fun insert(
-        boxId: String,
         boxName: String,
         boxDesc: String?,
         createdBy: String,
+        passcode: String?,
         createdDate: Long = nowUTCTimeInMillis(),
-        passcode: String? = null,
         lastSeen: Long = nowUTCTimeInMillis(),
         synced: Boolean = false,
     ): Box? {
         val box = Box(
-            boxId = boxId,
+            boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$boxName"),
             boxName = boxName,
             boxDesc = boxDesc,
             createdBy = createdBy,

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,10 +10,18 @@
         style="@style/AppToolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:minHeight="?attr/actionBarSize"
-        app:contentInsetEnd="2dp"
-        app:contentInsetStart="16dp"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:id="@+id/icon_save"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:icon_code="f00c"
+            app:icon_size="24dp" />
+    </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
@@ -120,62 +129,55 @@
                 app:layout_constraintTop_toBottomOf="@id/text_layout_passcode" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/checkbox_change_passcode"
+                android:id="@+id/checkbox_use_passcode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/change_passcode"
-                android:textAppearance="@style/TextBody"
-                android:visibility="gone" />
+                android:layout_marginStart="12dp"
+                android:text="@string/use_passcode"
+                android:textAppearance="@style/TextBody" />
 
-            <LinearLayout
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_update_passcode_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:text="@string/update_passcode_desc"
+                android:textAppearance="@style/TextCaption" />
+
+            <LinearLayout
+                android:id="@+id/container_passcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/text_layout_passcode"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_edit_passcode"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_weight="1"
-                    app:endIconMode="custom"
-                    app:errorTextAppearance="@style/TextCaption"
-                    app:hintTextAppearance="@style/TextBody"
-                    app:layout_constraintEnd_toStartOf="@id/image_clear"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/checkbox_change_passcode"
-                    app:placeholderTextAppearance="@style/TextBody">
+                    android:focusable="false"
+                    android:gravity="start|top"
+                    android:hint="@string/bookmark_collection_hint_passcode"
+                    android:inputType="numberPassword"
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:paddingVertical="16dp"
+                    android:textAppearance="@style/TextBody" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/text_edit_passcode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:gravity="start|top"
-                        android:hint="@string/bookmark_collection_hint_passcode"
-                        android:inputType="numberPassword"
-                        android:maxLength="6"
-                        android:maxLines="1"
-                        android:textAppearance="@style/TextBody" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_clear"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                <com.dinhlam.sharebox.view.FontAwesomeIconView
+                    android:id="@+id/icon_eye"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="16dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/action_clear_passcode"
-                    android:scaleType="centerInside"
-                    android:visibility="gone"
+                    app:icon_code="f06e"
+                    app:icon_size="20dp"
                     app:layout_constraintBottom_toBottomOf="@id/text_layout_passcode"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/text_layout_passcode" />
+                    app:layout_constraintTop_toTopOf="@id/text_layout_passcode"
+                    tools:visibility="visible" />
 
             </LinearLayout>
 
@@ -223,19 +225,6 @@
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_save"
-        style="@style/Widget.Material3.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTintMode="src_over"
-        android:gravity="center"
-        android:text="@string/save"
-        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
     <com.dinhlam.sharebox.view.ShareBoxLoadingView
         android:id="@+id/view_loading"

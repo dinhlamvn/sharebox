@@ -5,8 +5,8 @@ import com.dinhlam.sharebox.data.local.entity.Box
 import com.dinhlam.sharebox.model.BoxDetail
 
 data class BoxFormState(
-    val boxId: String?,
-    val boxDetail: BoxDetail? = null,
+    val currentBoxDetail: BoxDetail? = null,
     val asyncLoadSave: BaseViewModel.AsyncLoad<Box> = BaseViewModel.AsyncLoad.UnInitialized,
-    val isChangePasscode: Boolean = false
+    val isUsePasscode: Boolean = false,
+    val isPasscodeVisible: Boolean = false,
 ) : BaseViewModel.BaseState

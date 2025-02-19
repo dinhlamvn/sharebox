@@ -5,10 +5,8 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.extensions.md5
-import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.utils.BoxUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,52 +15,51 @@ class BoxFormViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val userHelper: UserHelper,
     savedStateHandle: SavedStateHandle
-) : BaseViewModel<BoxFormState>(BoxFormState(savedStateHandle[AppExtras.EXTRA_BOX_ID])) {
+) : BaseViewModel<BoxFormState>(BoxFormState()) {
 
     init {
-        loadBoxDetail()
+        loadBoxDetail(savedStateHandle[AppExtras.EXTRA_BOX_ID])
     }
 
-    private fun loadBoxDetail() = getState { state ->
-        state.boxId?.let { boxId ->
-            suspend {
-                boxRepository.findOne(boxId)
-            }.execute { asyncLoad -> copy(boxDetail = asyncLoad.data) }
-        }
+    private fun loadBoxDetail(boxId: String?) {
+        suspend {
+            boxRepository.findOne(boxId!!)
+        }.execute { asyncLoad -> copy(currentBoxDetail = asyncLoad.data) }
     }
-
 
     fun saveBox(name: String, desc: String, passcode: String) = getState { state ->
         suspend {
-            val createdBox =
-                state.boxDetail?.boxId?.let { boxId -> boxRepository.findOneRaw(boxId) }
-            createdBox?.let { box ->
-                val newBox = if (state.isChangePasscode) {
-                    box.copy(
+            if (state.currentBoxDetail != null) {
+                val currentBox = boxRepository.findOneRaw(state.currentBoxDetail.boxId)!!
+                val newBox = if (state.isUsePasscode) {
+                    currentBox.copy(
                         boxName = name,
                         boxDesc = desc,
                         passcode = passcode.takeIfNotNullOrBlank()?.md5()
                     )
                 } else {
-                    box.copy(
+                    currentBox.copy(
                         boxName = name,
                         boxDesc = desc
                     )
                 }
-                boxRepository.update(newBox)
-                newBox
-            } ?: boxRepository.insert(
-                BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$name"),
-                name,
-                desc,
-                userHelper.getCurrentUserId(),
-                nowUTCTimeInMillis(),
-                passcode.takeIfNotNullOrBlank()?.md5()
-            )!!
+                boxRepository.update(newBox)!!
+            } else {
+                boxRepository.insert(
+                    name,
+                    desc,
+                    userHelper.getCurrentUserId(),
+                    passcode.takeIfNotNullOrBlank()?.md5()
+                )!!
+            }
         }.execute { asyncLoad -> copy(asyncLoadSave = asyncLoad) }
     }
 
-    fun setChangePasscodeChecked(checked: Boolean) = setState {
-        copy(isChangePasscode = checked)
+    fun toggleUsePasscode(checked: Boolean) = setState {
+        copy(isUsePasscode = checked)
+    }
+
+    fun togglePasscodeVisibility() = setState {
+        copy(isPasscodeVisible = !isPasscodeVisible)
     }
 }

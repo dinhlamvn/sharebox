@@ -5,29 +5,26 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.view.MenuItem
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.UiThread
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.databinding.ActivityBoxFormBinding
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.getTrimmedText
+import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -61,8 +58,6 @@ class BoxFormActivity :
             }
         }
 
-    private var isVisiblePasscode: Boolean = false
-
     override fun onCreateViewBinding(): ActivityBoxFormBinding {
         return ActivityBoxFormBinding.inflate(layoutInflater)
     }
@@ -70,87 +65,62 @@ class BoxFormActivity :
     override val viewModel: BoxFormViewModel by viewModels()
 
     override fun onStateChanged(state: BoxFormState) {
-        if (state.boxDetail != null) {
-            binding.checkboxChangePasscode.isVisible = true
-            binding.toolbar.title = getString(R.string.title_edit_box)
-            binding.textLayoutPasscode.isVisible = state.isChangePasscode
-        } else {
-            binding.checkboxChangePasscode.isVisible = false
-            binding.toolbar.title = getString(R.string.title_create_box)
-            binding.textLayoutPasscode.isVisible = true
-        }
+        binding.containerPasscode.isVisible = state.isUsePasscode
+        togglePasscodeVisibility(state.isPasscodeVisible)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.imageClear.setImageDrawable(Icons.clearIcon(this) {
-            copy(sizeDp = 16)
-        })
-
-        binding.imageClear.setOnClickListener {
-            binding.textEditPasscode.text?.clear()
+        binding.checkboxUsePasscode.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.toggleUsePasscode(isChecked)
         }
 
-        binding.checkboxChangePasscode.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setChangePasscodeChecked(isChecked)
+        binding.iconEye.setOnClickListener {
+            viewModel.togglePasscodeVisibility()
         }
 
-        binding.textEditPasscode.doAfterTextChangedDebounce(200, lifecycleScope) { text ->
-            val takenText = text.trimmedString()
-
-            if (takenText.isBlank()) {
-                binding.textLayoutPasscode.endIconDrawable = null
-            } else {
-                togglePasscodeVisibility()
-            }
-
-            binding.imageClear.isVisible = takenText.isNotBlank()
-        }
-
-        binding.textLayoutPasscode.setEndIconOnClickListener {
-            isVisiblePasscode = !isVisiblePasscode
-            togglePasscodeVisibility()
-        }
-
-        binding.textEditName.doAfterTextChanged { editable ->
-            if (editable.trimmedString().isNotBlank()) {
-                binding.textEditName.error = null
-            }
+        binding.textEditName.doAfterTextChangedDebounce(scope = lifecycleScope) { editable ->
+            binding.textEditName.error =
+                (editable?.toString() != null).ifTrue(null, binding.textEditName.error)
         }
 
         binding.textEditPasscode.setOnClickListener {
             passcodeResultLauncher.launch(router.passcodeIntent(this))
         }
 
-        binding.buttonSave.setOnClickListener {
+        binding.iconSave.setOnClickListener {
             onSave()
         }
 
-        onChange(BoxFormState::boxDetail) { boxDetail ->
+        onChange(BoxFormState::currentBoxDetail) { boxDetail ->
             binding.textEditName.setText(boxDetail?.boxName)
             binding.textEditDesc.setText(boxDetail?.boxDesc)
+            binding.toolbar.title = (boxDetail == null).ifTrue(
+                getString(R.string.title_create_box),
+                getString(R.string.title_edit_box)
+            )
+            binding.textUpdatePasscodeDesc.isVisible = boxDetail?.isHasPasscode == true
+            binding.cardContainerMember.isVisible = boxDetail != null
         }
 
         onChange(BoxFormState::asyncLoadSave) { asyncLoad ->
             binding.viewLoading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
-            val box = asyncLoad.data
-            box?.let { createdBox ->
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 setResult(
                     Activity.RESULT_OK,
-                    Intent().putExtra(AppExtras.EXTRA_BOX_ID, createdBox.boxId)
+                    Intent().putExtra(AppExtras.EXTRA_BOX_ID, asyncLoad.value.boxId)
                 )
                 finish()
+            } else if (asyncLoad is BaseViewModel.AsyncLoad.Failed) {
+                showToast(asyncLoad.error.message)
             }
         }
 
-        binding.cardContainerMember.isVisible = getState(viewModel, BoxFormState::boxId) != null
         binding.containerMembers.setOnClickListener {
             if (userHelper.isSignedIn()) {
-                val boxId = getState(viewModel, BoxFormState::boxId)!!
-                startActivity(router.boxMembers(this, boxId))
+                manageBoxMembers()
             } else {
                 showToast(R.string.require_sign_in_to_manage_member)
                 signInLauncher.launch(router.signIn(true))
@@ -160,19 +130,23 @@ class BoxFormActivity :
 
     private fun handleSignInResult(result: ActivityResult) {
         if (result.resultCode == Activity.RESULT_OK) {
-            val boxId = getState(viewModel, BoxFormState::boxId)!!
-            startActivity(router.boxMembers(this, boxId))
+            manageBoxMembers()
         }
     }
 
+    private fun manageBoxMembers() {
+        val boxId = getState(viewModel, BoxFormState::currentBoxDetail)?.boxId
+            ?: return showToast(R.string.no_box_selected)
+        startActivity(router.boxMembers(this, boxId))
+    }
+
     @UiThread
-    private fun togglePasscodeVisibility() {
+    private fun togglePasscodeVisibility(isVisiblePasscode: Boolean) {
+        binding.iconEye.setIconCode(isVisiblePasscode.ifTrue("f06e", "f070"))
         if (isVisiblePasscode) {
-            binding.textLayoutPasscode.endIconDrawable = Icons.visibilityOnIcon(this)
             binding.textEditPasscode.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
         } else {
-            binding.textLayoutPasscode.endIconDrawable = Icons.visibilityOffIcon(this)
             binding.textEditPasscode.transformationMethod =
                 PasswordTransformationMethod.getInstance()
         }
@@ -189,13 +163,5 @@ class BoxFormActivity :
         }
 
         viewModel.saveBox(name, desc, passcode)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }
