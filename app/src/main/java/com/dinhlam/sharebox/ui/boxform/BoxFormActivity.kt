@@ -162,6 +162,11 @@ class BoxFormActivity :
             return
         }
 
+        if (getState(viewModel, BoxFormState::isUsePasscode) && passcode.length != 6) {
+            showToast(R.string.require_input_passcode)
+            return
+        }
+
         viewModel.saveBox(name, desc, passcode)
     }
 }

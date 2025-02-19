@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.md5
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
@@ -49,7 +50,7 @@ class BoxFormViewModel @Inject constructor(
                     name,
                     desc,
                     userHelper.getCurrentUserId(),
-                    passcode.takeIfNotNullOrBlank()?.md5()
+                    state.isUsePasscode.ifTrue(passcode.takeIfNotNullOrBlank()?.md5(), null)
                 )!!
             }
         }.execute { asyncLoad -> copy(asyncLoadSave = asyncLoad) }
