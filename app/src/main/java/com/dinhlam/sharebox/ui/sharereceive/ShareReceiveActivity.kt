@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.dinhlam.sharebox.R
@@ -22,6 +21,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareReceiveBinding
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.getFileNameAndSize
 import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
@@ -48,7 +48,6 @@ import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.sharereceive.listmodel.ShareReceiveFileListModel
 import com.dinhlam.sharebox.ui.sharereceive.listmodel.ShareReceiveTextListModel
 import com.dinhlam.sharebox.ui.sharereceive.listmodel.ShareReceiveUrlListModel
-import com.dinhlam.sharebox.utils.Icons
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -179,11 +178,8 @@ class ShareReceiveActivity :
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
 
-        binding.imageClose.setImageDrawable(Icons.closeIcon(this) {
-            copy(sizeDp = 16)
-        })
-        binding.imageClose.setOnClickListener {
-            finishAndRemoveTask()
+        binding.iconClose.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
 
         binding.textInputNote.setOnFocusChangeListener { v, _ ->
@@ -317,7 +313,8 @@ class ShareReceiveActivity :
         PagerSnapHelper().attachToRecyclerView(binding.recyclerView)
         binding.recyclerView.addItemDecoration(
             HorizontalCirclePagerItemDecoration(
-                colorActive = ContextCompat.getColor(this, R.color.md_theme_onPrimary)
+                colorActive = getColorCompat(R.color.md_theme_primary),
+                colorInactive = getColorCompat(R.color.md_theme_secondary),
             )
         )
         viewModel.setShareData(ShareData.ShareImages(takenImages))
