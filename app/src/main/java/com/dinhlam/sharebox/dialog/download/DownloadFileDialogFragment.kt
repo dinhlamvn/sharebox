@@ -13,14 +13,13 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentDownloadFileBinding
 import com.dinhlam.sharebox.extensions.asHumanReadableSize
 import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
+import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.model.DownloadState
+import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,19 +28,13 @@ class DownloadFileDialogFragment :
 
     companion object {
         @JvmStatic
-        fun showDialog(
+        fun startDownload(
             fragmentManager: FragmentManager,
-            downloadUrl: String,
-            fileName: String?,
-            mimeType: String?
+            downloadInfo: FileDownloadInfo
         ) {
             val dialogFragment = DownloadFileDialogFragment()
             dialogFragment.arguments =
-                bundleOf(
-                    AppExtras.EXTRA_URL to downloadUrl,
-                    AppExtras.EXTRA_NAME to fileName,
-                    AppExtras.EXTRA_MIMETYPE to mimeType
-                )
+                bundleOf(AppExtras.EXTRA_DATA to downloadInfo)
             dialogFragment.show(fragmentManager, "download_file_dialog")
         }
     }
@@ -58,35 +51,23 @@ class DownloadFileDialogFragment :
 
     override val viewModel: DownloadFileViewModel by viewModels()
 
-    private var downloadJob: Job? = null
-
     override fun onStateChanged(state: DownloadFileState) {
-        if (state.downloadState is DownloadState.Downloading) {
-            if (state.downloadState.progress > 0) {
-                binding.textProgress.text =
-                    getString(R.string.percentage, state.downloadState.progress)
-                binding.progressBar.progress = state.downloadState.progress
-            } else if (state.downloadState.totalBytesDownloaded > 0L) {
-                binding.progressBar.progress = 0
-                binding.textProgress.text = getString(
-                    R.string.downloaded,
-                    state.downloadState.totalBytesDownloaded.asHumanReadableSize()
-                )
-            }
-        } else {
-            binding.progressBar.progress = 0
-            binding.textProgress.text = null
-        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val downloadInfo =
+            arguments?.getParcelableExtraCompat<FileDownloadInfo>(AppExtras.EXTRA_DATA)
+                ?: return dismiss()
+
         onChange(DownloadFileState::downloadState) { downloadState ->
             when (downloadState) {
                 is DownloadState.Finished -> {
                     val fileUri =
                         FileUtils.getUriFromFile(requireContext(), downloadState.downloadFile)
-                    val mimeType = context?.getMimeTypeFromUri(fileUri) ?: return@onChange dismiss()
+                    val mimeType = downloadInfo.mimeType ?: context?.getMimeTypeFromUri(fileUri)
+                    ?: return@onChange dismiss()
                     val intent = router.shareToOtherIntent(requireContext(), fileUri, mimeType)
                     if (intent != null) {
                         startActivity(intent)
@@ -99,23 +80,32 @@ class DownloadFileDialogFragment :
                     dismiss()
                 }
 
-                else -> {}
+                is DownloadState.Downloading -> {
+                    if (downloadState.progress > 0) {
+                        binding.textMessage.text = getString(R.string.downloading)
+                        binding.textProgress.text =
+                            getString(R.string.percentage, downloadState.progress)
+                        binding.progressBar.progress = downloadState.progress
+                    } else if (downloadState.totalBytesDownloaded > 0L) {
+                        binding.textMessage.text = getString(R.string.downloading)
+                        binding.progressBar.progress = 0
+                        binding.textProgress.text = getString(
+                            R.string.downloaded,
+                            downloadState.totalBytesDownloaded.asHumanReadableSize()
+                        )
+                    } else {
+                        binding.textMessage.text = getString(R.string.processing)
+                        binding.progressBar.progress = 0
+                        binding.textProgress.text = null
+                    }
+                }
             }
         }
 
-        val downloadUrl = arguments?.getString(AppExtras.EXTRA_URL) ?: return dismiss()
-        val fileName = arguments?.getString(AppExtras.EXTRA_NAME)
-        val mimeType = arguments?.getString(AppExtras.EXTRA_MIMETYPE)
-
-        downloadJob = fragmentScope.launch(Dispatchers.IO) {
-            viewModel.download(requireContext(), downloadUrl, fileName, mimeType)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        if (downloadJob?.isActive == true && downloadJob?.isCompleted == false) {
-            downloadJob?.cancel()
-        }
+        viewModel.download(
+            requireContext(),
+            downloadInfo.downloadUrl,
+            downloadInfo.fileName,
+        )
     }
 }

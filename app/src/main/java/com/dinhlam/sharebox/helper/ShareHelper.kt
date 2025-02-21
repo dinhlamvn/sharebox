@@ -26,6 +26,7 @@ import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoSource
@@ -73,11 +74,13 @@ class ShareHelper @Inject constructor(
 
             is ShareData.ShareImage -> {
                 if (shareData.uri.toString().isNetworkUrl()) {
-                    return DownloadFileDialogFragment.showDialog(
+                    return DownloadFileDialogFragment.startDownload(
                         activity.supportFragmentManager,
-                        shareData.uri.toString(),
-                        FileUtils.createFileName("image", "jpg"),
-                        "image/jpg"
+                        FileDownloadInfo(
+                            shareData.uri.toString(),
+                            FileUtils.createFileName("image", "jpg"),
+                            "image/jpg"
+                        )
                     )
                 } else {
                     intent.putExtra(
@@ -99,11 +102,13 @@ class ShareHelper @Inject constructor(
 
             is ShareData.ShareFile -> {
                 if (shareData.uri.toString().isNetworkUrl()) {
-                    return DownloadFileDialogFragment.showDialog(
+                    return DownloadFileDialogFragment.startDownload(
                         activity.supportFragmentManager,
-                        shareData.uri.toString(),
-                        shareData.fileName,
-                        shareData.mimeType
+                        FileDownloadInfo(
+                            shareData.uri.toString(),
+                            shareData.fileName,
+                            shareData.mimeType
+                        )
                     )
                 } else {
                     intent.putExtra(
@@ -168,7 +173,10 @@ class ShareHelper @Inject constructor(
         }
     }
 
-    private fun getShareCheckListText(shareNote: String?, shareData: ShareData.ShareCheckList): String {
+    private fun getShareCheckListText(
+        shareNote: String?,
+        shareData: ShareData.ShareCheckList
+    ): String {
         return buildString {
             append("Check List [${shareNote.takeIfNotNullOrBlank() ?: "-"}]")
             append("\n\n")

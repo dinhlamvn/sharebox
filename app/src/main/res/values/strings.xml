@@ -64,7 +64,7 @@
     <string name="title_setting_sync_background">Sync data daily</string>
     <string name="message_enqueue_sync_data">Auto sync data to cloud everyday.</string>
     <string name="message_cancel_enqueue_sync_data">Canceled auto sync data</string>
-    <string name="downloading">Downloading</string>
+    <string name="downloading">Downloading…</string>
     <string name="cancel">Cancel</string>
     <string name="limit_share_image">We just allow archive maximum 10 images</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
@@ -184,6 +184,7 @@
     <string name="require_input_passcode">Please input passcode.</string>
     <string name="listing">Listing</string>
     <string name="edit_checklist">Edit Checklist</string>
+    <string name="loading">Loading...</string>
 
     <string-array name="tags_option_menu_items">
         <item>Remove tag</item>

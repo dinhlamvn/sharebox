@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -186,16 +185,12 @@ class TiktokDiscoverFragment :
             if (videoUrl == null) {
                 return@loadTiktokVideo showToast(R.string.video_not_available)
             }
-            TiktokDiscoverVideoViewerDialogFragment()
-                .apply {
-                    arguments = bundleOf(
-                        AppExtras.EXTRA_URL to videoUrl,
-                        TiktokDiscoverVideoViewerDialogFragment.EXTRA_VIEW_DESC to tiktokDiscover.desc,
-                        TiktokDiscoverVideoViewerDialogFragment.EXTRA_VIEW_TIKTOK_URL to tiktokDiscover.url,
-                        TiktokDiscoverVideoViewerDialogFragment.EXTRA_VIEW_COUNT to tiktokDiscover.playCount.toInt(),
-                        TiktokDiscoverVideoViewerDialogFragment.EXTRA_LIKE_COUNT to tiktokDiscover.diggCount.toInt()
-                    )
-                }.show(childFragmentManager, "tiktok_discover_video_viewer")
+            TiktokDiscoverVideoViewerDialogFragment.showDialog(
+                childFragmentManager,
+                videoUrl,
+                tiktokDiscover,
+                this
+            )
         }
     }
 

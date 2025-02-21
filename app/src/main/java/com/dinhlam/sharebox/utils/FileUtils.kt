@@ -72,6 +72,16 @@ object FileUtils {
     }
 
     fun createDownloadFile(fileName: String): File? {
+        val fileDir = getDownloadDir() ?: return null
+        val file = File(fileDir, fileName)
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+
+        return file
+    }
+
+    private fun getDownloadDir(): File? {
         val downloadPublicDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 ?: return null
@@ -79,11 +89,7 @@ object FileUtils {
         if (!fileDir.exists() && !fileDir.mkdirs()) {
             return null
         }
-        val file = File(fileDir, fileName)
-        if (!file.createNewFile() && !file.delete()) {
-            return null
-        }
-        return file
+        return fileDir
     }
 
     fun getFileNameFromUri(uri: Uri) =

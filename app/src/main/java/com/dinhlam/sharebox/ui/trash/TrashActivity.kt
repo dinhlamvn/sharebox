@@ -24,6 +24,7 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
@@ -180,25 +181,25 @@ class TrashActivity :
 
             is ShareData.ShareFile -> {
                 val downloadUrl = shareData.uri.toString()
-                DownloadFileDialogFragment.showDialog(
+                DownloadFileDialogFragment.startDownload(
                     supportFragmentManager,
-                    downloadUrl,
-                    shareData.fileName,
-                    shareData.mimeType
+                    FileDownloadInfo(
+                        downloadUrl,
+                        shareData.fileName,
+                        shareData.mimeType
+                    )
                 )
             }
 
             is ShareData.ShareCheckList -> {
-                TextViewerDialogFragment().apply {
-                    arguments =
-                        bundleOf(Intent.EXTRA_TEXT to shareData.checkListDataList.joinToString("\n") { checkListData ->
-                            "${checkListData.done} - ${checkListData.title} - (${
-                                checkListData.datetime.format(
-                                    "dd MMM yyyy, hh:mm a"
-                                )
-                            })"
-                        })
-                }.show(supportFragmentManager, "TextViewerDialogFragment")
+                val text = shareData.checkListDataList.joinToString("\n") { checkListData ->
+                    "${checkListData.done} - ${checkListData.title} - (${
+                        checkListData.datetime.format(
+                            "dd MMM yyyy, hh:mm a"
+                        )
+                    })"
+                }
+                TextViewerDialogFragment.showDialog(supportFragmentManager, text)
             }
         }
     }

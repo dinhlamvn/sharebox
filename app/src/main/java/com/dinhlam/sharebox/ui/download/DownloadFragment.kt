@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.databinding.FragmentDownloadBinding
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.extensions.asFileExtension
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
@@ -23,13 +24,13 @@ import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.AppSettingHelper
-import com.dinhlam.sharebox.helper.DownloadHelper
 import com.dinhlam.sharebox.helper.NetworkHelper
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.AppSettings
+import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -214,23 +215,35 @@ class DownloadFragment :
     }
 
     private fun downloadVideo(mimeType: String, downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("video", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("video", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            childFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
     private fun downloadAudio(mimeType: String, downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("audio", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("audio", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            childFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
-    private fun downloadImage(mimeType: String, url: String) {
-        val outputFile = FileUtils.createFileName("image", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), url, outputFile)
+    private fun downloadImage(mimeType: String, downloadUrl: String) {
+        val fileName = FileUtils.createFileName("image", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            childFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
     private fun downloadFile(mimeType: String, downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("file", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("file", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            childFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
     override fun onStateChanged(state: DownloadState) {

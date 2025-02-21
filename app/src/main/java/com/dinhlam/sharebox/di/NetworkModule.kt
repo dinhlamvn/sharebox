@@ -94,10 +94,14 @@ object NetworkModule {
 
     @Provides
     fun provideDownloadServices(
-        gson: Gson, httpClient: OkHttpClient
+        gson: Gson,
+        httpClient: OkHttpClient,
+        @UserAgentInterceptor userAgentInterceptor: Interceptor
     ): DownloadServices {
-        return getRetrofitBuilder(gson, httpClient)
-            .baseUrl("https://google.com")
+        return getRetrofitBuilder(
+            gson,
+            httpClient.newBuilder().addInterceptor(userAgentInterceptor).build()
+        ).baseUrl("https://google.com")
             .build().create(DownloadServices::class.java)
     }
 
@@ -110,8 +114,7 @@ object NetworkModule {
         return getRetrofitBuilder(
             gson,
             httpClient.newBuilder().addInterceptor(userAgentInterceptor).build()
-        )
-            .baseUrl("https://fdown.net/")
+        ).baseUrl("https://fdown.net/")
             .build().create(FDownServices::class.java)
     }
 
