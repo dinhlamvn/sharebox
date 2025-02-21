@@ -113,9 +113,8 @@
     <string name="members">Thành viên</string>
     <string name="add">Thêm</string>
     <string name="duplicate_member">Trùng thành viên</string>
-    <string name="hint_input_email">Email</string>
-    <string name="title_box_invited">Danh sách Box được mời</string>
-    <string name="invited_boxes">Danh sách Box được mời</string>
+    <string name="hint_input_email">Địa chỉ thư điện tử</string>
+    <string name="title_box_invited">Box được mời của tôi</string>
     <string name="require_sign_in_to_manage_member">Bạn cần đăng nhập để quản lý thành viên của Box</string>
     <string name="error_add_yourself">Bạn không thể thêm chính mình</string>
     <string name="download">Tải vể</string>
@@ -170,13 +169,13 @@
     <string name="nothing_to_save">Không có gì để lưu</string>
     <string name="confirm_done_checklist">Bạn có chắc sẽ đánh dấu hoàn thành task này? Bạn sẽ không thể hoàn tác sao khi task được đánh dấu hoàn thành.</string>
     <string name="saved">Đã lưu</string>
-    <string name="tag_picker_dialog_title">Choose a tag</string>
-    <string name="tags">Tags</string>
-    <string name="view_tags">View shares with tag</string>
-    <string name="update_passcode_desc">Your passcode has been set. If you want to change it, please tap the \"Use Passcode\" button.</string>
-    <string name="require_input_passcode">Please input passcode.</string>
-    <string name="listing">Listing</string>
-    <string name="edit_checklist">Edit Checklist</string>
+    <string name="tag_picker_dialog_title">Chọn nhãn</string>
+    <string name="tags">Nhãn</string>
+    <string name="view_tags">Xem những chia sẻ với nhãn</string>
+    <string name="update_passcode_desc">Mã bảo mật đã được thiết lập. Nếu bạn muốn thay đổi hoặc xóa, vui lòng nhấn nút \"Sử dụng mã\".</string>
+    <string name="require_input_passcode">Vui lòng nhập mã bảo mật.</string>
+    <string name="listing">Danh sách</string>
+    <string name="edit_checklist">Sửa danh sách</string>
 
     <string-array name="tags_option_menu_items">
         <item>Sửa</item>

@@ -12,7 +12,6 @@ import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.openShare
-import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
@@ -69,6 +68,7 @@ class MyInviteShareListingActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
         shareAdapter.attachTo(binding.recyclerView, this)
 
         viewModel.listen(this)
@@ -79,7 +79,6 @@ class MyInviteShareListingActivity :
             "f064",
             "f4ad",
             "f0c5",
-            "f24d",
         )
         val choiceItems =
             resources.getStringArray(R.array.my_invite_share_listing_item_more_action)
@@ -99,7 +98,6 @@ class MyInviteShareListingActivity :
                     )
 
                     2 -> shareHelper.copyShare(this, share)
-                    3 -> showToast("Clone")
                 }
             }
 

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="my_invite_share_listing_item_more_action">
-        <item>Share to</item>
-        <item>View Note</item>
-        <item>Copy</item>
-        <item>Clone</item>
+        <item>Chia sẻ tới</item>
+        <item>Xem ghi chú</item>
+        <item>Sao chép</item>
     </string-array>
 </resources>
