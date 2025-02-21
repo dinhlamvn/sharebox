@@ -31,7 +31,7 @@ interface Router {
 
     fun settingCompose(): Intent
 
-    fun boxDetail(context: Context, boxId: String, isFromInvited: Boolean): Intent
+    fun boxDetail(context: Context, boxId: String): Intent
 
     fun profile(context: Context): Intent
     fun textInput(context: Context, title: String?, text: String?, isEdit: Boolean): Intent
@@ -44,7 +44,8 @@ interface Router {
 
     fun trash(context: Context): Intent
     fun boxMembers(context: Context, boxId: String): Intent
-    fun boxInvited(context: Context): Intent
+    fun myInvites(context: Context): Intent
+    fun myInviteShareListing(context: Context, inviterId: String, boxId: String): Intent
 
     fun clipboard(context: Context): Intent
 

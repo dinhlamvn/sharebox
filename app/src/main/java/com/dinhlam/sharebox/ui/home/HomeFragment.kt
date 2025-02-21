@@ -293,7 +293,7 @@ class HomeFragment :
     }
 
     fun openBox(boxId: String) {
-        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId, false))
+        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId))
     }
 
     private fun editBox(boxDetail: BoxDetail) {

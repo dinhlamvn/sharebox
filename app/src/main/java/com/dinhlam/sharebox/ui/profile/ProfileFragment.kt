@@ -137,7 +137,7 @@ class ProfileFragment :
                     "f0c1",
                     getString(R.string.title_box_invited),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        startActivity(router.boxInvited(requireContext()))
+                        startActivity(router.myInvites(requireContext()))
                     })
                 ).attachTo(this)
 

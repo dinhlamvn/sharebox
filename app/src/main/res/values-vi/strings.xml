@@ -175,6 +175,8 @@
     <string name="view_tags">View shares with tag</string>
     <string name="update_passcode_desc">Your passcode has been set. If you want to change it, please tap the \"Use Passcode\" button.</string>
     <string name="require_input_passcode">Please input passcode.</string>
+    <string name="listing">Listing</string>
+    <string name="edit_checklist">Edit Checklist</string>
 
     <string-array name="tags_option_menu_items">
         <item>Sửa</item>

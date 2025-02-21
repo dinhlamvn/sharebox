@@ -24,6 +24,7 @@ data class BottomSheetShareActionState(
         MOVE_TO_OTHER_BOX,
         COPY,
         DOWNLOAD,
+        EDIT_CHECK_LIST,
         TAGS,
         VIEW_TAGS,
         COPY_BOX_ID,

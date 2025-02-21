@@ -23,14 +23,14 @@ class SyncRealtimeDataService : Service() {
 
     override fun onBind(intent: Intent?): IBinder {
         Logger.debug("Realtime service is running.")
-        realtimeDatabaseRepository.sync()
+        realtimeDatabaseRepository.listen()
         return binder
     }
 
     override fun onRebind(intent: Intent?) {
         super.onRebind(intent)
         Logger.debug("Realtime service is running.")
-        realtimeDatabaseRepository.sync()
+        realtimeDatabaseRepository.listen()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {

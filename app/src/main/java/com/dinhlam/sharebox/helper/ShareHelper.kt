@@ -15,18 +15,25 @@ import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.dialog.action.BottomSheetShareActionDialogFragment
-import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.format
+import com.dinhlam.sharebox.extensions.ifNotZero
+import com.dinhlam.sharebox.extensions.ifTrue
+import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.VideoSource
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.storage.FirebaseStorageManager
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
+import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,6 +42,7 @@ import javax.inject.Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
     private val router: Router,
+    private val firebaseStorageManager: FirebaseStorageManager
 ) {
 
     fun showMore(
@@ -48,7 +56,7 @@ class ShareHelper @Inject constructor(
         ).bottomSheetDismissListener = onBottomSheetDismissListener
     }
 
-    fun shareToOther(share: ShareDetail) {
+    fun shareToOther(activity: FragmentActivity, share: ShareDetail) {
         val intent = Intent(Intent.ACTION_SEND)
         when (val shareData = share.shareData) {
             is ShareData.ShareUrl -> {
@@ -64,11 +72,20 @@ class ShareHelper @Inject constructor(
             }
 
             is ShareData.ShareImage -> {
-                intent.putExtra(
-                    Intent.EXTRA_STREAM, shareData.uri
-                )
-                intent.setDataAndType(shareData.uri, "image/*")
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                if (shareData.uri.toString().isNetworkUrl()) {
+                    return DownloadFileDialogFragment.showDialog(
+                        activity.supportFragmentManager,
+                        shareData.uri.toString(),
+                        FileUtils.createFileName("image", "jpg"),
+                        "image/jpg"
+                    )
+                } else {
+                    intent.putExtra(
+                        Intent.EXTRA_STREAM, shareData.uri
+                    )
+                    intent.setDataAndType(shareData.uri, "image/*")
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
             }
 
             is ShareData.ShareImages -> {
@@ -81,23 +98,26 @@ class ShareHelper @Inject constructor(
             }
 
             is ShareData.ShareFile -> {
-                intent.putExtra(
-                    Intent.EXTRA_STREAM, shareData.uri
-                )
-                intent.setDataAndType(shareData.uri, "*/*")
-                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                if (shareData.uri.toString().isNetworkUrl()) {
+                    return DownloadFileDialogFragment.showDialog(
+                        activity.supportFragmentManager,
+                        shareData.uri.toString(),
+                        shareData.fileName,
+                        shareData.mimeType
+                    )
+                } else {
+                    intent.putExtra(
+                        Intent.EXTRA_STREAM, shareData.uri
+                    )
+                    intent.setDataAndType(shareData.uri, shareData.mimeType)
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
             }
 
             is ShareData.ShareCheckList -> {
                 intent.putExtra(
                     Intent.EXTRA_TEXT,
-                    shareData.checkListDataList.joinToString("\n") { checkListData ->
-                        "${checkListData.done} - ${checkListData.title} - (${
-                            checkListData.datetime.format(
-                                "dd MMM yyyy, hh:mm a"
-                            )
-                        })"
-                    }
+                    getShareCheckListText(share.shareNote, shareData)
                 )
                 intent.type = "text/*"
             }
@@ -135,12 +155,41 @@ class ShareHelper @Inject constructor(
         }
     }
 
-    fun openTextViewerDialog(activity: FragmentActivity, text: String) {
-        TextViewerDialogFragment().apply {
-            arguments = Bundle().apply {
-                putString(Intent.EXTRA_TEXT, text)
+    fun copyShare(context: Context, share: ShareDetail) {
+        when (val shareData = share.shareData) {
+            is ShareData.ShareText -> context.copy(shareData.text)
+            is ShareData.ShareUrl -> context.copy(shareData.url)
+            is ShareData.ShareCheckList -> {
+                val text = getShareCheckListText(share.shareNote, shareData)
+                context.copy(text)
             }
-        }.show(activity.supportFragmentManager, "TextViewerDialogFragment")
+
+            else -> context.showToast(R.string.nothing_to_copy)
+        }
+    }
+
+    private fun getShareCheckListText(shareNote: String?, shareData: ShareData.ShareCheckList): String {
+        return buildString {
+            append("Check List [${shareNote.takeIfNotNullOrBlank() ?: "-"}]")
+            append("\n\n")
+
+            for (checklist in shareData.checkListDataList) {
+                append("• Work title: ")
+                append(checklist.title)
+                append("\n")
+                append("• Deadline: ")
+                append(
+                    checklist.datetime.ifNotZero.ifTrue(
+                        checklist.datetime.format("dd MMM yyyy, HH:mm"),
+                        "-"
+                    )
+                )
+                append("\n")
+                append("• Status: ")
+                append(checklist.done.ifTrue("Done", "Not Done"))
+                append("\n--------------------")
+            }
+        }
     }
 
     fun viewShareImage(context: Context, uri: Uri) {

@@ -66,8 +66,8 @@ class DownloadFileDialogFragment :
                 binding.textProgress.text =
                     getString(R.string.percentage, state.downloadState.progress)
                 binding.progressBar.progress = state.downloadState.progress
-            } else {
-                binding.progressBar.progress = 100
+            } else if (state.downloadState.totalBytesDownloaded > 0L) {
+                binding.progressBar.progress = 0
                 binding.textProgress.text = getString(
                     R.string.downloaded,
                     state.downloadState.totalBytesDownloaded.asHumanReadableSize()

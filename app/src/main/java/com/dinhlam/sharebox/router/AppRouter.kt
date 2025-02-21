@@ -19,7 +19,6 @@ import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
-import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
 import com.dinhlam.sharebox.ui.checklist.CheckListActivity
@@ -29,6 +28,8 @@ import com.dinhlam.sharebox.ui.guideline.GuidelineActivity
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.link.ShareLinkActivity
+import com.dinhlam.sharebox.ui.myinvites.MyInvitesActivity
+import com.dinhlam.sharebox.ui.myinvites.listing.MyInviteShareListingActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.setting.SettingActivity
@@ -153,10 +154,9 @@ class AppRouter(private val context: Context) : Router {
         return Intent(context, SettingComposeActivity::class.java)
     }
 
-    override fun boxDetail(context: Context, boxId: String, isFromInvited: Boolean): Intent {
+    override fun boxDetail(context: Context, boxId: String): Intent {
         return Intent(context, BoxDetailActivity::class.java)
             .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
-            .putExtra(AppExtras.EXTRA_BOOLEAN, isFromInvited)
     }
 
     override fun profile(context: Context): Intent {
@@ -212,8 +212,14 @@ class AppRouter(private val context: Context) : Router {
         )
     }
 
-    override fun boxInvited(context: Context): Intent {
-        return Intent(context, BoxInvitedActivity::class.java)
+    override fun myInvites(context: Context): Intent {
+        return Intent(context, MyInvitesActivity::class.java)
+    }
+
+    override fun myInviteShareListing(context: Context, inviterId: String, boxId: String): Intent {
+        return Intent(context, MyInviteShareListingActivity::class.java)
+            .putExtra(AppExtras.EXTRA_ID, inviterId)
+            .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
     }
 
     override fun clipboard(context: Context): Intent {

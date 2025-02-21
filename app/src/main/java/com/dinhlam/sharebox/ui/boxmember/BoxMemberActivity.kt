@@ -36,7 +36,7 @@ class BoxMemberActivity :
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.listen(getState(viewModel, BoxMemberState::boxId))
+                viewModel.listenDataChangeEvent(this)
             } else {
                 showToast(R.string.error_require_passcode)
                 finish()
@@ -95,7 +95,7 @@ class BoxMemberActivity :
                 )
                 passcodeConfirmResultLauncher.launch(intent)
             } else {
-                viewModel.listen(getState(viewModel, BoxMemberState::boxId))
+                viewModel.listenDataChangeEvent(this)
             }
         }
     }

@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -15,9 +14,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
-import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
-import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.extensions.showToast
@@ -36,13 +33,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>() {
-
-    private val isFromInvite: Boolean by lazy {
-        intent.getBooleanExtra(
-            AppExtras.EXTRA_BOOLEAN,
-            false
-        )
-    }
 
     private val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -196,38 +186,7 @@ class BoxDetailActivity :
     }
 
     private fun showMore(share: ShareDetail) {
-        if (isFromInvite) {
-            val arrayIcons = arrayOf(
-                "f064", "f56d", "f0c5"
-            )
-            val choiceItems =
-                resources.getStringArray(R.array.more_menu_invited)
-                    .mapIndexed { index, text ->
-                        BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
-                            arrayIcons[index], text
-                        )
-                    }.toTypedArray()
-
-            BottomSheetOptionsMenuDialogFragment.show(
-                supportFragmentManager,
-                choiceItems,
-                bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
-            ) { position, _, args ->
-                getState(viewModel) { state ->
-                    val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
-                    val shareData =
-                        state.shares.firstOrNull { share -> share.shareId == shareId }
-                            ?: return@getState
-                    when (position) {
-                        0 -> shareHelper.shareToOther(shareData)
-                        1 -> shareHelper.downloadShareContent(this, shareData)
-                        2 -> copy(shareData.boxDetail?.boxId)
-                    }
-                }
-            }
-        } else {
-            shareHelper.showMore(this, share, viewModel::loadShares)
-        }
+        shareHelper.showMore(this, share, viewModel::loadShares)
     }
 
     private fun openShare(shareDetail: ShareDetail) {

@@ -173,7 +173,7 @@ class TagsActivity : BaseViewModelActivity<TagsState, TagsViewModel, ActivityTag
         popupWindow.showAsDropDown(view, 0, 8.dp)
     }
 
-    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+    override fun onOptionItemSelected(position: Int, itemText: String, args: Bundle) {
         val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return
         when (position) {
             0 -> viewModel.clearTag(shareId)

@@ -18,14 +18,12 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentBottomSheetShareActionBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.dialog.tag.TagPickerDialogFragment
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.IconTextListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -114,6 +112,7 @@ class BottomSheetShareActionDialogFragment :
             BottomSheetShareActionState.ActionId.MOVE_TO_OTHER_BOX -> onRequestMoveShare()
             BottomSheetShareActionState.ActionId.COPY -> copyShare(share)
             BottomSheetShareActionState.ActionId.DOWNLOAD -> downloadShare(share)
+            BottomSheetShareActionState.ActionId.EDIT_CHECK_LIST -> editCheckList(share)
             BottomSheetShareActionState.ActionId.TAGS -> onTags(share.shareId)
             BottomSheetShareActionState.ActionId.VIEW_TAGS -> onViewTags(share.tagId)
             BottomSheetShareActionState.ActionId.COPY_BOX_ID -> copyBoxID(share)
@@ -139,7 +138,7 @@ class BottomSheetShareActionDialogFragment :
     }
 
     private fun shareToOther(share: ShareDetail) {
-        shareHelper.shareToOther(share)
+        shareHelper.shareToOther(requireActivity(), share)
         dismiss()
     }
 
@@ -169,15 +168,17 @@ class BottomSheetShareActionDialogFragment :
     }
 
     private fun copyShare(share: ShareDetail) {
-        val content = share.shareData.cast<ShareData.ShareText>()?.text
-            ?: share.shareData.cast<ShareData.ShareUrl>()?.url
-            ?: return showToast(R.string.nothing_to_copy)
-        context?.copy(content)
+        shareHelper.copyShare(requireContext(), share)
         dismiss()
     }
 
     private fun downloadShare(share: ShareDetail) {
         shareHelper.downloadShareContent(requireContext(), share)
+        dismiss()
+    }
+
+    private fun editCheckList(share: ShareDetail) {
+        startActivity(router.checkList(requireContext(), share.shareId))
         dismiss()
     }
 

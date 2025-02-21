@@ -9,19 +9,27 @@ object Logger {
 
     private var enableLog = false
 
+    private var logTag: String = TAG
+
     init {
         enableLog = BuildConfig.DEBUG
     }
 
+    fun withTag(tag: String): Logger {
+        return this.apply {
+            logTag = tag
+        }
+    }
+
     fun debug(message: String) {
         if (enableLog) {
-            Log.d(TAG, message)
+            Log.d(logTag, message)
         }
     }
 
     fun error(message: String) {
         if (enableLog) {
-            Log.e(TAG, message)
+            Log.e(logTag, message)
         }
     }
 
@@ -32,7 +40,7 @@ object Logger {
 
     fun warning(message: String, t: Throwable?) {
         if (enableLog) {
-            Log.w(TAG, message, t)
+            Log.w(logTag, message, t)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.ui.boxinvited
+package com.dinhlam.sharebox.ui.myinvites
 
 import android.os.Bundle
 import android.view.Gravity
@@ -6,7 +6,7 @@ import android.view.View
 import androidx.activity.viewModels
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelActivity
-import com.dinhlam.sharebox.databinding.ActivityBoxInvitedBinding
+import com.dinhlam.sharebox.databinding.ActivityMyInvitesBinding
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
@@ -17,8 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoxInvitedActivity :
-    BaseViewModelActivity<BoxInvitedState, BoxInvitedViewModel, ActivityBoxInvitedBinding>() {
+class MyInvitesActivity :
+    BaseViewModelActivity<MyInvitesState, MyInvitesViewModel, ActivityMyInvitesBinding>() {
 
     @Inject
     lateinit var router: Router
@@ -33,12 +33,18 @@ class BoxInvitedActivity :
             state.boxList.forEach { box ->
                 TextListModel(
                     "box_${box.boxId}",
-                    box.boxName,
+                    box.boxId,
                     height = 50.dp(),
                     gravity = Gravity.CENTER_VERTICAL,
                     padding = Spacing.Horizontal(16.dp(), 16.dp()),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        startActivity(router.boxDetail(this@BoxInvitedActivity, box.boxId, true))
+                        startActivity(
+                            router.myInviteShareListing(
+                                this@MyInvitesActivity,
+                                box.invitedBy,
+                                box.boxId
+                            )
+                        )
                     })
                 ).attachTo(this)
                 VerticalDividerListModel("divider_${box.boxId}").attachTo(this)
@@ -46,13 +52,13 @@ class BoxInvitedActivity :
         }
     }
 
-    override fun onCreateViewBinding(): ActivityBoxInvitedBinding {
-        return ActivityBoxInvitedBinding.inflate(layoutInflater)
+    override fun onCreateViewBinding(): ActivityMyInvitesBinding {
+        return ActivityMyInvitesBinding.inflate(layoutInflater)
     }
 
-    override val viewModel: BoxInvitedViewModel by viewModels()
+    override val viewModel: MyInvitesViewModel by viewModels()
 
-    override fun onStateChanged(state: BoxInvitedState) {
+    override fun onStateChanged(state: MyInvitesState) {
         invitedBoxAdapter.requestBuildListModels()
     }
 
@@ -61,5 +67,7 @@ class BoxInvitedActivity :
         setSupportActionBar(binding.toolbar)
 
         invitedBoxAdapter.attachTo(binding.recyclerView, this)
+
+        viewModel.listenDataChangeEvent(this)
     }
 }

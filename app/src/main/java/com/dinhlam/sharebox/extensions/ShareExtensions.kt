@@ -1,10 +1,7 @@
 package com.dinhlam.sharebox.extensions
 
 import android.content.Context
-import android.content.Intent
-import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
-import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareData
@@ -26,9 +23,7 @@ fun Context.openShare(
         )
 
         is ShareData.ShareText -> {
-            TextViewerDialogFragment().apply {
-                arguments = bundleOf(Intent.EXTRA_TEXT to shareData.text)
-            }.show(fragmentManager, "dialog_text_viewer")
+            TextViewerDialogFragment.showDialog(fragmentManager, shareData.text)
         }
 
         is ShareData.ShareImage -> shareHelper.viewShareImage(
@@ -40,17 +35,40 @@ fun Context.openShare(
         )
 
         is ShareData.ShareFile -> {
-            val downloadUrl = shareData.uri.toString()
-            DownloadFileDialogFragment.showDialog(
-                fragmentManager,
-                downloadUrl,
-                shareData.fileName,
-                shareData.mimeType
-            )
+            val text = buildString {
+                append("<b>Name: </b>")
+                append(shareData.fileName)
+                append("\n\n")
+                append("<b>Size: </b>")
+                append(shareData.fileSize.asHumanReadableSize())
+            }
+            TextViewerDialogFragment.showDialog(fragmentManager, text)
         }
 
         is ShareData.ShareCheckList -> {
-            startActivity(router.checkList(this, shareDetail.shareId))
+            val text = buildString {
+                append("<b>Check List</b> [${shareDetail.shareNote.takeIfNotNullOrBlank() ?: "-"}]")
+                append("\n")
+
+                for (checklist in shareData.checkListDataList) {
+                    append("\n")
+                    append("• Work title: ")
+                    append(checklist.title)
+                    append("\n")
+                    append("• Deadline: ")
+                    append(
+                        checklist.datetime.ifNotZero.ifTrue(
+                            checklist.datetime.format("dd MMM yyyy, HH:mm"),
+                            "-"
+                        )
+                    )
+                    append("\n")
+                    append("• Status: ")
+                    append(checklist.done.ifTrue("Done", "Not Done"))
+                    append("\n--------------------")
+                }
+            }
+            TextViewerDialogFragment.showDialog(fragmentManager, text)
         }
     }
 }

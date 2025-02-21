@@ -12,14 +12,14 @@ class ShareToShareDetailMapper @Inject constructor() {
 
     fun map(
         share: Share,
-        commentNumber: Int,
-        likeNumber: Int,
-        liked: Boolean,
-        commentDetail: CommentDetail?,
-        boxDetail: BoxDetail?,
-        isVideoShare: Boolean,
-        tagId: Int?,
-        tagColor: Int?,
+        commentNumber: Int = 0,
+        likeNumber: Int = 0,
+        liked: Boolean = false,
+        commentDetail: CommentDetail? = null,
+        boxDetail: BoxDetail? = null,
+        isVideoShare: Boolean = false,
+        tagId: Int? = null,
+        tagColor: Int? = null,
     ): ShareDetail {
         return ShareDetail(
             share.id,

@@ -116,7 +116,7 @@ class TrashActivity :
         }
     }
 
-    override fun onOptionItemSelected(position: Int, item: String, args: Bundle) {
+    override fun onOptionItemSelected(position: Int, itemText: String, args: Bundle) {
         getState(viewModel) { state ->
             val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
             val share =

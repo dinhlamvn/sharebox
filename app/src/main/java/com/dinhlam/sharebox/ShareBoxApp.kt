@@ -14,6 +14,7 @@ import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.imageloader.ImageLoader
 import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.services.RealtimeServiceManager
@@ -84,6 +85,7 @@ class ShareBoxApp : Application(), Configuration.Provider {
         requestApplyTheme()
         ImageLoader.setLoader(GlideImageLoader)
 
+        Logger.debug("Current User ID: ${userHelper.getCurrentUserId()}")
         if (userHelper.isSignedIn()) {
             FirebaseCrashlytics.getInstance().setUserId(userHelper.getCurrentUserId())
         }

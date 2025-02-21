@@ -32,6 +32,7 @@ class BottomSheetShareActionViewModel @Inject constructor(
 
     fun buildActions(context: Context, share: ShareDetail?) {
         val shareDetail = share ?: return setState { copy(actions = emptyList()) }
+        val shareData = shareDetail.shareData
         val actions = buildList {
             add(
                 BottomSheetShareActionState.Action(
@@ -55,7 +56,7 @@ class BottomSheetShareActionViewModel @Inject constructor(
                 )
             )
 
-            if (shareDetail.shareData is ShareData.ShareText || shareDetail.shareData is ShareData.ShareUrl) {
+            if (shareData is ShareData.ShareText || shareData is ShareData.ShareUrl || shareData is ShareData.ShareCheckList) {
                 add(
                     BottomSheetShareActionState.Action(
                         BottomSheetShareActionState.ActionId.COPY,
@@ -72,6 +73,16 @@ class BottomSheetShareActionViewModel @Inject constructor(
                     )
                 )
             }
+            if (shareData is ShareData.ShareCheckList) {
+                add(
+                    BottomSheetShareActionState.Action(
+                        BottomSheetShareActionState.ActionId.EDIT_CHECK_LIST,
+                        "f0ae",
+                        context.getString(R.string.edit_checklist)
+                    )
+                )
+            }
+
             add(
                 BottomSheetShareActionState.Action(
                     BottomSheetShareActionState.ActionId.TAGS,
