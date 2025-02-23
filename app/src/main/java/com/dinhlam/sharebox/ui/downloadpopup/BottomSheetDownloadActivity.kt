@@ -13,6 +13,7 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityDownloadBottomSheetBinding
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.extensions.asFileExtension
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.isLocalUri
@@ -20,11 +21,11 @@ import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.helper.DownloadHelper
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -197,23 +198,35 @@ class BottomSheetDownloadActivity :
     }
 
     private fun downloadVideo(mimeType: String, downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("video", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("video", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            supportFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
     private fun downloadAudio(mimeType: String, downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("audio", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("audio", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            supportFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
-    private fun downloadImage(mimeType: String, url: String) {
-        val outputFile = FileUtils.createFileName("image", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(this, url, outputFile)
+    private fun downloadImage(mimeType: String, downloadUrl: String) {
+        val fileName = FileUtils.createFileName("image", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            supportFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
     private fun downloadFile(mimeType: String, downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("file", mimeType.asFileExtension())
-        DownloadHelper.enqueueDownload(this, downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("file", mimeType.asFileExtension())
+        DownloadFileDialogFragment.startDownload(
+            supportFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, mimeType)
+        )
     }
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {

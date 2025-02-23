@@ -1,7 +1,9 @@
 package com.dinhlam.sharebox.extensions
 
 import android.content.res.Resources
+import android.graphics.Color
 import android.util.TypedValue
+import androidx.annotation.ColorInt
 import java.text.DecimalFormat
 import java.util.Calendar
 import java.util.TimeZone
@@ -63,4 +65,12 @@ fun Number.asHumanReadableSize(): String {
         bytes >= 1 shl 10 -> "%.0f kB".format(bytes / (1 shl 10))
         else -> "$this bytes"
     }
+}
+
+@ColorInt
+fun Int.asColorInt(): Int {
+    val red = Color.red(this)
+    val green = Color.green(this)
+    val blue = Color.blue(this)
+    return Color.rgb(red, green, blue)
 }

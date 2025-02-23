@@ -1,16 +1,12 @@
 package com.dinhlam.sharebox.ui.home
 
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.ifTrue
-import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareData
-import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -18,9 +14,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
     private val userHelper: UserHelper,
-    private val bookmarkRepository: BookmarkRepository,
     private val boxRepository: BoxRepository,
-    private val appSettingHelper: AppSettingHelper
+    private val appSettingHelper: AppSettingHelper,
 ) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {
@@ -72,58 +67,8 @@ class HomeViewModel @Inject constructor(
         copy(shares = shareList)
     }
 
-    fun bookmark(shareId: String, bookmarkCollectionId: String?) = doInBackground {
-        bookmarkCollectionId?.let { id ->
-            val bookmarkDetail = bookmarkRepository.findOne(shareId)
-            if (bookmarkDetail?.bookmarkCollectionId != bookmarkCollectionId) {
-                val bookmarked =
-                    bookmarkRepository.bookmark(bookmarkDetail?.id.orElse(0), shareId, id)
-                if (bookmarked) {
-                    setState {
-                        val shareList = shares.map { shareDetail ->
-                            if (shareDetail.shareId == shareId) {
-                                shareDetail.copy(bookmarked = true)
-                            } else {
-                                shareDetail
-                            }
-                        }
-                        copy(shares = shareList)
-                    }
-                }
-            }
-        } ?: run {
-            val deleted = bookmarkRepository.delete(shareId)
-            if (deleted) {
-                setState {
-                    val shareList = shares.map { shareDetail ->
-                        if (shareDetail.shareId == shareId) {
-                            shareDetail.copy(bookmarked = false)
-                        } else {
-                            shareDetail
-                        }
-                    }
-                    copy(shares = shareList)
-                }
-            }
-        }
-    }
-
     fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
         copy(chooseBoxFor = chooseBoxFor)
-    }
-
-    fun setCurrentShare(shareDetail: ShareDetail?) = setState { copy(currentShare = shareDetail) }
-
-    fun saveShareText(text: String?) = getState { state ->
-        val currentShare = state.currentShare ?: return@getState
-        val shareId = currentShare.shareId
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)
-            share?.let { updateShare ->
-                shareRepository.update(updateShare.copy(shareData = ShareData.ShareText(text.orEmpty())))
-                shareRepository.findOne(shareId)
-            } ?: currentShare
-        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
     }
 
     fun refreshBoxDetail(boxDetail: BoxDetail) = getState { state ->
@@ -135,25 +80,5 @@ class HomeViewModel @Inject constructor(
             }
         }
         setState { copy(boxes = boxes) }
-    }
-
-    fun reloadBoxDetail(id: String) {
-        suspend {
-            boxRepository.findOne(id)!!
-        }.execute { asyncLoad ->
-            if (asyncLoad is AsyncLoad.Success) {
-                val box = asyncLoad.value
-                val newBoxList = boxes.map { boxDetail ->
-                    if (boxDetail.boxId == id) {
-                        box
-                    } else {
-                        boxDetail
-                    }
-                }
-                copy(boxes = newBoxList)
-            } else {
-                this
-            }
-        }
     }
 }

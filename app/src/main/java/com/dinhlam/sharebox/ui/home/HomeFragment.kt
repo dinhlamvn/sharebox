@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
@@ -22,23 +23,21 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
-import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.extensions.packageName
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
-import com.dinhlam.sharebox.utils.LiveEvents
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -50,15 +49,6 @@ class HomeFragment :
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.refresh()
-            }
-        }
-
-    private val editBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { id ->
-                    viewModel.reloadBoxDetail(id)
-                }
             }
         }
 
@@ -85,17 +75,22 @@ class HomeFragment :
             }
         }
 
-    private val openShareTextResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.saveShareText(result.data?.getStringExtra(Intent.EXTRA_TEXT))
-            }
-        }
-
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (!isGranted) {
                 showAlertDialog()
+            }
+        }
+
+    private val passcodeConfirmResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                onEditBox(boxId)
+            } else {
+                showToast(R.string.error_require_passcode)
             }
         }
 
@@ -207,10 +202,6 @@ class HomeFragment :
                 viewModel.refresh()
             }
         }
-
-        LiveEvents.onBottomSheetShareActionRefreshEvent.observe(viewLifecycleOwner) {
-            viewModel.refresh()
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
@@ -298,66 +289,33 @@ class HomeFragment :
     }
 
     fun showMore(shareDetail: ShareDetail) {
-        shareHelper.showMore(requireActivity(), shareDetail)
-    }
-
-    fun openShare(shareDetail: ShareDetail) {
-        when (val shareData = shareDetail.shareData) {
-            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
-                requireContext(),
-                shareData.url,
-                shareDetail.boxDetail?.boxId,
-                shareDetail.boxDetail?.boxName
-            )
-
-            is ShareData.ShareText -> {
-                viewModel.setCurrentShare(shareDetail)
-                openShareTextResultLauncher.launch(
-                    router.textInput(
-                        requireContext(),
-                        null,
-                        shareData.text,
-                        true
-                    )
-                )
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                requireContext(), shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                requireContext(), shareData.uris
-            )
-
-            is ShareData.ShareFile -> {
-                val downloadUrl = shareData.uri.toString()
-                DownloadFileDialogFragment.showDialog(
-                    childFragmentManager,
-                    downloadUrl,
-                    shareData.fileName,
-                    shareData.mimeType
-                )
-            }
-
-            is ShareData.ShareCheckList -> {
-                val checkList = shareData.checkListDataList
-                startActivity(router.checkList(requireContext(), shareDetail.shareId))
-            }
-        }
+        shareHelper.showMore(requireActivity(), shareDetail, viewModel::refresh)
     }
 
     fun openBox(boxId: String) {
-        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId, false))
+        viewBoxDetailLauncher.launch(router.boxDetail(requireContext(), boxId))
     }
 
-    private fun editBox(boxId: String) {
-        editBoxResultLauncher.launch(
-            router.boxForm(
-                requireContext(),
-                boxId
+    private fun editBox(boxDetail: BoxDetail) {
+        if (boxDetail.isHasPasscode) {
+            passcodeConfirmResultLauncher.launch(
+                router.passcodeIntent(
+                    requireContext(),
+                    boxDetail.passcode,
+                    bundleOf(AppExtras.EXTRA_BOX_ID to boxDetail.boxId),
+                    getString(
+                        R.string.dialog_bookmark_collection_picker_verify_passcode,
+                        boxDetail.boxName
+                    )
+                )
             )
-        )
+        } else {
+            onEditBox(boxDetail.boxId)
+        }
+    }
+
+    private fun onEditBox(boxId: String) {
+        startActivity(router.boxForm(requireContext(), boxId))
     }
 
     private fun requestManageMembers(boxId: String) {
@@ -389,7 +347,7 @@ class HomeFragment :
             items
         ) { position, _, _ ->
             when (position) {
-                0 -> editBox(boxDetail.boxId)
+                0 -> editBox(boxDetail)
                 1 -> requestManageMembers(boxDetail.boxId)
                 2 -> context?.copy(boxDetail.boxId)
             }
@@ -402,5 +360,9 @@ class HomeFragment :
 
     fun requestCreateBox() {
         createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+    }
+
+    fun openShare(shareDetail: ShareDetail) {
+        context?.openShare(childFragmentManager, shareDetail, router, shareHelper)
     }
 }

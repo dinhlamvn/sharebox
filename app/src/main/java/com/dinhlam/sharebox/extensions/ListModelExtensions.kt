@@ -33,13 +33,22 @@ fun ShareDetail.buildListItemListModel(
         }
     }
 
-    fun getRecentlySubtitle(shareDetail: ShareDetail): String? {
+    fun getRecentlySubtitle(shareDetail: ShareDetail): String {
         return when (val shareData = shareDetail.shareData) {
-            is ShareData.ShareText -> "${shareDetail.createdAt.format("yyyy MMM d HH:mm")} ${shareDetail.shareNote}"
-            is ShareData.ShareUrl -> shareDetail.shareNote
-            is ShareData.ShareImage -> shareDetail.createdAt.format("yyyy MMM d HH:mm")
-            is ShareData.ShareImages -> shareDetail.createdAt.format()
-            is ShareData.ShareFile -> shareData.fileSize.asHumanReadableSize()
+            is ShareData.ShareText -> shareDetail.shareNote.takeIfNotNullOrBlank()
+                ?: shareDetail.createdAt.format("yyyy MMM d, HH:mm")
+
+            is ShareData.ShareUrl -> shareDetail.shareNote.takeIfNotNullOrBlank()
+                ?: shareDetail.createdAt.format("yyyy MMM d, HH:mm")
+
+            is ShareData.ShareImage -> shareDetail.createdAt.format("yyyy MMM d, HH:mm")
+            is ShareData.ShareImages -> shareDetail.createdAt.format("yyyy MMM d, HH:mm")
+            is ShareData.ShareFile -> buildString {
+                append(shareData.fileSize.asHumanReadableSize())
+                append(" - ")
+                append(shareDetail.createdAt.format("yyyy MMM d, HH:mm"))
+            }
+
             is ShareData.ShareCheckList -> shareData.checkListDataList.run {
                 val totalDone = count { checkListData -> checkListData.done }
                 val totalUnDone = count { checkListData -> !checkListData.done }
@@ -47,7 +56,7 @@ fun ShareDetail.buildListItemListModel(
                     size,
                     totalDone,
                     totalUnDone,
-                    shareDetail.createdAt.format("yyyy MMM d HH:mm")
+                    shareDetail.createdAt.format("yyyy MMM d, HH:mm")
                 )
             }
         }
@@ -59,6 +68,7 @@ fun ShareDetail.buildListItemListModel(
         getRecentlyIcon(this.shareData),
         getRecentlyTitle(this),
         getRecentlySubtitle(this),
+        this.tagColor,
         BaseListAdapter.NoHashProp(View.OnClickListener {
             onShowMore(this)
         }),

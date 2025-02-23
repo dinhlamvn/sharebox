@@ -73,6 +73,7 @@ class ProfileFragment :
                 val margin = screenWidth.minus(48.dp()).div(2)
 
                 DrawableImageListModel(
+                    "setting",
                     Icons.settingIcon(requireContext()),
                     width = 48.dp(),
                     height = 48.dp(),
@@ -105,11 +106,11 @@ class ProfileFragment :
             ).attachTo(this)
 
             IconTextListModel(
-                "bookmark",
-                "f02e",
-                getString(R.string.title_bookmark_collection),
+                "tags",
+                "f02b",
+                getString(R.string.tags),
                 actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                    startActivity(router.bookmark(requireContext()))
+                    startActivity(router.tags(requireContext()))
                 })
             ).attachTo(this)
 
@@ -136,7 +137,7 @@ class ProfileFragment :
                     "f0c1",
                     getString(R.string.title_box_invited),
                     actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                        startActivity(router.boxInvited(requireContext()))
+                        startActivity(router.myInvites(requireContext()))
                     })
                 ).attachTo(this)
 

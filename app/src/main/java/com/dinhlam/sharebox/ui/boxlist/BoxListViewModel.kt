@@ -5,7 +5,6 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.model.BoxDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -76,14 +75,6 @@ class BoxListViewModel @Inject constructor(
             boxRepository.search(query, userHelper.getCurrentUserId())
         }.execute { asyncLoad ->
             copy(searchBoxes = asyncLoad.data.orEmpty(), isSearching = true)
-        }
-    }
-
-    fun setSelectedBox(box: BoxDetail?) = getState { state ->
-        if (state.selectedBox?.boxId == box?.boxId) {
-            setState { copy(selectedBox = null) }
-        } else {
-            setState { copy(selectedBox = box) }
         }
     }
 }

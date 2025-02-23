@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/tag"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="3dp"
+        app:cardCornerRadius="1000dp"
+        app:layout_constraintDimensionRatio="1,1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/grey_400"
+        app:strokeWidth="0dp" />
+
+    <com.dinhlam.sharebox.view.FontAwesomeIconView
+        android:id="@+id/icon_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon_code="f00c"
+        app:icon_color="@color/white"
+        app:icon_size="14dp"
+        app:layout_constraintBottom_toBottomOf="@id/tag"
+        app:layout_constraintEnd_toEndOf="@id/tag"
+        app:layout_constraintStart_toStartOf="@id/tag"
+        app:layout_constraintTop_toTopOf="@id/tag"
+        tools:icon_color="#000" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

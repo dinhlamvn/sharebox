@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.text.underline
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -16,11 +18,12 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentTiktokDiscoverVideoViewerBinding
+import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.extensions.asViewCount
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.updateHeight
-import com.dinhlam.sharebox.helper.DownloadHelper
+import com.dinhlam.sharebox.model.FileDownloadInfo
+import com.dinhlam.sharebox.model.TiktokDiscover
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,10 +38,31 @@ class TiktokDiscoverVideoViewerDialogFragment :
     }
 
     companion object {
-        const val EXTRA_VIEW_TIKTOK_URL = "extra-view-tiktok-url"
-        const val EXTRA_VIEW_DESC = "extra-view-desc"
-        const val EXTRA_VIEW_COUNT = "extra-view-count"
-        const val EXTRA_LIKE_COUNT = "extra-like-count"
+        private const val EXTRA_VIEW_TIKTOK_URL = "extra-view-tiktok-url"
+        private const val EXTRA_VIEW_DESC = "extra-view-desc"
+        private const val EXTRA_VIEW_COUNT = "extra-view-count"
+        private const val EXTRA_LIKE_COUNT = "extra-like-count"
+
+        @JvmStatic
+        fun showDialog(
+            fragmentManager: FragmentManager,
+            videoUrl: String,
+            tiktokDiscover: TiktokDiscover,
+            dialogCallback: OnDialogCallback
+        ) {
+            TiktokDiscoverVideoViewerDialogFragment()
+                .apply {
+                    arguments = bundleOf(
+                        AppExtras.EXTRA_URL to videoUrl,
+                        EXTRA_VIEW_DESC to tiktokDiscover.desc,
+                        EXTRA_VIEW_TIKTOK_URL to tiktokDiscover.url,
+                        EXTRA_VIEW_COUNT to tiktokDiscover.playCount.toInt(),
+                        EXTRA_LIKE_COUNT to tiktokDiscover.diggCount.toInt()
+                    )
+                    this.dialogCallback = dialogCallback
+                }.show(fragmentManager, "tiktok_discover_video_viewer")
+        }
+
     }
 
     override val isUseMaterialDialog: Boolean
@@ -46,6 +70,8 @@ class TiktokDiscoverVideoViewerDialogFragment :
 
     @Inject
     lateinit var router: Router
+
+    var dialogCallback: OnDialogCallback? = null
 
     private val playerListener = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
@@ -141,12 +167,15 @@ class TiktokDiscoverVideoViewerDialogFragment :
     }
 
     private fun downloadVideo(downloadUrl: String) {
-        val outputFile = FileUtils.createFileName("video", "mp4")
-        DownloadHelper.enqueueDownload(requireContext(), downloadUrl, outputFile)
+        val fileName = FileUtils.createFileName("video", "mp4")
+        DownloadFileDialogFragment.startDownload(
+            childFragmentManager,
+            FileDownloadInfo(downloadUrl, fileName, "video/mp4")
+        )
     }
 
     private fun saveVideoUrl(url: String, desc: String?) {
-        parentFragment?.cast<OnDialogCallback>()?.onSave(url, desc)
+        dialogCallback?.onSave(url, desc)
     }
 
     private fun shareVideo(url: String) {

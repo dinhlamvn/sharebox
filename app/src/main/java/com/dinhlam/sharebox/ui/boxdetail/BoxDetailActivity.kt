@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -15,36 +14,25 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
-import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
-import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
-import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.LiveEvents
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoxDetailActivity :
     BaseViewModelActivity<BoxDetailState, BoxDetailViewModel, ActivityBoxDetailBinding>() {
-
-    private val isFromInvite: Boolean by lazy {
-        intent.getBooleanExtra(
-            AppExtras.EXTRA_BOOLEAN,
-            false
-        )
-    }
 
     private val editBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -60,13 +48,6 @@ class BoxDetailActivity :
     }
 
     override val viewModel: BoxDetailViewModel by viewModels()
-
-    private val openShareTextResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.saveShareText(result.data?.getStringExtra(Intent.EXTRA_TEXT))
-            }
-        }
 
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -98,6 +79,10 @@ class BoxDetailActivity :
 
     private val shareAdapter = BaseListAdapter.create {
         getState(viewModel) { state ->
+            if (state.boxDetail == null || state.requirePasscode) {
+                return@getState LoadingListModel("loading", height = 100.dp).attachTo(this)
+            }
+
             if (state.isRefreshing) {
                 LoadingListModel("top_loading", height = 50.dp).attachTo(this)
             }
@@ -110,6 +95,7 @@ class BoxDetailActivity :
                 state.shares.forEachIndexed { idx, shareDetail ->
                     shareDetail.buildListItemListModel(::showMore, ::openShare)
                         .attachTo(this)
+
                     VerticalDividerListModel(
                         "share_divider_$idx",
                         margin = Spacing.Horizontal(16.dp(), 16.dp())
@@ -157,21 +143,25 @@ class BoxDetailActivity :
         shareAdapter.attachTo(binding.recyclerView, this)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.doOnRefresh()
             binding.swipeRefreshLayout.isRefreshing = false
+            if (getState(viewModel, BoxDetailState::requirePasscode)) {
+                return@setOnRefreshListener
+            }
+            viewModel.doOnRefresh()
         }
 
-        onChange(
-            BoxDetailState::boxDetail,
-            BoxDetailState::mustInputPasscode
-        ) { boxDetail, mustInputPasscode ->
-            if (!boxDetail?.passcode.isNullOrBlank() && mustInputPasscode) {
-                val takeBox = boxDetail ?: return@onChange finish()
+        onChange(BoxDetailState::boxDetail) { boxDetail ->
+            if (boxDetail == null) {
+                return@onChange
+            }
+            val isRequirePasscode = getState(viewModel, BoxDetailState::requirePasscode)
+            if (boxDetail.isHasPasscode && isRequirePasscode) {
                 val intent = router.passcodeIntent(
-                    this, takeBox.passcode!!, getString(
+                    this, boxDetail.passcode,
+                    desc = getString(
                         R.string.dialog_bookmark_collection_picker_verify_passcode,
-                        takeBox.boxName
-                    )
+                        boxDetail.boxName
+                    ),
                 )
                 passcodeConfirmResultLauncher.launch(intent)
             } else {
@@ -185,10 +175,6 @@ class BoxDetailActivity :
                 viewModel.updateShare(asyncLoad.value)
             }
         }
-
-        LiveEvents.onBottomSheetShareActionRefreshEvent.observe(this) {
-            viewModel.loadShares()
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -200,87 +186,15 @@ class BoxDetailActivity :
     }
 
     private fun showMore(share: ShareDetail) {
-        if (isFromInvite) {
-            val arrayIcons = arrayOf(
-                "f064", "f56d", "f0c5"
-            )
-            val choiceItems =
-                resources.getStringArray(R.array.more_menu_invited)
-                    .mapIndexed { index, text ->
-                        BottomSheetOptionsMenuDialogFragment.SingleChoiceItem(
-                            arrayIcons[index], text
-                        )
-                    }.toTypedArray()
-
-            BottomSheetOptionsMenuDialogFragment.show(
-                supportFragmentManager,
-                choiceItems,
-                bundleOf(AppExtras.EXTRA_SHARE_ID to share.shareId)
-            ) { position, _, args ->
-                getState(viewModel) { state ->
-                    val shareId = args.getString(AppExtras.EXTRA_SHARE_ID) ?: return@getState
-                    val shareData =
-                        state.shares.firstOrNull { share -> share.shareId == shareId }
-                            ?: return@getState
-                    when (position) {
-                        0 -> shareHelper.shareToOther(shareData)
-                        1 -> shareHelper.downloadShareContent(this, shareData)
-                        2 -> copy(shareData.boxDetail?.boxId)
-                    }
-                }
-            }
-        } else {
-            shareHelper.showMore(this, share)
-        }
+        shareHelper.showMore(this, share, viewModel::loadShares)
     }
 
-    private fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToChromeCustomTab(
-                this,
-                shareData.url,
-                share.boxDetail?.boxId,
-                share.boxDetail?.boxName
-            )
+    private fun openShare(shareDetail: ShareDetail) {
+        openShare(supportFragmentManager, shareDetail, router, shareHelper)
+    }
 
-            is ShareData.ShareText -> {
-                if (isFromInvite) {
-                    shareHelper.openTextViewerDialog(this, shareData.text)
-                } else {
-                    viewModel.setCurrentShare(share)
-                    openShareTextResultLauncher.launch(
-                        router.textInput(
-                            this,
-                            null,
-                            shareData.text,
-                            true
-                        )
-                    )
-                }
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, shareData.uris
-            )
-
-            is ShareData.ShareFile -> {
-                val downloadUrl = shareData.uri.toString()
-                DownloadFileDialogFragment.showDialog(
-                    supportFragmentManager,
-                    downloadUrl,
-                    shareData.fileName,
-                    shareData.mimeType
-                )
-            }
-
-            is ShareData.ShareCheckList -> {
-                val checkList = shareData.checkListDataList
-                startActivity(router.checkList(this, share.shareId))
-            }
-        }
+    override fun onResume() {
+        super.onResume()
+        viewModel.refresh()
     }
 }

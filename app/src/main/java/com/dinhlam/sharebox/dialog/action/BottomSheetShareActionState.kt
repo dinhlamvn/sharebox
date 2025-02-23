@@ -13,8 +13,21 @@ data class BottomSheetShareActionState(
 ): BaseViewModel.BaseState {
 
     data class Action(
-        val actionId: Int,
+        val actionId: ActionId,
         val icon: String,
         val text: String,
     )
+
+    enum class ActionId {
+        SHARE_TO,
+        EDIT_NOTE,
+        MOVE_TO_OTHER_BOX,
+        COPY,
+        DOWNLOAD,
+        EDIT_CHECK_LIST,
+        TAGS,
+        VIEW_TAGS,
+        COPY_BOX_ID,
+        MOVE_TO_TRASH
+    }
 }

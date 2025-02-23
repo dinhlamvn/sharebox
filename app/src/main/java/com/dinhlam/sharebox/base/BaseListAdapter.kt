@@ -241,7 +241,9 @@ abstract class BaseListAdapter :
         protected val buildContext: Context = itemView.context
 
         abstract fun onBind(model: T, position: Int)
-        abstract fun onUnBind()
+        open fun onUnBind() {
+            // Do no-thing
+        }
     }
 
     abstract class BaseViewHolderViewBinding<T : BaseListModel, VB : ViewBinding>(val binding: VB) :

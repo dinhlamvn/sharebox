@@ -2,7 +2,6 @@
     <string name="share_activity_title">Lưu trữ</string>
     <string name="share_direct_download_activity_title">Tải về</string>
     <string name="text_input_note_hint_desc">Đây là gì?</string>
-    <string name="confirmation">Xác nhận</string>
     <string name="no_result">Không có chia sẻ nào.\nKéo để làm mới dữ liệu.</string>
     <string name="search_hint">Tìm kiếm…</string>
     <string name="like">(%d)</string>
@@ -14,25 +13,13 @@
     <string name="comments_input_hint">Bình luận…</string>
     <string name="title_bookmark_collection">Bộ sưu lưu đánh dấu</string>
     <string name="button_add_bookmark_collection">Tạo bộ sưu tập mới</string>
-    <string name="no_bookmark_collections">Không tìm thấy bộ sưu tập nào.\nNhấp vào nút (+) để tạo mới.</string>
-    <string name="title_bookmark_creator">Bộ sưu tập mới</string>
     <string name="bookmark_collection_hint_name">Tên</string>
-    <string name="bookmark_collection_hint_desc">Mô tả chi tiết</string>
-    <string name="bookmark_collection_error_require_name">Tên không được bỏ trống</string>
-    <string name="bookmark_collection_error_require_desc">Mô tả không được bỏ trống</string>
-    <string name="bookmark_collection_error_require_thumbnail">Hình thu nhỏ không được bỏ trống</string>
     <string name="bookmark_collection_hint_passcode"> Mã bảo mật</string>
-    <string name="action_done">Xong</string>
     <string name="action_clear_passcode">Xóa mã bảo mật</string>
-    <string name="desc_image_bookmark_list_thumbnail">Hình thu nhỏ của bộ sưu tập đánh dấu</string>
-    <string name="dialog_bookmark_collection_picker_title">Đánh dấu chia sẻ vào…</string>
-    <string name="dialog_bookmark_collection_picker_create_new">Mới</string>
-    <string name="dialog_bookmark_collection_picker_no_bookmarks">Không có bộ sưu tập nào.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Nhập mã bảo mật của: %s</string>
     <string name="dialog_confirm">Xác nhận</string>
     <string name="dialog_ok">Đồng ý</string>
     <string name="dialog_cancel">Hủy</string>
-    <string name="bookmark_collection_delete_confirm_message">Bạn có chắc sẽ xóa bộ sưu tập này?</string>
     <string name="collapsed_text">Xem thêm</string>
     <string name="expanded_text">Thu gọn</string>
     <string name="shares_success">Đã lưu trữ</string>
@@ -56,7 +43,6 @@
     <string name="sign_out_confirm_message">Bạn có chắc muốn đăng xuất không?</string>
     <string name="setting_about">%s • Phiên bản %s</string>
     <string name="app_desc">Sharebox là ứng dụng đơn giản để lưu trữ tất cả nội dung bạn muốn và chia sẻ chúng cho mọi người khác.</string>
-    <string name="box_general">Cộng đồng</string>
     <string name="share_text_quote_hint">Nhập vào đây…</string>
     <string name="share_link_hint">Nhập địa chỉ vào đây…</string>
     <string name="require_input_link">Vui lòng nhập địa chỉ</string>
@@ -70,7 +56,7 @@
     <string name="title_setting_sync_background">Đồng bộ dữ liệu hằng ngày</string>
     <string name="message_enqueue_sync_data">Ứng dụng sẽ đồng bộ dữ liệu dưới nền mỗi 6 giờ.</string>
     <string name="message_cancel_enqueue_sync_data">Hủy đồng bộ dữ liệu dưới nền thành công</string>
-    <string name="downloading">Đang tải</string>
+    <string name="downloading">Đang tải về…</string>
     <string name="cancel">Hủy</string>
     <string name="limit_share_image">Chúng tôi chỉ cho phép chia sẻ tối đa 10 ảnh cùng lúc</string>
     <string name="sync_data_to_cloud">Ứng dụng đang đồng bộ dữ liệu lên đám mây</string>
@@ -114,14 +100,12 @@
     <string name="discover">Khám phá</string>
     <string name="discover_subtitle">Khám phá nội dung thú vị về phim, ảnh, nhạc và nhiều thứ khác</string>
     <string name="choose_box_for_web">Chọn Box để lưu trữ địa chỉ</string>
-    <string name="download_content">Tải nội dung này</string>
     <string name="please_choose_box">Vui lòng chọn một Box</string>
     <string name="move_share_to">Di chuyển vào…</string>
     <string name="save">Lưu</string>
     <string name="title_edit_box">Sửa Box</string>
     <string name="title_create_box">Tạo Box</string>
-    <string name="change_passcode">Thay đổi mã</string>
-    <string name="removed_item">Đã xóa %s</string>
+    <string name="use_passcode">Sử dụng mã bảo mật</string>
     <string name="confirm_move_to_trash">Bạn có chắc di chuyển mục này vào thùng rác?</string>
     <string name="title_trash">Thùng rác</string>
     <string name="restore_share_to">Khôi phục vào…</string>
@@ -129,9 +113,8 @@
     <string name="members">Thành viên</string>
     <string name="add">Thêm</string>
     <string name="duplicate_member">Trùng thành viên</string>
-    <string name="hint_input_email">Email</string>
-    <string name="title_box_invited">Danh sách Box được mời</string>
-    <string name="invited_boxes">Danh sách Box được mời</string>
+    <string name="hint_input_email">Địa chỉ thư điện tử</string>
+    <string name="title_box_invited">Box được mời của tôi</string>
     <string name="require_sign_in_to_manage_member">Bạn cần đăng nhập để quản lý thành viên của Box</string>
     <string name="error_add_yourself">Bạn không thể thêm chính mình</string>
     <string name="download">Tải vể</string>
@@ -154,7 +137,6 @@
     <string name="edit_note">Sửa ghi chú</string>
     <string name="move_to">Di chuyển…</string>
     <string name="copy">Sao chép</string>
-    <string name="bookmark">Đánh dấu</string>
     <string name="copy_box_id">Sao chép Box\'s ID</string>
     <string name="move_to_trash">Di chuyển vào thùng rác</string>
     <string name="share_not_found">Chia sẻ không tìm thấy.</string>
@@ -187,13 +169,17 @@
     <string name="nothing_to_save">Không có gì để lưu</string>
     <string name="confirm_done_checklist">Bạn có chắc sẽ đánh dấu hoàn thành task này? Bạn sẽ không thể hoàn tác sao khi task được đánh dấu hoàn thành.</string>
     <string name="saved">Đã lưu</string>
+    <string name="tag_picker_dialog_title">Chọn nhãn</string>
+    <string name="tags">Nhãn</string>
+    <string name="view_tags">Xem những chia sẻ với nhãn</string>
+    <string name="update_passcode_desc">Mã bảo mật đã được thiết lập. Nếu bạn muốn thay đổi hoặc xóa, vui lòng nhấn nút \"Sử dụng mã\".</string>
+    <string name="require_input_passcode">Vui lòng nhập mã bảo mật.</string>
+    <string name="listing">Danh sách</string>
+    <string name="edit_checklist">Sửa danh sách</string>
+    <string name="loading">Loading...</string>
 
-    <string-array name="bookmark_collection_option_menu_items">
+    <string-array name="tags_option_menu_items">
         <item>Sửa</item>
-        <item>Xóa</item>
-    </string-array>
-
-    <string-array name="bookmark_collection_list_option_menu_items">
         <item>Xóa</item>
     </string-array>
 

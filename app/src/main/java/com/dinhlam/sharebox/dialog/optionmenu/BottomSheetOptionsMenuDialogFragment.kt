@@ -47,7 +47,7 @@ class BottomSheetOptionsMenuDialogFragment :
     var itemSelectedListener: OnOptionItemSelectedListener? = null
 
     fun interface OnOptionItemSelectedListener {
-        fun onOptionItemSelected(position: Int, item: String, args: Bundle)
+        fun onOptionItemSelected(position: Int, itemText: String, args: Bundle)
     }
 
     override fun onCreateViewBinding(

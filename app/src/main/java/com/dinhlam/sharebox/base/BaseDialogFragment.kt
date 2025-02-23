@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -34,6 +33,8 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
         get() = _binding!!
 
     protected open val isUseMaterialDialog: Boolean = true
+
+    var onDialogDismissListener: OnDialogDismissListener? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return if (isUseMaterialDialog) MaterialAlertDialogBuilder(requireContext(), theme).apply {
@@ -73,8 +74,7 @@ abstract class BaseDialogFragment<VB : ViewBinding> : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        activity?.cast<OnDialogDismissListener>()?.onDismiss()
-            ?: parentFragment.cast<OnDialogDismissListener>()?.onDismiss()
+        onDialogDismissListener?.onDismiss()
     }
 
     open fun getSpacing(): Int {

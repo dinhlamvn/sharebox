@@ -10,7 +10,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.dpF
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
 
-class HorizontalCirclePagerItemDecoration constructor(
+class HorizontalCirclePagerItemDecoration(
     private val strokeWidth: Float = 1.dpF(),
     @ColorInt val colorActive: Int = Color.BLACK,
     @ColorInt val colorInactive: Int = Color.WHITE
@@ -39,7 +39,7 @@ class HorizontalCirclePagerItemDecoration constructor(
         }
 
         val xPos = width.minus(indicatorWidth).div(2)
-        val yPos = height.minus(16.dpF())
+        val yPos = height.minus(32.dpF())
 
         val layoutManager = parent.layoutManager.cast<LinearLayoutManager>() ?: return
         val currentPosition = layoutManager.findFirstVisibleItemPosition()

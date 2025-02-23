@@ -16,14 +16,9 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
-import com.dinhlam.sharebox.model.BookmarkCollectionDetail
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
-import com.dinhlam.sharebox.ui.bookmark.BookmarkActivity
-import com.dinhlam.sharebox.ui.bookmark.form.BookmarkCollectionFormActivity
-import com.dinhlam.sharebox.ui.bookmark.list.BookmarkListItemActivity
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
-import com.dinhlam.sharebox.ui.boxinvited.BoxInvitedActivity
 import com.dinhlam.sharebox.ui.boxlist.BoxListActivity
 import com.dinhlam.sharebox.ui.boxmember.BoxMemberActivity
 import com.dinhlam.sharebox.ui.checklist.CheckListActivity
@@ -33,17 +28,20 @@ import com.dinhlam.sharebox.ui.guideline.GuidelineActivity
 import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.link.ShareLinkActivity
+import com.dinhlam.sharebox.ui.myinvites.MyInvitesActivity
+import com.dinhlam.sharebox.ui.myinvites.listing.MyInviteShareListingActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
 import com.dinhlam.sharebox.ui.profile.ProfileFragment
 import com.dinhlam.sharebox.ui.setting.SettingActivity
 import com.dinhlam.sharebox.ui.setting.SettingComposeActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.ui.signin.SignInActivity
+import com.dinhlam.sharebox.ui.tags.TagsActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity
 import com.dinhlam.sharebox.ui.trash.TrashActivity
 import com.dinhlam.sharebox.utils.Icons
 
-class AppRouter constructor(private val context: Context) : Router {
+class AppRouter(private val context: Context) : Router {
 
     override fun home(isNewTask: Boolean): Intent {
         return Intent(context, HomeFragment::class.java).apply {
@@ -112,24 +110,6 @@ class AppRouter constructor(private val context: Context) : Router {
         context.startActivity(intent)
     }
 
-    override fun bookmarkCollectionFormIntent(context: Context): Intent {
-        return Intent(context, BookmarkCollectionFormActivity::class.java)
-    }
-
-    override fun bookmarkCollectionFormIntent(
-        context: Context, bookmarkCollection: BookmarkCollectionDetail
-    ): Intent {
-        return Intent(context, BookmarkCollectionFormActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION, bookmarkCollection)
-        }
-    }
-
-    override fun bookmarkListItemIntent(context: Context, bookmarkCollectionId: String): Intent {
-        return Intent(context, BookmarkListItemActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_BOOKMARK_COLLECTION_ID, bookmarkCollectionId)
-        }
-    }
-
     override fun pickImageIntent(isMultiple: Boolean): Intent {
         return Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
             if (isMultiple) {
@@ -138,21 +118,8 @@ class AppRouter constructor(private val context: Context) : Router {
         }
     }
 
-    override fun passcodeIntent(context: Context, desc: String?): Intent {
-        return Intent(context, PasscodeActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_PASSCODE, desc)
-        }
-    }
-
-    override fun passcodeIntent(context: Context, passcode: String, desc: String?): Intent {
-        return Intent(context, PasscodeActivity::class.java).apply {
-            putExtra(AppExtras.EXTRA_PASSCODE, passcode)
-            putExtra(AppExtras.EXTRA_PASSCODE_DESCRIPTION, desc)
-        }
-    }
-
     override fun passcodeIntent(
-        context: Context, passcode: String, extras: Bundle, desc: String?
+        context: Context, passcode: String?, extras: Bundle, desc: String?
     ): Intent {
         return Intent(context, PasscodeActivity::class.java).apply {
             putExtra(AppExtras.EXTRA_PASSCODE, passcode)
@@ -187,10 +154,9 @@ class AppRouter constructor(private val context: Context) : Router {
         return Intent(context, SettingComposeActivity::class.java)
     }
 
-    override fun boxDetail(context: Context, boxId: String, isFromInvited: Boolean): Intent {
+    override fun boxDetail(context: Context, boxId: String): Intent {
         return Intent(context, BoxDetailActivity::class.java)
             .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
-            .putExtra(AppExtras.EXTRA_BOOLEAN, isFromInvited)
     }
 
     override fun profile(context: Context): Intent {
@@ -225,10 +191,6 @@ class AppRouter constructor(private val context: Context) : Router {
             .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
     }
 
-    override fun bookmark(context: Context): Intent {
-        return Intent(context, BookmarkActivity::class.java)
-    }
-
     override fun imageViewer(context: Context, uris: List<Uri>): Intent {
         return Intent(context, ImageViewerActivity::class.java)
             .putExtra(AppExtras.EXTRA_IMAGE_URIS, arrayListOf(*uris.toTypedArray()))
@@ -250,8 +212,14 @@ class AppRouter constructor(private val context: Context) : Router {
         )
     }
 
-    override fun boxInvited(context: Context): Intent {
-        return Intent(context, BoxInvitedActivity::class.java)
+    override fun myInvites(context: Context): Intent {
+        return Intent(context, MyInvitesActivity::class.java)
+    }
+
+    override fun myInviteShareListing(context: Context, inviterId: String, boxId: String): Intent {
+        return Intent(context, MyInviteShareListingActivity::class.java)
+            .putExtra(AppExtras.EXTRA_ID, inviterId)
+            .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
     }
 
     override fun clipboard(context: Context): Intent {
@@ -319,5 +287,10 @@ class AppRouter constructor(private val context: Context) : Router {
                 AppExtras.EXTRA_SHARE_ID,
                 shareId
             )
+    }
+
+    override fun tags(context: Context, tagId: Int?): Intent {
+        return Intent(context, TagsActivity::class.java)
+            .putExtra(AppExtras.EXTRA_ID, tagId)
     }
 }

@@ -2,9 +2,11 @@ package com.dinhlam.sharebox.data.repository
 
 import com.dinhlam.sharebox.logger.Logger
 
-abstract class BaseRepository<E> {
+abstract class BaseRepository<I, E> {
     protected abstract suspend fun insertInternal(entity: E): E
     protected abstract suspend fun updateInternal(entity: E, willBeSync: Boolean): E
+    abstract suspend fun readAll(): List<E>
+    abstract suspend fun readOne(id: I): E?
     abstract suspend fun count(): Int
     abstract suspend fun delete(entity: E): Boolean
 

@@ -2,7 +2,6 @@ package com.dinhlam.sharebox.dialog.download
 
 import android.content.Context
 import android.net.Uri
-import android.webkit.MimeTypeMap
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.network.DownloadServices
@@ -17,16 +16,15 @@ class DownloadFileViewModel @Inject constructor(
     private val downloadServices: DownloadServices,
 ) : BaseViewModel<DownloadFileState>(DownloadFileState()) {
 
-    suspend fun download(
+    fun download(
         context: Context,
         downloadUrl: String,
-        fileName: String?,
-        mimeType: String?
-    ) {
+        fileName: String,
+    ) = doInBackground {
         if (downloadUrl.startsWith("http")) {
-            downloadNetworkFile(context, downloadUrl, fileName, mimeType)
+            downloadNetworkFile(context, downloadUrl, fileName)
         } else if (downloadUrl.startsWith("content:")) {
-            downloadLocalFile(context, downloadUrl, fileName, mimeType)
+            downloadLocalFile(context, downloadUrl, fileName)
         } else {
             setState {
                 copy(
@@ -45,13 +43,8 @@ class DownloadFileViewModel @Inject constructor(
     private fun downloadLocalFile(
         context: Context,
         downloadUrl: String,
-        fileName: String?,
-        mimeType: String?
+        downloadFileName: String,
     ) {
-        val downloadFileName = fileName ?: FileUtils.createFileName(
-            "file",
-            MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)!!
-        )
         val downloadFile = FileUtils.createDownloadFile(downloadFileName) ?: return setState {
             copy(
                 downloadState = DownloadState.Failed(IllegalStateException(context.getString(R.string.error_create_file)))
@@ -68,13 +61,8 @@ class DownloadFileViewModel @Inject constructor(
     private suspend fun downloadNetworkFile(
         context: Context,
         downloadUrl: String,
-        fileName: String?,
-        mimeType: String?
+        downloadFileName: String,
     ) {
-        val downloadFileName = fileName ?: FileUtils.createFileName(
-            "file",
-            MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)!!
-        )
         val downloadFile = FileUtils.createDownloadFile(downloadFileName) ?: return setState {
             copy(
                 downloadState = DownloadState.Failed(IllegalStateException(context.getString(R.string.error_create_file)))

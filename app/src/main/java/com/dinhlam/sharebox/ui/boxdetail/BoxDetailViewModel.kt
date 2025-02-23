@@ -8,7 +8,6 @@ import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,7 +17,7 @@ class BoxDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val boxRepository: BoxRepository,
     private val shareRepository: ShareRepository,
-) : BaseViewModel<BoxDetailState>(BoxDetailState(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))) {
+) : BaseViewModel<BoxDetailState>(BoxDetailState()) {
 
     init {
         onChange(BoxDetailState::boxDetail) { boxDetail ->
@@ -26,7 +25,7 @@ class BoxDetailViewModel @Inject constructor(
                 updateLastSeen(boxDetail.boxId)
             }
         }
-        loadBoxDetail()
+        loadBoxDetail(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))
     }
 
     private fun updateLastSeen(boxId: String) = doInBackground {
@@ -34,31 +33,33 @@ class BoxDetailViewModel @Inject constructor(
         boxRepository.update(box.copy(lastSeen = nowUTCTimeInMillis()))
     }
 
-    private fun loadBoxDetail() = getState { state ->
+    private fun loadBoxDetail(boxId: String) {
         suspend {
-            boxRepository.findOne(state.boxId)!!
+            boxRepository.findOne(boxId)!!
         }.execute { asyncLoad ->
             copy(
                 asyncLoadBoxDetail = asyncLoad,
-                boxDetail = asyncLoad.data,
-                isRefreshing = false,
-                mustInputPasscode = true
+                boxDetail = asyncLoad.data
             )
         }
     }
 
     fun loadShares() = getState { state ->
         suspend {
-            loadShares(state.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+            loadShares(state.boxDetail!!.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
         }.execute { asyncLoad ->
-            copy(shares = asyncLoad.data ?: shares, isRefreshing = asyncLoad is AsyncLoad.Loading)
+            copy(
+                shares = asyncLoad.data ?: shares,
+                isRefreshing = asyncLoad is AsyncLoad.Loading,
+                requirePasscode = false
+            )
         }
     }
 
     fun loadMores() = getState { state ->
         suspend {
             loadShares(
-                state.boxId,
+                state.boxDetail!!.boxId,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
             )
@@ -85,13 +86,9 @@ class BoxDetailViewModel @Inject constructor(
         )
     }
 
-    fun doOnRefresh() = getState { state ->
+    fun doOnRefresh() {
         setState {
-            BoxDetailState(
-                boxId = state.boxId,
-                boxDetail = boxDetail,
-                mustInputPasscode = mustInputPasscode
-            )
+            copy(currentPage = 1, canLoadMore = false)
         }
         loadShares()
     }
@@ -115,24 +112,9 @@ class BoxDetailViewModel @Inject constructor(
         }.execute { asyncLoad ->
             copy(
                 asyncLoadBoxDetail = asyncLoad,
-                boxDetail = asyncLoad.data,
-                mustInputPasscode = false
+                boxDetail = asyncLoad.data
             )
         }
-    }
-
-    fun setCurrentShare(shareDetail: ShareDetail?) = setState { copy(currentShare = shareDetail) }
-
-    fun saveShareText(text: String?) = getState { state ->
-        val currentShare = state.currentShare ?: return@getState
-        val shareId = currentShare.shareId
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)
-            share?.let { updateShare ->
-                shareRepository.update(updateShare.copy(shareData = ShareData.ShareText(text.orEmpty())))
-                shareRepository.findOne(shareId)
-            } ?: currentShare
-        }.execute { asyncLoad -> copy(currentShare = null, asyncLoadSave = asyncLoad) }
     }
 
     fun updateShare(data: ShareDetail) = getState { state ->
@@ -144,5 +126,23 @@ class BoxDetailViewModel @Inject constructor(
             }
         }
         setState { copy(shares = newShares) }
+    }
+
+    fun refresh() = getState { state ->
+        if (state.boxDetail == null || state.requirePasscode) {
+            return@getState
+        }
+        suspend {
+            loadShares(
+                state.boxDetail.boxId,
+                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                0
+            )
+        }.execute { asyncLoad ->
+            copy(
+                shares = asyncLoad.data ?: shares,
+                isRefreshing = asyncLoad is AsyncLoad.Loading
+            )
+        }
     }
 }

@@ -25,6 +25,9 @@ interface BoxDao {
     @Query("SELECT * FROM `box` WHERE created_by = :userId ORDER BY created_at DESC LIMIT 1")
     suspend fun findFirst(userId: String): Box?
 
+    @Query("SELECT * FROM `box` WHERE created_by = :userId ORDER BY created_at DESC")
+    suspend fun findAll(userId: String): List<Box>
+
     @Query("SELECT * FROM `box` WHERE (created_by = :userId AND box_name LIKE '%' || :query || '%') OR box_id = :query ORDER BY box_name ASC")
     suspend fun search(query: String, userId: String): List<Box>
 

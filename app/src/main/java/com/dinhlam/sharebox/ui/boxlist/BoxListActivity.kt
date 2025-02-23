@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -47,12 +47,14 @@ class BoxListActivity :
     private val passcodeConfirmResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val selectedBox = getState(viewModel, BoxListState::selectedBox)
-                    ?: return@registerForActivityResult showToast(R.string.please_choose_box)
-                returnSelectedBox(selectedBox)
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                val boxName = data.getStringExtra(AppExtras.EXTRA_BOX_NAME)
+                    ?: return@registerForActivityResult
+                returnSelectedBox(boxId, boxName)
             } else {
                 showToast(R.string.error_require_passcode)
-                viewModel.setSelectedBox(null)
             }
         }
 
@@ -80,7 +82,7 @@ class BoxListActivity :
                             !boxDetail.passcode.isNullOrBlank(),
                             false,
                             NoHashProp(View.OnClickListener {
-                                viewModel.setSelectedBox(boxDetail)
+                                onBoxSelected(boxDetail)
                             }),
                         ).attachTo(this)
 
@@ -103,7 +105,7 @@ class BoxListActivity :
                     !boxDetail.passcode.isNullOrBlank(),
                     false,
                     NoHashProp(View.OnClickListener {
-                        viewModel.setSelectedBox(boxDetail)
+                        onBoxSelected(boxDetail)
                     }),
                 ).attachTo(this)
 
@@ -124,7 +126,7 @@ class BoxListActivity :
                             R.string.total_box, state.totalBox - state.boxes.size
                         ),
                         height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                        actionClick = BaseListAdapter.NoHashProp(
+                        actionClick = NoHashProp(
                             View.OnClickListener {
                                 viewModel.loadNextPage()
                             },
@@ -146,7 +148,6 @@ class BoxListActivity :
         setSupportActionBar(binding.toolbar)
         binding.toolbar.title =
             intent.getStringExtra(AppExtras.EXTRA_TITLE) ?: getString(R.string.choose_box)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         boxAdapter.attachTo(binding.recyclerView, this)
         boxAdapter.requestBuildListModels()
@@ -158,43 +159,34 @@ class BoxListActivity :
         binding.buttonAdd.setOnClickListener {
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
-
-        onChange(BoxListState::selectedBox) { selectedBox ->
-            if (selectedBox != null) {
-                onBoxSelected(selectedBox)
-            }
-        }
     }
 
-    private fun onBoxSelected(selectedBox: BoxDetail) = getState(viewModel) { state ->
+    private fun onBoxSelected(selectedBox: BoxDetail) {
         if (selectedBox.passcode != null) {
             passcodeConfirmResultLauncher.launch(
-                router.passcodeIntent(this, selectedBox.passcode).putExtra(
-                    AppExtras.EXTRA_PASSCODE_DESCRIPTION, getString(
+                router.passcodeIntent(
+                    this, selectedBox.passcode,
+                    bundleOf(
+                        AppExtras.EXTRA_BOX_ID to selectedBox.boxId,
+                        AppExtras.EXTRA_BOX_NAME to selectedBox.boxName
+                    ),
+                    getString(
                         R.string.dialog_bookmark_collection_picker_verify_passcode,
                         selectedBox.boxName
                     )
                 )
             )
         } else {
-            returnSelectedBox(selectedBox)
+            returnSelectedBox(selectedBox.boxId, selectedBox.boxName)
         }
     }
 
-    private fun returnSelectedBox(boxDetail: BoxDetail) {
+    private fun returnSelectedBox(boxId: String, boxName: String) {
         setResult(
             Activity.RESULT_OK, Intent()
-                .putExtra(AppExtras.EXTRA_BOX_ID, boxDetail.boxId)
-                .putExtra(AppExtras.EXTRA_BOX_NAME, boxDetail.boxName)
+                .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
+                .putExtra(AppExtras.EXTRA_BOX_NAME, boxName)
         )
         finish()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

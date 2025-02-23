@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.data.repository
 
-import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.dao.UserDao
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.mapper.UserToUserDetailMapper
@@ -13,7 +12,6 @@ import javax.inject.Singleton
 class UserRepository @Inject constructor(
     private val userDao: UserDao,
     private val userToUserDetailMapper: UserToUserDetailMapper,
-    private val shareDao: ShareDao,
 ) {
 
     suspend fun insert(

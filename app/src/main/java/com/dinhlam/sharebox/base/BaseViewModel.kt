@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.base
 
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -113,6 +112,21 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
             errorCatcher?.invoke(e)
         }
     }
+
+    protected fun <T> onAsyncChange(
+        property: KProperty1<S, BaseViewModel.AsyncLoad<T>>,
+        onFail: (Throwable) -> Unit = {},
+        onSuccess: (T) -> Unit
+    ) = stateFlow
+        .map { state -> Observer1(property.get(state)) }
+        .distinctUntilChanged()
+        .resolveObserver() { observer ->
+            if (observer.value is BaseViewModel.AsyncLoad.Success<T>) {
+                onSuccess(observer.value.value)
+            } else if (observer.value is BaseViewModel.AsyncLoad.Failed) {
+                onFail(observer.value.error)
+            }
+        }
 
     protected fun <V> onChange(
         property: KProperty1<S, V>, block: (V) -> Unit

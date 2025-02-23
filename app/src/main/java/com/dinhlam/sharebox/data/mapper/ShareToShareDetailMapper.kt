@@ -4,7 +4,6 @@ import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.CommentDetail
 import com.dinhlam.sharebox.model.ShareDetail
-import com.dinhlam.sharebox.model.UserDetail
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,13 +12,14 @@ class ShareToShareDetailMapper @Inject constructor() {
 
     fun map(
         share: Share,
-        commentNumber: Int,
-        likeNumber: Int,
-        bookmarked: Boolean,
-        liked: Boolean,
-        commentDetail: CommentDetail?,
-        boxDetail: BoxDetail?,
-        isVideoShare: Boolean,
+        commentNumber: Int = 0,
+        likeNumber: Int = 0,
+        liked: Boolean = false,
+        commentDetail: CommentDetail? = null,
+        boxDetail: BoxDetail? = null,
+        isVideoShare: Boolean = false,
+        tagId: Int? = null,
+        tagColor: Int? = null,
     ): ShareDetail {
         return ShareDetail(
             share.id,
@@ -30,11 +30,12 @@ class ShareToShareDetailMapper @Inject constructor() {
             share.shareData,
             commentNumber,
             likeNumber,
-            bookmarked,
             liked,
             commentDetail,
             boxDetail,
-            isVideoShare
+            isVideoShare,
+            tagId,
+            tagColor,
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.dialog.action
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -18,17 +17,15 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentBottomSheetShareActionBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
-import com.dinhlam.sharebox.extensions.cast
+import com.dinhlam.sharebox.dialog.tag.TagPickerDialogFragment
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.listmodel.IconTextListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.utils.LiveEvents
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -50,12 +47,14 @@ class BottomSheetShareActionDialogFragment :
         fun showDialog(
             fragmentManager: FragmentManager,
             shareId: String
-        ) {
-            BottomSheetShareActionDialogFragment().apply {
+        ): BottomSheetShareActionDialogFragment {
+            return BottomSheetShareActionDialogFragment().apply {
                 arguments = bundleOf(
                     AppExtras.EXTRA_SHARE_ID to shareId
                 )
-            }.show(fragmentManager, "BottomSheetShareActionDialogFragment")
+            }.also { dialog ->
+                dialog.show(fragmentManager, "BottomSheetShareActionDialogFragment")
+            }
         }
     }
 
@@ -101,21 +100,23 @@ class BottomSheetShareActionDialogFragment :
         }
     }
 
-    private fun onActionClick(actionId: Int) {
+    private fun onActionClick(actionId: BottomSheetShareActionState.ActionId) {
         val share =
             getState(viewModel, BottomSheetShareActionState::shareDetail) ?: return showToast(
                 R.string.share_not_found
             )
 
         when (actionId) {
-            0 -> shareToOther(share)
-            1 -> showDialogInputShareNote(share.shareNote)
-            2 -> onRequestMoveShare()
-            3 -> copyShare(share)
-            4 -> downloadShare(share)
-            5 -> onBookmark(share.shareId)
-            6 -> copyBoxID(share)
-            7 -> moveToTrash(share)
+            BottomSheetShareActionState.ActionId.SHARE_TO -> shareToOther(share)
+            BottomSheetShareActionState.ActionId.EDIT_NOTE -> showDialogInputShareNote(share.shareNote)
+            BottomSheetShareActionState.ActionId.MOVE_TO_OTHER_BOX -> onRequestMoveShare()
+            BottomSheetShareActionState.ActionId.COPY -> copyShare(share)
+            BottomSheetShareActionState.ActionId.DOWNLOAD -> downloadShare(share)
+            BottomSheetShareActionState.ActionId.EDIT_CHECK_LIST -> editCheckList(share)
+            BottomSheetShareActionState.ActionId.TAGS -> onTags(share.shareId)
+            BottomSheetShareActionState.ActionId.VIEW_TAGS -> onViewTags(share.tagId)
+            BottomSheetShareActionState.ActionId.COPY_BOX_ID -> copyBoxID(share)
+            BottomSheetShareActionState.ActionId.MOVE_TO_TRASH -> moveToTrash(share)
         }
     }
 
@@ -137,7 +138,7 @@ class BottomSheetShareActionDialogFragment :
     }
 
     private fun shareToOther(share: ShareDetail) {
-        shareHelper.shareToOther(share)
+        shareHelper.shareToOther(requireActivity(), share)
         dismiss()
     }
 
@@ -167,10 +168,7 @@ class BottomSheetShareActionDialogFragment :
     }
 
     private fun copyShare(share: ShareDetail) {
-        val content = share.shareData.cast<ShareData.ShareText>()?.text
-            ?: share.shareData.cast<ShareData.ShareUrl>()?.url
-            ?: return showToast(R.string.nothing_to_copy)
-        context?.copy(content)
+        shareHelper.copyShare(requireContext(), share)
         dismiss()
     }
 
@@ -179,17 +177,23 @@ class BottomSheetShareActionDialogFragment :
         dismiss()
     }
 
+    private fun editCheckList(share: ShareDetail) {
+        startActivity(router.checkList(requireContext(), share.shareId))
+        dismiss()
+    }
+
     private fun copyBoxID(share: ShareDetail) {
         context?.copy(share.boxDetail?.boxId)
         dismiss()
     }
 
-    private fun onBookmark(shareId: String) {
-        viewModel.showBookmarkCollectionPicker(shareId) { collectionId ->
-            shareHelper.showBookmarkCollectionPickerDialog(
-                childFragmentManager, shareId, collectionId
-            )
-        }
+    private fun onTags(shareId: String) {
+        TagPickerDialogFragment.showDialog(childFragmentManager, shareId)
+    }
+
+    private fun onViewTags(tagId: Int?) {
+        startActivity(router.tags(requireContext(), tagId))
+        dismiss()
     }
 
     private fun moveToTrash(share: ShareDetail) {
@@ -200,10 +204,5 @@ class BottomSheetShareActionDialogFragment :
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        LiveEvents.requestBottomSheetShareActionRefresh()
     }
 }

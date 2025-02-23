@@ -10,6 +10,5 @@ data class BoxListState(
     val totalBox: Int = 0,
     val currentPage: Int = 0,
     val isLoadingMore: Boolean = false,
-    val isSearching: Boolean = false,
-    val selectedBox: BoxDetail? = null
+    val isSearching: Boolean = false
 ) : BaseViewModel.BaseState

@@ -1,25 +1,20 @@
 package com.dinhlam.sharebox.dialog.action
 
 import android.content.Context
-import androidx.annotation.UiThread
 import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.data.repository.BookmarkRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class BottomSheetShareActionViewModel @Inject constructor(
     private val shareRepository: ShareRepository,
-    private val bookmarkRepository: BookmarkRepository,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<BottomSheetShareActionState>(
     BottomSheetShareActionState(
@@ -35,41 +30,86 @@ class BottomSheetShareActionViewModel @Inject constructor(
         }
     }
 
-    fun buildActions(context: Context, shareDetail: ShareDetail?) {
-        val shareData = shareDetail ?: return setState { copy(actions = emptyList()) }
+    fun buildActions(context: Context, share: ShareDetail?) {
+        val shareDetail = share ?: return setState { copy(actions = emptyList()) }
+        val shareData = shareDetail.shareData
         val actions = buildList {
-            add(BottomSheetShareActionState.Action(0, "f064", context.getString(R.string.share_to)))
             add(
                 BottomSheetShareActionState.Action(
-                    1,
+                    BottomSheetShareActionState.ActionId.SHARE_TO,
+                    "f064",
+                    context.getString(R.string.share_to)
+                )
+            )
+            add(
+                BottomSheetShareActionState.Action(
+                    BottomSheetShareActionState.ActionId.EDIT_NOTE,
                     "f044",
                     context.getString(R.string.edit_note)
                 )
             )
-            add(BottomSheetShareActionState.Action(2, "f061", context.getString(R.string.move_to)))
+            add(
+                BottomSheetShareActionState.Action(
+                    BottomSheetShareActionState.ActionId.MOVE_TO_OTHER_BOX,
+                    "f061",
+                    context.getString(R.string.move_to)
+                )
+            )
 
-            if (shareData.shareData is ShareData.ShareText || shareData.shareData is ShareData.ShareUrl) {
-                add(BottomSheetShareActionState.Action(3, "f0c5", context.getString(R.string.copy)))
+            if (shareData is ShareData.ShareText || shareData is ShareData.ShareUrl || shareData is ShareData.ShareCheckList) {
+                add(
+                    BottomSheetShareActionState.Action(
+                        BottomSheetShareActionState.ActionId.COPY,
+                        "f0c5",
+                        context.getString(R.string.copy)
+                    )
+                )
             } else {
                 add(
                     BottomSheetShareActionState.Action(
-                        4,
+                        BottomSheetShareActionState.ActionId.DOWNLOAD,
                         "f56d",
                         context.getString(R.string.download)
                     )
                 )
             }
-            add(BottomSheetShareActionState.Action(5, "f02e", context.getString(R.string.bookmark)))
+            if (shareData is ShareData.ShareCheckList) {
+                add(
+                    BottomSheetShareActionState.Action(
+                        BottomSheetShareActionState.ActionId.EDIT_CHECK_LIST,
+                        "f0ae",
+                        context.getString(R.string.edit_checklist)
+                    )
+                )
+            }
+
             add(
                 BottomSheetShareActionState.Action(
-                    6,
+                    BottomSheetShareActionState.ActionId.TAGS,
+                    "f02b",
+                    context.getString(R.string.tags)
+                )
+            )
+            if (shareDetail.tagId != null) {
+                add(
+                    BottomSheetShareActionState.Action(
+                        BottomSheetShareActionState.ActionId.VIEW_TAGS,
+                        "f03a",
+                        context.getString(R.string.view_tags)
+                    )
+                )
+            }
+
+            add(
+                BottomSheetShareActionState.Action(
+                    BottomSheetShareActionState.ActionId.COPY_BOX_ID,
                     "f0c5",
                     context.getString(R.string.copy_box_id)
                 )
             )
             add(
                 BottomSheetShareActionState.Action(
-                    7,
+                    BottomSheetShareActionState.ActionId.MOVE_TO_TRASH,
                     "f1f8",
                     context.getString(R.string.move_to_trash)
                 )
@@ -105,14 +145,6 @@ class BottomSheetShareActionViewModel @Inject constructor(
             } ?: state.shareDetail
         }.execute { asyncLoad -> copy(asyncUpdate = asyncLoad) }
     }
-
-    fun showBookmarkCollectionPicker(shareId: String, @UiThread block: (String?) -> Unit) =
-        doInBackground {
-            val bookmarkDetail = bookmarkRepository.findOne(shareId)
-            withContext(Dispatchers.Main) {
-                block(bookmarkDetail?.bookmarkCollectionId)
-            }
-        }
 
     fun moveShareToTrash(shareId: String) {
         suspend {

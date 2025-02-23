@@ -3,7 +3,6 @@
     <string name="share_activity_title">Archive</string>
     <string name="share_direct_download_activity_title">Download</string>
     <string name="text_input_note_hint_desc">What\'s this?</string>
-    <string name="confirmation">Confirmation</string>
 
     <!-- Facebook declare -->
     <string name="facebook_app_id" translatable="false">647232403661006</string>
@@ -21,27 +20,14 @@
     <string name="comment_title">Comments (%d)</string>
     <string name="comment_hint">What\'s on your mind?</string>
     <string name="comments_input_hint">Comments…</string>
-    <string name="title_bookmark_collection">Bookmark Collections</string>
     <string name="button_add_bookmark_collection">Add new bookmark collection</string>
-    <string name="no_bookmark_collections">No bookmark collections found.\nTap button (+) to create one.</string>
-    <string name="title_bookmark_creator">New bookmark collection</string>
     <string name="bookmark_collection_hint_name">Name</string>
-    <string name="bookmark_collection_hint_desc">Description</string>
-    <string name="bookmark_collection_error_require_name">Name can\'t be empty</string>
-    <string name="bookmark_collection_error_require_desc">Desc can\'t be empty</string>
-    <string name="bookmark_collection_error_require_thumbnail">Thumbnail must be set</string>
     <string name="bookmark_collection_hint_passcode">Passcode</string>
-    <string name="action_done">Done</string>
     <string name="action_clear_passcode">Clear passcode</string>
-    <string name="desc_image_bookmark_list_thumbnail">The thumbnail of bookmark collection</string>
-    <string name="dialog_bookmark_collection_picker_title">Bookmark share to…</string>
-    <string name="dialog_bookmark_collection_picker_create_new">New collection</string>
-    <string name="dialog_bookmark_collection_picker_no_bookmarks">No bookmark collections found.</string>
     <string name="dialog_bookmark_collection_picker_verify_passcode">Type passcode of %s</string>
     <string name="dialog_confirm">Confirmation</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="bookmark_collection_delete_confirm_message">Are you sure to delete this collection?</string>
     <string name="collapsed_text">Read more</string>
     <string name="expanded_text">Read less</string>
     <string name="shares_success">Archive successfully</string>
@@ -49,7 +35,7 @@
     <string name="create_user_error">An error occurred while create user.</string>
     <string name="logged_out_error">Error, try again!</string>
     <string name="error_require_name">Name can\'t be empty</string>
-    <string name="error_require_passcode">Please verify this box</string>
+    <string name="error_require_passcode">Verify box failed.</string>
     <string name="choose_box">Choose box</string>
     <string name="total_box">+%d more box…</string>
     <string name="search_box_result_empty">No found any box.</string>
@@ -65,7 +51,6 @@
     <string name="sign_out_confirm_message">Are you sure to sign out?</string>
     <string name="setting_about">%s • Version %s</string>
     <string name="app_desc">Sharebox is an app that helps you store all the content you want to save and easily share it with your friends.</string>
-    <string name="box_general">General</string>
     <string name="share_text_quote_hint">Type here…</string>
     <string name="share_link_hint">Enter URL</string>
     <string name="require_input_link">Please input the link</string>
@@ -79,7 +64,7 @@
     <string name="title_setting_sync_background">Sync data daily</string>
     <string name="message_enqueue_sync_data">Auto sync data to cloud everyday.</string>
     <string name="message_cancel_enqueue_sync_data">Canceled auto sync data</string>
-    <string name="downloading">Downloading</string>
+    <string name="downloading">Downloading…</string>
     <string name="cancel">Cancel</string>
     <string name="limit_share_image">We just allow archive maximum 10 images</string>
     <string name="sync_data_to_cloud">Syncing data to cloud…</string>
@@ -103,14 +88,13 @@
     <string name="download_videos">Download Videos</string>
     <string name="download_images">Download Images</string>
     <string name="downloading_all_image">Downloading…(%d/%d)</string>
-    <string name="tips_search_box">*Tip: You can input the Box\'s ID to access it.</string>
     <string name="require_choose_box">Please choose box to archive</string>
     <string name="your_boxes">Your Boxes</string>
     <string name="copied">Copied</string>
     <string name="auto_sync_data_desc">*Your data will be auto sync to cloud daily to keep it always up-to-date.</string>
     <string name="desc">Description</string>
     <string name="desc_box_hint">What is this Box? What does it to do?…</string>
-    <string name="passcode_desc">*Secure your content to restrict other people access those.</string>
+    <string name="passcode_desc">* Protect your content to limit access from others.</string>
     <string name="copy_id">Copy ID</string>
     <string name="share_link_label">Browse</string>
     <string name="permission_denied">Permission denied</string>
@@ -123,14 +107,12 @@
     <string name="discover">Discover</string>
     <string name="discover_subtitle">Discover interesting videos, images, musics, news and more</string>
     <string name="choose_box_for_web">Archive WebLink To</string>
-    <string name="download_content">Download this content</string>
     <string name="please_choose_box">Please choose a box</string>
     <string name="move_share_to">Move share to…</string>
     <string name="save">Save</string>
     <string name="title_edit_box">Edit Box</string>
     <string name="title_create_box">Create Box</string>
-    <string name="change_passcode">Change passcode</string>
-    <string name="removed_item">Removed %s</string>
+    <string name="use_passcode">Use Passcode</string>
     <string name="confirm_move_to_trash">Are you sure to move this share to trash?</string>
     <string name="title_trash">Trash</string>
     <string name="restore_share_to">Restore to…</string>
@@ -140,8 +122,7 @@
     <string name="add">Add</string>
     <string name="duplicate_member">Duplicate member</string>
     <string name="hint_input_email">Email</string>
-    <string name="title_box_invited">Invited Boxes</string>
-    <string name="invited_boxes">Invited Boxes</string>
+    <string name="title_box_invited">My Invited Boxes</string>
     <string name="require_sign_in_to_manage_member">You need sign in to manage box member</string>
     <string name="error_add_yourself">You can\'t add yourself</string>
     <string name="download">Download</string>
@@ -164,7 +145,6 @@
     <string name="edit_note">Edit note</string>
     <string name="move_to">Move to…</string>
     <string name="copy">Copy</string>
-    <string name="bookmark">Bookmark</string>
     <string name="copy_box_id">Copy Box\'s ID</string>
     <string name="move_to_trash">Move to trash</string>
     <string name="share_not_found">Share not found</string>
@@ -197,20 +177,18 @@
     <string name="nothing_to_save">Nothing to save</string>
     <string name="confirm_done_checklist">Are you sure you want to mark this task as complete? You will not be able to undo this action once the task is marked as complete.</string>
     <string name="saved">Saved</string>
+    <string name="tag_picker_dialog_title">Choose a tag</string>
+    <string name="tags">Tags</string>
+    <string name="view_tags">Tag listings</string>
+    <string name="update_passcode_desc">Your passcode has been set. If you want to change it, please tap the \"Use Passcode\" option.</string>
+    <string name="require_input_passcode">Please input passcode.</string>
+    <string name="listing">Listing</string>
+    <string name="edit_checklist">Edit Checklist</string>
+    <string name="loading">Loading...</string>
 
-    <string-array name="bookmark_collection_option_menu_items">
-        <item>Edit</item>
-        <item>Delete</item>
-    </string-array>
-
-    <string-array name="bookmark_collection_list_option_menu_items">
-        <item>Remove</item>
-    </string-array>
-
-    <string-array name="more_menu_invited">
-        <item>Share to other…</item>
-        <item>Download</item>
-        <item>Copy box\'s ID</item>
+    <string-array name="tags_option_menu_items">
+        <item>Remove tag</item>
+        <item>Change tag</item>
     </string-array>
 
     <string-array name="trash_more_menu">

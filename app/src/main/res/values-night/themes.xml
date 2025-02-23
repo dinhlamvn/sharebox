@@ -28,6 +28,7 @@
         <item name="colorSurfaceInverse">@color/md_theme_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
         <item name="android:statusBarColor">@color/md_theme_surface</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
     </style>
 
     <style name="AppTheme.TranslucentStatusBar" parent="AppTheme">
@@ -40,16 +41,6 @@
         <item name="cardBackgroundColor">@color/md_theme_background</item>
         <item name="strokeWidth">0dp</item>
         <item name="strokeColor">@android:color/transparent</item>
-    </style>
-
-    <style name="MaterialCardView.TopLeftRightCorners" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/ShapeCardViewTopLeftRightCorners</item>
-    </style>
-
-    <style name="ShapeCardViewTopLeftRightCorners">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopRight">20dp</item>
-        <item name="cornerSizeTopLeft">20dp</item>
     </style>
 
 </resources>

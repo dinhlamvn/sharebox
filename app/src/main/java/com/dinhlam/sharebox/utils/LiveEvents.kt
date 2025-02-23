@@ -9,11 +9,4 @@ object LiveEvents {
         get() = _discoverTabChangeEvent
 
     fun changeDiscoverTab(tab: Int) = _discoverTabChangeEvent.postValue(tab)
-
-    private val _onBottomSheetShareActionRefreshEvent = MutableLiveData(Unit)
-    val onBottomSheetShareActionRefreshEvent: LiveData<Unit>
-        get() = _onBottomSheetShareActionRefreshEvent
-
-    fun requestBottomSheetShareActionRefresh() =
-        _onBottomSheetShareActionRefreshEvent.postValue(Unit)
 }
