@@ -12,7 +12,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogFragmentCheckListDataFormBinding
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
-import com.dinhlam.sharebox.extensions.ifNotZero
+import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.showToast
@@ -53,16 +53,16 @@ class CheckListDataFormDialogFragment :
         set(value) {
             field = value
             binding.textDatetime.text =
-                value.ifNotZero.ifTrue(value.format("dd MMM yyyy, hh:mm a"), "-")
-            binding.iconClearDatetime.isVisible = value.ifNotZero
+                value.isNotZero.ifTrue(value.format("dd MMM yyyy, hh:mm a"), "-")
+            binding.iconClearDatetime.isVisible = value.isNotZero
         }
 
     private var checkListReminder: Long = 0L
         set(value) {
             field = value
             binding.textReminder.text =
-                value.ifNotZero.ifTrue(value.format("dd MMM yyyy, hh:mm a"), "-")
-            binding.iconClearReminder.isVisible = value.ifNotZero
+                value.isNotZero.ifTrue(value.format("dd MMM yyyy, hh:mm a"), "-")
+            binding.iconClearReminder.isVisible = value.isNotZero
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,7 +95,7 @@ class CheckListDataFormDialogFragment :
     }
 
     private fun showCheckListDateTimePicker() {
-        var timestamp = checkListDateTime.ifNotZero.ifTrue(checkListDateTime, nowUTCTimeInMillis())
+        var timestamp = checkListDateTime.isNotZero.ifTrue(checkListDateTime, nowUTCTimeInMillis())
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp
         }
@@ -128,7 +128,7 @@ class CheckListDataFormDialogFragment :
     }
 
     private fun showCheckListReminderPicker() {
-        var timestamp = checkListReminder.ifNotZero.ifTrue(checkListReminder, nowUTCTimeInMillis())
+        var timestamp = checkListReminder.isNotZero.ifTrue(checkListReminder, nowUTCTimeInMillis())
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp
         }

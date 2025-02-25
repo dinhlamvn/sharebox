@@ -1,25 +1,37 @@
 package com.dinhlam.sharebox.ui.checklist
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseListAdapter.NoHashProp
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.databinding.ActivityCheckListBinding
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
+import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
-import com.dinhlam.sharebox.extensions.ifNotZero
+import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.ifTrue
+import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.trimmedString
@@ -28,8 +40,10 @@ import com.dinhlam.sharebox.listmodel.CheckListListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.Spacing
+import com.dinhlam.sharebox.receiver.ShareCheckListAlarmBroadcastReceiver
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.checklist.dialog.CheckListDataFormDialogFragment
+import com.dinhlam.sharebox.utils.Ids
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -86,8 +100,8 @@ class CheckListActivity :
                         showConfirmDoneCheckList(checkListData)
                     }),
                     NoHashProp(View.OnClickListener {
-                        if (checkListData.reminder.ifNotZero) {
-                            viewModel.setCheckListDataReminder(checkListData, 0)
+                        if (checkListData.reminder.isNotZero) {
+                            showResetAlertReminder(checkListData)
                         } else {
                             showReminderDateTimePicker(checkListData)
                         }
@@ -108,6 +122,25 @@ class CheckListActivity :
                 this
             )
         }
+    }
+
+    private fun showResetAlertReminder(checkListData: ShareData.ShareCheckList.CheckListData) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.alert_notice)
+            .setMessage(
+                HtmlCompat.fromHtml(
+                    getString(
+                        R.string.confirm_reset_reminder,
+                        checkListData.reminder.format("dd MMM yyyy, hh:mm a")
+                    ), HtmlCompat.FROM_HTML_MODE_COMPACT
+                )
+            )
+            .setPositiveButton(R.string.change) { _, _ ->
+                showReminderDateTimePicker(checkListData)
+            }
+            .setNegativeButton(R.string.delete) { _, _ ->
+                viewModel.setCheckListDataReminder(checkListData, 0)
+            }.create().show()
     }
 
     private fun showConfirmDoneCheckList(checkListData: ShareData.ShareCheckList.CheckListData) {
@@ -188,6 +221,7 @@ class CheckListActivity :
 
         onChange(CheckListState::asyncArchive) { asyncLoad ->
             if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
+                setupCheckListAlarm(asyncLoad.value)
                 showToast(
                     getString(
                         (getState(
@@ -232,9 +266,9 @@ class CheckListActivity :
     private fun showReminderDateTimePicker(checkListData: ShareData.ShareCheckList.CheckListData) {
         val datetime = checkListData.datetime
         val reminder = checkListData.reminder
-        var timestamp = reminder.ifNotZero.ifTrue(
+        var timestamp = reminder.isNotZero.ifTrue(
             reminder,
-            datetime.ifNotZero.ifTrue(datetime, nowUTCTimeInMillis())
+            datetime.isNotZero.ifTrue(datetime, nowUTCTimeInMillis())
         )
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp
@@ -264,5 +298,51 @@ class CheckListActivity :
         }
 
         datePicker.show(supportFragmentManager, "dialog_date_picker")
+    }
+
+    private fun setupCheckListAlarm(share: Share) {
+        val shareData = share.shareData.castNonNull<ShareData.ShareCheckList>()
+        val alarmManager = getSystemServiceCompat<AlarmManager>(Context.ALARM_SERVICE)
+        shareData.checkListDataList.forEachIndexed { idx, checkListData ->
+            if (!checkListData.done && checkListData.reminder.isNotZero && checkListData.reminder > nowUTCTimeInMillis()) {
+                val idStr = "${share.shareId}-$idx"
+                val requestCode = Ids.hashString64Bit(idStr)
+
+                val intent =
+                    Intent(applicationContext, ShareCheckListAlarmBroadcastReceiver::class.java)
+                        .putExtra(AppExtras.EXTRA_SHARE_ID, share.shareId)
+                        .putExtra(AppExtras.EXTRA_POSITION, idx)
+
+                val alarmIntent = PendingIntent.getBroadcast(
+                    this,
+                    requestCode.toInt(),
+                    intent,
+                    PendingIntent.FLAG_MUTABLE
+                )
+                if (alarmIntent != null) {
+                    alarmManager.cancel(alarmIntent)
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    alarmManager.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        checkListData.reminder,
+                        alarmIntent
+                    )
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2) {
+                    if (ActivityCompat.checkSelfPermission(
+                            this,
+                            android.Manifest.permission.SCHEDULE_EXACT_ALARM
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            checkListData.reminder,
+                            alarmIntent
+                        )
+                    }
+                }
+            }
+        }
     }
 }

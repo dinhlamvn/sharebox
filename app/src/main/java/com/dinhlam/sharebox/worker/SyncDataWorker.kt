@@ -15,12 +15,14 @@ import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.storage.FirebaseStorageManager
 import com.dinhlam.sharebox.utils.FileUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import javax.inject.Inject
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
@@ -31,6 +33,9 @@ class SyncDataWorker @AssistedInject constructor(
     private val shareRepository: ShareRepository,
     private val firebaseStorageManager: FirebaseStorageManager,
 ) : CoroutineWorker(appContext, params) {
+
+    @Inject
+    lateinit var userHelper: UserHelper
 
     companion object {
         private const val SERVICE_ID = 699190901
@@ -43,12 +48,16 @@ class SyncDataWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Logger.debug("$this has been started")
         setForeground(getForegroundInfo())
-        return try {
-            syncBoxes()
-            syncShares()
+        return if (userHelper.isSignedIn()) {
             Result.success()
-        } catch (e: Exception) {
-            Result.retry()
+        } else {
+            try {
+                syncBoxes()
+                syncShares()
+                Result.success()
+            } catch (e: Exception) {
+                Result.retry()
+            }
         }
     }
 

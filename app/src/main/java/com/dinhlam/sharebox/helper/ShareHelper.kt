@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.BuildConfig
@@ -19,7 +20,7 @@ import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.format
-import com.dinhlam.sharebox.extensions.ifNotZero
+import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
@@ -185,9 +186,9 @@ class ShareHelper @Inject constructor(
                 append("• Work title: ")
                 append(checklist.title)
                 append("\n")
-                append("• Deadline: ")
+                append("• Datetime: ")
                 append(
-                    checklist.datetime.ifNotZero.ifTrue(
+                    checklist.datetime.isNotZero.ifTrue(
                         checklist.datetime.format("dd MMM yyyy, HH:mm"),
                         "-"
                     )
@@ -227,7 +228,7 @@ class ShareHelper @Inject constructor(
 
     private fun viewInTiktok(context: Context, shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = router.viewIntent(shareUrl.url)
+        val viewIntent = router.viewIntent(Uri.parse(shareUrl.url))
 
         val resolveInfoList = context.packageManager?.queryIntentActivitiesCompat(
             viewIntent, PackageManager.GET_META_DATA
@@ -256,7 +257,7 @@ class ShareHelper @Inject constructor(
 
     private fun viewInYoutube(context: Context, shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = router.viewIntent(shareUrl.url)
+        val viewIntent = router.viewIntent(shareUrl.url.toUri())
         viewIntent.runCatching {
             context.startActivity(this)
         }.onFailure { error ->
@@ -267,7 +268,7 @@ class ShareHelper @Inject constructor(
 
     private fun viewInFacebook(context: Context, shareData: ShareData) {
         val shareUrl = shareData.cast<ShareData.ShareUrl>() ?: return
-        val viewIntent = router.viewIntent(shareUrl.url)
+        val viewIntent = router.viewIntent(shareUrl.url.toUri())
         viewIntent.setPackage(AppConsts.FACEBOOK_M_PACKAGE_ID)
 
         if (viewIntent.resolveActivity(context.packageManager) != null) {

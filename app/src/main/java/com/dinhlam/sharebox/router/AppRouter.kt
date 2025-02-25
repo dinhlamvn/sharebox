@@ -128,8 +128,10 @@ class AppRouter(private val context: Context) : Router {
         }
     }
 
-    override fun viewIntent(url: String): Intent {
-        return Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    override fun viewIntent(uri: Uri, mimeType: String?): Intent {
+        return Intent(Intent.ACTION_VIEW, uri).apply {
+            type = mimeType
+        }
     }
 
     override fun playStoreIntent(packageName: String): Intent {

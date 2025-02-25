@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.text.underline
@@ -162,7 +163,7 @@ class TiktokDiscoverVideoViewerDialogFragment :
             }
         }
         binding.viewOnTiktok.setOnClickListener {
-            startActivity(router.viewIntent(tiktokUrl))
+            startActivity(router.viewIntent(tiktokUrl.toUri()))
         }
     }
 
