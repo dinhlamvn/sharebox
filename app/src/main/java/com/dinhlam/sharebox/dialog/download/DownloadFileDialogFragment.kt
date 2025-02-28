@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.dialog.download
 
+import android.content.Intent
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import com.dinhlam.sharebox.extensions.asHumanReadableSize
 import com.dinhlam.sharebox.extensions.getMimeTypeFromUri
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.DownloadState
 import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.router.Router
@@ -67,11 +70,21 @@ class DownloadFileDialogFragment :
                     val fileUri =
                         FileUtils.getUriFromFile(requireContext(), downloadState.downloadFile)
                     val mimeType = downloadInfo.mimeType ?: context?.getMimeTypeFromUri(fileUri)
-                    ?: return@onChange dismiss()
-                    val intent = router.shareToOtherIntent(requireContext(), fileUri, mimeType)
+                    val intent =
+                        router.shareToOtherIntent(requireContext(), fileUri, mimeType)?.apply {
+                            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        }
                     if (intent != null) {
                         startActivity(intent)
                     }
+                    MediaScannerConnection.scanFile(
+                        requireContext(),
+                        arrayOf(downloadState.downloadFile.path),
+                        arrayOf(mimeType)
+                    ) { path, uri ->
+                        Logger.debug("Media scan is completed: $path - $uri")
+                    }
+                    showToast(getString(R.string.downloaded, downloadState.downloadFile.path))
                     dismiss()
                 }
 

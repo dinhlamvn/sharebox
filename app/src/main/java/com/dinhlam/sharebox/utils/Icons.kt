@@ -15,6 +15,7 @@ import com.mikepenz.iconics.utils.sizeDp
 object Icons {
     const val MP4_LOGO = "https://static.vecteezy.com/system/resources/thumbnails/000/375/576/small_2x/File_Formats__28160_29.jpg"
     const val MP3_LOGO = "https://static.vecteezy.com/system/resources/thumbnails/024/694/509/small_2x/mp3-file-lossy-audio-format-icon-vector.jpg"
+    const val IMAGE_LOGO = "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-13.png"
     const val FILE_LOGO = "https://w7.pngwing.com/pngs/521/255/png-transparent-computer-icons-data-file-document-file-format-others-thumbnail.png"
 
     data class IconBuilder(

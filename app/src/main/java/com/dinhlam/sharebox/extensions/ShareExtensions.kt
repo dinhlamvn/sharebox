@@ -55,9 +55,9 @@ fun Context.openShare(
                     append("• Work title: ")
                     append(checklist.title)
                     append("\n")
-                    append("• Deadline: ")
+                    append("• Datetime: ")
                     append(
-                        checklist.datetime.ifNotZero.ifTrue(
+                        checklist.datetime.isNotZero.ifTrue(
                             checklist.datetime.format("dd MMM yyyy, HH:mm"),
                             "-"
                         )

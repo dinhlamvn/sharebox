@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -25,11 +26,14 @@ import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.model.FileDownloadInfo
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BottomSheetDownloadActivity :
@@ -40,6 +44,9 @@ class BottomSheetDownloadActivity :
     override fun onStateChanged(state: BottomSheetDownloadState) {
         adapter.requestBuildListModels()
     }
+
+    @Inject
+    lateinit var router: Router
 
     private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
@@ -133,17 +140,19 @@ class BottomSheetDownloadActivity :
                     gravity = Gravity.START
                 ).attachTo(this)
 
-                images.forEachIndexed { index, downloadData ->
-                    DownloadItemListModel(
-                        "download_image_$index",
-                        downloadData.downloadUrl,
-                        "Download Image - ${downloadData.suffix}",
-                        actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            download(downloadData.mimeType, downloadData.downloadUrl, 3)
-                        })
-                    ).attachTo(this)
-                    VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
-                }
+                DownloadItemListModel(
+                    "download_images",
+                    Icons.IMAGE_LOGO,
+                    "Download Images - (${images.size})",
+                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        startActivity(
+                            router.imageViewer(
+                                this@BottomSheetDownloadActivity,
+                                images.map(DownloadData::downloadUrl).map(String::toUri)
+                            )
+                        )
+                    }),
+                ).attachTo(this)
             }
 
             if (files.isNotEmpty()) {
@@ -161,7 +170,7 @@ class BottomSheetDownloadActivity :
                         Icons.FILE_LOGO,
                         "Download File - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            download(downloadData.mimeType, downloadData.downloadUrl, 4)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 3)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("file_divider_$index", height = 1.dp()).attachTo(this)
@@ -175,8 +184,7 @@ class BottomSheetDownloadActivity :
             when (type) {
                 1 -> downloadVideo(mimeType, downloadUrl)
                 2 -> downloadAudio(mimeType, downloadUrl)
-                3 -> downloadImage(mimeType, downloadUrl)
-                4 -> downloadFile(mimeType, downloadUrl)
+                3 -> downloadFile(mimeType, downloadUrl)
             }
         } else if (downloadUrl.isLocalUri()) {
             downloadLocalContent(downloadUrl, mimeType)
@@ -213,14 +221,6 @@ class BottomSheetDownloadActivity :
         )
     }
 
-    private fun downloadImage(mimeType: String, downloadUrl: String) {
-        val fileName = FileUtils.createFileName("image", mimeType.asFileExtension())
-        DownloadFileDialogFragment.startDownload(
-            supportFragmentManager,
-            FileDownloadInfo(downloadUrl, fileName, mimeType)
-        )
-    }
-
     private fun downloadFile(mimeType: String, downloadUrl: String) {
         val fileName = FileUtils.createFileName("file", mimeType.asFileExtension())
         DownloadFileDialogFragment.startDownload(
@@ -232,7 +232,11 @@ class BottomSheetDownloadActivity :
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                finishAndRemoveTask()
+                if (isTaskRoot) {
+                    finishAndRemoveTask()
+                } else {
+                    finish()
+                }
             }
         }
 

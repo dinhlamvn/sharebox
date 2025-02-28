@@ -38,16 +38,16 @@ class SyncShareToCloudWorker @AssistedInject constructor(
             workerParams.inputData.getString(AppExtras.EXTRA_SHARE_ID) ?: return Result.success()
         val share = shareRepository.findOneRaw(shareId) ?: return Result.success()
         val newShare = when (share.shareData) {
-            is ShareData.ShareImage -> handleShareImage(share, share.shareData)
-            is ShareData.ShareImages -> handleShareImages(share, share.shareData)
-            is ShareData.ShareFile -> handleShareFile(share, share.shareData)
+            is ShareData.ShareImage -> uploadShareImage(share, share.shareData)
+            is ShareData.ShareImages -> uploadShareImages(share, share.shareData)
+            is ShareData.ShareFile -> uploadShareFiles(share, share.shareData)
             else -> share
         }
         realtimeDatabaseRepository.push(newShare)
         return Result.success()
     }
 
-    private suspend fun handleShareImage(share: Share, shareImage: ShareData.ShareImage): Share {
+    private suspend fun uploadShareImage(share: Share, shareImage: ShareData.ShareImage): Share {
         val shareUri = shareImage.uri
         if (FileUtils.isNetworkFile(shareUri)) {
             return share
@@ -59,7 +59,7 @@ class SyncShareToCloudWorker @AssistedInject constructor(
         return share
     }
 
-    private suspend fun handleShareImages(share: Share, shareImages: ShareData.ShareImages): Share {
+    private suspend fun uploadShareImages(share: Share, shareImages: ShareData.ShareImages): Share {
         val shareUris = shareImages.uris.filter(FileUtils::isNetworkFile).toMutableList()
         val uploadUris = shareImages.uris.filterNot(FileUtils::isNetworkFile)
         if (uploadUris.isEmpty()) {
@@ -82,7 +82,7 @@ class SyncShareToCloudWorker @AssistedInject constructor(
         return share.copy(shareData = shareImages.copy(uris = shareUris))
     }
 
-    private suspend fun handleShareFile(share: Share, shareFile: ShareData.ShareFile): Share {
+    private suspend fun uploadShareFiles(share: Share, shareFile: ShareData.ShareFile): Share {
         val shareUri = shareFile.uri
         if (FileUtils.isNetworkFile(shareUri)) {
             return share

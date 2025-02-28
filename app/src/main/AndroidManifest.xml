@@ -28,6 +28,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
@@ -317,6 +319,7 @@
             tools:node="merge" />
 
         <receiver android:name="com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver" />
+        <receiver android:name="com.dinhlam.sharebox.receiver.ShareCheckListAlarmBroadcastReceiver" />
     </application>
 
 </manifest>

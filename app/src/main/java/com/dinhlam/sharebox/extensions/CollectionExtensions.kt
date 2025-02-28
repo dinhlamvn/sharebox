@@ -19,3 +19,11 @@ fun <T> Set<T>.toggleElement(element: T): Set<T> {
         plus(element)
     }
 }
+
+fun <T> T.toList(): List<T> {
+    return listOf(this)
+}
+
+inline fun <reified T> List<T>.toArrayList(): ArrayList<T> {
+    return arrayListOf(*this.toTypedArray())
+}

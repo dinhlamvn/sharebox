@@ -15,9 +15,8 @@ import com.dinhlam.sharebox.databinding.ActivityImageViewerBinding
 import com.dinhlam.sharebox.extensions.getParcelableArrayListExtraCompat
 import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.storage.LocalStorageManager
 import com.dinhlam.sharebox.listmodel.ImageListModel
-import com.dinhlam.sharebox.utils.Icons
+import com.dinhlam.sharebox.storage.LocalStorageManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,7 +67,6 @@ class ImageViewerActivity : BaseActivity<ActivityImageViewerBinding>() {
             }
         })
 
-        binding.imageSaveToGallery.setImageDrawable(Icons.saveIcon(this))
         binding.imageSaveToGallery.setOnClickListener {
             val currentPos = layoutManager.findFirstVisibleItemPosition()
             val uri = uris.getOrNull(currentPos) ?: return@setOnClickListener

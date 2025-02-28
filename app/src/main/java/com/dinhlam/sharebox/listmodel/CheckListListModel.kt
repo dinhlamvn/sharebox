@@ -8,7 +8,7 @@ import androidx.core.view.children
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelCheckListBinding
 import com.dinhlam.sharebox.extensions.format
-import com.dinhlam.sharebox.extensions.ifNotZero
+import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.view.FontAwesomeIconView
 
@@ -48,16 +48,16 @@ data class CheckListListModel(
             )
             binding.iconReminder.setOnClickListener(model.onReminderClickListener.prop)
             binding.iconReminder.setIconStyle(
-                model.reminder.ifNotZero.ifTrue(
+                model.reminder.isNotZero.ifTrue(
                     FontAwesomeIconView.IconStyle.SOLID,
                     FontAwesomeIconView.IconStyle.REGULAR
                 )
             )
             binding.textDatetime.text =
-                model.datetime.ifNotZero.ifTrue(model.datetime.format("dd MMM yyyy, hh:mm a"), "-")
+                model.datetime.isNotZero.ifTrue(model.datetime.format("dd MMM yyyy, hh:mm a"), "-")
 
             binding.textUpdatedAt.text =
-                model.updatedAt.ifNotZero.ifTrue(
+                model.updatedAt.isNotZero.ifTrue(
                     model.updatedAt.format("dd MMM yyyy, hh:mm a"),
                     "-"
                 )

@@ -153,7 +153,7 @@
     <string name="nothing_to_copy">Nothing to copy</string>
     <string name="download_files">Download Files</string>
     <string name="no_box_selected">No Selected Box</string>
-    <string name="downloaded">Downloaded %s</string>
+    <string name="downloaded">Downloaded to %s</string>
     <string name="guideline_title_1">Archive</string>
     <string name="guideline_subtitle_1">Archive Note, Web Link, Image and File</string>
     <string name="guideline_title_2">Easy</string>
@@ -184,7 +184,13 @@
     <string name="require_input_passcode">Please input passcode.</string>
     <string name="listing">Listing</string>
     <string name="edit_checklist">Edit Checklist</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
+    <string name="datetime">Datetime: %s</string>
+    <string name="confirm_reset_reminder">Your current reminder at <b>%s</b>. Do you want to?</string>
+    <string name="change">Change</string>
+    <string name="delete">Delete</string>
+    <string name="link">Link</string>
+    <string name="browser">Browser</string>
 
     <string-array name="tags_option_menu_items">
         <item>Remove tag</item>

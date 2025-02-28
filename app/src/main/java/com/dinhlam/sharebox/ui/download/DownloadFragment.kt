@@ -31,6 +31,7 @@ import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.model.FileDownloadInfo
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -52,6 +53,9 @@ class DownloadFragment :
 
     @Inject
     lateinit var networkHelper: NetworkHelper
+
+    @Inject
+    lateinit var router: Router
 
     override val viewModel: DownloadViewModel by viewModels()
 

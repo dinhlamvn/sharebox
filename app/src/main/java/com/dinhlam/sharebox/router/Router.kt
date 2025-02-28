@@ -24,7 +24,7 @@ interface Router {
         desc: String? = null
     ): Intent
 
-    fun viewIntent(url: String): Intent
+    fun viewIntent(uri: Uri, mimeType: String? = null): Intent
     fun playStoreIntent(packageName: String): Intent
     fun boxForm(context: Context, boxId: String?): Intent
     fun setting(): Intent
