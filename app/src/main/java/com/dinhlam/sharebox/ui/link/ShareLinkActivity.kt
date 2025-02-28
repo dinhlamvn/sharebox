@@ -6,20 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.annotation.UiThread
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.base.BaseListAdapter
-import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityShareLinkBinding
-import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
 import com.dinhlam.sharebox.extensions.getTrimmedText
@@ -37,7 +31,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShareLinkActivity :
-    BaseViewModelActivity<ShareLinkState, ShareLinkViewModel, ActivityShareLinkBinding>() {
+    BaseActivity<ActivityShareLinkBinding>() {
 
     private val chooseBoxToGoLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -96,13 +90,6 @@ class ShareLinkActivity :
         ).attachTo(this)
     }
 
-    override val viewModel: ShareLinkViewModel by viewModels()
-
-    override fun onStateChanged(state: ShareLinkState) {
-        showLinkError(state.linkError)
-        adapter.requestBuildListModels()
-    }
-
     override fun onCreateViewBinding(): ActivityShareLinkBinding {
         return ActivityShareLinkBinding.inflate(layoutInflater)
     }
@@ -126,20 +113,9 @@ class ShareLinkActivity :
             true
         }
 
-        binding.editLink.doAfterTextChangedDebounce(scope = lifecycleScope) {
-            viewModel.setLinkError(null)
-        }
-
         binding.buttonPaste.setOnClickListener {
             val clipboardData = pickWebLinkFromClipboard()?.toString() ?: return@setOnClickListener
             binding.editLink.setText(clipboardData)
-        }
-
-        onChange(ShareLinkState::asyncLoadArchive) { asyncLoad ->
-            if (asyncLoad.success) {
-                showToast(R.string.shares_success)
-                finish()
-            }
         }
     }
 
@@ -158,12 +134,15 @@ class ShareLinkActivity :
 
     private fun onGo() {
         binding.editLink.hideKeyboard()
-        val correctLink = getCorrectLink().takeIfNotNullOrBlank() ?: return viewModel.setLinkError(
-            getString(R.string.require_input_link)
-        )
+        val correctLink = getCorrectLink().takeIfNotNullOrBlank()
+        if (correctLink == null) {
+            showToast(getString(R.string.require_input_link))
+            return
+        }
 
         if (!correctLink.isWebLink()) {
-            return viewModel.setLinkError(getString(R.string.require_input_correct_weblink))
+            showToast(getString(R.string.require_input_correct_weblink))
+            return
         }
 
         chooseBoxToGoLauncher.launch(router.boxList(this, getString(R.string.choose_box_for_web)))
@@ -208,20 +187,5 @@ class ShareLinkActivity :
         }
 
         return null
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    @UiThread
-    private fun showLinkError(error: String?) {
-        binding.textError.error = error
-        binding.textError.text = error
-        binding.textError.isVisible = error.isNullOrBlank().not()
     }
 }

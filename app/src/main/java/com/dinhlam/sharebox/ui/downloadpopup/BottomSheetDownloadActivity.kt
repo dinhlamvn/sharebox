@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -21,15 +22,18 @@ import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
+import com.dinhlam.sharebox.extensions.toList
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.FileDownloadInfo
+import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.FileUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BottomSheetDownloadActivity :
@@ -40,6 +44,9 @@ class BottomSheetDownloadActivity :
     override fun onStateChanged(state: BottomSheetDownloadState) {
         adapter.requestBuildListModels()
     }
+
+    @Inject
+    lateinit var router: Router
 
     private val adapter = BaseListAdapter.create {
         getState(viewModel) { state ->
@@ -140,6 +147,14 @@ class BottomSheetDownloadActivity :
                         "Download Image - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             download(downloadData.mimeType, downloadData.downloadUrl, 3)
+                        }),
+                        onThumbnailClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                            startActivity(
+                                router.imageViewer(
+                                    this@BottomSheetDownloadActivity,
+                                    downloadData.downloadUrl.toUri().toList()
+                                )
+                            )
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)

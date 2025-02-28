@@ -189,6 +189,8 @@
     <string name="confirm_reset_reminder">Your current reminder at <b>%s</b>. Do you want to?</string>
     <string name="change">Change</string>
     <string name="delete">Delete</string>
+    <string name="link">Link</string>
+    <string name="browser">Browser</string>
 
     <string-array name="tags_option_menu_items">
         <item>Remove tag</item>

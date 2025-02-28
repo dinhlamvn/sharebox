@@ -36,8 +36,8 @@ class HomeAdapter @Inject constructor(
             NoHashProp(View.OnClickListener { view ->
                 homeFragment.requestArchiveNote(view)
             }),
-            NoHashProp(View.OnClickListener {
-                homeFragment.requestArchiveWeb()
+            NoHashProp(View.OnClickListener { view ->
+                homeFragment.requestArchiveWeb(view)
             }),
             NoHashProp(View.OnClickListener {
                 homeFragment.requestArchiveImages()

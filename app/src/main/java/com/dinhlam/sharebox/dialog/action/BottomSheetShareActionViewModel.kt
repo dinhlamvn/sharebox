@@ -64,7 +64,9 @@ class BottomSheetShareActionViewModel @Inject constructor(
                         context.getString(R.string.copy)
                     )
                 )
-            } else {
+            }
+
+            if (shareData is ShareData.ShareUrl || shareData is ShareData.ShareFile) {
                 add(
                     BottomSheetShareActionState.Action(
                         BottomSheetShareActionState.ActionId.DOWNLOAD,
@@ -73,6 +75,7 @@ class BottomSheetShareActionViewModel @Inject constructor(
                     )
                 )
             }
+
             if (shareData is ShareData.ShareCheckList) {
                 add(
                     BottomSheetShareActionState.Action(

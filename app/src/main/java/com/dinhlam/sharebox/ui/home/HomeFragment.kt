@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,15 +23,18 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
 import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.extensions.packageName
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfGreaterThanZero
+import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
@@ -38,19 +42,13 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment :
     BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>() {
-
-    private val createBoxResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.refresh()
-            }
-        }
 
     private val viewBoxDetailLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -109,13 +107,6 @@ class HomeFragment :
         homeAdapter.requestBuildListModels()
     }
 
-    private val archiveResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.refresh()
-            }
-        }
-
     private val archiveTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -148,7 +139,7 @@ class HomeFragment :
                         putParcelableArrayListExtra(Intent.EXTRA_STREAM, list)
                     }
                 }
-                archiveResultLauncher.launch(intent)
+                startActivity(intent)
             }
         }
 
@@ -162,7 +153,7 @@ class HomeFragment :
                         ComponentName(packageName, ShareReceiveActivity::class.java.name)
                     putExtra(Intent.EXTRA_STREAM, uri)
                 }
-                archiveResultLauncher.launch(intent)
+                startActivity(intent)
             }
         }
 
@@ -222,7 +213,7 @@ class HomeFragment :
             component = ComponentName(packageName, ShareReceiveActivity::class.java.name)
             putExtra(Intent.EXTRA_TEXT, text)
         }
-        archiveResultLauncher.launch(intent)
+        startActivity(intent)
     }
 
     private fun onBoxSelected(boxId: String, boxName: String) {
@@ -271,8 +262,37 @@ class HomeFragment :
         popupMenu.show()
     }
 
-    fun requestArchiveWeb() {
-        archiveResultLauncher.launch(router.shareLink(requireContext(), null))
+    fun requestArchiveWeb(view: View) {
+        val popupMenu = PopupMenu(requireActivity(), view)
+        popupMenu.menuInflater.inflate(R.menu.menu_archive_web, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.link -> showDialogInputLink()
+
+                R.id.browser -> startActivity(router.shareLink(requireContext(), null))
+            }
+            true
+        }
+        popupMenu.show()
+
+    }
+
+    private fun showDialogInputLink() {
+        val binding = DialogLayoutInputBinding.inflate(LayoutInflater.from(requireContext()))
+        binding.dialogTextInputEdit.inputType = InputType.TYPE_CLASS_TEXT
+        binding.dialogTextInputEdit.hint = getString(R.string.share_link_hint)
+        MaterialAlertDialogBuilder(requireContext())
+            .setPositiveButton(R.string.dialog_ok) { _, _ ->
+                val link = binding.dialogTextInputEdit.text?.trimmedString().orEmpty()
+                if (link.isWebLink()) {
+                    onArchiveNote(link)
+                } else {
+                    showToast(R.string.require_input_correct_weblink)
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .setView(binding.root)
+            .show()
     }
 
     fun requestArchiveImages() {
@@ -359,7 +379,7 @@ class HomeFragment :
     }
 
     fun requestCreateBox() {
-        createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+        router.boxForm(requireContext(), null)
     }
 
     fun openShare(shareDetail: ShareDetail) {
