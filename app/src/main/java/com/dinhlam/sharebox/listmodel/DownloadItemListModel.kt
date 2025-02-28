@@ -11,10 +11,7 @@ data class DownloadItemListModel(
     val id: String,
     val thumbnail: String?,
     val title: String,
-    val actionClick: BaseListAdapter.NoHashProp<OnClickListener>,
-    val onThumbnailClick: BaseListAdapter.NoHashProp<OnClickListener> = BaseListAdapter.NoHashProp(
-        null
-    )
+    val actionClick: BaseListAdapter.NoHashProp<OnClickListener>
 ) : BaseListAdapter.BaseListModel(id) {
     override fun createViewHolder(
         inflater: LayoutInflater,
@@ -31,7 +28,6 @@ data class DownloadItemListModel(
             binding.thumbnail.load(buildContext, model.thumbnail)
             binding.title.text = model.title
             binding.root.setOnClickListener(model.actionClick.prop)
-            binding.thumbnail.setOnClickListener(model.onThumbnailClick.prop)
         }
 
         override fun onUnBind() {

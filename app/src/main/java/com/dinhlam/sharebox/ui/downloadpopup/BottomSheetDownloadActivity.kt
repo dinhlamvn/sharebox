@@ -22,11 +22,11 @@ import com.dinhlam.sharebox.extensions.isNetworkUrl
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.registerOnBackPressHandler
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.toList
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
+import com.dinhlam.sharebox.model.DownloadData
 import com.dinhlam.sharebox.model.FileDownloadInfo
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.utils.FileUtils
@@ -140,25 +140,19 @@ class BottomSheetDownloadActivity :
                     gravity = Gravity.START
                 ).attachTo(this)
 
-                images.forEachIndexed { index, downloadData ->
-                    DownloadItemListModel(
-                        "download_image_$index",
-                        downloadData.downloadUrl,
-                        "Download Image - ${downloadData.suffix}",
-                        actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            download(downloadData.mimeType, downloadData.downloadUrl, 3)
-                        }),
-                        onThumbnailClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            startActivity(
-                                router.imageViewer(
-                                    this@BottomSheetDownloadActivity,
-                                    downloadData.downloadUrl.toUri().toList()
-                                )
+                DownloadItemListModel(
+                    "download_images",
+                    Icons.IMAGE_LOGO,
+                    "Download Images - (${images.size})",
+                    actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        startActivity(
+                            router.imageViewer(
+                                this@BottomSheetDownloadActivity,
+                                images.map(DownloadData::downloadUrl).map(String::toUri)
                             )
-                        })
-                    ).attachTo(this)
-                    VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
-                }
+                        )
+                    }),
+                ).attachTo(this)
             }
 
             if (files.isNotEmpty()) {
@@ -176,7 +170,7 @@ class BottomSheetDownloadActivity :
                         Icons.FILE_LOGO,
                         "Download File - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            download(downloadData.mimeType, downloadData.downloadUrl, 4)
+                            download(downloadData.mimeType, downloadData.downloadUrl, 3)
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("file_divider_$index", height = 1.dp()).attachTo(this)
@@ -190,8 +184,7 @@ class BottomSheetDownloadActivity :
             when (type) {
                 1 -> downloadVideo(mimeType, downloadUrl)
                 2 -> downloadAudio(mimeType, downloadUrl)
-                3 -> downloadImage(mimeType, downloadUrl)
-                4 -> downloadFile(mimeType, downloadUrl)
+                3 -> downloadFile(mimeType, downloadUrl)
             }
         } else if (downloadUrl.isLocalUri()) {
             downloadLocalContent(downloadUrl, mimeType)
@@ -222,14 +215,6 @@ class BottomSheetDownloadActivity :
 
     private fun downloadAudio(mimeType: String, downloadUrl: String) {
         val fileName = FileUtils.createFileName("audio", mimeType.asFileExtension())
-        DownloadFileDialogFragment.startDownload(
-            supportFragmentManager,
-            FileDownloadInfo(downloadUrl, fileName, mimeType)
-        )
-    }
-
-    private fun downloadImage(mimeType: String, downloadUrl: String) {
-        val fileName = FileUtils.createFileName("image", mimeType.asFileExtension())
         DownloadFileDialogFragment.startDownload(
             supportFragmentManager,
             FileDownloadInfo(downloadUrl, fileName, mimeType)

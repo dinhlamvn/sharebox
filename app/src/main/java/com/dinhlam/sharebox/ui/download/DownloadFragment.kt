@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
@@ -24,7 +23,6 @@ import com.dinhlam.sharebox.extensions.hideKeyboard
 import com.dinhlam.sharebox.extensions.isWebLink
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
-import com.dinhlam.sharebox.extensions.toList
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.NetworkHelper
 import com.dinhlam.sharebox.listmodel.DownloadItemListModel
@@ -167,14 +165,6 @@ class DownloadFragment :
                         "Download Image - ${downloadData.suffix}",
                         actionClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                             download(downloadData.mimeType, downloadData.downloadUrl, 3)
-                        }),
-                        onThumbnailClick = BaseListAdapter.NoHashProp(View.OnClickListener {
-                            startActivity(
-                                router.imageViewer(
-                                    requireContext(),
-                                    downloadData.downloadUrl.toUri().toList()
-                                )
-                            )
                         })
                     ).attachTo(this)
                     VerticalDividerListModel("image_divider_$index", height = 1.dp()).attachTo(this)
