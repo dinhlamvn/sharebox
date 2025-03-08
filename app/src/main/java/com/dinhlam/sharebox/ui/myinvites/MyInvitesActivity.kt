@@ -33,7 +33,7 @@ class MyInvitesActivity :
             state.boxList.forEach { box ->
                 TextListModel(
                     "box_${box.boxId}",
-                    box.boxId,
+                    box.boxName,
                     height = 50.dp(),
                     gravity = Gravity.CENTER_VERTICAL,
                     padding = Spacing.Horizontal(16.dp(), 16.dp()),

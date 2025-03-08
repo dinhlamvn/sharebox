@@ -16,6 +16,7 @@ import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.enumByNameIgnoreCase
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
+import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.BoxInvitedData
@@ -202,7 +203,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    private fun createNewShare(shareId: String, jsonMap: Map<String, Any>): Share? {
+    private fun parseShareFromRealtimeObj(shareId: String, jsonMap: Map<String, Any>): Share? {
         val realtimeShareObj = RealtimeShareObj.from(jsonMap)
         val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
         val shareData =
@@ -230,7 +231,7 @@ class RealtimeDatabaseRepository @Inject constructor(
     private suspend fun onShareSnapshotDataReceived(shareId: String, jsonMap: Map<String, Any>) {
         try {
             val share = shareRepository.findOneRaw(shareId)
-            val snapshotDataShare = createNewShare(shareId, jsonMap) ?: return
+            val snapshotDataShare = parseShareFromRealtimeObj(shareId, jsonMap) ?: return
             if (share != null) {
                 shareRepository.update(snapshotDataShare.copy(id = share.id), false)
             } else {
@@ -323,25 +324,35 @@ class RealtimeDatabaseRepository @Inject constructor(
         val listener = boxMemberRef
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val iterator = snapshot.children.iterator()
-                    val boxInvitedDataList = buildList {
-                        while (iterator.hasNext()) {
-                            val data = iterator.next()
-                            val boxId = data.key ?: continue
+                    realtimeDatabaseScope.launch(Dispatchers.IO) {
+                        val iterator = snapshot.children.iterator()
+                        val boxInvitedDataList = buildList {
+                            while (iterator.hasNext()) {
+                                val data = iterator.next()
+                                val boxId = data.key ?: continue
 
-                            val dataValue = data.value?.cast<Map<String, Any>>() ?: continue
-                            val memberData =
-                                dataValue[userHelper.getCurrentUserId()]?.cast<Map<String, Any>>()
-                                    ?: continue
+                                val dataValue = data.value?.cast<Map<String, Any>>() ?: continue
+                                val memberData =
+                                    dataValue[userHelper.getCurrentUserId()]?.cast<Map<String, Any>>()
+                                        ?: continue
 
-                            val invitedBy = memberData["invited_by"]?.toString() ?: continue
-                            val addedAt =
-                                memberData["added_at"]?.toString()?.toLongOrNull() ?: continue
-                            add(BoxInvitedData(boxId, invitedBy, addedAt))
+                                val invitedBy = memberData["invited_by"]?.toString() ?: continue
+                                val addedAt =
+                                    memberData["added_at"]?.toString()?.toLongOrNull() ?: continue
+
+                                val boxData = boxRef.orderByChild("id").equalTo(boxId).get().await()
+                                val boxDataMap = boxData.value?.cast<Map<String, Any>>() ?: continue
+                                val valueMap = boxDataMap[boxId]?.cast<Map<String, Any>>() ?: continue
+                                val boxName =
+                                    valueMap["name"]?.toString()?.takeIfNotNullOrBlank()
+                                        ?: continue
+
+                                add(BoxInvitedData(boxId, boxName, invitedBy, addedAt))
+                            }
                         }
-                    }
 
-                    block(boxInvitedDataList)
+                        block(boxInvitedDataList)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -371,13 +382,20 @@ class RealtimeDatabaseRepository @Inject constructor(
         val listener = ref
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val shares = snapshot.children.mapNotNull { dataSnapshot ->
-                        val shareId = dataSnapshot.key ?: return@mapNotNull null
-                        val jsonMap =
-                            dataSnapshot.value?.cast<Map<String, Any>>() ?: return@mapNotNull null
-                        createNewShare(shareId, jsonMap)
+                    realtimeDatabaseScope.launch(Dispatchers.IO) {
+                        val iterator = snapshot.children.iterator()
+                        val shares = buildList {
+                            while (iterator.hasNext()) {
+                                val dataSnapshot = iterator.next()
+                                val shareId = dataSnapshot.key ?: continue
+                                val jsonMap =
+                                    dataSnapshot.value?.cast<Map<String, Any>>() ?: continue
+                                parseShareFromRealtimeObj(shareId, jsonMap)?.let(::add)
+                            }
+                        }
+
+                        block(shares)
                     }
-                    block(shares)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
