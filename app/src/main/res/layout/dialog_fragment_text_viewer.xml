@@ -15,23 +15,14 @@
         android:clipToPadding="false"
         android:fillViewport="true"
         android:overScrollMode="never"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:scrollbars="none">
 
-        <FrameLayout
-            android:id="@+id/container"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_content"
+            style="@style/TextBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_content"
-                style="@style/TextBody"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:autoLink="all" />
-
-        </FrameLayout>
+            android:layout_height="wrap_content"
+            android:autoLink="all" />
 
     </ScrollView>
 

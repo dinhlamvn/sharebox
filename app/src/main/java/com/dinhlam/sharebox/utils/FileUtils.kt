@@ -77,7 +77,6 @@ object FileUtils {
         if (!file.exists()) {
             file.createNewFile()
         }
-
         return file
     }
 

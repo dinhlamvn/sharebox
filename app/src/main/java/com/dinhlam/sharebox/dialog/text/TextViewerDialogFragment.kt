@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.base.BaseDialogFragment
 import com.dinhlam.sharebox.databinding.DialogFragmentTextViewerBinding
 import com.dinhlam.sharebox.extensions.heightPercentage
+import com.dinhlam.sharebox.extensions.updateHeight
 
 class TextViewerDialogFragment : BaseDialogFragment<DialogFragmentTextViewerBinding>() {
 
@@ -36,7 +37,7 @@ class TextViewerDialogFragment : BaseDialogFragment<DialogFragmentTextViewerBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textContent.maxHeight = heightPercentage(70)
+        binding.scrollView.updateHeight(heightPercentage(70))
 
         val textContent = arguments?.getString(Intent.EXTRA_TEXT) ?: ""
         val htmlText = textContent.replace("\n", "<br>")

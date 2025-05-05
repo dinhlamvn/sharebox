@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.extensions
 
 import android.content.Context
 import androidx.fragment.app.FragmentManager
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.model.ShareData
@@ -47,15 +48,19 @@ fun Context.openShare(
 
         is ShareData.ShareCheckList -> {
             val text = buildString {
-                append("<b>Check List</b> [${shareDetail.shareNote.takeIfNotNullOrBlank() ?: "-"}]")
+                append("<b>${getString(R.string.checklist)}</b>")
                 append("\n")
+                shareDetail.shareNote?.takeIfNotNullOrBlank()?.let { note ->
+                    append(note)
+                    append("\n")
+                }
 
                 for (checklist in shareData.checkListDataList) {
                     append("\n")
-                    append("• Work title: ")
+                    append("• <b>${getString(R.string.hint_input_check_list_title)}: </b>")
                     append(checklist.title)
                     append("\n")
-                    append("• Datetime: ")
+                    append("• <b>${getString(R.string.datetime, "")}</b>")
                     append(
                         checklist.datetime.isNotZero.ifTrue(
                             checklist.datetime.format("dd MMM yyyy, HH:mm"),
@@ -63,8 +68,13 @@ fun Context.openShare(
                         )
                     )
                     append("\n")
-                    append("• Status: ")
-                    append(checklist.done.ifTrue("Done", "Not Done"))
+                    append("• <b>${getString(R.string.status)}: </b>")
+                    append(
+                        checklist.done.ifTrue(
+                            getString(R.string.done),
+                            getString(R.string.not_done)
+                        )
+                    )
                     append("\n--------------------")
                 }
             }

@@ -19,7 +19,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_scrollFlags="snap"
             app:title="@string/logo"
-            app:titleTextAppearance="@style/AppTheme.AppNameTextAppearance" />
+            app:titleTextAppearance="@style/AppTheme.AppNameTextAppearance">
+
+            <com.dinhlam.sharebox.view.FontAwesomeIconView
+                android:id="@+id/icon_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                app:icon_code="f05a"
+                app:icon_size="24dp" />
+        </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/divider"

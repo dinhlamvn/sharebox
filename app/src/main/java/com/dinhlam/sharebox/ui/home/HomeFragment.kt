@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -193,9 +194,14 @@ class HomeFragment :
                 viewModel.refresh()
             }
         }
+
+        binding.iconInfo.setOnClickListener {
+            startActivity(router.guideline(requireContext()))
+        }
+
     }
 
-    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun showAlertDialog() {
         AlertDialog.Builder(requireContext()).setTitle(R.string.alert_notice)
             .setMessage(R.string.alert_request_post_notification_permission_message)
@@ -379,7 +385,7 @@ class HomeFragment :
     }
 
     fun requestCreateBox() {
-        router.boxForm(requireContext(), null)
+        startActivity(router.boxForm(requireContext(), null))
     }
 
     fun openShare(shareDetail: ShareDetail) {

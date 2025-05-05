@@ -57,6 +57,18 @@ class HomeAdapter @Inject constructor(
             "margin_my_boxes", height = 32.dp(), dividerColor = android.R.color.transparent
         ).attachTo(this)
 
+        ButtonListModel(
+            "your_invited_box",
+            fragment.getString(R.string.title_box_invited),
+            onClick = NoHashProp(View.OnClickListener {
+                fragment.startActivity(router.myInvites(fragment.requireContext()))
+            }), margin = Spacing.Horizontal(16.dp, 16.dp)
+        ).attachTo(this)
+
+        VerticalDividerListModel(
+            "margin_invited", height = 16.dp(), dividerColor = android.R.color.transparent
+        ).attachTo(this)
+
         TextPairListModel(
             "title_your_boxes",
             text1 = homeFragment.requireContext().getString(R.string.your_boxes),
@@ -103,18 +115,18 @@ class HomeAdapter @Inject constructor(
                 homeFragment.requireContext().getString(R.string.no_boxes),
                 height = 100.dp()
             ).attachTo(this)
-        }
 
-        ButtonListModel(
-            "button_create_box",
-            "+",
-            margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0),
-            onClick = NoHashProp(View.OnClickListener {
-                homeFragment.requestCreateBox()
-            })
-        ).attachTo(
-            this
-        )
+            ButtonListModel(
+                "button_create_box",
+                "+",
+                margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0),
+                onClick = NoHashProp(View.OnClickListener {
+                    homeFragment.requestCreateBox()
+                })
+            ).attachTo(
+                this
+            )
+        }
 
         TextListModel(
             "title_recently",

@@ -162,7 +162,7 @@
     <string name="skip">Bỏ qua</string>
     <string name="checklist">Danh sách công việc</string>
     <string name="text">Văn bản</string>
-    <string name="hint_input_check_list_title">Nội dung công việc</string>
+    <string name="hint_input_check_list_title">Tiêu đề công việc</string>
     <string name="require_check_list_title">Nội dung công việc không thể trống</string>
     <string name="nothing_to_save">Không có gì để lưu</string>
     <string name="confirm_done_checklist">Bạn có chắc sẽ đánh dấu hoàn thành task này? Bạn sẽ không thể hoàn tác sao khi task được đánh dấu hoàn thành.</string>
@@ -181,6 +181,9 @@
     <string name="delete">Xóa</string>
     <string name="link">Đường dẫn</string>
     <string name="browser">Trình duyệt</string>
+    <string name="status">Status</string>
+    <string name="done">Done</string>
+    <string name="not_done">Not Done</string>
 
     <string-array name="tags_option_menu_items">
         <item>Sửa</item>

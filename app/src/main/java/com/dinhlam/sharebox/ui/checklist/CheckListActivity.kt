@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -24,17 +22,16 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.databinding.ActivityCheckListBinding
-import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.format
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
 import com.dinhlam.sharebox.extensions.getSystemServiceCompat
+import com.dinhlam.sharebox.extensions.getTrimmedText
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.extensions.trimmedString
 import com.dinhlam.sharebox.listmodel.ButtonListModel
 import com.dinhlam.sharebox.listmodel.CheckListListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
@@ -196,11 +193,8 @@ class CheckListActivity :
                     return@getState
                 }
 
-                if (state.shareDetail?.shareNote.isNullOrBlank()) {
-                    showDialogInputTitle(state.shareDetail?.shareNote)
-                } else {
-                    viewModel.saveCheckList(state.shareDetail?.shareNote)
-                }
+                val note = binding.editNote.getTrimmedText()
+                viewModel.saveCheckList(note)
             }
         }
 
@@ -236,22 +230,10 @@ class CheckListActivity :
                 showToast(asyncLoad.error.message)
             }
         }
-    }
 
-    private fun showDialogInputTitle(title: String?) {
-        val binding = DialogLayoutInputBinding.inflate(LayoutInflater.from(this))
-        binding.dialogTextInputEdit.inputType = InputType.TYPE_CLASS_TEXT
-        binding.dialogTextInputEdit.hint = getString(R.string.text_input_note_hint_desc)
-        binding.dialogTextInputEdit.setText(title)
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.share_note)
-            .setPositiveButton(R.string.dialog_ok) { _, _ ->
-                val newTitle = binding.dialogTextInputEdit.text?.trimmedString()
-                viewModel.saveCheckList(newTitle)
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .setView(binding.root)
-            .show()
+        onChange(CheckListState::shareDetail) { shareDetail ->
+            binding.editNote.setText(shareDetail?.shareNote)
+        }
     }
 
     override fun onSaveCheckListData(

@@ -20,9 +20,9 @@ import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.format
-import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.isNetworkUrl
+import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
 import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.extensions.takeIfNotNullOrBlank
@@ -179,14 +179,19 @@ class ShareHelper @Inject constructor(
         shareData: ShareData.ShareCheckList
     ): String {
         return buildString {
-            append("Check List [${shareNote.takeIfNotNullOrBlank() ?: "-"}]")
-            append("\n\n")
+            append("<b>${context.getString(R.string.checklist)}</b>")
+            append("\n")
+            shareNote.takeIfNotNullOrBlank()?.let { note ->
+                append(note)
+                append("\n")
+            }
 
             for (checklist in shareData.checkListDataList) {
-                append("• Work title: ")
+                append("\n")
+                append("• <b>${context.getString(R.string.hint_input_check_list_title)}: </b>")
                 append(checklist.title)
                 append("\n")
-                append("• Datetime: ")
+                append("• <b>${context.getString(R.string.datetime, "")}</b>")
                 append(
                     checklist.datetime.isNotZero.ifTrue(
                         checklist.datetime.format("dd MMM yyyy, HH:mm"),
@@ -194,8 +199,13 @@ class ShareHelper @Inject constructor(
                     )
                 )
                 append("\n")
-                append("• Status: ")
-                append(checklist.done.ifTrue("Done", "Not Done"))
+                append("• <b>${context.getString(R.string.status)}: </b>")
+                append(
+                    checklist.done.ifTrue(
+                        context.getString(R.string.done),
+                        context.getString(R.string.not_done)
+                    )
+                )
                 append("\n--------------------")
             }
         }

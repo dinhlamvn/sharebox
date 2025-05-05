@@ -8,8 +8,8 @@ import androidx.core.view.children
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelCheckListBinding
 import com.dinhlam.sharebox.extensions.format
-import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.ifTrue
+import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.view.FontAwesomeIconView
 
 data class CheckListListModel(
@@ -58,7 +58,7 @@ data class CheckListListModel(
 
             binding.textUpdatedAt.text =
                 model.updatedAt.isNotZero.ifTrue(
-                    model.updatedAt.format("dd MMM yyyy, hh:mm a"),
+                    model.updatedAt.format("dd MMM yyyy"),
                     "-"
                 )
         }
