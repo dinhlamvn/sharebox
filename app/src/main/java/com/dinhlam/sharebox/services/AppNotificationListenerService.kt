@@ -71,6 +71,7 @@ class AppNotificationListenerService : NotificationListenerService() {
         if (intent?.action == ACTION_START_SERVICE) {
             startForeground()
         } else {
+            appSettingHelper.setRecordingNotifications(false)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 stopForeground(Service.STOP_FOREGROUND_REMOVE)
             } else {
@@ -135,7 +136,7 @@ class AppNotificationListenerService : NotificationListenerService() {
             .setSmallIcon(R.drawable.ic_notification).setAutoCancel(false).setContentIntent(
                 PendingIntent.getActivity(
                     this,
-                    1122,
+                    1,
                     packageManager.getLaunchIntentForPackage(packageName),
                     PendingIntent.FLAG_IMMUTABLE
                 )
@@ -143,7 +144,7 @@ class AppNotificationListenerService : NotificationListenerService() {
             .addAction(
                 0, getString(R.string.shutdown), PendingIntent.getService(
                     this, 1, intent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             )
             .build()

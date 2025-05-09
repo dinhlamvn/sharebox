@@ -287,12 +287,18 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                             Intent(
                                 this@SettingActivity,
                                 AppNotificationListenerService::class.java
-                            )
+                            ).setAction(AppNotificationListenerService.ACTION_START_SERVICE)
                         )
                     }
                 }
             } else {
                 appSettingHelper.setRecordingNotifications(false)
+                startService(
+                    Intent(
+                        this@SettingActivity,
+                        AppNotificationListenerService::class.java
+                    ).setAction(AppNotificationListenerService.ACTION_STOP_SERVICE)
+                )
             }
         }
     }
