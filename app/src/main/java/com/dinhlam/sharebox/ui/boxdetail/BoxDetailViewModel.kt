@@ -46,7 +46,12 @@ class BoxDetailViewModel @Inject constructor(
 
     fun loadShares() = getState { state ->
         suspend {
-            loadShares(state.boxDetail!!.boxId, AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 0)
+            loadShares(
+                state.boxDetail!!.boxId,
+                AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                0,
+                state.searchQuery
+            )
         }.execute { asyncLoad ->
             copy(
                 shares = asyncLoad.data ?: shares,
@@ -61,7 +66,8 @@ class BoxDetailViewModel @Inject constructor(
             loadShares(
                 state.boxDetail!!.boxId,
                 AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE
+                state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
+                state.searchQuery
             )
         }.execute { asyncLoad ->
             val shares = asyncLoad.data.orEmpty()
@@ -77,12 +83,14 @@ class BoxDetailViewModel @Inject constructor(
     private suspend fun loadShares(
         boxId: String,
         limit: Int,
-        offset: Int
+        offset: Int,
+        searchQuery: String?
     ): List<ShareDetail> {
         return shareRepository.findWhereInBox(
             boxId,
             limit,
-            offset
+            offset,
+            searchQuery
         )
     }
 
@@ -136,7 +144,8 @@ class BoxDetailViewModel @Inject constructor(
             loadShares(
                 state.boxDetail.boxId,
                 state.currentPage * AppConsts.LOADING_LIMIT_ITEM_PER_PAGE,
-                0
+                0,
+                state.searchQuery
             )
         }.execute { asyncLoad ->
             copy(
@@ -145,4 +154,6 @@ class BoxDetailViewModel @Inject constructor(
             )
         }
     }
+
+    fun setSearchQuery(searchQuery: String?) = setState { copy(searchQuery = searchQuery) }
 }

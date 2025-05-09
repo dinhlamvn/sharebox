@@ -16,10 +16,31 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:icon_code="f044"
             app:icon_size="24dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:inputType="text"
+                android:textAppearance="@style/TextBody"
+                android:theme="@style/AppSearchView"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent"
+                app:queryHint="@string/search_hint" />
+
+        </androidx.cardview.widget.CardView>
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider

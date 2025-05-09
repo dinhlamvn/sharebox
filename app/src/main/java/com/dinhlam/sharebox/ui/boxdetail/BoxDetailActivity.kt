@@ -8,6 +8,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
@@ -15,6 +16,7 @@ import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxDetailBinding
 import com.dinhlam.sharebox.extensions.buildListItemListModel
+import com.dinhlam.sharebox.extensions.doOnQueryTextChangedDebounce
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.extensions.showToast
@@ -150,7 +152,12 @@ class BoxDetailActivity :
             viewModel.doOnRefresh()
         }
 
-        onChange(BoxDetailState::boxDetail) { boxDetail ->
+        binding.searchView.doOnQueryTextChangedDebounce(
+            scope = lifecycleScope,
+            block = viewModel::setSearchQuery
+        )
+
+        onChange(BoxDetailState::boxDetail, BoxDetailState::searchQuery) { boxDetail, _ ->
             if (boxDetail == null) {
                 return@onChange
             }

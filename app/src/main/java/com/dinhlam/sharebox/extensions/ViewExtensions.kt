@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.FloatRange
 import androidx.annotation.StyleRes
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
@@ -57,10 +58,12 @@ fun TextView.setTextAppearanceCompat(@StyleRes textAppearance: Int) {
 }
 
 fun TextView.doAfterTextChangedDebounce(
-    waitMs: Long = 300, scope: CoroutineScope, action: (Editable?) -> Unit
+    waitMs: Long = 300,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined),
+    action: (Editable?) -> Unit
 ) {
     addTextChangedListener(object : TextWatcher {
-        var debounceJob: Job? = null
+        private var debounceJob: Job? = null
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -117,4 +120,29 @@ fun View.updatePadding(spacing: Spacing) {
 fun View.scaleXY(@FloatRange(0.0, 1.0) scaleX: Float, @FloatRange(0.0, 1.0) scaleY: Float) {
     this.scaleX = scaleX
     this.scaleY = scaleY
+}
+
+fun SearchView.doOnQueryTextChangedDebounce(
+    waitMs: Long = 300,
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined),
+    block: (String?) -> Unit
+) {
+    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        private var debounceJob: Job? = null
+
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            debounceJob?.cancel()
+            debounceJob = scope.launch(Dispatchers.IO) {
+                delay(waitMs)
+                withContext(Dispatchers.Main) {
+                    block(newText)
+                }
+            }
+            return true
+        }
+    })
 }

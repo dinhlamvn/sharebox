@@ -194,7 +194,15 @@ class RealtimeDatabaseRepository @Inject constructor(
             val box = boxRepository.findOneRaw(boxId)
             val snapshotDataBox = createNewBox(boxId, jsonMap)
             if (box != null) {
-                boxRepository.update(snapshotDataBox.copy(id = box.id, synced = true))
+                boxRepository.update(
+                    snapshotDataBox.copy(
+                        id = box.id,
+                        synced = true,
+                        lastSeen = box.lastSeen,
+                        createdAt = box.createdAt,
+                        updatedAt = box.updatedAt
+                    )
+                )
             } else {
                 boxRepository.insert(snapshotDataBox.copy(synced = true))
             }
@@ -238,7 +246,14 @@ class RealtimeDatabaseRepository @Inject constructor(
             val share = shareRepository.findOneRaw(shareId)
             val snapshotDataShare = parseShareFromRealtimeObj(shareId, jsonMap) ?: return
             if (share != null) {
-                shareRepository.update(snapshotDataShare.copy(id = share.id), false)
+                shareRepository.update(
+                    snapshotDataShare.copy(
+                        id = share.id,
+                        synced = true,
+                        createdAt = share.createdAt,
+                        updatedAt = share.updatedAt
+                    ), false
+                )
             } else {
                 shareRepository.insert(snapshotDataShare.copy(synced = true))
             }

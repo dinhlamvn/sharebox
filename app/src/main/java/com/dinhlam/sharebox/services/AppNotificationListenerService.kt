@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.services
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.app.Service
+import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.service.notification.NotificationListenerService
@@ -40,11 +42,28 @@ class AppNotificationListenerService : NotificationListenerService() {
 
     companion object {
         private const val SERVICE_ID = 5102000
+        const val ACTION_START_SERVICE = "START_SERVICE"
+        const val ACTION_STOP_SERVICE = "STOP_SERVICE"
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.debug("Notification listener has been started.")
+        if (intent?.action == ACTION_START_SERVICE) {
+            startForeground()
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                stopForeground(Service.STOP_FOREGROUND_REMOVE)
+            } else {
+                @Suppress("DEPRECATION")
+                stopForeground(true)
+            }
+            stopSelf()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun startForeground() {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(
                 SERVICE_ID,
@@ -82,6 +101,9 @@ class AppNotificationListenerService : NotificationListenerService() {
     }
 
     private fun createNotification(): Notification {
+        val intent =
+            Intent(this, AppNotificationListenerService::class.java).setAction(ACTION_STOP_SERVICE)
+
         return NotificationCompat.Builder(this, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
             .setContentText(getString(R.string.archive_notifications_notification_message))
             .setSubText(getString(R.string.title_archive_notification))
@@ -91,6 +113,12 @@ class AppNotificationListenerService : NotificationListenerService() {
                     1122,
                     packageManager.getLaunchIntentForPackage(packageName),
                     PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+            .addAction(
+                0, getString(R.string.shutdown), PendingIntent.getService(
+                    this, 1, intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             )
             .build()

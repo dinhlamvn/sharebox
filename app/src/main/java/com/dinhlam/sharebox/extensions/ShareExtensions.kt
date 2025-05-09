@@ -80,8 +80,8 @@ fun Context.openShare(
         is ShareData.ShareNotification -> {
             TextViewerDialogFragment.showDialog(fragmentManager, buildString {
                 append("<b>${shareData.appName}</b>\n")
-                append("•%s:${shareData.title}\n".format(getString(R.string.title)))
-                append("•%s: ${shareData.content}".format(getString(R.string.content)))
+                append("•${getString(R.string.title)}: ${shareData.title}\n")
+                append("•${getString(R.string.content)}: ${shareData.content}")
             })
         }
     }

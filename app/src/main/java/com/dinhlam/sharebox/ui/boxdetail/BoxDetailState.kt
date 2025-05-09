@@ -13,5 +13,6 @@ data class BoxDetailState(
     val currentPage: Int = 1,
     val canLoadMore: Boolean = false,
     val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.UnInitialized,
-    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized
+    val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized,
+    val searchQuery: String? = null,
 ) : BaseViewModel.BaseState

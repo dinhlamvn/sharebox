@@ -68,4 +68,9 @@
         <item name="contentInsetStart">16dp</item>
     </style>
 
+    <style name="AppSearchView" parent="AppTheme">
+        <item name="android:textAppearance">@style/TextBody</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

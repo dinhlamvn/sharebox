@@ -10,12 +10,12 @@ import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.listmodel.BoxItemListModel
-import com.dinhlam.sharebox.listmodel.PrimaryButtonListModel
 import com.dinhlam.sharebox.listmodel.CircleDrawableIconButtonListModel
 import com.dinhlam.sharebox.listmodel.CircleFontAwesomeIconButtonListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
+import com.dinhlam.sharebox.listmodel.PrimaryButtonListModel
 import com.dinhlam.sharebox.listmodel.SecondaryButtonListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.TextPairListModel
@@ -93,7 +93,7 @@ class HomeAdapter @Inject constructor(
                     "box_${boxDetail.boxId}",
                     boxDetail.boxId,
                     boxDetail.boxName,
-                    boxDetail.createdDate,
+                    boxDetail.lastSeen,
                     Spacing.None,
                     !boxDetail.passcode.isNullOrBlank(),
                     true,

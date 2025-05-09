@@ -149,9 +149,14 @@ class ShareRepository @Inject constructor(
         }
     }
 
-    suspend fun findWhereInBox(shareBoxId: String, limit: Int, offset: Int): List<ShareDetail> {
+    suspend fun findWhereInBox(
+        shareBoxId: String,
+        limit: Int,
+        offset: Int,
+        searchQuery: String?
+    ): List<ShareDetail> {
         return try {
-            val shares = shareDao.findWhereInBox(shareBoxId, limit, offset)
+            val shares = shareDao.findWhereInBox(shareBoxId, limit, offset, searchQuery.orEmpty())
             shares.asFlow().mapNotNull(::buildShareDetail).toList()
         } catch (e: Exception) {
             Logger.error("Query list share in box $shareBoxId has error: $e")

@@ -190,8 +190,8 @@ class ShareHelper @Inject constructor(
     private fun getShareNotificationText(shareData: ShareData.ShareNotification): String {
         return buildString {
             append("${shareData.appName}\n")
-            append("•%s:${shareData.title}\n".format(context.getString(R.string.title)))
-            append("•%s: ${shareData.content}".format(context.getString(R.string.content)))
+            append("•${context.getString(R.string.title)}: ${shareData.title}\n")
+            append("•${context.getString(R.string.content)}: ${shareData.content}")
         }
     }
 

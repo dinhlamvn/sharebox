@@ -76,13 +76,13 @@ interface ShareDao {
         """
         SELECT s.* 
         FROM share as s
-        WHERE s.share_box_id = :boxId
+        WHERE s.share_box_id = :boxId AND s.share_data LIKE '%' || :searchQuery || '%'
         ORDER BY s.share_date DESC
         LIMIT :limit
         OFFSET :offset
     """
     )
-    suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int): List<Share>
+    suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int, searchQuery: String): List<Share>
 
     @Query(
         """
