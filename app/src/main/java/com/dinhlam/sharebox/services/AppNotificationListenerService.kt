@@ -29,6 +29,26 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AppNotificationListenerService : NotificationListenerService() {
 
+    private val systemAppPackages = arrayOf(
+        "com.android.settings",                      // Cài đặt
+        "com.android.systemui",                      // System UI
+        "com.google.android.gms",                    // Google Play Services
+        "com.android.vending",                       // Google Play Store
+        "com.google.android.gsf",                    // Google Services Framework
+        "com.android.dialer",                        // Ứng dụng điện thoại
+        "com.android.contacts",                      // Danh bạ
+        "com.google.android.apps.messaging",         // Tin nhắn (Messages)
+        "com.google.android.inputmethod.latin",      // Bàn phím Gboard
+        "com.android.launcher",                      // Trình khởi chạy (Launcher)
+        "com.android.camera",                        // Camera mặc định
+        "com.android.documentsui",                   // Trình quản lý file
+        "com.android.mms",                           // Tin nhắn MMS cũ
+        "com.android.phone",                         // Phone service
+        "com.android.calendar",                      // Lịch
+        "com.android.providers.settings",            // Cung cấp dữ liệu hệ thống
+        "com.android.packageinstaller"               // Trình cài đặt gói
+    )
+
     private val coroutineScope by lazyOf(MainScope() + CoroutineName("AppNotificationListenerServiceScope") + Job())
 
     @Inject
@@ -79,6 +99,11 @@ class AppNotificationListenerService : NotificationListenerService() {
         super.onNotificationPosted(sbn)
         val packageName = sbn.packageName
         if (!BuildConfig.DEBUG && packageName == this.packageName) {
+            return
+        }
+
+        if (systemAppPackages.contains(packageName)) {
+            // Don't store the system app messages
             return
         }
 
