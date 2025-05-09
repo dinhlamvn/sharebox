@@ -4,6 +4,7 @@ import android.content.Context
 import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.pref.UserSharePref
+import com.dinhlam.sharebox.utils.BoxUtils
 import com.dinhlam.sharebox.utils.UserUtils
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,9 @@ class UserHelper @Inject constructor(
     private val userSharePref: UserSharePref,
     private val userRepository: UserRepository
 ) {
+    val notificationsBoxId: String
+        get() = BoxUtils.createBoxId(getCurrentUserId() + "--notifications")
+
     fun isSignedIn(): Boolean {
         val currentUserId = userSharePref.getCurrentUserId()
         val firebaseEmail = FirebaseAuth.getInstance().currentUser?.email ?: return false

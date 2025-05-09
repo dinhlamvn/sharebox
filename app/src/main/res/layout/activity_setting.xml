@@ -19,8 +19,8 @@
             android:id="@+id/text_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
             android:layout_gravity="center_vertical|end"
+            android:textAllCaps="true"
             android:textAppearance="@style/TextTitleMedium"
             android:textColor="@color/md_theme_primary"
             tools:text="Sign In" />
@@ -127,6 +127,27 @@
 
             </RadioGroup>
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_recording_notification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/title_recording_notification"
+                android:textAppearance="@style/TextBodyMedium"
+                app:layout_constraintTop_toBottomOf="@id/radio_group_network_condition" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_recording_notification_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:drawablePadding="8dp"
+                android:hint="@string/recording_notification_desc"
+                android:textAppearance="@style/TextCaption"
+                android:textStyle="italic"
+                app:layout_constraintTop_toBottomOf="@id/switch_recording_notification" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_image_download_quality"
                 android:layout_width="match_parent"
@@ -135,7 +156,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/title_image_download_quality"
                 android:textAppearance="@style/TextTitleMedium"
-                app:layout_constraintTop_toBottomOf="@id/radio_group_network_condition" />
+                app:layout_constraintTop_toBottomOf="@id/text_recording_notification_desc" />
 
             <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekbar_image_download_quality"

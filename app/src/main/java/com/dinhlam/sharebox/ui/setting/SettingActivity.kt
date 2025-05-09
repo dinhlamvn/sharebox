@@ -2,8 +2,9 @@ package com.dinhlam.sharebox.ui.setting
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.net.toUri
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.underline
@@ -21,6 +23,7 @@ import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.databinding.ActivitySettingBinding
 import com.dinhlam.sharebox.extensions.coerceMinMax
 import com.dinhlam.sharebox.extensions.getColorCompat
@@ -33,7 +36,9 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
+import com.dinhlam.sharebox.services.AppNotificationListenerService
 import com.dinhlam.sharebox.services.RealtimeServiceManager
+import com.dinhlam.sharebox.utils.AppUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -69,6 +74,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
     @Inject
     lateinit var realtimeServiceManager: RealtimeServiceManager
+
+    @Inject
+    lateinit var boxRepository: BoxRepository
 
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(), ::handleSignInResult
@@ -247,10 +255,45 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
         binding.textAbout.setOnClickListener {
             val intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://play.google.com/store/apps/details?id=com.dinhlam.sharebox")
+                "https://play.google.com/store/apps/details?id=com.dinhlam.sharebox".toUri()
             )
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
+        }
+
+        binding.switchRecordingNotification.isChecked = appSettingHelper.isRecordingNotifications()
+        binding.switchRecordingNotification.setOnCheckedChangeListener { button, isChecked ->
+            if (isChecked) {
+                if (!AppUtils.hasNotificationAccess(this)) {
+                    showToast(R.string.recording_notifications_permission_message)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                        startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                    } else {
+                        startActivity(Intent(Settings.ACTION_SETTINGS))
+                    }
+                    button.isChecked = false
+                } else {
+                    activityScope.launch(Dispatchers.IO) {
+                        val box = boxRepository.findOneRaw(userHelper.notificationsBoxId)
+                        if (box == null) {
+                            boxRepository.insert(
+                                "Notifications",
+                                id = userHelper.notificationsBoxId,
+                                createdBy = userHelper.getCurrentUserId()
+                            )
+                        }
+                        appSettingHelper.setRecordingNotifications(true)
+                        startService(
+                            Intent(
+                                this@SettingActivity,
+                                AppNotificationListenerService::class.java
+                            )
+                        )
+                    }
+                }
+            } else {
+                appSettingHelper.setRecordingNotifications(false)
+            }
         }
     }
 

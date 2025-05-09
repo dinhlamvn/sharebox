@@ -23,6 +23,7 @@ import com.dinhlam.sharebox.tracking.trackers.FirebaseAnalysisTracker
 import com.dinhlam.sharebox.utils.UserUtils
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.iconics.Iconics
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
@@ -115,6 +116,12 @@ class ShareBoxApp : Application(), Configuration.Provider {
         TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
 
         realtimeServiceManager.bindRealtimeService()
+
+        if (BuildConfig.DEBUG) {
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                Logger.debug("My token: $token")
+            }
+        }
     }
 
 

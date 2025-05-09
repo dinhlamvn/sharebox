@@ -59,15 +59,16 @@ class BoxRepository @Inject constructor(
 
     suspend fun insert(
         boxName: String,
-        boxDesc: String?,
+        boxDesc: String? = null,
         createdBy: String,
-        passcode: String?,
+        passcode: String? = null,
         createdDate: Long = nowUTCTimeInMillis(),
         lastSeen: Long = nowUTCTimeInMillis(),
         synced: Boolean = false,
+        id: String? = null
     ): Box? {
         val box = Box(
-            boxId = BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$boxName"),
+            boxId = id ?: BoxUtils.createBoxId("${userHelper.getCurrentUserId()}-$boxName"),
             boxName = boxName,
             boxDesc = boxDesc,
             createdBy = createdBy,

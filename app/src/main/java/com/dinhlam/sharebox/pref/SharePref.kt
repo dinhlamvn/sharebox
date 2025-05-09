@@ -13,7 +13,7 @@ abstract class SharePref constructor(
     private val sharePref: SharedPreferences =
         context.getSharedPreferences(sharePrefName, Context.MODE_PRIVATE)
 
-    protected fun put(key: String, value: Any, sync: Boolean = false) {
+    fun put(key: String, value: Any, sync: Boolean = false) {
         if (key.isBlank()) {
             return
         }
@@ -38,11 +38,11 @@ abstract class SharePref constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    protected fun <T : Any> get(key: String, default: T): T {
+    fun <T : Any> get(key: String, default: T): T {
         return sharePref.all[key] as? T ?: default
     }
 
-    protected fun remove(key: String, sync: Boolean = false) {
+    fun remove(key: String, sync: Boolean = false) {
         sharePref.edit(sync) {
             remove(key)
         }

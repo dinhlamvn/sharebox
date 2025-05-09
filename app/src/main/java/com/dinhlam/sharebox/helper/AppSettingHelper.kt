@@ -11,6 +11,10 @@ import javax.inject.Singleton
 @Singleton
 class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePref) {
 
+    companion object {
+        private const val KEY_SETTING_RECORDING_NOTIFICATIONS = "setting-recording-notification"
+    }
+
     fun getTheme(): AppSettings.Theme {
         return when (appSharePref.getTheme()) {
             1 -> AppSettings.Theme.LIGHT
@@ -66,5 +70,13 @@ class AppSettingHelper @Inject constructor(private val appSharePref: AppSharePre
     fun getNumOfRecently(): Int {
         return appSharePref.getNumOfRecently()
             .coerceMinMax(AppConsts.LOADING_LIMIT_ITEM_PER_PAGE, 100)
+    }
+
+    fun setRecordingNotifications(value: Boolean) {
+        appSharePref.put(KEY_SETTING_RECORDING_NOTIFICATIONS, value)
+    }
+
+    fun isRecordingNotifications(): Boolean {
+        return appSharePref.get(KEY_SETTING_RECORDING_NOTIFICATIONS, false)
     }
 }
