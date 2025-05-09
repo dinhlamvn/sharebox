@@ -18,7 +18,7 @@ import com.dinhlam.sharebox.extensions.heightPercentage
 import com.dinhlam.sharebox.extensions.screenWidth
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
-import com.dinhlam.sharebox.listmodel.ButtonListModel
+import com.dinhlam.sharebox.listmodel.PrimaryButtonListModel
 import com.dinhlam.sharebox.listmodel.DrawableImageListModel
 import com.dinhlam.sharebox.listmodel.IconTextListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
@@ -61,7 +61,7 @@ class ProfileFragment :
                     height = heightPercentage(70)
                 ).attachTo(this)
 
-                ButtonListModel(
+                PrimaryButtonListModel(
                     "button_sign_in",
                     getString(R.string.sign_in),
                     Spacing.All(16.dp()),
@@ -153,7 +153,7 @@ class ProfileFragment :
                     textColor = R.color.grey_500,
                     padding = Spacing.All(16.dp)
                 ).attachTo(this)
-                ButtonListModel(
+                PrimaryButtonListModel(
                     "button_sign_in",
                     getString(R.string.sign_in),
                     Spacing.Horizontal(16.dp()),

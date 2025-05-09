@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.extensions
 
 import android.content.Context
+import android.content.Intent
 import androidx.fragment.app.FragmentManager
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
@@ -36,14 +37,9 @@ fun Context.openShare(
         )
 
         is ShareData.ShareFile -> {
-            val text = buildString {
-                append("<b>Name: </b>")
-                append(shareData.fileName)
-                append("\n\n")
-                append("<b>Size: </b>")
-                append(shareData.fileSize.asHumanReadableSize())
-            }
-            TextViewerDialogFragment.showDialog(fragmentManager, text)
+            val intent = Intent(Intent.ACTION_VIEW, shareData.uri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivity(Intent.createChooser(intent, "Open with"))
         }
 
         is ShareData.ShareCheckList -> {

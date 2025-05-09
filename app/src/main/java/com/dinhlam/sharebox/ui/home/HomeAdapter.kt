@@ -10,12 +10,13 @@ import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
 import com.dinhlam.sharebox.listmodel.BoxItemListModel
-import com.dinhlam.sharebox.listmodel.ButtonListModel
+import com.dinhlam.sharebox.listmodel.PrimaryButtonListModel
 import com.dinhlam.sharebox.listmodel.CircleDrawableIconButtonListModel
 import com.dinhlam.sharebox.listmodel.CircleFontAwesomeIconButtonListModel
 import com.dinhlam.sharebox.listmodel.DiscoverListModel
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.MainActionListModel
+import com.dinhlam.sharebox.listmodel.SecondaryButtonListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.TextPairListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
@@ -57,7 +58,7 @@ class HomeAdapter @Inject constructor(
             "margin_my_boxes", height = 32.dp(), dividerColor = android.R.color.transparent
         ).attachTo(this)
 
-        ButtonListModel(
+        SecondaryButtonListModel(
             "your_invited_box",
             fragment.getString(R.string.title_box_invited),
             onClick = NoHashProp(View.OnClickListener {
@@ -116,7 +117,7 @@ class HomeAdapter @Inject constructor(
                 height = 100.dp()
             ).attachTo(this)
 
-            ButtonListModel(
+            PrimaryButtonListModel(
                 "button_create_box",
                 "+",
                 margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0),

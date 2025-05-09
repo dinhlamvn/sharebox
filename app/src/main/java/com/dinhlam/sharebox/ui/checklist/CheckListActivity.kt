@@ -32,7 +32,7 @@ import com.dinhlam.sharebox.extensions.ifTrue
 import com.dinhlam.sharebox.extensions.isNotZero
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.listmodel.ButtonListModel
+import com.dinhlam.sharebox.listmodel.PrimaryButtonListModel
 import com.dinhlam.sharebox.listmodel.CheckListListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
 import com.dinhlam.sharebox.model.ShareData
@@ -108,7 +108,7 @@ class CheckListActivity :
                 VerticalDividerListModel("divider_$idx").attachTo(this)
             }
 
-            ButtonListModel(
+            PrimaryButtonListModel(
                 "button_create_checklist",
                 "+",
                 margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0),
