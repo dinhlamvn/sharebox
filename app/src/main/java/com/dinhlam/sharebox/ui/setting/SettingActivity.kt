@@ -261,11 +261,11 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             startActivity(intent)
         }
 
-        binding.switchRecordingNotification.isChecked = appSettingHelper.isRecordingNotifications()
-        binding.switchRecordingNotification.setOnCheckedChangeListener { button, isChecked ->
+        binding.switchArchiveNotification.isChecked = appSettingHelper.isRecordingNotifications()
+        binding.switchArchiveNotification.setOnCheckedChangeListener { button, isChecked ->
             if (isChecked) {
                 if (!AppUtils.hasNotificationAccess(this)) {
-                    showToast(R.string.recording_notifications_permission_message)
+                    showToast(R.string.archive_notifications_permission_message)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                         startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                     } else {

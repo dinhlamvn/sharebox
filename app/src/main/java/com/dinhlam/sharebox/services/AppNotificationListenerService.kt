@@ -83,8 +83,8 @@ class AppNotificationListenerService : NotificationListenerService() {
 
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, AppConsts.NOTIFICATION_SYNC_DATA_CHANNEL_ID)
-            .setContentText(getString(R.string.recording_notifications_notification_message))
-            .setSubText(getString(R.string.title_recording_notification))
+            .setContentText(getString(R.string.archive_notifications_notification_message))
+            .setSubText(getString(R.string.title_archive_notification))
             .setSmallIcon(R.drawable.ic_notification).setAutoCancel(false).setContentIntent(
                 PendingIntent.getActivity(
                     this,

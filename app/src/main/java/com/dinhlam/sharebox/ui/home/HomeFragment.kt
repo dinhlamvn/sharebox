@@ -1,6 +1,5 @@
 package com.dinhlam.sharebox.ui.home
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
@@ -195,8 +194,8 @@ class HomeFragment :
             }
         }
 
-        binding.iconInfo.setOnClickListener {
-            startActivity(router.guideline(requireContext()))
+        binding.iconSetting.setOnClickListener {
+            startActivity(router.setting())
         }
 
     }

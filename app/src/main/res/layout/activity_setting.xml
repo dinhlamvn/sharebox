@@ -128,25 +128,25 @@
             </RadioGroup>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_recording_notification"
+                android:id="@+id/switch_archive_notification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/title_recording_notification"
+                android:text="@string/title_archive_notification"
                 android:textAppearance="@style/TextBodyMedium"
                 app:layout_constraintTop_toBottomOf="@id/radio_group_network_condition" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_recording_notification_desc"
+                android:id="@+id/text_archive_notification_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:drawablePadding="8dp"
-                android:hint="@string/recording_notification_desc"
+                android:hint="@string/archive_notification_desc"
                 android:textAppearance="@style/TextCaption"
                 android:textStyle="italic"
-                app:layout_constraintTop_toBottomOf="@id/switch_recording_notification" />
+                app:layout_constraintTop_toBottomOf="@id/switch_archive_notification" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_image_download_quality"
@@ -156,7 +156,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/title_image_download_quality"
                 android:textAppearance="@style/TextTitleMedium"
-                app:layout_constraintTop_toBottomOf="@id/text_recording_notification_desc" />
+                app:layout_constraintTop_toBottomOf="@id/text_archive_notification_desc" />
 
             <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekbar_image_download_quality"
