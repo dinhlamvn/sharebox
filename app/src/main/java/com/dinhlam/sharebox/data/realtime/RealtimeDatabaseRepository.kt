@@ -214,6 +214,11 @@ class RealtimeDatabaseRepository @Inject constructor(
                 ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
                 ShareType.FILE -> gson.fromJson(json, ShareData.ShareFile::class.java)
                 ShareType.CHECK_LIST -> gson.fromJson(json, ShareData.ShareCheckList::class.java)
+                ShareType.NOTIFICATION -> gson.fromJson(
+                    json,
+                    ShareData.ShareNotification::class.java
+                )
+
                 ShareType.UNKNOWN -> null
             } ?: return null
         return Share(
@@ -342,7 +347,8 @@ class RealtimeDatabaseRepository @Inject constructor(
 
                                 val boxData = boxRef.orderByChild("id").equalTo(boxId).get().await()
                                 val boxDataMap = boxData.value?.cast<Map<String, Any>>() ?: continue
-                                val valueMap = boxDataMap[boxId]?.cast<Map<String, Any>>() ?: continue
+                                val valueMap =
+                                    boxDataMap[boxId]?.cast<Map<String, Any>>() ?: continue
                                 val boxName =
                                     valueMap["name"]?.toString()?.takeIfNotNullOrBlank()
                                         ?: continue

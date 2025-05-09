@@ -39,4 +39,8 @@ sealed interface ShareData : Parcelable {
         ) :
             Parcelable
     }
+
+    @Parcelize
+    data class ShareNotification(val appName: String, val title: String, val content: String, val deeplink: String?) :
+        ShareData
 }

@@ -78,7 +78,7 @@ class ShareRepository @Inject constructor(
 
     suspend fun insert(
         shareData: ShareData,
-        shareNote: String?,
+        shareNote: String? = null,
         shareBoxId: String,
         synced: Boolean = false,
         isVideoShare: Boolean = false,

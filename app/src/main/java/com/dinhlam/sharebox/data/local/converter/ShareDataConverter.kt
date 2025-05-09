@@ -21,6 +21,7 @@ class ShareDataConverter constructor(
             is ShareData.ShareImages -> ShareData.ShareImages::class.java
             is ShareData.ShareFile -> ShareData.ShareFile::class.java
             is ShareData.ShareCheckList -> ShareData.ShareCheckList::class.java
+            is ShareData.ShareNotification -> ShareData.ShareNotification::class.java
         }
         return gson.toJson(shareData, clazz)
     }
@@ -35,6 +36,7 @@ class ShareDataConverter constructor(
             ShareType.IMAGES -> ShareData.ShareImages::class.java
             ShareType.FILE -> ShareData.ShareFile::class.java
             ShareType.CHECK_LIST -> ShareData.ShareCheckList::class.java
+            ShareType.NOTIFICATION -> ShareData.ShareNotification::class.java
             else -> error("No share type this data $str")
         }
         return gson.fromJson(json, clazz)

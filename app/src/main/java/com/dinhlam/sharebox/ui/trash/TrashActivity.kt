@@ -1,7 +1,6 @@
 package com.dinhlam.sharebox.ui.trash
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,19 +12,15 @@ import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityTrashBinding
-import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
 import com.dinhlam.sharebox.dialog.optionmenu.BottomSheetOptionsMenuDialogFragment
-import com.dinhlam.sharebox.dialog.text.TextViewerDialogFragment
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.extensions.format
+import com.dinhlam.sharebox.extensions.openShare
 import com.dinhlam.sharebox.helper.ShareHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.listmodel.LoadingListModel
 import com.dinhlam.sharebox.listmodel.TextListModel
 import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
-import com.dinhlam.sharebox.model.FileDownloadInfo
-import com.dinhlam.sharebox.model.ShareData
 import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
@@ -81,7 +76,7 @@ class TrashActivity :
                 ).attachTo(this)
             } else {
                 state.shares.forEachIndexed { idx, shareDetail ->
-                    shareDetail.buildListItemListModel(::showMore, ::openShare)
+                    shareDetail.buildListItemListModel(::showMore, ::openShareDetail)
                         .attachTo(this)
                     VerticalDividerListModel(
                         "share_divider_$idx",
@@ -162,45 +157,7 @@ class TrashActivity :
         )
     }
 
-    private fun openShare(share: ShareDetail) {
-        when (val shareData = share.shareData) {
-            is ShareData.ShareUrl -> router.moveToBrowser(shareData.url)
-            is ShareData.ShareText -> {
-                TextViewerDialogFragment().apply {
-                    arguments = bundleOf(Intent.EXTRA_TEXT to shareData.text)
-                }.show(supportFragmentManager, "TextViewerDialogFragment")
-            }
-
-            is ShareData.ShareImage -> shareHelper.viewShareImage(
-                this, shareData.uri
-            )
-
-            is ShareData.ShareImages -> shareHelper.viewShareImages(
-                this, shareData.uris
-            )
-
-            is ShareData.ShareFile -> {
-                val downloadUrl = shareData.uri.toString()
-                DownloadFileDialogFragment.startDownload(
-                    supportFragmentManager,
-                    FileDownloadInfo(
-                        downloadUrl,
-                        shareData.fileName,
-                        shareData.mimeType
-                    )
-                )
-            }
-
-            is ShareData.ShareCheckList -> {
-                val text = shareData.checkListDataList.joinToString("\n") { checkListData ->
-                    "${checkListData.done} - ${checkListData.title} - (${
-                        checkListData.datetime.format(
-                            "dd MMM yyyy, hh:mm a"
-                        )
-                    })"
-                }
-                TextViewerDialogFragment.showDialog(supportFragmentManager, text)
-            }
-        }
+    private fun openShareDetail(share: ShareDetail) {
+        openShare(supportFragmentManager, share, router, shareHelper)
     }
 }

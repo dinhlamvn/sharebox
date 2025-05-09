@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.json.ShareCheckListJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareFileJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImagesJsonSerializerDeserializer
+import com.dinhlam.sharebox.json.ShareNotificationJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareTextJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareUrlJsonSerializerDeserializer
 import com.dinhlam.sharebox.model.ShareData
@@ -51,6 +52,9 @@ object AppModule {
         )
         gsonBuilder.registerTypeAdapter(
             ShareData.ShareCheckList::class.java, ShareCheckListJsonSerializerDeserializer
+        )
+        gsonBuilder.registerTypeAdapter(
+            ShareData.ShareNotification::class.java, ShareNotificationJsonSerializerDeserializer
         )
         return gsonBuilder.create()
     }

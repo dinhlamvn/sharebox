@@ -19,6 +19,7 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareImages -> "f302"
             is ShareData.ShareFile -> "f15c"
             is ShareData.ShareCheckList -> "f0ae"
+            is ShareData.ShareNotification -> "f0f3"
         }
     }
 
@@ -30,6 +31,11 @@ fun ShareDetail.buildListItemListModel(
             is ShareData.ShareImages -> shareDetail.shareNote
             is ShareData.ShareFile -> shareData.fileName
             is ShareData.ShareCheckList -> shareDetail.shareNote
+            is ShareData.ShareNotification -> buildString {
+                append(shareData.appName)
+                append(": ")
+                append(shareData.title)
+            }
         }
     }
 
@@ -59,6 +65,8 @@ fun ShareDetail.buildListItemListModel(
                     shareDetail.createdAt.format("yyyy MMM d, HH:mm")
                 )
             }
+
+            is ShareData.ShareNotification -> shareData.content
         }
     }
 

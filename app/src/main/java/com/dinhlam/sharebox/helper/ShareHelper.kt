@@ -127,6 +127,14 @@ class ShareHelper @Inject constructor(
                 )
                 intent.type = "text/*"
             }
+
+            is ShareData.ShareNotification -> {
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    getShareNotificationText(shareData)
+                )
+                intent.type = "text/*"
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -170,7 +178,20 @@ class ShareHelper @Inject constructor(
                 context.copy(text)
             }
 
+            is ShareData.ShareNotification -> {
+                val text = getShareNotificationText(shareData)
+                context.copy(text)
+            }
+
             else -> context.showToast(R.string.nothing_to_copy)
+        }
+    }
+
+    private fun getShareNotificationText(shareData: ShareData.ShareNotification): String {
+        return buildString {
+            append("${shareData.appName}\n")
+            append("•%s:${shareData.title}\n".format(context.getString(R.string.title)))
+            append("•%s: ${shareData.content}".format(context.getString(R.string.content)))
         }
     }
 
