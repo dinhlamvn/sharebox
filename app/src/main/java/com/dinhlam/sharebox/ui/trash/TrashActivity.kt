@@ -54,9 +54,9 @@ class TrashActivity :
     }
 
     private val layoutManager by lazy {
-        LoadMoreLinearLayoutManager(this, blockShouldLoadMore = {
+        LoadMoreLinearLayoutManager(this, willTriggerLoadMore = {
             getState(viewModel) { state ->
-                state.canLoadMore && state.asyncLoadLoadMoreShares is BaseViewModel.AsyncLoad.Loading
+                state.canLoadMore && state.asyncLoadLoadMoreShares !is BaseViewModel.AsyncLoad.Loading
             }
         }) {
             viewModel.loadMores()

@@ -9,7 +9,7 @@ object AppConsts {
 
     const val NUMBER_VISIBLE_BOX = 10
 
-    const val LOADING_LIMIT_ITEM_PER_PAGE = 10
+    const val LOADING_LIMIT_ITEM_PER_PAGE = 20
 
     const val NOTIFICATION_DEFAULT_CHANNEL_ID = "default_notification_channel"
 
