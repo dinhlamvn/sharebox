@@ -56,7 +56,8 @@ class BoxDetailViewModel @Inject constructor(
             copy(
                 shares = asyncLoad.data ?: shares,
                 isRefreshing = asyncLoad is AsyncLoad.Loading,
-                requirePasscode = false
+                requirePasscode = false,
+                canLoadMore = asyncLoad.data?.isNotEmpty() == true
             )
         }
     }
