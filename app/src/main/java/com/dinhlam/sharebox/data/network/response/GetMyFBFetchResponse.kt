@@ -8,7 +8,7 @@ data class GetMyFBFetchResponse(
     @SerializedName("url")
     val url: String,
     @SerializedName("id")
-    val id: Long,
+    val id: String,
     @SerializedName("sd")
     val sd: String,
     @SerializedName("title")
