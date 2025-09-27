@@ -18,7 +18,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     private var _binding: VB? = null
 
     protected val binding: VB
-        get() = _binding!!
+        get() = checkNotNull(_binding) { "ViewBinding accessed after onDestroyView()" }
 
     protected open val isOverrideBackPressedCallback: Boolean = false
 
@@ -32,8 +32,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
     override fun onAttach(context: Context) {

@@ -5,7 +5,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.launchWhenAtLeast
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,11 @@ internal interface ViewModelBaseView<S : BaseViewModel.BaseState, VM : BaseViewM
 
     val subscriptionLifecycleOwner: LifecycleOwner
         get() = try {
-            this.cast<Fragment>()?.viewLifecycleOwner ?: this
+            if (this is Fragment) {
+                viewLifecycleOwner
+            } else {
+                this as LifecycleOwner
+            }
         } catch (e: IllegalStateException) {
             this
         }

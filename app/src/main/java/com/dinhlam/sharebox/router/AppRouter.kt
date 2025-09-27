@@ -11,11 +11,13 @@ import android.provider.MediaStore
 import android.widget.RemoteViews
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.extensions.getColorCompat
 import com.dinhlam.sharebox.extensions.queryIntentActivitiesCompat
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver
 import com.dinhlam.sharebox.ui.boxdetail.BoxDetailActivity
 import com.dinhlam.sharebox.ui.boxform.BoxFormActivity
@@ -25,9 +27,9 @@ import com.dinhlam.sharebox.ui.checklist.CheckListActivity
 import com.dinhlam.sharebox.ui.clipboard.ClipboardActivity
 import com.dinhlam.sharebox.ui.downloadpopup.BottomSheetDownloadActivity
 import com.dinhlam.sharebox.ui.guideline.GuidelineActivity
-import com.dinhlam.sharebox.ui.home.HomeFragment
 import com.dinhlam.sharebox.ui.imageviewer.ImageViewerActivity
 import com.dinhlam.sharebox.ui.link.ShareLinkActivity
+import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.myinvites.MyInvitesActivity
 import com.dinhlam.sharebox.ui.myinvites.listing.MyInviteShareListingActivity
 import com.dinhlam.sharebox.ui.passcode.PasscodeActivity
@@ -40,11 +42,12 @@ import com.dinhlam.sharebox.ui.tags.TagsActivity
 import com.dinhlam.sharebox.ui.textinput.TextInputActivity
 import com.dinhlam.sharebox.ui.trash.TrashActivity
 import com.dinhlam.sharebox.utils.Icons
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class AppRouter(private val context: Context) : Router {
 
     override fun home(isNewTask: Boolean): Intent {
-        return Intent(context, HomeFragment::class.java).apply {
+        return Intent(context, MainActivity::class.java).apply {
             if (isNewTask) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }
@@ -99,11 +102,18 @@ class AppRouter(private val context: Context) : Router {
 
         customTabsIntent.intent.setPackage("com.android.chrome")
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        customTabsIntent.launchUrl(context, Uri.parse(url))
+
+        try {
+            customTabsIntent.launchUrl(context, url.toUri())
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+            context.showToast(R.string.no_support_chrome_browser)
+        }
+
     }
 
     override fun moveToBrowser(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -136,9 +146,7 @@ class AppRouter(private val context: Context) : Router {
 
     override fun playStoreIntent(packageName: String): Intent {
         return Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(
-                "https://play.google.com/store/apps/details?id=$packageName"
-            )
+            data = "https://play.google.com/store/apps/details?id=$packageName".toUri()
             setPackage("com.android.vending")
         }
     }

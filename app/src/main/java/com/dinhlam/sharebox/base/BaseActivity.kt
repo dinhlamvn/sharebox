@@ -22,7 +22,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     private var _binding: VB? = null
 
     protected val binding: VB
-        get() = _binding!!
+        get() = checkNotNull(_binding) { "ViewBinding accessed after onDestroy()" }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val entryPoint = EntryPointAccessors.fromActivity(

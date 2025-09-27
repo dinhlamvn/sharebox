@@ -19,6 +19,7 @@ import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityGuidelineBinding
 import com.dinhlam.sharebox.databinding.FragmentGuidelineBinding
 import com.dinhlam.sharebox.extensions.getParcelableExtraCompat
+import com.dinhlam.sharebox.imageloader.ImageLoader
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.parcelize.Parcelize
 
@@ -139,7 +140,7 @@ class GuidelineActivity : BaseActivity<ActivityGuidelineBinding>() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            binding.image.setImageResource(guideline.image)
+            ImageLoader.INSTANCE.load(requireContext(), guideline.image, binding.image)
             binding.title.setText(guideline.title)
             binding.subtitle.setText(guideline.subtitle)
         }
