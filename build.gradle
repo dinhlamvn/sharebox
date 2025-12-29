@@ -4,13 +4,14 @@ buildscript {
         agp_version = '8.1.0'
         agp_version1 = '8.1.4'
         kotlin_version = '1.9.22'
+        agp_version = '8.5.1'
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$agp_version1"
+        classpath "com.android.tools.build:gradle:$agp_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // Hilt dependencies

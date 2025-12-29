@@ -1,13 +1,16 @@
 package com.dinhlam.sharebox
 
+import android.app.Activity
 import android.app.Application
 import android.app.NotificationManager
 import android.os.Build
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.dinhlam.sharebox.callback.SimpleActivityLifecycleCallbacks
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.UserRepository
 import com.dinhlam.sharebox.helper.AppSettingHelper
@@ -29,18 +32,19 @@ import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 
 @HiltAndroidApp
-class ShareBoxApp : Application(), Configuration.Provider {
+class ShareBoxApp : Application(), Configuration.Provider, CoroutineScope {
 
-    private val appScope by lazyOf(MainScope() + CoroutineName("AppScope") + Job())
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + CoroutineName("AppCoroutine") + SupervisorJob()
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -63,7 +67,7 @@ class ShareBoxApp : Application(), Configuration.Provider {
     private fun createAnonymousUser() {
         if (!userHelper.isSignedIn() && userHelper.getCurrentUserId().isEmpty()) {
             FirebaseInstallations.getInstance().id.addOnSuccessListener { instanceId ->
-                appScope.launch(Dispatchers.IO) {
+                launch(Dispatchers.IO) {
                     val userId = UserUtils.createUserId(instanceId)
                     val user = userRepository.insert(
                         userId,
@@ -121,6 +125,12 @@ class ShareBoxApp : Application(), Configuration.Provider {
             FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
                 Logger.debug("My token: $token")
             }
+            registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks() {
+                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                    super.onActivityCreated(activity, savedInstanceState)
+                    Logger.debug("The activity ${activity.javaClass.simpleName} is created.")
+                }
+            })
         }
     }
 

@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalStorageManager @Inject constructor(
-    @ApplicationContext private val appContext: Context,
+    @param:ApplicationContext private val appContext: Context,
     private val appSettingHelper: AppSettingHelper
 
 ) {

@@ -2,6 +2,8 @@ package com.dinhlam.sharebox.di
 
 import android.content.Context
 import com.dinhlam.sharebox.BuildConfig
+import com.dinhlam.sharebox.ShareBoxApp
+import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.json.ShareCheckListJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareFileJsonSerializerDeserializer
 import com.dinhlam.sharebox.json.ShareImageJsonSerializerDeserializer
@@ -23,6 +25,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 
 @Module
 @InstallIn(
@@ -72,5 +75,10 @@ object AppModule {
     @Provides
     fun provideRouter(@ApplicationContext context: Context): Router {
         return AppRouter(context)
+    }
+
+    @Provides
+    fun provideApplicationScope(@ApplicationContext context: Context): CoroutineScope {
+        return context.cast<ShareBoxApp>()!!
     }
 }

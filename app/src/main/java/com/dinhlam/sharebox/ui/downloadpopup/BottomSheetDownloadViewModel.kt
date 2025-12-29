@@ -27,14 +27,15 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import javax.inject.Inject
 import javax.inject.Named
+import androidx.core.net.toUri
 
 @HiltViewModel
 class BottomSheetDownloadViewModel @Inject constructor(
     private val videoHelper: VideoHelper,
     private val okHttpClient: OkHttpClient,
-    @Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader,
-    @Named("FacebookDownloaderV2") private val facebookDownloader: Downloader,
-    @Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
+    @param:Named("TiktokDownloaderV2") private val tiktokDownloader: Downloader,
+    @param:Named("FacebookDownloaderV2") private val facebookDownloader: Downloader,
+    @param:Named("YoutubeDownloader") private val youtubeDownloader: Downloader,
 ) : BaseViewModel<BottomSheetDownloadState>(BottomSheetDownloadState()) {
 
     fun download(context: Context, downloadLinks: List<String>) {
@@ -66,7 +67,7 @@ class BottomSheetDownloadViewModel @Inject constructor(
     }
 
     private fun downloadLocalFile(context: Context, url: String): DownloadContent {
-        val uri = Uri.parse(url)
+        val uri = url.toUri()
         val mimeType = context.getMimeTypeFromUri(uri) ?: return DownloadContent()
         val pair = context.getFileNameAndSize(uri)
         return when {
@@ -241,7 +242,7 @@ class BottomSheetDownloadViewModel @Inject constructor(
                     "/login"
                 )
             ) {
-                Pair(Uri.parse(pair.first).getQueryParameter("next")!!, pair.second)
+                Pair(pair.first.toUri().getQueryParameter("next")!!, pair.second)
             } else {
                 pair
             }
