@@ -163,6 +163,24 @@ class RealtimeDatabaseRepository @Inject constructor(
         boxMemberRef.child(boxId).child(memberId).removeValue().await()
     }
 
+    suspend fun deleteBoxAndMoveSharesToTrash(boxId: String): Boolean {
+        if (!userHelper.isSignedIn()) {
+            return true
+        }
+        return try {
+            val sharesInBox = shareRef.orderByChild("share_box_id").equalTo(boxId).get().await()
+            sharesInBox.children.forEach { shareSnapshot ->
+                shareSnapshot.ref.child("share_box_id").removeValue().await()
+            }
+            boxMemberRef.child(boxId).removeValue().await()
+            boxRef.child(boxId).removeValue().await()
+            true
+        } catch (e: Exception) {
+            Logger.error("Delete box $boxId from realtime database has error: $e")
+            false
+        }
+    }
+
     private fun parseShareFromRealtimeObj(shareId: String, jsonMap: Map<String, Any>): Share? {
         return try {
             val realtimeShareObj = RealtimeShareObj.from(jsonMap)

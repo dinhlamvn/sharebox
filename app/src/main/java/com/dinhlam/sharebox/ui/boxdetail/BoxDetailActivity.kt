@@ -194,6 +194,8 @@ class BoxDetailActivity :
             if (asyncLoad is BaseViewModel.AsyncLoad.Success && asyncLoad.value) {
                 setResult(Activity.RESULT_OK)
                 finish()
+            } else if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
+                showToast(R.string.error_delete_box)
             }
         }
     }

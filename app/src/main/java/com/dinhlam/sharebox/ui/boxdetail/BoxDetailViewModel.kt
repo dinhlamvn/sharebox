@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
@@ -17,6 +18,7 @@ class BoxDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val boxRepository: BoxRepository,
     private val shareRepository: ShareRepository,
+    private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
 ) : BaseViewModel<BoxDetailState>(BoxDetailState()) {
 
     init {
@@ -147,7 +149,11 @@ class BoxDetailViewModel @Inject constructor(
     fun deleteBox() = getState { state ->
         val boxId = state.boxDetail?.boxId ?: return@getState
         suspend {
-            boxRepository.deleteBoxAndMoveSharesToTrash(boxId)
+            if (realtimeDatabaseRepository.deleteBoxAndMoveSharesToTrash(boxId)) {
+                boxRepository.deleteBoxAndMoveSharesToTrash(boxId)
+            } else {
+                false
+            }
         }.execute { asyncLoad ->
             copy(asyncLoadDeleteBox = asyncLoad)
         }
