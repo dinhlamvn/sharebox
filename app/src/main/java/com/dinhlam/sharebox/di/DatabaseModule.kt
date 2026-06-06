@@ -22,6 +22,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Singleton
 
 @Module
 @InstallIn(value = [SingletonComponent::class])
@@ -29,6 +30,7 @@ object DatabaseModule {
 
 
     @Provides
+    @Singleton
     fun provideAppDatabase(
         @ApplicationContext context: Context, gson: Gson
     ): AppDatabase {

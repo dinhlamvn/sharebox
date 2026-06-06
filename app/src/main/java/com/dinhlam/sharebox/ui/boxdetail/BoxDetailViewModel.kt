@@ -20,12 +20,32 @@ class BoxDetailViewModel @Inject constructor(
 ) : BaseViewModel<BoxDetailState>(BoxDetailState()) {
 
     init {
+        onChange(
+            BoxDetailState::boxDetail,
+            BoxDetailState::shares, BoxDetailState::searchQuery
+        ) { boxDetail, shares, query ->
+            val boxId = boxDetail?.boxId ?: return@onChange
+            val noEmptyResult =
+                shares.takeIf(Collection<ShareDetail>::isNotEmpty) ?: return@onChange
+            updateCanLoadMore(boxId, noEmptyResult.size, query)
+        }
+
         onChange(BoxDetailState::boxDetail) { boxDetail ->
             if (boxDetail != null) {
                 updateLastSeen(boxDetail.boxId)
             }
         }
         loadBoxDetail(savedStateHandle.getNonNull(AppExtras.EXTRA_BOX_ID))
+    }
+
+    private fun updateCanLoadMore(boxId: String, size: Int, query: String?) = doInBackground {
+        val shares = loadShares(
+            boxId,
+            1,
+            size,
+            query
+        )
+        setState { copy(canLoadMore = shares.isNotEmpty()) }
     }
 
     private fun updateLastSeen(boxId: String) = doInBackground {
@@ -56,8 +76,7 @@ class BoxDetailViewModel @Inject constructor(
             copy(
                 shares = asyncLoad.data ?: shares,
                 isRefreshing = asyncLoad is AsyncLoad.Loading,
-                requirePasscode = false,
-                canLoadMore = asyncLoad.data?.isNotEmpty() == true
+                requirePasscode = false
             )
         }
     }
@@ -75,7 +94,6 @@ class BoxDetailViewModel @Inject constructor(
             copy(
                 asyncLoadLoadMoreShares = asyncLoad,
                 shares = this.shares.plus(shares),
-                canLoadMore = shares.isNotEmpty(),
                 currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage,
             )
         }
@@ -123,6 +141,15 @@ class BoxDetailViewModel @Inject constructor(
                 asyncLoadBoxDetail = asyncLoad,
                 boxDetail = asyncLoad.data
             )
+        }
+    }
+
+    fun deleteBox() = getState { state ->
+        val boxId = state.boxDetail?.boxId ?: return@getState
+        suspend {
+            boxRepository.deleteBoxAndMoveSharesToTrash(boxId)
+        }.execute { asyncLoad ->
+            copy(asyncLoadDeleteBox = asyncLoad)
         }
     }
 

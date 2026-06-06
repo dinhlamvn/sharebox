@@ -105,6 +105,7 @@
     <string name="title_create_box">Tạo Box</string>
     <string name="use_passcode">Sử dụng mã bảo mật</string>
     <string name="confirm_move_to_trash">Bạn có chắc di chuyển mục này vào thùng rác?</string>
+    <string name="confirm_delete_box">Xóa Box này? Tất cả chia sẻ trong Box sẽ được chuyển vào thùng rác.</string>
     <string name="title_trash">Thùng rác</string>
     <string name="restore_share_to">Khôi phục vào…</string>
     <string name="basic_info">Thông tin cơ bản</string>

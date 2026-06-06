@@ -29,6 +29,7 @@ import com.dinhlam.sharebox.model.ShareDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.recyclerview.LoadMoreLinearLayoutManager
 import com.dinhlam.sharebox.router.Router
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -62,8 +63,9 @@ class BoxDetailActivity :
         }
 
     override fun onStateChanged(state: BoxDetailState) {
-        binding.iconEdit.isVisible =
-            userHelper.getCurrentUserId() == state.boxDetail?.createdBy
+        val isOwner = userHelper.getCurrentUserId() == state.boxDetail?.createdBy
+        binding.iconEdit.isVisible = isOwner
+        binding.iconDelete.isVisible = isOwner
         shareAdapter.requestBuildListModels()
         binding.toolbar.title = state.boxDetail?.boxName
         binding.toolbar.subtitle = state.boxDetail?.boxDesc
@@ -141,6 +143,10 @@ class BoxDetailActivity :
             editBoxResultLauncher.launch(router.boxForm(this, boxDetail.boxId))
         }
 
+        binding.iconDelete.setOnClickListener {
+            confirmDeleteBox()
+        }
+
         binding.recyclerView.layoutManager = layoutManager
         shareAdapter.attachTo(binding.recyclerView, this)
 
@@ -182,6 +188,14 @@ class BoxDetailActivity :
                 viewModel.updateShare(asyncLoad.value)
             }
         }
+
+        onChange(BoxDetailState::asyncLoadDeleteBox) { asyncLoad ->
+            binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
+            if (asyncLoad is BaseViewModel.AsyncLoad.Success && asyncLoad.value) {
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -194,6 +208,17 @@ class BoxDetailActivity :
 
     private fun showMore(share: ShareDetail) {
         shareHelper.showMore(this, share, viewModel::loadShares)
+    }
+
+    private fun confirmDeleteBox() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_confirm)
+            .setMessage(R.string.confirm_delete_box)
+            .setPositiveButton(R.string.delete) { _, _ ->
+                viewModel.deleteBox()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun openShare(shareDetail: ShareDetail) {

@@ -14,5 +14,6 @@ data class BoxDetailState(
     val canLoadMore: Boolean = false,
     val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.UnInitialized,
     val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized,
+    val asyncLoadDeleteBox: BaseViewModel.AsyncLoad<Boolean> = BaseViewModel.AsyncLoad.UnInitialized,
     val searchQuery: String? = null,
 ) : BaseViewModel.BaseState

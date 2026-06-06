@@ -12,12 +12,10 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
@@ -133,16 +131,16 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) :
     }
 
     protected fun <T> onAsyncChange(
-        property: KProperty1<S, BaseViewModel.AsyncLoad<T>>,
+        property: KProperty1<S, AsyncLoad<T>>,
         onFail: (Throwable) -> Unit = {},
         onSuccess: (T) -> Unit
     ) = stateFlow
         .map { state -> Observer1(property.get(state)) }
         .distinctUntilChanged()
-        .resolveObserver() { observer ->
-            if (observer.value is BaseViewModel.AsyncLoad.Success<T>) {
+        .resolveObserver { observer ->
+            if (observer.value is AsyncLoad.Success<T>) {
                 onSuccess(observer.value.value)
-            } else if (observer.value is BaseViewModel.AsyncLoad.Failed) {
+            } else if (observer.value is AsyncLoad.Failed) {
                 onFail(observer.value.error)
             }
         }

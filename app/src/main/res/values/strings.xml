@@ -114,6 +114,7 @@
     <string name="title_create_box">Create Box</string>
     <string name="use_passcode">Use Passcode</string>
     <string name="confirm_move_to_trash">Are you sure to move this share to trash?</string>
+    <string name="confirm_delete_box">Delete this box? All shares in this box will be moved to trash.</string>
     <string name="title_trash">Trash</string>
     <string name="restore_share_to">Restore to…</string>
     <string name="basic_info">Basic Info</string>

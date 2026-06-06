@@ -106,6 +106,9 @@ interface ShareDao {
     @Query("UPDATE share SET share_user_id = :userId, synced = 0 WHERE share_user_id = :fromUserId")
     suspend fun transferData(fromUserId: String, userId: String)
 
+    @Query("UPDATE share SET share_box_id = NULL, synced = 0, updated_at = :updatedAt WHERE share_box_id = :boxId")
+    suspend fun moveSharesInBoxToTrash(boxId: String, updatedAt: Long)
+
     @Query(
         """
         SELECT s.* 

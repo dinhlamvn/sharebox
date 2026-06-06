@@ -1,8 +1,10 @@
 package com.dinhlam.sharebox.data.repository
 
+import androidx.room.withTransaction
+import com.dinhlam.sharebox.data.local.AppDatabase
 import com.dinhlam.sharebox.data.local.dao.BoxDao
+import com.dinhlam.sharebox.data.local.dao.ShareDao
 import com.dinhlam.sharebox.data.local.entity.Box
-import com.dinhlam.sharebox.data.local.entity.Share
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
@@ -16,7 +18,9 @@ import javax.inject.Singleton
 
 @Singleton
 class BoxRepository @Inject constructor(
+    private val appDatabase: AppDatabase,
     private val boxDao: BoxDao,
+    private val shareDao: ShareDao,
     private val userHelper: UserHelper
 ) : BaseRepository<String, Box>() {
 
@@ -33,6 +37,20 @@ class BoxRepository @Inject constructor(
     override suspend fun delete(entity: Box): Boolean {
         boxDao.delete(entity)
         return true
+    }
+
+    suspend fun deleteBoxAndMoveSharesToTrash(boxId: String): Boolean {
+        return try {
+            val box = boxDao.find(boxId) ?: return false
+            appDatabase.withTransaction {
+                shareDao.moveSharesInBoxToTrash(boxId, nowUTCTimeInMillis())
+                boxDao.delete(box)
+            }
+            true
+        } catch (e: Exception) {
+            Logger.error("Delete box $boxId and move shares to trash has error: $e")
+            false
+        }
     }
 
     override suspend fun readOne(id: String): Box? {
