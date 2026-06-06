@@ -106,6 +106,12 @@ android {
         kotlinCompilerExtensionVersion = "1.5.9"
     }
 
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging false
+        }
+    }
+
     dynamicFeatures = []
     namespace 'com.dinhlam.sharebox'
 }

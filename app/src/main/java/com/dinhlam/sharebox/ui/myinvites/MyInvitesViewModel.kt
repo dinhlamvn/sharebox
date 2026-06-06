@@ -14,8 +14,15 @@ class MyInvitesViewModel @Inject constructor(
 ) : BaseViewModel<MyInvitesState>(MyInvitesState()) {
 
     fun listenDataChangeEvent(lifecycleOwner: LifecycleOwner) {
-        realtimeDatabaseRepository.listenBoxMembersInvitedChangeEvent(lifecycleOwner) { boxInvitedDataList ->
-            setState { copy(boxList = boxInvitedDataList, loading = false) }
-        }
+        setState { copy(loading = true) }
+        realtimeDatabaseRepository.listenBoxMembersInvitedChangeEvent(
+            lifecycleOwner,
+            block = { boxInvitedDataList ->
+                setState { copy(boxList = boxInvitedDataList, loading = false) }
+            },
+            onError = {
+                setState { copy(loading = false) }
+            }
+        )
     }
 }

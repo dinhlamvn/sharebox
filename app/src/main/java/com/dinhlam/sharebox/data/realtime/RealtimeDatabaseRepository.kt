@@ -63,20 +63,6 @@ class RealtimeDatabaseRepository @Inject constructor(
             .asCoroutineDispatcher() + CoroutineName("realtime-database-scope")
     )
 
-    private val shareEventListener =
-        SimpleRealtimeEventListener(
-            "ShareListener",
-            realtimeDatabaseScope,
-            ::onShareSnapshotDataReceived
-        )
-
-    private val boxEventListener =
-        SimpleRealtimeEventListener(
-            "BoxListener",
-            realtimeDatabaseScope,
-            ::onBoxSnapshotDataReceived
-        )
-
     private val shareRef: DatabaseReference by lazyOf(database.getReference("shares"))
 
     private val userRef: DatabaseReference by lazyOf(database.getReference("users"))
@@ -159,135 +145,6 @@ class RealtimeDatabaseRepository @Inject constructor(
         }
     }
 
-    fun listen() {
-        shareRef.orderByChild("share_user_id")
-            .equalTo(userHelper.getCurrentUserId())
-            .addValueEventListener(shareEventListener)
-
-        boxRef.orderByChild("created_by")
-            .equalTo(userHelper.getCurrentUserId())
-            .addValueEventListener(boxEventListener)
-    }
-
-    fun release() {
-        shareRef.removeEventListener(shareEventListener)
-        boxRef.removeEventListener(boxEventListener)
-    }
-
-    private fun createNewBox(boxId: String, jsonMap: Map<String, Any>): Box {
-        return RealtimeBoxObj.from(jsonMap).run {
-            Box(
-                boxId = boxId,
-                boxName = name,
-                boxDesc = desc,
-                createdBy = createdBy,
-                createdDate = createdDate,
-                passcode = passcode,
-                lastSeen = System.currentTimeMillis(),
-                synced = true
-            )
-        }
-    }
-
-    private suspend fun onBoxSnapshotDataReceived(boxId: String, jsonMap: Map<String, Any>) {
-        try {
-            val box = boxRepository.findOneRaw(boxId)
-            val snapshotDataBox = createNewBox(boxId, jsonMap)
-            if (box != null) {
-                boxRepository.update(
-                    snapshotDataBox.copy(
-                        id = box.id,
-                        synced = true,
-                        lastSeen = box.lastSeen,
-                        createdAt = box.createdAt,
-                        updatedAt = box.updatedAt
-                    )
-                )
-            } else {
-                boxRepository.insert(snapshotDataBox.copy(synced = true))
-            }
-        } catch (e: Exception) {
-            Logger.error(e)
-        }
-    }
-
-    private fun parseShareFromRealtimeObj(shareId: String, jsonMap: Map<String, Any>): Share? {
-        val realtimeShareObj = RealtimeShareObj.from(jsonMap)
-        val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
-        val shareData =
-            when (enumByNameIgnoreCase(json.get("type").asString, ShareType.UNKNOWN)) {
-                ShareType.URL -> gson.fromJson(json, ShareData.ShareUrl::class.java)
-                ShareType.TEXT -> gson.fromJson(json, ShareData.ShareText::class.java)
-                ShareType.IMAGE -> gson.fromJson(json, ShareData.ShareImage::class.java)
-                ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
-                ShareType.FILE -> gson.fromJson(json, ShareData.ShareFile::class.java)
-                ShareType.CHECK_LIST -> gson.fromJson(json, ShareData.ShareCheckList::class.java)
-                ShareType.NOTIFICATION -> gson.fromJson(
-                    json,
-                    ShareData.ShareNotification::class.java
-                )
-
-                ShareType.UNKNOWN -> null
-            } ?: return null
-        return Share(
-            shareId = shareId,
-            shareUserId = realtimeShareObj.shareUserId,
-            shareData = shareData,
-            shareNote = realtimeShareObj.shareNote,
-            shareBoxId = realtimeShareObj.shareBoxId,
-            shareDate = realtimeShareObj.shareDate,
-            synced = true,
-            isVideoShare = realtimeShareObj.isVideoShare
-        )
-    }
-
-    private suspend fun onShareSnapshotDataReceived(shareId: String, jsonMap: Map<String, Any>) {
-        try {
-            val share = shareRepository.findOneRaw(shareId)
-            val snapshotDataShare = parseShareFromRealtimeObj(shareId, jsonMap) ?: return
-            if (share != null) {
-                shareRepository.update(
-                    snapshotDataShare.copy(
-                        id = share.id,
-                        synced = true,
-                        createdAt = share.createdAt,
-                        updatedAt = share.updatedAt
-                    ), false
-                )
-            } else {
-                shareRepository.insert(snapshotDataShare.copy(synced = true))
-            }
-        } catch (e: Exception) {
-            Logger.error(e)
-        }
-    }
-
-    private class SimpleRealtimeEventListener(
-        private val name: String,
-        private val scope: CoroutineScope,
-        private val block: suspend (String, Map<String, Any>) -> Unit
-    ) : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            scope.launch(Dispatchers.IO) {
-                try {
-                    val iterator = snapshot.children.iterator()
-                    while (iterator.hasNext()) {
-                        val dataSnapshot = iterator.next()
-                        val dataKey = dataSnapshot.key ?: continue
-                        val value = dataSnapshot.value.cast<Map<String, Any>>() ?: continue
-                        block(dataKey, value)
-                    }
-                } catch (e: Exception) {
-                    Logger.withTag(name).error("$this Listen data change has error: $e")
-                }
-            }
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            Logger.withTag(name).error("$this Listen data change has error: $error")
-        }
-    }
-
     suspend fun pushBoxMember(
         boxId: String,
         memberId: String,
@@ -304,6 +161,47 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     suspend fun removeBoxMember(boxId: String, memberId: String) {
         boxMemberRef.child(boxId).child(memberId).removeValue().await()
+    }
+
+    private fun parseShareFromRealtimeObj(shareId: String, jsonMap: Map<String, Any>): Share? {
+        return try {
+            val realtimeShareObj = RealtimeShareObj.from(jsonMap)
+            val json = gson.fromJson(realtimeShareObj.shareData, JsonObject::class.java)
+            val shareData = when (
+                enumByNameIgnoreCase(
+                    json.get("type").asString,
+                    ShareType.UNKNOWN
+                )
+            ) {
+                ShareType.URL -> gson.fromJson(json, ShareData.ShareUrl::class.java)
+                ShareType.TEXT -> gson.fromJson(json, ShareData.ShareText::class.java)
+                ShareType.IMAGE -> gson.fromJson(json, ShareData.ShareImage::class.java)
+                ShareType.IMAGES -> gson.fromJson(json, ShareData.ShareImages::class.java)
+                ShareType.FILE -> gson.fromJson(json, ShareData.ShareFile::class.java)
+                ShareType.CHECK_LIST -> gson.fromJson(json, ShareData.ShareCheckList::class.java)
+                ShareType.NOTIFICATION -> gson.fromJson(
+                    json,
+                    ShareData.ShareNotification::class.java
+                )
+
+                ShareType.UNKNOWN -> null
+            } ?: return null
+
+            Share(
+                shareId = shareId,
+                shareUserId = realtimeShareObj.shareUserId,
+                shareData = shareData,
+                isVideoShare = realtimeShareObj.isVideoShare,
+                shareNote = realtimeShareObj.shareNote,
+                shareBoxId = realtimeShareObj.shareBoxId,
+                shareDate = realtimeShareObj.shareDate,
+                synced = true,
+                tagId = realtimeShareObj.tagId
+            )
+        } catch (e: Exception) {
+            Logger.error(e)
+            null
+        }
     }
 
     fun listenBoxMembersChangeEvent(
@@ -339,45 +237,50 @@ class RealtimeDatabaseRepository @Inject constructor(
 
     fun listenBoxMembersInvitedChangeEvent(
         lifecycleOwner: LifecycleOwner,
-        block: (List<BoxInvitedData>) -> Unit
+        block: (List<BoxInvitedData>) -> Unit,
+        onError: (Throwable) -> Unit = {}
     ) {
         val listener = boxMemberRef
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     realtimeDatabaseScope.launch(Dispatchers.IO) {
-                        val iterator = snapshot.children.iterator()
-                        val boxInvitedDataList = buildList {
-                            while (iterator.hasNext()) {
-                                val data = iterator.next()
-                                val boxId = data.key ?: continue
+                        try {
+                            val currentUserId = userHelper.getCurrentUserId()
+                            val iterator = snapshot.children.iterator()
+                            val boxInvitedDataList = buildList {
+                                while (iterator.hasNext()) {
+                                    val data = iterator.next()
+                                    val boxId = data.key ?: continue
 
-                                val dataValue = data.value?.cast<Map<String, Any>>() ?: continue
-                                val memberData =
-                                    dataValue[userHelper.getCurrentUserId()]?.cast<Map<String, Any>>()
+                                    val dataValue = data.value?.cast<Map<String, Any>>() ?: continue
+                                    val memberData = dataValue[currentUserId]?.cast<Map<String, Any>>()
                                         ?: continue
 
-                                val invitedBy = memberData["invited_by"]?.toString() ?: continue
-                                val addedAt =
-                                    memberData["added_at"]?.toString()?.toLongOrNull() ?: continue
+                                    val invitedBy = memberData["invited_by"]?.toString() ?: continue
+                                    val addedAt =
+                                        memberData["added_at"]?.toString()?.toLongOrNull() ?: continue
 
-                                val boxData = boxRef.orderByChild("id").equalTo(boxId).get().await()
-                                val boxDataMap = boxData.value?.cast<Map<String, Any>>() ?: continue
-                                val valueMap =
-                                    boxDataMap[boxId]?.cast<Map<String, Any>>() ?: continue
-                                val boxName =
-                                    valueMap["name"]?.toString()?.takeIfNotNullOrBlank()
-                                        ?: continue
+                                    val boxData = boxRef.child(boxId).get().await()
+                                    val valueMap = boxData.value?.cast<Map<String, Any>>() ?: continue
+                                    val boxName =
+                                        valueMap["name"]?.toString()?.takeIfNotNullOrBlank()
+                                            ?: continue
 
-                                add(BoxInvitedData(boxId, boxName, invitedBy, addedAt))
+                                    add(BoxInvitedData(boxId, boxName, invitedBy, addedAt))
+                                }
                             }
-                        }
 
-                        block(boxInvitedDataList)
+                            block(boxInvitedDataList)
+                        } catch (e: Exception) {
+                            Logger.error(e)
+                            onError(e)
+                        }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Logger.error("box member error")
+                    Logger.error("Listen invited box members cancelled: ${error.message}")
+                    onError(error.toException())
                 }
             })
 
@@ -427,7 +330,7 @@ class RealtimeDatabaseRepository @Inject constructor(
         val lifecycleObserver = object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
                 super.onDestroy(owner)
-                boxMemberRef.removeEventListener(listener)
+                ref.removeEventListener(listener)
                 lifecycleOwner.lifecycle.removeObserver(this)
             }
         }

@@ -49,8 +49,6 @@ class SyncDataWorker @AssistedInject constructor(
         Logger.debug("$this has been started")
         setForeground(getForegroundInfo())
         return if (userHelper.isSignedIn()) {
-            Result.success()
-        } else {
             try {
                 syncBoxes()
                 syncShares()
@@ -58,6 +56,8 @@ class SyncDataWorker @AssistedInject constructor(
             } catch (e: Exception) {
                 Result.retry()
             }
+        } else {
+            Result.success()
         }
     }
 

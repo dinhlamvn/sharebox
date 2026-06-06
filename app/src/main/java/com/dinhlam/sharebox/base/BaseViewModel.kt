@@ -8,15 +8,16 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
@@ -24,9 +25,12 @@ import kotlinx.coroutines.yield
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KProperty1
 
-abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewModel() {
+abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) :
+    ViewModel() {
 
     interface BaseState
+
+    interface BaseIntent
 
     sealed class AsyncLoad<out T>(
         val data: T?,
@@ -38,8 +42,6 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         data class Success<T>(val value: T) : AsyncLoad<T>(value, true, true)
         data class Failed(val error: Throwable) : AsyncLoad<Nothing>(null, true, false)
     }
-
-    private val stateScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val setStateChannel = Channel<S.() -> S>(Channel.UNLIMITED)
     private val getStateChannel = Channel<(S) -> Unit>(Channel.UNLIMITED)
@@ -53,24 +55,41 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     ).apply { tryEmit(initState) }
     val stateFlow: Flow<S> = _stateFlow.asSharedFlow()
 
-    init {
-        stateScope.launch {
-            while (isActive) {
-                select {
-                    setStateChannel.onReceive { reducer ->
-                        val newState = currentState.reducer()
-                        if (newState != currentState) {
-                            currentState = newState
-                            _stateFlow.emit(newState)
-                        }
-                    }
+    private val _intentFlow = MutableSharedFlow<BaseIntent>()
+    private val intentFlow: Flow<BaseIntent> = _intentFlow.asSharedFlow()
 
-                    getStateChannel.onReceive { block ->
-                        block(currentState)
+    init {
+        doInBackground {
+            launch {
+                while (isActive) {
+                    select {
+                        setStateChannel.onReceive { reducer ->
+                            val newState = currentState.reducer()
+                            if (newState != currentState) {
+                                currentState = newState
+                                _stateFlow.emit(newState)
+                            }
+                        }
+
+                        getStateChannel.onReceive { block ->
+                            block(currentState)
+                        }
                     }
                 }
             }
+
+            launch {
+                intentFlow.collectLatest(::processIntent)
+            }
         }
+    }
+
+    fun sendIntent(intent: BaseIntent) = doInBackground {
+        _intentFlow.emit(intent)
+    }
+
+    protected open suspend fun processIntent(intent: BaseIntent) {
+        // No implemented yet
     }
 
     protected fun setState(block: S.() -> S) {
@@ -86,7 +105,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
         stateReducer: S.(AsyncLoad<T>) -> S
     ): Job {
         setState { stateReducer(AsyncLoad.Loading) }
-        return stateScope.launch(dispatcher ?: EmptyCoroutineContext) {
+        return viewModelScope.launch(dispatcher ?: EmptyCoroutineContext) {
             try {
                 val result = invoke()
                 setState { stateReducer(AsyncLoad.Success(result)) }
@@ -218,7 +237,7 @@ abstract class BaseViewModel<S : BaseViewModel.BaseState>(initState: S) : ViewMo
     }
 
     private fun <T> Flow<T>.resolveObserver(block: (T) -> Unit): Job {
-        return stateScope.launch(start = CoroutineStart.UNDISPATCHED) {
+        return viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
             yield()
             collectLatest { data ->
                 block(data)

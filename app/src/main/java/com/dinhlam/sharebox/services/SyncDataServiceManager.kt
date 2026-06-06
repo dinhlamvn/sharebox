@@ -12,42 +12,41 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RealtimeServiceManager @Inject constructor(
+class SyncDataServiceManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userHelper: UserHelper
 ) {
 
-    private lateinit var syncRealtimeDataService: SyncRealtimeDataService
     private var isBound: Boolean = false
 
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            Logger.debug("Realtime service is connected.")
-            val binder = service as SyncRealtimeDataService.LocalBinder
-            syncRealtimeDataService = binder.getService()
+            Logger.debug("Sync service is connected.")
             isBound = true
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            Logger.debug("Realtime service is disconnected.")
+            Logger.debug("Sync service is disconnected.")
             isBound = false
         }
     }
 
-    fun bindRealtimeService() {
-        if (userHelper.isSignedIn()) {
-            context.bindService(
-                Intent(context, SyncRealtimeDataService::class.java),
-                connection,
-                Context.BIND_AUTO_CREATE
-            )
+    fun bindSyncService() {
+        if (isBound || !userHelper.isSignedIn()) {
+            return
         }
+        context.bindService(
+            Intent(context, SyncDataService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 
-    fun unbindRealtimeService() {
+    fun unbindSyncService() {
         if (isBound) {
             context.unbindService(connection)
+            isBound = false
         }
     }
 }

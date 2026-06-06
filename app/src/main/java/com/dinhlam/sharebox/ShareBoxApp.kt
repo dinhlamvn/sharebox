@@ -20,7 +20,7 @@ import com.dinhlam.sharebox.imageloader.loader.GlideImageLoader
 import com.dinhlam.sharebox.logger.Logger
 import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
-import com.dinhlam.sharebox.services.RealtimeServiceManager
+import com.dinhlam.sharebox.services.SyncDataServiceManager
 import com.dinhlam.sharebox.tracking.TrackerManager
 import com.dinhlam.sharebox.tracking.trackers.FirebaseAnalysisTracker
 import com.dinhlam.sharebox.utils.UserUtils
@@ -62,7 +62,7 @@ class ShareBoxApp : Application(), Configuration.Provider, CoroutineScope {
     lateinit var userRepository: UserRepository
 
     @Inject
-    lateinit var realtimeServiceManager: RealtimeServiceManager
+    lateinit var syncDataServiceManager: SyncDataServiceManager
 
     private fun createAnonymousUser() {
         if (!userHelper.isSignedIn() && userHelper.getCurrentUserId().isEmpty()) {
@@ -119,7 +119,7 @@ class ShareBoxApp : Application(), Configuration.Provider, CoroutineScope {
 
         TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
 
-        realtimeServiceManager.bindRealtimeService()
+        syncDataServiceManager.bindSyncService()
 
         if (BuildConfig.DEBUG) {
             FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->

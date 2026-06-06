@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.core.net.toUri
 
 @Singleton
 class LocalStorageManager @Inject constructor(
@@ -130,7 +131,7 @@ class LocalStorageManager @Inject constructor(
             resolver.insert(imageCollection, newImage) ?: return@withContext null
 
         imageSource.toString().takeIf { uriStr -> uriStr.startsWith("content://") }?.let { uriStr ->
-            resolver.openInputStream(Uri.parse(uriStr))?.use { inputStream ->
+            resolver.openInputStream(uriStr.toUri())?.use { inputStream ->
                 resolver.openOutputStream(destUri)?.use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }

@@ -4,38 +4,33 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.logger.Logger
+import com.dinhlam.sharebox.utils.WorkerUtils
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class SyncRealtimeDataService : Service() {
+class SyncDataService : Service() {
 
     inner class LocalBinder : Binder() {
-        fun getService(): SyncRealtimeDataService = this@SyncRealtimeDataService
+        fun getService(): SyncDataService = this@SyncDataService
     }
 
     private val binder = LocalBinder()
 
-    @Inject
-    lateinit var realtimeDatabaseRepository: RealtimeDatabaseRepository
-
     override fun onBind(intent: Intent?): IBinder {
-        Logger.debug("Realtime service is running.")
-        realtimeDatabaseRepository.listen()
+        Logger.debug("Sync service is running.")
+        WorkerUtils.enqueueJobSyncDataOneTime(applicationContext)
         return binder
     }
 
     override fun onRebind(intent: Intent?) {
         super.onRebind(intent)
-        Logger.debug("Realtime service is running.")
-        realtimeDatabaseRepository.listen()
+        Logger.debug("Sync service is running.")
+        WorkerUtils.enqueueJobSyncDataOneTime(applicationContext)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Logger.debug("Realtime service is stopped.")
-        realtimeDatabaseRepository.release()
+        Logger.debug("Sync service is stopped.")
         return super.onUnbind(intent)
     }
 }

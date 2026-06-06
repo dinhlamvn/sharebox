@@ -37,7 +37,7 @@ import com.dinhlam.sharebox.model.AppSettings
 import com.dinhlam.sharebox.pref.UserSharePref
 import com.dinhlam.sharebox.router.Router
 import com.dinhlam.sharebox.services.AppNotificationListenerService
-import com.dinhlam.sharebox.services.RealtimeServiceManager
+import com.dinhlam.sharebox.services.SyncDataServiceManager
 import com.dinhlam.sharebox.utils.AppUtils
 import com.dinhlam.sharebox.utils.Icons
 import com.dinhlam.sharebox.utils.WorkerUtils
@@ -73,7 +73,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     lateinit var transferDataHelper: TransferDataHelper
 
     @Inject
-    lateinit var realtimeServiceManager: RealtimeServiceManager
+    lateinit var syncDataServiceManager: SyncDataServiceManager
 
     @Inject
     lateinit var boxRepository: BoxRepository
@@ -314,7 +314,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                         userSharePref.getAnonymousUserId()
                     )
                     userHelper.signOut(this@SettingActivity, this, {
-                        realtimeServiceManager.unbindRealtimeService()
+                        syncDataServiceManager.unbindSyncService()
                         binding.textAction.setText(R.string.sign_in)
                         showToast(R.string.logged_out)
                     }, {
