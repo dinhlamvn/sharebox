@@ -197,12 +197,12 @@ class BottomSheetShareActionDialogFragment :
     }
 
     private fun moveToTrash(share: ShareDetail) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setMessage(R.string.confirm_move_to_trash)
-            .setPositiveButton(R.string.dialog_ok) { _, _ ->
-                viewModel.moveShareToTrash(share.shareId)
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
+        val onDismissListener = bottomSheetDismissListener
+        shareHelper.moveShareToTrash(
+            requireActivity(),
+            share.shareId,
+            onMoved = ::dismiss,
+            onUndo = { onDismissListener?.onDismiss() },
+        )
     }
 }

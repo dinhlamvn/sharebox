@@ -6,6 +6,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.realtime.RealtimeDatabaseRepository
 import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.data.repository.BoxTransferRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.getNonNull
 import com.dinhlam.sharebox.extensions.nowUTCTimeInMillis
@@ -19,6 +20,7 @@ class BoxDetailViewModel @Inject constructor(
     private val boxRepository: BoxRepository,
     private val shareRepository: ShareRepository,
     private val realtimeDatabaseRepository: RealtimeDatabaseRepository,
+    private val boxTransferRepository: BoxTransferRepository,
 ) : BaseViewModel<BoxDetailState>(BoxDetailState()) {
 
     init {
@@ -157,6 +159,19 @@ class BoxDetailViewModel @Inject constructor(
         }.execute { asyncLoad ->
             copy(asyncLoadDeleteBox = asyncLoad)
         }
+    }
+
+    fun exportBox() = getState { state ->
+        val boxId = state.boxDetail?.boxId ?: return@getState
+        suspend {
+            boxTransferRepository.export(boxId)
+        }.execute { asyncLoad ->
+            copy(asyncLoadExportBox = asyncLoad)
+        }
+    }
+
+    fun consumeExportResult() {
+        setState { copy(asyncLoadExportBox = AsyncLoad.UnInitialized) }
     }
 
     fun updateShare(data: ShareDetail) = getState { state ->

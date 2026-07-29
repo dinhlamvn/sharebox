@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.data.local.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.dinhlam.sharebox.data.local.entity.Box
@@ -12,6 +13,9 @@ interface BoxDao {
 
     @Insert
     suspend fun insert(vararg box: Box)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(box: Box)
 
     @Update
     suspend fun update(vararg box: Box)

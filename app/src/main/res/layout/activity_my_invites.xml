@@ -11,7 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/title_box_invited" />
+        app:title="@string/title_box_invited">
+
+        <com.dinhlam.sharebox.view.FontAwesomeIconView
+            android:id="@+id/icon_import"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/import_box"
+            app:icon_code="f019"
+            app:icon_size="20dp" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"

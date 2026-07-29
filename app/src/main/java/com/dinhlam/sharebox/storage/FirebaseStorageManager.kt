@@ -12,9 +12,11 @@ import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.logger.Logger
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -27,6 +29,8 @@ class FirebaseStorageManager @Inject constructor(
     private val fileRef by lazy { storage.getReference("files") }
 
     private val avatarImagesRef by lazy { storage.getReference("avatarImages") }
+
+    private val boxExportsRef by lazy { storage.getReference("box-exports") }
 
     suspend fun uploadUserAvatar(uri: Uri): String? =
         withContext(Dispatchers.IO) {
@@ -100,6 +104,42 @@ class FirebaseStorageManager @Inject constructor(
         }
     }
 
+    suspend fun uploadBoxAsset(
+        boxId: String,
+        shareId: String,
+        uri: Uri,
+        fileNumber: Int = 0,
+    ): Uri = withContext(Dispatchers.IO) {
+        val ref = boxExportsRef.child(boxAssetPath(boxId, shareId, fileNumber))
+        ref.putFile(uri).await()
+        ref.downloadUrl.await()
+    }
+
+    suspend fun uploadBoxManifest(boxId: String, json: String) =
+        withContext(Dispatchers.IO) {
+            val metadata = StorageMetadata.Builder()
+                .setContentType("application/json")
+                .setCustomMetadata("schemaVersion", "1")
+                .build()
+            boxExportsRef.child(manifestPath(boxId))
+                .putBytes(json.toByteArray(Charsets.UTF_8), metadata)
+                .await()
+        }
+
+    suspend fun downloadBoxManifest(boxId: String): String = withContext(Dispatchers.IO) {
+        val bytes = boxExportsRef.child(manifestPath(boxId))
+            .getBytes(MAX_MANIFEST_BYTES)
+            .await()
+        bytes.toString(Charsets.UTF_8)
+    }
+
+    suspend fun downloadBoxAsset(uri: Uri, destination: File): File =
+        withContext(Dispatchers.IO) {
+            destination.parentFile?.mkdirs()
+            storage.getReferenceFromUrl(uri.toString()).getFile(destination).await()
+            destination
+        }
+
     suspend fun downloadFile(
         context: Context, shareId: String, uri: Uri, destUri: Uri, fileNumber: Int = 0
     ): FileDownloadTask.TaskSnapshot = withContext(Dispatchers.IO) {
@@ -153,6 +193,15 @@ class FirebaseStorageManager @Inject constructor(
         return "avatar_$userId"
     }
 
+    private fun manifestPath(boxId: String) = "$boxId/manifest.json"
+
+    private fun boxAssetPath(boxId: String, shareId: String, fileNumber: Int) =
+        "$boxId/assets/$shareId/asset_$fileNumber"
+
     private fun getNotificationId() =
         (System.currentTimeMillis() / 1000 + Random.nextInt(1, 100)).toInt()
+
+    private companion object {
+        const val MAX_MANIFEST_BYTES = 10L * 1024L * 1024L
+    }
 }

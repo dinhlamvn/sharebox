@@ -118,6 +118,15 @@
     <string name="require_sign_in_to_manage_member">Bạn cần đăng nhập để quản lý thành viên của Box</string>
     <string name="error_add_yourself">Bạn không thể thêm chính mình</string>
     <string name="download">Tải vể</string>
+    <string name="import_box">Nhập Box</string>
+    <string name="input_box_id">Nhập ID của Box</string>
+    <string name="box_id_required">Vui lòng nhập ID của Box</string>
+    <string name="box_import_started">Đang tải Box…</string>
+    <string name="box_import_success">Đã nhập Box thành công</string>
+    <string name="box_import_failed">Không thể nhập Box. Hãy kiểm tra ID và quyền truy cập.</string>
+    <string name="export_box">Xuất Box</string>
+    <string name="box_export_success">Đã tải Box lên thành công</string>
+    <string name="box_export_failed">Không thể tải Box lên. Vui lòng thử lại.</string>
     <string name="title_add_member">Thêm thành viên</string>
     <string name="title_num_of_recently">Số lượng chia sẻ gần đây được hiển thị</string>
     <string name="require_min_num_recently">Số chia sẻ gần đây phải từ %d</string>
@@ -139,6 +148,10 @@
     <string name="copy">Sao chép</string>
     <string name="copy_box_id">Sao chép Box\'s ID</string>
     <string name="move_to_trash">Di chuyển vào thùng rác</string>
+    <string name="moved_to_trash">Đã chuyển chia sẻ vào thùng rác</string>
+    <string name="undo">HOÀN TÁC</string>
+    <string name="move_to_trash_failed">Không thể chuyển chia sẻ vào thùng rác</string>
+    <string name="restore_share_failed">Không thể khôi phục chia sẻ</string>
     <string name="share_not_found">Chia sẻ không tìm thấy.</string>
     <string name="hint_note">Ghi chú của bản…</string>
     <string name="share_note">Ghi chú chia sẻ</string>

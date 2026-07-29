@@ -10,6 +10,9 @@ interface ShareDao {
     @Insert
     suspend fun insertAll(vararg shares: Share)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAll(shares: List<Share>)
+
     @Update
     suspend fun update(share: Share)
 
@@ -83,6 +86,9 @@ interface ShareDao {
     """
     )
     suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int, searchQuery: String): List<Share>
+
+    @Query("SELECT * FROM share WHERE share_box_id = :boxId ORDER BY share_date ASC")
+    suspend fun findAllInBoxForTransfer(boxId: String): List<Share>
 
     @Query(
         """

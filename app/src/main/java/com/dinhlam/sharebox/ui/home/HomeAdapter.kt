@@ -32,7 +32,8 @@ class HomeAdapter @Inject constructor(
 ) : BaseListAdapter() {
     private val homeFragment: HomeFragment = fragment.castNonNull()
 
-    override fun buildListModels() = homeFragment.getState(homeFragment.viewModel) { state ->
+    override fun buildListModels() {
+        val state = homeFragment.viewModel.currentState
         MainActionListModel(
             NoHashProp(View.OnClickListener { view ->
                 homeFragment.requestArchiveNote(view)

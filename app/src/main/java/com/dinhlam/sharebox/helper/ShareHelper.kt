@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.dinhlam.sharebox.BuildConfig
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseBottomSheetDialogFragment
@@ -17,6 +18,7 @@ import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.dialog.action.BottomSheetShareActionDialogFragment
 import com.dinhlam.sharebox.dialog.download.DownloadFileDialogFragment
+import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.extensions.cast
 import com.dinhlam.sharebox.extensions.copy
 import com.dinhlam.sharebox.extensions.format
@@ -36,7 +38,9 @@ import com.dinhlam.sharebox.storage.FirebaseStorageManager
 import com.dinhlam.sharebox.ui.comment.CommentFragment
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.dinhlam.sharebox.utils.FileUtils
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,7 +48,8 @@ import javax.inject.Singleton
 class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context,
     private val router: Router,
-    private val firebaseStorageManager: FirebaseStorageManager
+    private val firebaseStorageManager: FirebaseStorageManager,
+    private val shareRepository: ShareRepository,
 ) {
 
     fun showMore(
@@ -184,6 +189,46 @@ class ShareHelper @Inject constructor(
             }
 
             else -> context.showToast(R.string.nothing_to_copy)
+        }
+    }
+
+    fun moveShareToTrash(
+        activity: FragmentActivity,
+        shareId: String,
+        onMoved: () -> Unit,
+        onUndo: () -> Unit,
+    ) {
+        activity.lifecycleScope.launch {
+            val originalShare = shareRepository.findOneRaw(shareId)
+            if (originalShare == null) {
+                activity.showToast(R.string.share_not_found)
+                return@launch
+            }
+
+            val movedShare = shareRepository.update(originalShare.copy(shareBoxId = null))
+            if (movedShare == null) {
+                activity.showToast(R.string.move_to_trash_failed)
+                return@launch
+            }
+
+            onMoved()
+            Snackbar.make(
+                activity.findViewById(android.R.id.content),
+                R.string.moved_to_trash,
+                Snackbar.LENGTH_LONG,
+            )
+                .setDuration(SNACKBAR_UNDO_DURATION_MS)
+                .setAction(R.string.undo) {
+                    activity.lifecycleScope.launch {
+                        val restored = shareRepository.update(originalShare)
+                        if (restored != null) {
+                            onUndo()
+                        } else {
+                            activity.showToast(R.string.restore_share_failed)
+                        }
+                    }
+                }
+                .show()
         }
     }
 
@@ -334,5 +379,9 @@ class ShareHelper @Inject constructor(
         }
 
         context.startActivity(router.downloadBottomSheet(context, urls))
+    }
+
+    private companion object {
+        const val SNACKBAR_UNDO_DURATION_MS = 5_000
     }
 }

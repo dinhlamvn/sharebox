@@ -6,9 +6,12 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.worker.DownloadImagesWorker
+import com.dinhlam.sharebox.worker.ExportBoxWorker
+import com.dinhlam.sharebox.worker.ImportBoxWorker
 import com.dinhlam.sharebox.worker.SyncDataWorker
 import com.dinhlam.sharebox.worker.SyncShareToCloudWorker
 import java.util.UUID
@@ -64,4 +67,35 @@ object WorkerUtils {
         ).setId(UUID.randomUUID()).build()
         WorkManager.getInstance(context).enqueue(imageDownloadRequest)
     }
+
+    fun enqueueExportBox(context: Context, boxId: String): UUID {
+        val request = OneTimeWorkRequestBuilder<ExportBoxWorker>()
+            .setConstraints(networkConstraints())
+            .setInputData(Data.Builder().putString(AppExtras.EXTRA_BOX_ID, boxId).build())
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "sharebox-export-$boxId",
+            ExistingWorkPolicy.REPLACE,
+            request,
+        )
+        return request.id
+    }
+
+    fun enqueueImportBox(context: Context, boxId: String): UUID {
+        val request = OneTimeWorkRequestBuilder<ImportBoxWorker>()
+            .setConstraints(networkConstraints())
+            .setInputData(Data.Builder().putString(AppExtras.EXTRA_BOX_ID, boxId).build())
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "sharebox-import-$boxId",
+            ExistingWorkPolicy.REPLACE,
+            request,
+        )
+        return request.id
+    }
+
+    private fun networkConstraints() = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresStorageNotLow(true)
+        .build()
 }
