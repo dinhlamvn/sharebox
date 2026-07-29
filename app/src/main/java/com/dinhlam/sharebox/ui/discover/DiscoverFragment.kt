@@ -9,6 +9,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.dinhlam.sharebox.base.BaseFragment
 import com.dinhlam.sharebox.databinding.FragmentDiscoverBinding
 import com.dinhlam.sharebox.ui.discover.tiktok.TiktokDiscoverFragment
+import com.dinhlam.sharebox.ui.discover.pinterest.PinterestDiscoverFragment
 import com.dinhlam.sharebox.ui.discover.zingnews.ZingNewsDiscoverFragment
 import com.dinhlam.sharebox.utils.LiveEvents
 import com.google.android.material.tabs.TabLayoutMediator
@@ -36,6 +37,7 @@ class DiscoverFragment : BaseFragment<FragmentDiscoverBinding>() {
             when (tabPosition) {
                 0 -> tab.text = "Tiktok"
                 1 -> tab.text = "ZingNews"
+                2 -> tab.text = "Pinterest"
             }
         }.attach()
 
@@ -49,13 +51,14 @@ class DiscoverFragment : BaseFragment<FragmentDiscoverBinding>() {
     ) : FragmentStateAdapter(fragment) {
 
         override fun getItemCount(): Int {
-            return 2
+            return 3
         }
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> TiktokDiscoverFragment()
                 1 -> ZingNewsDiscoverFragment()
+                2 -> PinterestDiscoverFragment()
                 else -> error("No Fragment found for position $position")
             }
         }

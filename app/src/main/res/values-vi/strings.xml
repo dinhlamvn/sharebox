@@ -127,6 +127,12 @@
     <string name="export_box">Xuất Box</string>
     <string name="box_export_success">Đã tải Box lên thành công</string>
     <string name="box_export_failed">Không thể tải Box lên. Vui lòng thử lại.</string>
+    <string name="search_pinterest_hint">Tìm kiếm trên Pinterest</string>
+    <string name="pinterest_search_action">Tìm kiếm</string>
+    <string name="search_text_required">Nhập nội dung tìm kiếm</string>
+    <string name="open_search_on_pinterest">Mở tìm kiếm trên Pinterest</string>
+    <string name="pinterest_html_results_unavailable">Không thể trích xuất kết quả Pinterest. Hãy mở tìm kiếm trên Pinterest.</string>
+    <string name="pinterest_pin_image">Hình ảnh Pin Pinterest</string>
     <string name="title_add_member">Thêm thành viên</string>
     <string name="title_num_of_recently">Số lượng chia sẻ gần đây được hiển thị</string>
     <string name="require_min_num_recently">Số chia sẻ gần đây phải từ %d</string>

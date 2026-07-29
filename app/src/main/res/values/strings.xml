@@ -137,6 +137,12 @@
     <string name="export_box">Export Box</string>
     <string name="box_export_success">Box uploaded successfully</string>
     <string name="box_export_failed">Could not upload this Box. Please try again.</string>
+    <string name="search_pinterest_hint">Search Pinterest</string>
+    <string name="pinterest_search_action">Search</string>
+    <string name="search_text_required">Enter search text</string>
+    <string name="open_search_on_pinterest">Open search on Pinterest</string>
+    <string name="pinterest_html_results_unavailable">Pinterest results could not be extracted. Open the search on Pinterest instead.</string>
+    <string name="pinterest_pin_image">Pinterest Pin image</string>
     <string name="title_num_of_recently">Number of recently share to show</string>
     <string name="require_min_num_recently">Number of recently must be from %d</string>
     <string name="archive_url_success">"Archived %s "</string>
