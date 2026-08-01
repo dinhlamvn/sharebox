@@ -38,11 +38,23 @@
             </androidx.cardview.widget.CardView>
 
             <com.dinhlam.sharebox.view.FontAwesomeIconView
+                android:id="@+id/icon_upload"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/export_box"
+                app:icon_code="f093"
+                app:icon_size="20dp" />
+
+            <com.dinhlam.sharebox.view.FontAwesomeIconView
                 android:id="@+id/icon_delete"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical|end"
-                android:layout_marginHorizontal="16dp"
+                android:layout_marginHorizontal="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:icon_code="f2ed"
                 app:icon_size="20dp" />

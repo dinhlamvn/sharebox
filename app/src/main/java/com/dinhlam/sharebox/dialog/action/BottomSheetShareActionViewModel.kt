@@ -149,11 +149,4 @@ class BottomSheetShareActionViewModel @Inject constructor(
         }.execute { asyncLoad -> copy(asyncUpdate = asyncLoad) }
     }
 
-    fun moveShareToTrash(shareId: String) {
-        suspend {
-            val share = shareRepository.findOneRaw(shareId)!!
-            shareRepository.update(share.copy(shareBoxId = null))
-            shareRepository.findOne(shareId)!!
-        }.execute { asyncLoad -> copy(asyncUpdate = asyncLoad) }
-    }
 }

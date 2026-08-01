@@ -8,6 +8,7 @@ import com.dinhlam.sharebox.data.network.DownloadServices
 import com.dinhlam.sharebox.data.network.FDownServices
 import com.dinhlam.sharebox.data.network.GetMyFBServices
 import com.dinhlam.sharebox.data.network.LibreTubeServices
+import com.dinhlam.sharebox.data.network.PinterestServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.data.network.TiktokServices
 import com.dinhlam.sharebox.data.network.response.AppDLResponse
@@ -125,6 +126,17 @@ object NetworkModule {
         return getRetrofitBuilder(gson, httpClient)
             .baseUrl("https://www.tiktok.com")
             .build().create(TiktokServices::class.java)
+    }
+
+    @Provides
+    fun providePinterestServices(
+        gson: Gson,
+        httpClient: OkHttpClient,
+    ): PinterestServices {
+        return getRetrofitBuilder(gson, httpClient)
+            .baseUrl("https://www.pinterest.com/")
+            .build()
+            .create(PinterestServices::class.java)
     }
 
     @Provides

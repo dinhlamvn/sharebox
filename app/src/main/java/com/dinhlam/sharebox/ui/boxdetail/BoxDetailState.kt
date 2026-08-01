@@ -2,6 +2,7 @@ package com.dinhlam.sharebox.ui.boxdetail
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.model.BoxTransferManifest
 import com.dinhlam.sharebox.model.ShareDetail
 
 data class BoxDetailState(
@@ -15,5 +16,7 @@ data class BoxDetailState(
     val asyncLoadLoadMoreShares: BaseViewModel.AsyncLoad<List<ShareDetail>> = BaseViewModel.AsyncLoad.UnInitialized,
     val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized,
     val asyncLoadDeleteBox: BaseViewModel.AsyncLoad<Boolean> = BaseViewModel.AsyncLoad.UnInitialized,
+    val asyncLoadExportBox: BaseViewModel.AsyncLoad<BoxTransferManifest> =
+        BaseViewModel.AsyncLoad.UnInitialized,
     val searchQuery: String? = null,
 ) : BaseViewModel.BaseState

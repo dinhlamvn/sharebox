@@ -19,9 +19,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelFragment
+import com.dinhlam.sharebox.base.AsyncResult
+import com.dinhlam.sharebox.base.BaseFragment
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.DialogLayoutInputBinding
 import com.dinhlam.sharebox.databinding.FragmentHomeBinding
@@ -44,11 +47,12 @@ import com.dinhlam.sharebox.ui.main.MainActivity
 import com.dinhlam.sharebox.ui.sharereceive.ShareReceiveActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment :
-    BaseViewModelFragment<HomeState, HomeViewModel, FragmentHomeBinding>() {
+    BaseFragment<FragmentHomeBinding>() {
 
     private val viewBoxDetailLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -92,7 +96,7 @@ class HomeFragment :
             }
         }
 
-    override val viewModel: HomeViewModel by viewModels()
+    val viewModel: HomeViewModel by viewModels()
 
     @Inject
     lateinit var router: Router
@@ -102,10 +106,6 @@ class HomeFragment :
 
     @Inject
     lateinit var userHelper: UserHelper
-
-    override fun onStateChanged(state: HomeState) {
-        homeAdapter.requestBuildListModels()
-    }
 
     private val archiveTextResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -182,16 +182,21 @@ class HomeFragment :
 
         homeAdapter.attachTo(binding.recyclerView, this)
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    homeAdapter.requestBuildListModels()
+                    binding.loading.isVisible = state.asyncLoadSave is AsyncResult.Loading
+                    if (state.asyncLoadSave is AsyncResult.Success) {
+                        viewModel.refresh()
+                    }
+                }
+            }
+        }
+
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
             viewModel.refresh()
-        }
-
-        onChange(HomeState::asyncLoadSave) { asyncLoad ->
-            binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
-            if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
-                viewModel.refresh()
-            }
         }
 
         binding.iconSetting.setOnClickListener {
@@ -222,7 +227,7 @@ class HomeFragment :
     }
 
     private fun onBoxSelected(boxId: String, boxName: String) {
-        val chooseBoxFor = getState(viewModel, HomeState::chooseBoxFor) ?: return
+        val chooseBoxFor = viewModel.currentState.chooseBoxFor ?: return
         viewModel.setChooseBoxFor(null)
 
         if (chooseBoxFor is HomeState.ChooseBoxFor.Detail) {

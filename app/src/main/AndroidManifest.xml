@@ -328,8 +328,8 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="com.dinhlam.sharebox.receiver.CustomTabsShareBroadcastReceiver" />
-        <receiver android:name="com.dinhlam.sharebox.receiver.ShareCheckListAlarmBroadcastReceiver" />
+        <receiver android:name=".receiver.CustomTabsShareBroadcastReceiver" />
+        <receiver android:name=".receiver.ShareCheckListAlarmBroadcastReceiver" />
     </application>
 
 </manifest>

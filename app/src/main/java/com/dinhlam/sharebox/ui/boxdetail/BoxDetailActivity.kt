@@ -66,6 +66,7 @@ class BoxDetailActivity :
         val isOwner = userHelper.getCurrentUserId() == state.boxDetail?.createdBy
         binding.iconEdit.isVisible = isOwner
         binding.iconDelete.isVisible = isOwner
+        binding.iconUpload.isVisible = isOwner
         shareAdapter.requestBuildListModels()
         binding.toolbar.title = state.boxDetail?.boxName
         binding.toolbar.subtitle = state.boxDetail?.boxDesc
@@ -147,6 +148,10 @@ class BoxDetailActivity :
             confirmDeleteBox()
         }
 
+        binding.iconUpload.setOnClickListener {
+            viewModel.exportBox()
+        }
+
         binding.recyclerView.layoutManager = layoutManager
         shareAdapter.attachTo(binding.recyclerView, this)
 
@@ -196,6 +201,21 @@ class BoxDetailActivity :
                 finish()
             } else if (asyncLoad is BaseViewModel.AsyncLoad.Success) {
                 showToast(R.string.error_delete_box)
+            }
+        }
+
+        onChange(BoxDetailState::asyncLoadExportBox) { asyncLoad ->
+            binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading
+            when (asyncLoad) {
+                is BaseViewModel.AsyncLoad.Success -> {
+                    viewModel.consumeExportResult()
+                    showToast(R.string.box_export_success)
+                }
+                is BaseViewModel.AsyncLoad.Failed -> {
+                    viewModel.consumeExportResult()
+                    showToast(R.string.box_export_failed)
+                }
+                else -> Unit
             }
         }
     }
