@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.data.network.LibreTubeServices
 import com.dinhlam.sharebox.data.network.PinterestServices
 import com.dinhlam.sharebox.data.network.SSSTikServices
 import com.dinhlam.sharebox.data.network.TiktokServices
+import com.dinhlam.sharebox.data.network.UnsplashServices
 import com.dinhlam.sharebox.data.network.response.AppDLResponse
 import com.dinhlam.sharebox.di.qualifier.UserAgentInterceptor
 import com.dinhlam.sharebox.helper.CronetHelper
@@ -137,6 +138,17 @@ object NetworkModule {
             .baseUrl("https://www.pinterest.com/")
             .build()
             .create(PinterestServices::class.java)
+    }
+
+    @Provides
+    fun provideUnsplashServices(
+        gson: Gson,
+        httpClient: OkHttpClient,
+    ): UnsplashServices {
+        return getRetrofitBuilder(gson, httpClient)
+            .baseUrl("https://api.unsplash.com/")
+            .build()
+            .create(UnsplashServices::class.java)
     }
 
     @Provides

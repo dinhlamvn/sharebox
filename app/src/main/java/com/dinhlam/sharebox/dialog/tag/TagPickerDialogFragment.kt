@@ -4,18 +4,39 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
-import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
+import com.dinhlam.sharebox.base.CommonLazyGrid
 import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.data.local.entity.Tag
 import com.dinhlam.sharebox.databinding.DialogFragmentTagPickerBinding
-import com.dinhlam.sharebox.extensions.dp
+import com.dinhlam.sharebox.extensions.asColorInt
 import com.dinhlam.sharebox.extensions.showToast
-import com.dinhlam.sharebox.listmodel.TagItemListModel
-import com.dinhlam.sharebox.recyclerview.decoration.GridItemSpacingDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,29 +65,28 @@ class TagPickerDialogFragment :
 
     override val viewModel: TagPickerViewModel by viewModels()
 
-    private val tagAdapter = BaseListAdapter.create {
-        getState(viewModel) { state ->
-            state.tags.forEach { tag ->
-                TagItemListModel(
-                    "tag_${tag.id}",
-                    tag.tagColor,
-                    state.tagIdPicked == tag.id,
-                    BaseListAdapter.NoHashProp(View.OnClickListener {
-                        viewModel.setSelectedTag(tag.id)
-                    })
-                ).attachTo(this)
-            }
-        }
-    }
+    private var composeState by mutableStateOf<TagPickerState?>(null)
 
     override fun onStateChanged(state: TagPickerState) {
-        tagAdapter.requestBuildListModels()
+        composeState = state
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.addItemDecoration(GridItemSpacingDecoration(8.dp, 5))
-        tagAdapter.attachTo(binding.recyclerView)
+        composeState = viewModel.currentState
+        binding.tagGrid.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        binding.tagGrid.setContent {
+            MaterialTheme {
+                val state = composeState ?: return@MaterialTheme
+                TagGrid(
+                    tags = state.tags,
+                    selectedTagId = state.tagIdPicked,
+                    onTagClick = viewModel::setSelectedTag,
+                )
+            }
+        }
 
         onAsyncChange(TagPickerState::asyncLoadSaveTag, onFail = { error ->
             showToast(error.message)
@@ -77,6 +97,44 @@ class TagPickerDialogFragment :
 
         binding.buttonSave.setOnClickListener {
             viewModel.saveShareTag()
+        }
+    }
+}
+
+@Composable
+private fun TagGrid(
+    tags: List<Tag>,
+    selectedTagId: Int?,
+    onTagClick: (Int) -> Unit,
+) {
+    CommonLazyGrid(
+        items = tags,
+        columns = GridCells.Fixed(5),
+        key = { it.id },
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(3.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) { tag ->
+        val selected = tag.id == selectedTagId
+        Card(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .clickable { onTagClick(tag.id) },
+            shape = CircleShape,
+            colors = CardDefaults.cardColors(
+                containerColor = Color(tag.tagColor.asColorInt()),
+            ),
+            border = if (selected) BorderStroke(3.dp, Color.Gray) else null,
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (selected) {
+                    Text(text = "✓", color = Color.White)
+                }
+            }
         }
     }
 }

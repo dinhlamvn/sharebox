@@ -11,6 +11,7 @@ import com.dinhlam.sharebox.databinding.FragmentDiscoverBinding
 import com.dinhlam.sharebox.ui.discover.tiktok.TiktokDiscoverFragment
 import com.dinhlam.sharebox.ui.discover.pinterest.PinterestDiscoverFragment
 import com.dinhlam.sharebox.ui.discover.zingnews.ZingNewsDiscoverFragment
+import com.dinhlam.sharebox.ui.discover.unsplash.UnsplashDiscoverFragment
 import com.dinhlam.sharebox.utils.LiveEvents
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +39,7 @@ class DiscoverFragment : BaseFragment<FragmentDiscoverBinding>() {
                 0 -> tab.text = "Tiktok"
                 1 -> tab.text = "ZingNews"
                 2 -> tab.text = "Pinterest"
+                3 -> tab.text = "Unsplash"
             }
         }.attach()
 
@@ -51,7 +53,7 @@ class DiscoverFragment : BaseFragment<FragmentDiscoverBinding>() {
     ) : FragmentStateAdapter(fragment) {
 
         override fun getItemCount(): Int {
-            return 3
+            return 4
         }
 
         override fun createFragment(position: Int): Fragment {
@@ -59,6 +61,7 @@ class DiscoverFragment : BaseFragment<FragmentDiscoverBinding>() {
                 0 -> TiktokDiscoverFragment()
                 1 -> ZingNewsDiscoverFragment()
                 2 -> PinterestDiscoverFragment()
+                3 -> UnsplashDiscoverFragment()
                 else -> error("No Fragment found for position $position")
             }
         }
