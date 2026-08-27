@@ -1,14 +1,12 @@
 package com.dinhlam.sharebox.ui.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.BoxRepository
 import com.dinhlam.sharebox.data.repository.ShareRepository
 import com.dinhlam.sharebox.helper.AppSettingHelper
 import com.dinhlam.sharebox.helper.UserHelper
 import com.dinhlam.sharebox.model.BoxDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,55 +15,95 @@ class HomeViewModel @Inject constructor(
     private val userHelper: UserHelper,
     private val boxRepository: BoxRepository,
     private val appSettingHelper: AppSettingHelper,
-) : ViewModel() {
+) : BaseViewModel<HomeState>(HomeState(userHelper.getCurrentUserId())) {
 
     companion object {
         private const val BOX_LIST_INIT_LOAD_SIZE_DEFAULT = 3
     }
 
-    private val stateManager = HomeStateManager(HomeState(userHelper.getCurrentUserId()))
+    sealed interface Intent : BaseIntent {
+        data object Refresh : Intent
+        data class Like(val shareId: String) : Intent
+        data class SetChooseBoxFor(val chooseBoxFor: HomeState.ChooseBoxFor?) : Intent
+        data class RefreshBoxDetail(val boxDetail: BoxDetail) : Intent
+    }
 
-    val state = stateManager.state
-    val currentState: HomeState
-        get() = stateManager.value
+    override suspend fun processIntent(intent: BaseIntent) {
+        when (intent) {
+            is Intent.Refresh -> refreshInternal()
+            is Intent.Like -> likeInternal(intent.shareId)
+            is Intent.SetChooseBoxFor -> setChooseBoxForInternal(intent.chooseBoxFor)
+            is Intent.RefreshBoxDetail -> refreshBoxDetailInternal(intent.boxDetail)
+        }
+    }
 
     fun refresh() {
-        stateManager.refreshing()
-        loadTotalBox()
-        loadBoxes()
-        loadRecentlyShared()
+        sendIntent(Intent.Refresh)
     }
 
-    private fun loadTotalBox() = viewModelScope.launch {
-        runCatching { boxRepository.count() }
-            .onSuccess(stateManager::totalBoxLoaded)
+    private fun refreshInternal() {
+        getTotalBox()
+        getListBoxes()
+        getRecentlyShares()
     }
 
-    private fun loadBoxes() = viewModelScope.launch {
-        runCatching { boxRepository.find(BOX_LIST_INIT_LOAD_SIZE_DEFAULT, 0) }
-            .onSuccess(stateManager::boxesLoaded)
+    private fun getTotalBox() = suspend {
+        boxRepository.count()
+    }.execute { asyncLoad ->
+        copy(totalBox = asyncLoad.data ?: 0)
     }
 
-    private fun loadRecentlyShared() = viewModelScope.launch {
-        runCatching {
+    private fun getListBoxes() = suspend {
+        boxRepository.find(BOX_LIST_INIT_LOAD_SIZE_DEFAULT, 0)
+    }.execute { asyncLoad ->
+        copy(boxes = if (asyncLoad.completed) asyncLoad.data.orEmpty() else boxes)
+    }
+
+    private fun getRecentlyShares() {
+        suspend {
             shareRepository.findRecentlyShares(
                 userHelper.getCurrentUserId(),
                 appSettingHelper.getNumOfRecently(),
                 0
             )
-        }.onSuccess(stateManager::sharesLoaded)
-            .onFailure(stateManager::sharesFailed)
+        }.execute { asyncLoad ->
+            val list = asyncLoad.data.orEmpty()
+            copy(
+                shares = if (asyncLoad.completed) list else shares,
+                isRefreshing = asyncLoad is AsyncLoad.Loading
+            )
+        }
     }
 
     fun like(shareId: String) {
-        stateManager.shareLiked(shareId)
+        sendIntent(Intent.Like(shareId))
+    }
+
+    private fun likeInternal(shareId: String) = setState {
+        copy(shares = shares.map { share ->
+            if (share.shareId == shareId) {
+                share.copy(likeNumber = share.likeNumber + 1, liked = true)
+            } else {
+                share
+            }
+        })
     }
 
     fun setChooseBoxFor(chooseBoxFor: HomeState.ChooseBoxFor?) {
-        stateManager.chooseBoxFor(chooseBoxFor)
+        sendIntent(Intent.SetChooseBoxFor(chooseBoxFor))
+    }
+
+    private fun setChooseBoxForInternal(chooseBoxFor: HomeState.ChooseBoxFor?) = setState {
+        copy(chooseBoxFor = chooseBoxFor)
     }
 
     fun refreshBoxDetail(boxDetail: BoxDetail) {
-        stateManager.boxUpdated(boxDetail)
+        sendIntent(Intent.RefreshBoxDetail(boxDetail))
+    }
+
+    private fun refreshBoxDetailInternal(boxDetail: BoxDetail) = setState {
+        copy(boxes = boxes.map { box ->
+            if (box.boxId == boxDetail.boxId) boxDetail else box
+        })
     }
 }

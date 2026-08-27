@@ -31,7 +31,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModelDialogFragment
-import com.dinhlam.sharebox.base.CommonLazyGrid
+import com.dinhlam.sharebox.components.AppLazyGrid
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.data.local.entity.Tag
 import com.dinhlam.sharebox.databinding.DialogFragmentTagPickerBinding
@@ -107,7 +107,7 @@ private fun TagGrid(
     selectedTagId: Int?,
     onTagClick: (Int) -> Unit,
 ) {
-    CommonLazyGrid(
+    AppLazyGrid(
         items = tags,
         columns = GridCells.Fixed(5),
         key = { it.id },

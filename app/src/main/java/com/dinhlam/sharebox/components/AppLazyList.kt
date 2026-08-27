@@ -1,4 +1,4 @@
-package com.dinhlam.sharebox.base
+package com.dinhlam.sharebox.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun <T> CommonLazyList(
+fun <T> AppLazyList(
     items: List<T>,
     key: (T) -> Any,
     modifier: Modifier = Modifier,
@@ -51,7 +51,7 @@ fun <T> CommonLazyList(
 }
 
 @Composable
-fun <T> CommonLazyGrid(
+fun <T> AppLazyGrid(
     items: List<T>,
     columns: GridCells,
     key: (T) -> Any,
@@ -81,7 +81,7 @@ fun <T> CommonLazyGrid(
 }
 
 @Composable
-fun <T> CommonLazyStaggeredGrid(
+fun <T> AppLazyStaggeredGrid(
     items: List<T>,
     columns: StaggeredGridCells,
     key: (T) -> Any,

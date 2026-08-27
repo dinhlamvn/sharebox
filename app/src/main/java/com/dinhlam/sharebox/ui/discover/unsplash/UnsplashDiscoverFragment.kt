@@ -18,10 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,7 +45,9 @@ import coil.compose.AsyncImage
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.base.CommonLazyStaggeredGrid
+import com.dinhlam.sharebox.components.AppInputField
+import com.dinhlam.sharebox.components.AppCardView
+import com.dinhlam.sharebox.components.AppLazyStaggeredGrid
 import com.dinhlam.sharebox.databinding.FragmentUnsplashDiscoverBinding
 import com.dinhlam.sharebox.model.UnsplashPhoto
 import com.dinhlam.sharebox.router.Router
@@ -143,7 +143,7 @@ private fun UnsplashDiscoverContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedTextField(
+            AppInputField(
                 value = input,
                 onValueChange = { input = it },
                 modifier = Modifier.weight(1f),
@@ -169,7 +169,7 @@ private fun UnsplashDiscoverContent(
         }
 
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-            CommonLazyStaggeredGrid(
+            AppLazyStaggeredGrid(
                 items = state.photos,
                 columns = StaggeredGridCells.Adaptive(160.dp),
                 key = UnsplashPhoto::id,
@@ -244,7 +244,7 @@ private fun UnsplashPhotoCard(
     onPreview: (UnsplashPhoto) -> Unit,
     onOpenUrl: (String) -> Unit,
 ) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+    AppCardView(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
             model = photo.imageUrl,
             contentDescription = "Photo by ${photo.photographerName}",
