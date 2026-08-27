@@ -22,12 +22,12 @@ def unsplashAccessKey = (localProperties["UNSPLASH_ACCESS_KEY"] ?: System.getenv
         .replace('"', '\\"')
 
 android {
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.dinhlam.sharebox"
         minSdk 23
-        targetSdk 35
+        targetSdk 36
         versionCode 202608270
         versionName "3.9.13"
 
