@@ -2,8 +2,12 @@ package com.dinhlam.sharebox.base
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.viewbinding.ViewBinding
 import com.dinhlam.sharebox.di.DefaultFragmentFactoryEntryPoint
 import dagger.hilt.android.EntryPointAccessors
@@ -32,8 +36,35 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
         supportFragmentManager.fragmentFactory = entryPoint.getFragmentFactory()
 
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         _binding = onCreateViewBinding()
-        setContentView(_binding!!.root)
+        val root = _binding!!.root
+        setContentView(root)
+
+        val initialPaddingLeft = root.paddingLeft
+        val initialPaddingTop = root.paddingTop
+        val initialPaddingRight = root.paddingRight
+        val initialPaddingBottom = root.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(
+                initialPaddingLeft + insets.left,
+                initialPaddingTop + insets.top,
+                initialPaddingRight + insets.right,
+                initialPaddingBottom + insets.bottom,
+            )
+            WindowInsetsCompat.Builder(windowInsets)
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars() or
+                        WindowInsetsCompat.Type.displayCutout(),
+                    Insets.NONE,
+                )
+                .build()
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     override fun onDestroy() {
