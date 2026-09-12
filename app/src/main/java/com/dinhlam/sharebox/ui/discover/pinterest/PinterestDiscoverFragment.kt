@@ -1,5 +1,10 @@
 package com.dinhlam.sharebox.ui.discover.pinterest
 
+import com.dinhlam.sharebox.R
+import android.app.Activity
+import androidx.activity.result.contract.ActivityResultContracts
+import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.extensions.showToast
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +28,25 @@ import javax.inject.Inject
 class PinterestDiscoverFragment :
     BaseViewModelFragment<PinterestDiscoverState, PinterestDiscoverViewModel, FragmentPinterestDiscoverBinding>() {
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { boxId ->
+                    viewModel.setCurrentBoxId(boxId)
+                }
+            }
+        }
+
+    private val chooseBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.setCurrentBoxId(boxId)
+            }
+        }
+
     @Inject
     lateinit var router: Router
 
@@ -44,6 +68,9 @@ class PinterestDiscoverFragment :
                     id = "pinterest_${pin.id}",
                     imageUrl = pin.imageUrl,
                     title = pin.title,
+                    onSave = BaseListAdapter.NoHashProp(View.OnClickListener {
+                        onArchive(pin.url, pin.title)
+                    }),
                     onClick = BaseListAdapter.NoHashProp(View.OnClickListener {
                         router.moveToChromeCustomTab(requireContext(), pin.url, null, null)
                     }),
@@ -98,7 +125,38 @@ class PinterestDiscoverFragment :
             binding.swipeRefreshLayout.isRefreshing = false
             viewModel.refresh()
         }
+        binding.boxSectionButton.setOnClickListener {
+            chooseBoxLauncher.launch(router.boxList(requireContext(), null))
+        }
+
+        binding.boxSectionButton.setOnAddIconClickListener {
+            createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+        }
+
+        onChange(PinterestDiscoverState::asyncLoadArchive) { asyncLoad ->
+            if (asyncLoad.success) {
+                showToast(getString(R.string.archive_url_success, asyncLoad.data))
+            }
+        }
+
+        onChange(PinterestDiscoverState::currentBox) { currentBox ->
+            val boxName = currentBox?.boxName
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            binding.boxSectionButton.setBoxName(boxName)
+            binding.boxSectionButton.showLock(isLock)
+        }
     }
+
+    private fun onArchive(url: String, note: String?) = getState(viewModel) {
+        val box = getState(viewModel, PinterestDiscoverState::currentBox)
+        if (box == null) {
+            showToast(R.string.please_choose_box)
+            binding.boxSectionButton.playZoomAnimation()
+            return@getState
+        }
+        viewModel.archiveLink(url, note, box.boxId)
+    }
+
 
     private fun submitSearch() {
         val query = binding.searchInput.text.trimmedString()

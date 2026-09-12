@@ -1,17 +1,27 @@
 package com.dinhlam.sharebox.ui.boxlist
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.base.StateManager
 import com.dinhlam.sharebox.common.AppConsts
 import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.di.qualifier.BoxListStateManager
 import com.dinhlam.sharebox.extensions.orElse
 import com.dinhlam.sharebox.helper.UserHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BoxListViewModel @Inject constructor(
-    private val boxRepository: BoxRepository, private val userHelper: UserHelper
-) : BaseViewModel<BoxListState>(BoxListState()) {
+    private val boxRepository: BoxRepository,
+    private val userHelper: UserHelper,
+    @param:BoxListStateManager
+    private val stateManager: StateManager<BoxListState>
+) : ViewModel() {
+
+    val state = stateManager.state
 
     init {
         getListBoxes()
@@ -19,62 +29,64 @@ class BoxListViewModel @Inject constructor(
     }
 
     fun reload() {
-        setState { BoxListState() }
-        getListBoxes()
+        stateManager.set(ResetBoxListEvent)
+        fetchBoxes(page = 0, append = false)
         fetchTotalBox()
     }
 
-    private fun getListBoxes() = getState { state ->
-        suspend {
-            boxRepository.find(
-                AppConsts.NUMBER_VISIBLE_BOX,
-                state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
-            )
-        }.execute { asyncLoad ->
-            copy(
-                asyncLoadBoxes = asyncLoad,
-                boxes = asyncLoad.data.orEmpty(),
-                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage
-            )
+    private fun getListBoxes() = stateManager.get { state ->
+        fetchBoxes(state.currentPage, append = false)
+    }
+
+    private fun fetchBoxes(page: Int, append: Boolean) {
+        stateManager.set(SetBoxListEvent(BaseViewModel.AsyncLoad.Loading, append))
+        viewModelScope.launch {
+            val result = try {
+                BaseViewModel.AsyncLoad.Success(
+                    boxRepository.find(
+                        AppConsts.NUMBER_VISIBLE_BOX,
+                        page * AppConsts.NUMBER_VISIBLE_BOX
+                    )
+                )
+            } catch (error: Throwable) {
+                BaseViewModel.AsyncLoad.Failed(error)
+            }
+            stateManager.set(SetBoxListEvent(result, append))
         }
     }
 
     private fun fetchTotalBox() {
-        suspend { boxRepository.count() }.execute { asyncLoad ->
-            copy(totalBox = asyncLoad.data.orElse(0))
+        viewModelScope.launch {
+            val totalBox = try {
+                boxRepository.count()
+            } catch (_: Throwable) {
+                null
+            }
+            stateManager.set(SetTotalBoxEvent(totalBox.orElse(0)))
         }
     }
 
-    fun loadNextPage() = getState { state ->
-        if (state.boxes.size == state.totalBox) {
-            return@getState
+    fun loadNextPage() = stateManager.get { state ->
+        if (state.boxes.size >= state.totalBox ||
+            state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading
+        ) {
+            return@get
         }
-        suspend {
-            boxRepository.find(
-                AppConsts.NUMBER_VISIBLE_BOX,
-                state.currentPage * AppConsts.NUMBER_VISIBLE_BOX
-            )
-        }.execute { asyncLoad ->
-            val list = asyncLoad.data.orEmpty()
-
-            copy(
-                asyncLoadBoxes = asyncLoad,
-                boxes = state.boxes.plus(list),
-                currentPage = if (asyncLoad is AsyncLoad.Success) currentPage + 1 else currentPage
-            )
-        }
+        fetchBoxes(state.currentPage, append = true)
     }
 
     fun search(query: String) {
-        if (query.isEmpty()) return setState {
-            copy(
-                searchBoxes = emptyList(), isSearching = false
-            )
+        if (query.isEmpty()) {
+            stateManager.set(SetSearchBoxesEvent(emptyList(), isSearching = false))
+            return
         }
-        suspend {
-            boxRepository.search(query, userHelper.getCurrentUserId())
-        }.execute { asyncLoad ->
-            copy(searchBoxes = asyncLoad.data.orEmpty(), isSearching = true)
+        viewModelScope.launch {
+            val boxes = try {
+                boxRepository.search(query, userHelper.getCurrentUserId())
+            } catch (_: Throwable) {
+                emptyList()
+            }
+            stateManager.set(SetSearchBoxesEvent(boxes, isSearching = true))
         }
     }
 }

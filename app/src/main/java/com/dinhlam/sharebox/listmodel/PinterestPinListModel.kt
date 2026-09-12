@@ -12,6 +12,7 @@ data class PinterestPinListModel(
     val id: String,
     val imageUrl: String,
     val title: String,
+    val onSave: BaseListAdapter.NoHashProp<OnClickListener>,
     val onClick: BaseListAdapter.NoHashProp<OnClickListener>,
 ) : BaseListAdapter.BaseListModel(id) {
 
@@ -24,6 +25,7 @@ data class PinterestPinListModel(
                 ListModelPinterestPinBinding.inflate(inflater, container, false)
             ) {
             override fun onBind(model: PinterestPinListModel, position: Int) {
+                binding.saveButton.setOnClickListener(model.onSave.prop)
                 binding.root.setOnClickListener(model.onClick.prop)
                 binding.image.load(binding.root.context, model.imageUrl)
                 binding.title.text = model.title

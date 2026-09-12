@@ -1,6 +1,7 @@
 package com.dinhlam.sharebox.ui.boxlist
 
 import com.dinhlam.sharebox.base.BaseViewModel
+import com.dinhlam.sharebox.base.State
 import com.dinhlam.sharebox.model.BoxDetail
 
 data class BoxListState(
@@ -11,4 +12,4 @@ data class BoxListState(
     val currentPage: Int = 0,
     val isLoadingMore: Boolean = false,
     val isSearching: Boolean = false
-) : BaseViewModel.BaseState
+) : State

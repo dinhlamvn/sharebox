@@ -1,5 +1,9 @@
 package com.dinhlam.sharebox.ui.discover.unsplash
 
+import android.app.Activity
+import androidx.activity.result.contract.ActivityResultContracts
+import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.extensions.showToast
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,6 +63,25 @@ import javax.inject.Inject
 class UnsplashDiscoverFragment :
     BaseViewModelFragment<UnsplashDiscoverState, UnsplashDiscoverViewModel, FragmentUnsplashDiscoverBinding>() {
 
+    private val createBoxResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getStringExtra(AppExtras.EXTRA_BOX_ID)?.let { boxId ->
+                    viewModel.setCurrentBoxId(boxId)
+                }
+            }
+        }
+
+    private val chooseBoxLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data ?: return@registerForActivityResult
+                val boxId =
+                    data.getStringExtra(AppExtras.EXTRA_BOX_ID) ?: return@registerForActivityResult
+                viewModel.setCurrentBoxId(boxId)
+            }
+        }
+
     @Inject
     lateinit var router: Router
 
@@ -86,6 +109,7 @@ class UnsplashDiscoverFragment :
             MaterialTheme {
                 UnsplashDiscoverContent(
                     state = composeState,
+                    onSave = { photo -> onArchive(photo.photoUrl, "Photo by ${photo.photographerName}") },
                     onSearch = viewModel::search,
                     onLoadMore = viewModel::loadMore,
                     onRetry = viewModel::retry,
@@ -100,7 +124,38 @@ class UnsplashDiscoverFragment :
                 )
             }
         }
+        binding.boxSectionButton.setOnClickListener {
+            chooseBoxLauncher.launch(router.boxList(requireContext(), null))
+        }
+
+        binding.boxSectionButton.setOnAddIconClickListener {
+            createBoxResultLauncher.launch(router.boxForm(requireContext(), null))
+        }
+
+        onChange(UnsplashDiscoverState::asyncLoadArchive) { asyncLoad ->
+            if (asyncLoad.success) {
+                showToast(getString(R.string.archive_url_success, asyncLoad.data))
+            }
+        }
+
+        onChange(UnsplashDiscoverState::currentBox) { currentBox ->
+            val boxName = currentBox?.boxName
+            val isLock = currentBox?.passcode?.isNotBlank() ?: false
+            binding.boxSectionButton.setBoxName(boxName)
+            binding.boxSectionButton.showLock(isLock)
+        }
     }
+
+    private fun onArchive(url: String, note: String?) = getState(viewModel) {
+        val box = getState(viewModel, UnsplashDiscoverState::currentBox)
+        if (box == null) {
+            showToast(R.string.please_choose_box)
+            binding.boxSectionButton.playZoomAnimation()
+            return@getState
+        }
+        viewModel.archiveLink(url, note, box.boxId)
+    }
+
 }
 
 @Composable
@@ -111,6 +166,7 @@ private fun UnsplashDiscoverContent(
     onRetry: () -> Unit,
     onPreview: (UnsplashPhoto) -> Unit,
     onOpenUrl: (String) -> Unit,
+    onSave: (UnsplashPhoto) -> Unit,
 ) {
     var input by rememberSaveable { mutableStateOf(state.query) }
     val focusManager = LocalFocusManager.current
@@ -181,6 +237,7 @@ private fun UnsplashDiscoverContent(
             ) { photo ->
                 UnsplashPhotoCard(
                     photo = photo,
+                    onSave = onSave,
                     onPreview = onPreview,
                     onOpenUrl = onOpenUrl,
                 )
@@ -243,6 +300,7 @@ private fun UnsplashPhotoCard(
     photo: UnsplashPhoto,
     onPreview: (UnsplashPhoto) -> Unit,
     onOpenUrl: (String) -> Unit,
+    onSave: (UnsplashPhoto) -> Unit,
 ) {
     AppCardView(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
@@ -269,6 +327,12 @@ private fun UnsplashPhotoCard(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
             )
+            TextButton(
+                onClick = { onSave(photo) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(androidx.compose.ui.res.stringResource(R.string.save))
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),

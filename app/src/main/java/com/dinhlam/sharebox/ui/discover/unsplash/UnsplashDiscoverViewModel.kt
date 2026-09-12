@@ -2,13 +2,43 @@ package com.dinhlam.sharebox.ui.discover.unsplash
 
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.data.repository.UnsplashRepository
+import com.dinhlam.sharebox.data.repository.BoxRepository
+import com.dinhlam.sharebox.data.repository.ShareRepository
+import com.dinhlam.sharebox.model.ShareData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class UnsplashDiscoverViewModel @Inject constructor(
     private val repository: UnsplashRepository,
+    private val boxRepository: BoxRepository,
+    private val shareRepository: ShareRepository,
 ) : BaseViewModel<UnsplashDiscoverState>(UnsplashDiscoverState()) {
+
+    init {
+        suspend { boxRepository.findLastActiveBox() }.execute { asyncLoad ->
+            copy(currentBox = asyncLoad.data)
+        }
+    }
+
+    fun setCurrentBoxId(boxId: String) {
+        suspend { boxRepository.findOne(boxId) }.execute { asyncLoad ->
+            copy(currentBox = asyncLoad.data)
+        }
+    }
+
+    fun archiveLink(link: String, note: String?, boxId: String) {
+        suspend {
+            shareRepository.insert(
+                shareData = ShareData.ShareUrl(link),
+                shareNote = note,
+                shareBoxId = boxId,
+            )
+            link
+        }.execute { asyncLoad ->
+            copy(asyncLoadArchive = asyncLoad)
+        }
+    }
 
     fun search(input: String) {
         val query = input.trim()

@@ -8,12 +8,15 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.base.BaseActivity
 import com.dinhlam.sharebox.base.BaseListAdapter
+import com.dinhlam.sharebox.base.BaseListAdapter.BaseListModel
 import com.dinhlam.sharebox.base.BaseListAdapter.NoHashProp
 import com.dinhlam.sharebox.base.BaseViewModel
-import com.dinhlam.sharebox.base.BaseViewModelActivity
 import com.dinhlam.sharebox.common.AppExtras
 import com.dinhlam.sharebox.databinding.ActivityBoxListBinding
 import com.dinhlam.sharebox.extensions.doAfterTextChangedDebounce
@@ -28,11 +31,11 @@ import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.model.Spacing
 import com.dinhlam.sharebox.router.Router
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoxListActivity :
-    BaseViewModelActivity<BoxListState, BoxListViewModel, ActivityBoxListBinding>() {
+class BoxListActivity : BaseActivity<ActivityBoxListBinding>() {
 
     private val createBoxResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -62,17 +65,21 @@ class BoxListActivity :
         return ActivityBoxListBinding.inflate(layoutInflater)
     }
 
-    private val boxAdapter = BaseListAdapter.create {
-        getState(viewModel) { state ->
-            if (state.isSearching) {
-                if (state.searchBoxes.isEmpty()) {
+    private val boxAdapter = BaseListAdapter.create()
+
+    private fun createListModels(state: BoxListState): List<BaseListModel> = buildList {
+        if (state.isSearching) {
+            if (state.searchBoxes.isEmpty()) {
+                add(
                     TextListModel(
                         "text_search_result_empty",
                         getString(R.string.search_box_result_empty),
                         height = 100.dp()
-                    ).attachTo(this)
-                } else {
-                    state.searchBoxes.forEachIndexed { idx, boxDetail ->
+                    )
+                )
+            } else {
+                state.searchBoxes.forEachIndexed { idx, boxDetail ->
+                    add(
                         BoxItemListModel(
                             "box_${boxDetail.boxId}",
                             boxDetail.boxId,
@@ -84,18 +91,22 @@ class BoxListActivity :
                             NoHashProp(View.OnClickListener {
                                 onBoxSelected(boxDetail)
                             }),
-                        ).attachTo(this)
+                        )
+                    )
 
+                    add(
                         VerticalDividerListModel(
                             "box_divider_$idx"
-                        ).attachTo(this)
-                    }
+                        )
+                    )
                 }
-
-                return@getState
             }
 
-            state.boxes.forEachIndexed { idx, boxDetail ->
+            return@buildList
+        }
+
+        state.boxes.forEachIndexed { idx, boxDetail ->
+            add(
                 BoxItemListModel(
                     "box_${boxDetail.boxId}",
                     boxDetail.boxId,
@@ -107,50 +118,52 @@ class BoxListActivity :
                     NoHashProp(View.OnClickListener {
                         onBoxSelected(boxDetail)
                     }),
-                ).attachTo(this)
+                )
+            )
 
+            add(
                 VerticalDividerListModel(
                     "box_divider_$idx"
-                ).attachTo(this)
-            }
-
-            if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
-                LoadingListModel("loading_more_${state.currentPage}", height = 50.dp()).attachTo(
-                    this
                 )
-            } else {
-                if (state.totalBox > state.boxes.size) {
-                    TextListModel(
-                        "text_total_box",
-                        getString(
-                            R.string.total_box, state.totalBox - state.boxes.size
-                        ),
-                        height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
-                        actionClick = NoHashProp(
-                            View.OnClickListener {
-                                viewModel.loadNextPage()
-                            },
-                        ),
-                    ).attachTo(this)
-                }
-            }
+            )
+        }
+
+        if (state.asyncLoadBoxes is BaseViewModel.AsyncLoad.Loading) {
+            add(LoadingListModel("loading_more_${state.currentPage}", height = 50.dp()))
+        } else if (state.totalBox > state.boxes.size) {
+            add(
+                TextListModel(
+                    "text_total_box",
+                    getString(
+                        R.string.total_box, state.totalBox - state.boxes.size
+                    ),
+                    height = 50.dp(), gravity = Gravity.START.or(Gravity.CENTER_VERTICAL),
+                    actionClick = NoHashProp(
+                        View.OnClickListener {
+                            viewModel.loadNextPage()
+                        },
+                    ),
+                )
+            )
         }
     }
 
-    override val viewModel: BoxListViewModel by viewModels()
-
-    override fun onStateChanged(state: BoxListState) {
-        boxAdapter.requestBuildListModels()
-    }
+    private val viewModel: BoxListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    boxAdapter.requestBuildListModels(createListModels(state))
+                }
+            }
+        }
         setSupportActionBar(binding.toolbar)
         binding.toolbar.title =
             intent.getStringExtra(AppExtras.EXTRA_TITLE) ?: getString(R.string.choose_box)
 
         boxAdapter.attachTo(binding.recyclerView, this)
-        boxAdapter.requestBuildListModels()
 
         binding.editSearch.doAfterTextChangedDebounce(300, lifecycleScope) { editable ->
             viewModel.search(editable.trimmedString())
@@ -183,7 +196,7 @@ class BoxListActivity :
 
     private fun returnSelectedBox(boxId: String, boxName: String) {
         setResult(
-            Activity.RESULT_OK, Intent()
+            RESULT_OK, Intent()
                 .putExtra(AppExtras.EXTRA_BOX_ID, boxId)
                 .putExtra(AppExtras.EXTRA_BOX_NAME, boxName)
         )

@@ -1,9 +1,12 @@
 package com.dinhlam.sharebox.ui.discover.unsplash
 
+import com.dinhlam.sharebox.model.BoxDetail
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.model.UnsplashPhoto
 
 data class UnsplashDiscoverState(
+    val currentBox: BoxDetail? = null,
+    val asyncLoadArchive: BaseViewModel.AsyncLoad<String> = BaseViewModel.AsyncLoad.UnInitialized,
     val query: String = "",
     val photos: List<UnsplashPhoto> = emptyList(),
     val page: Int = 0,
