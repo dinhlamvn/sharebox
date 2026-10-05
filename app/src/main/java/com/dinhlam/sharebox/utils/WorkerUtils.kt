@@ -24,38 +24,15 @@ object WorkerUtils {
     private fun getWorkerSyncDataUUID(): UUID =
         UUID.nameUUIDFromBytes(TAG_WORKER_SYNC_DATA.toByteArray())
 
-    fun enqueueJobSyncDataEveryDay(context: Context) {
-        val syncDataWorkerRequest =
-            PeriodicWorkRequestBuilder<SyncDataWorker>(1, TimeUnit.DAYS).setId(
-                getWorkerSyncDataUUID()
-            ).setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED)
-                    .setRequiresStorageNotLow(true).setRequiresBatteryNotLow(true).build()
-            ).build()
-        WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
-    }
+    fun enqueueJobSyncDataEveryDay(context: Context) = cancelJobSyncData(context)
 
-    fun enqueueJobSyncDataOneTime(context: Context) {
-        val syncDataWorkerRequest = OneTimeWorkRequestBuilder<SyncDataWorker>().setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        ).build()
-        WorkManager.getInstance(context).enqueue(syncDataWorkerRequest)
-    }
+    fun enqueueJobSyncDataOneTime(context: Context) = Unit
 
     fun cancelJobSyncData(context: Context) {
         WorkManager.getInstance(context).cancelWorkById(getWorkerSyncDataUUID())
     }
 
-    fun enqueueSyncShareToCloud(context: Context, shareId: String) {
-        val syncShareToCloudRequest =
-            OneTimeWorkRequestBuilder<SyncShareToCloudWorker>().setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED).build()
-            ).setInputData(
-                Data.Builder().putString(AppExtras.EXTRA_SHARE_ID, shareId).build()
-            ).setId(UUID.fromString(shareId)).build()
-        WorkManager.getInstance(context).enqueue(syncShareToCloudRequest)
-    }
+    fun enqueueSyncShareToCloud(context: Context, shareId: String) = Unit
 
     fun enqueueDownloadImages(context: Context, id: String, urls: List<String>) {
         val imageDownloadRequest = OneTimeWorkRequestBuilder<DownloadImagesWorker>().setConstraints(

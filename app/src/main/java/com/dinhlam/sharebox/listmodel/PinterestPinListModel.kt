@@ -3,6 +3,7 @@ package com.dinhlam.sharebox.listmodel
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.databinding.ListModelPinterestPinBinding
 import com.dinhlam.sharebox.imageloader.load
@@ -28,7 +29,13 @@ data class PinterestPinListModel(
                 binding.saveButton.setOnClickListener(model.onSave.prop)
                 binding.root.setOnClickListener(model.onClick.prop)
                 binding.image.load(binding.root.context, model.imageUrl)
-                binding.title.text = model.title
+                val displayTitle = model.title.ifBlank {
+                    binding.root.context.getString(R.string.pinterest_untitled_post)
+                }
+                binding.title.text = displayTitle
+                binding.saveButton.contentDescription = binding.root.context.getString(
+                    R.string.save_pinterest_pin, displayTitle,
+                )
             }
 
             override fun onUnBind() {

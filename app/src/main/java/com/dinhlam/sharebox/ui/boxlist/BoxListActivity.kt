@@ -169,9 +169,19 @@ class BoxListActivity : BaseActivity<ActivityBoxListBinding>() {
             viewModel.search(editable.trimmedString())
         }
 
+        binding.toolbar.menu.add(R.string.transfer_title).setOnMenuItemClickListener {
+            startActivity(Intent(this, com.dinhlam.sharebox.ui.transfer.TransferActivity::class.java))
+            true
+        }
+
         binding.buttonAdd.setOnClickListener {
             createBoxResultLauncher.launch(router.boxForm(this, null))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.reload()
     }
 
     private fun onBoxSelected(selectedBox: BoxDetail) {

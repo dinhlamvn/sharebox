@@ -57,9 +57,9 @@ object FileUtils {
         return file.apply { createNewFile() }
     }
 
-    fun getUriFromFile(context: Context, targetFile: File): Uri {
+    fun getUriFromFile(context: Context, targetFile: File, displayName: String? = null): Uri {
         return FileProvider.getUriForFile(
-            context, "${BuildConfig.APPLICATION_ID}.file_provider", targetFile
+            context.applicationContext, "${BuildConfig.APPLICATION_ID}.file_provider", targetFile, displayName ?: targetFile.name
         )
     }
 

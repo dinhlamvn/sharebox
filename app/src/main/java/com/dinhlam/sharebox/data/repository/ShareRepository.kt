@@ -32,15 +32,11 @@ class ShareRepository @Inject constructor(
 
     override suspend fun insertInternal(entity: Share): Share {
         shareDao.insertAll(entity)
-        WorkerUtils.enqueueSyncShareToCloud(context, entity.shareId)
         return entity
     }
 
     override suspend fun updateInternal(entity: Share, willBeSync: Boolean): Share {
         shareDao.update(entity.copy(synced = !willBeSync))
-        if (willBeSync) {
-            WorkerUtils.enqueueSyncShareToCloud(context, entity.shareId)
-        }
         return entity
     }
 
@@ -129,6 +125,9 @@ class ShareRepository @Inject constructor(
         val shares = find(shareIds)
         shares.asFlow().mapNotNull(::buildShareDetail).toList()
     }.getOrDefault(emptyList())
+
+    suspend fun searchLibrary(query: String): List<ShareDetail> =
+        shareDao.searchLibrary(userHelper.getCurrentUserId(), query).mapNotNull { buildShareDetail(it) }
 
     suspend fun findRecentlyShares(userId: String, limit: Int, offset: Int): List<ShareDetail> {
         return try {

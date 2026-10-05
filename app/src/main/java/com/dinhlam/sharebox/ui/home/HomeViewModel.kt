@@ -37,6 +37,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private var searchJob: kotlinx.coroutines.Job? = null
+
+    fun searchLibrary(query: String?) {
+        val text = query.orEmpty().trim()
+        searchJob?.cancel()
+        setState { copy(searchQuery = text, isSearching = text.isNotEmpty(), matchingBoxes = emptyList(), matchingShares = emptyList()) }
+        if (text.isEmpty()) return
+        searchJob = suspend {
+            val userId = userHelper.getCurrentUserId()
+            boxRepository.search(text, userId).filter { it.createdBy == userId } to shareRepository.searchLibrary(text)
+        }.execute { result ->
+            if (searchQuery != text) this else copy(isSearching = !result.completed,
+                matchingBoxes = result.data?.first.orEmpty(), matchingShares = result.data?.second.orEmpty())
+        }
+    }
+
     fun refresh() {
         sendIntent(Intent.Refresh)
     }
@@ -45,6 +61,7 @@ class HomeViewModel @Inject constructor(
         getTotalBox()
         getListBoxes()
         getRecentlyShares()
+        if (currentState.searchQuery.isNotBlank()) searchLibrary(currentState.searchQuery)
     }
 
     private fun getTotalBox() = suspend {

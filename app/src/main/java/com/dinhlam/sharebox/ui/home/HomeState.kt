@@ -11,6 +11,10 @@ data class HomeState(
     val shares: List<ShareDetail> = emptyList(),
     val boxes: List<BoxDetail> = emptyList(),
     val totalBox: Int = 0,
+    val searchQuery: String = "",
+    val isSearching: Boolean = false,
+    val matchingBoxes: List<BoxDetail> = emptyList(),
+    val matchingShares: List<ShareDetail> = emptyList(),
     val chooseBoxFor: ChooseBoxFor? = null,
     val asyncLoadSave: BaseViewModel.AsyncLoad<ShareDetail> = BaseViewModel.AsyncLoad.UnInitialized,
 ) : BaseViewModel.BaseState {

@@ -1,5 +1,7 @@
 package com.dinhlam.sharebox.data.local
 
+import com.dinhlam.sharebox.data.local.entity.BoxTransferState
+import com.dinhlam.sharebox.data.local.dao.BoxTransferStateDao
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.DeleteColumn
@@ -24,10 +26,11 @@ import com.dinhlam.sharebox.data.local.entity.User
 import com.dinhlam.sharebox.extensions.insertDefaultTags
 
 @Database(
-    entities = [Share::class, User::class, Like::class, Comment::class, Box::class, Tag::class],
-    version = 7,
+    entities = [Share::class, User::class, Like::class, Comment::class, Box::class, Tag::class, BoxTransferState::class],
+    version = 8,
     exportSchema = true,
     autoMigrations = [
+        AutoMigration(from = 7, to = 8),
         AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class),
         AutoMigration(from = 5, to = 6, spec = AppDatabase.Migration5To6::class),
         AutoMigration(from = 6, to = 7, spec = AppDatabase.Migration6To7::class),
@@ -35,6 +38,7 @@ import com.dinhlam.sharebox.extensions.insertDefaultTags
 )
 @TypeConverters(ShareDataConverter::class)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun boxTransferStateDao(): BoxTransferStateDao
     abstract fun shareDao(): ShareDao
     abstract fun userDao(): UserDao
     abstract fun likeDao(): LikeDao

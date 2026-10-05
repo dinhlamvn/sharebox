@@ -99,20 +99,9 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         }
 
-        binding.buttonSyncData.setDrawableCompat(Icons.syncIcon(this))
+        binding.buttonSyncData.setText(R.string.transfer_title)
         binding.buttonSyncData.setOnClickListener {
-            if (!userHelper.isSignedIn()) {
-                AlertDialog.Builder(this)
-                    .setTitle(R.string.title_alert)
-                    .setMessage(R.string.require_sign_to_sync_cloud)
-                    .setPositiveButton(R.string.sign_in) { _, _ ->
-                        signInLauncher.launch(router.signIn(true))
-                    }
-                    .setNegativeButton(R.string.alert_no_thanks, null)
-                    .show()
-            } else {
-                WorkerUtils.enqueueJobSyncDataOneTime(this)
-            }
+            startActivity(android.content.Intent(this, com.dinhlam.sharebox.ui.transfer.TransferActivity::class.java))
         }
 
         when (appSettingHelper.getTheme()) {
@@ -225,20 +214,11 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             }
         })
 
-        binding.switchAutoSync.isChecked = appSettingHelper.isSyncDataInBackground()
+        appSettingHelper.setSyncDataInBackground(false)
+        WorkerUtils.cancelJobSyncData(applicationContext)
+        binding.switchAutoSync.isVisible = false
+        binding.textAutoSyncDesc.setText(R.string.transfer_local_only)
 
-        binding.switchAutoSync.setOnCheckedChangeListener { _, isChecked ->
-            appSettingHelper.setSyncDataInBackground(isChecked)
-            if (isChecked) {
-                WorkerUtils.enqueueJobSyncDataEveryDay(applicationContext)
-                showToast(R.string.message_enqueue_sync_data)
-            } else {
-                WorkerUtils.cancelJobSyncData(applicationContext)
-                showToast(R.string.message_cancel_enqueue_sync_data)
-            }
-        }
-
-        binding.switchAutoSync.isVisible = userHelper.isSignedIn()
         binding.textAbout.text = buildSpannedString {
             underline {
                 color(getColorCompat(R.color.md_theme_primary)) {

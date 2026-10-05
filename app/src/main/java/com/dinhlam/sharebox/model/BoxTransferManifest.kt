@@ -1,11 +1,6 @@
 package com.dinhlam.sharebox.model
 
-/**
- * Portable representation of a box stored in Firebase Storage.
- *
- * [shareData] uses the same JSON representation as Room. File and image URIs
- * point at exported Firebase assets until the manifest is imported.
- */
+/** A complete portable snapshot. Asset URIs are relative ZIP entry names. */
 data class BoxTransferManifest(
     val schemaVersion: Int = CURRENT_SCHEMA_VERSION,
     val boxId: String,
@@ -15,17 +10,13 @@ data class BoxTransferManifest(
     val createdDate: Long,
     val exportedAt: Long,
     val shares: List<BoxTransferShare>,
+    val revisionId: String,
+    val ancestors: List<String>,
+    val assets: List<BoxTransferAsset>,
+    // Returned by cloud export for sharing; not part of the portable package.
+    val transferCode: String? = null,
 ) {
-    init {
-        require(schemaVersion == CURRENT_SCHEMA_VERSION) {
-            "Unsupported box manifest schema version: $schemaVersion"
-        }
-        require(boxId.isNotBlank()) { "Box id cannot be blank" }
-    }
-
-    companion object {
-        const val CURRENT_SCHEMA_VERSION = 1
-    }
+    companion object { const val CURRENT_SCHEMA_VERSION = 2 }
 }
 
 data class BoxTransferShare(
@@ -38,3 +29,5 @@ data class BoxTransferShare(
     val createdAt: Long,
     val updatedAt: Long,
 )
+
+data class BoxTransferAsset(val path: String, val sha256: String, val size: Long)

@@ -8,6 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.dinhlam.sharebox.extensions.trimmedString
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,25 +41,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
-import com.dinhlam.sharebox.components.AppInputField
 import com.dinhlam.sharebox.components.AppCardView
 import com.dinhlam.sharebox.components.AppLazyStaggeredGrid
 import com.dinhlam.sharebox.databinding.FragmentUnsplashDiscoverBinding
 import com.dinhlam.sharebox.model.UnsplashPhoto
 import com.dinhlam.sharebox.router.Router
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -97,11 +96,23 @@ class UnsplashDiscoverFragment :
 
     override fun onStateChanged(state: UnsplashDiscoverState) {
         composeState = state
+        binding.searchButton.isEnabled = state.asyncSearch !is BaseViewModel.AsyncLoad.Loading
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         composeState = viewModel.currentState
+        binding.searchInput.setText(composeState.query)
+        binding.searchButton.isEnabled = composeState.asyncSearch !is BaseViewModel.AsyncLoad.Loading
+        binding.searchButton.setOnClickListener { submitSearch() }
+        binding.searchInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                submitSearch()
+                true
+            } else {
+                false
+            }
+        }
         binding.composeView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
@@ -110,7 +121,6 @@ class UnsplashDiscoverFragment :
                 UnsplashDiscoverContent(
                     state = composeState,
                     onSave = { photo -> onArchive(photo.photoUrl, "Photo by ${photo.photographerName}") },
-                    onSearch = viewModel::search,
                     onLoadMore = viewModel::loadMore,
                     onRetry = viewModel::retry,
                     onPreview = { photo ->
@@ -146,6 +156,21 @@ class UnsplashDiscoverFragment :
         }
     }
 
+    private fun submitSearch() {
+        if (viewModel.currentState.asyncSearch is BaseViewModel.AsyncLoad.Loading) return
+        val query = binding.searchInput.text.trimmedString()
+        binding.searchInputLayout.error = if (query.isBlank()) {
+            getString(R.string.search_text_required)
+        } else {
+            null
+        }
+        if (query.isNotBlank()) {
+            ViewCompat.getWindowInsetsController(binding.searchInput)?.hide(WindowInsetsCompat.Type.ime())
+            binding.searchInput.clearFocus()
+            viewModel.search(query)
+        }
+    }
+
     private fun onArchive(url: String, note: String?) = getState(viewModel) {
         val box = getState(viewModel, UnsplashDiscoverState::currentBox)
         if (box == null) {
@@ -161,16 +186,12 @@ class UnsplashDiscoverFragment :
 @Composable
 private fun UnsplashDiscoverContent(
     state: UnsplashDiscoverState,
-    onSearch: (String) -> Unit,
     onLoadMore: () -> Unit,
     onRetry: () -> Unit,
     onPreview: (UnsplashPhoto) -> Unit,
     onOpenUrl: (String) -> Unit,
     onSave: (UnsplashPhoto) -> Unit,
 ) {
-    var input by rememberSaveable { mutableStateOf(state.query) }
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     val gridState = rememberLazyStaggeredGridState()
     var displayedSearchRequestId by rememberSaveable { mutableStateOf(state.searchRequestId) }
     val shouldLoadMore by remember(state, gridState) {
@@ -192,38 +213,6 @@ private fun UnsplashDiscoverContent(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AppInputField(
-                value = input,
-                onValueChange = { input = it },
-                modifier = Modifier.weight(1f),
-                singleLine = true,
-                label = { Text("Search Unsplash") },
-            )
-            AndroidView(
-                factory = { context ->
-                    MaterialButton(context).apply {
-                        setText(R.string.pinterest_search_action)
-                    }
-                },
-                update = { button ->
-                    button.isEnabled = input.isNotBlank() &&
-                        state.asyncSearch !is BaseViewModel.AsyncLoad.Loading
-                    button.setOnClickListener {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                        onSearch(input)
-                    }
-                },
-            )
-        }
-
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             AppLazyStaggeredGrid(
                 items = state.photos,

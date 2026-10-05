@@ -22,6 +22,14 @@ class ExportBoxWorker @AssistedInject constructor(
         return try {
             boxTransferRepository.export(boxId)
             Result.success()
+        } catch (error: kotlinx.coroutines.CancellationException) {
+            throw error
+        } catch (error: IllegalArgumentException) {
+            Logger.error(error)
+            Result.failure()
+        } catch (error: IllegalStateException) {
+            Logger.error(error)
+            Result.failure()
         } catch (error: Exception) {
             Logger.error(error)
             if (runAttemptCount < MAX_RETRIES) Result.retry() else Result.failure()

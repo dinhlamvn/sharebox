@@ -3,23 +3,23 @@
     <item
         android:id="@+id/home"
         android:enabled="true"
-        android:icon="@drawable/ic_home"
-        android:title="@string/home" />
+        android:icon="@drawable/ic_library_folder"
+        android:title="@string/library_files" />
     <item
         android:id="@+id/discover"
         android:enabled="true"
         android:icon="@drawable/ic_compass"
-        android:title="@string/discover" />
+        android:title="@string/library_explore" />
 
     <item
         android:id="@+id/download"
         android:enabled="true"
         android:icon="@drawable/ic_download"
-        android:title="@string/download" />
+        android:title="@string/library_downloads" />
 
     <item
         android:id="@+id/me"
         android:enabled="true"
         android:icon="@drawable/ic_user"
-        android:title="@string/me" />
+        android:title="@string/library_account" />
 </menu>

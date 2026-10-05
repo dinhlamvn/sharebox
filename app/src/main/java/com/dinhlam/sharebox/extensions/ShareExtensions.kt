@@ -37,7 +37,10 @@ fun Context.openShare(
         )
 
         is ShareData.ShareFile -> {
-            val intent = Intent(Intent.ACTION_VIEW, shareData.uri)
+            val mimeType = shareData.mimeType ?: android.webkit.MimeTypeMap.getSingleton()
+                .getMimeTypeFromExtension(shareData.fileName.substringAfterLast('.', "").lowercase())
+                ?: "application/octet-stream"
+            val intent = Intent(Intent.ACTION_VIEW).setDataAndType(shareData.uri, mimeType)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(Intent.createChooser(intent, "Open with"))
         }

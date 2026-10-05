@@ -87,6 +87,13 @@ interface ShareDao {
     )
     suspend fun findWhereInBox(boxId: String, limit: Int, offset: Int, searchQuery: String): List<Share>
 
+    @Query("""SELECT s.* FROM share s JOIN box b ON b.box_id = s.share_box_id
+        WHERE s.share_user_id = :userId AND b.created_by = :userId
+        AND (b.passcode IS NULL OR b.passcode = '')
+        AND (s.share_data LIKE '%' || :query || '%' OR s.share_note LIKE '%' || :query || '%')
+        ORDER BY s.share_date DESC LIMIT 100""")
+    suspend fun searchLibrary(userId: String, query: String): List<Share>
+
     @Query("SELECT * FROM share WHERE share_box_id = :boxId ORDER BY share_date ASC")
     suspend fun findAllInBoxForTransfer(boxId: String): List<Share>
 

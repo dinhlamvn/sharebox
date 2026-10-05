@@ -20,22 +20,40 @@
             android:contentDescription="@string/pinterest_pin_image"
             android:scaleType="centerCrop" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="3"
-            android:padding="8dp"
-            android:textAppearance="@style/TextBody"
-            tools:text="Pinterest Pin title" />
+            android:gravity="top"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="4dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/save_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/save" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:minHeight="48dp"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:textAppearance="@style/TextBody"
+                tools:text="Pinterest Pin title" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/save_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/save"
+                android:padding="12dp"
+                app:srcCompat="@drawable/ic_bookmark_outline"
+                app:tint="?attr/colorPrimary" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

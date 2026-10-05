@@ -5,7 +5,15 @@ import com.dinhlam.sharebox.data.network.PinterestServices
 import com.dinhlam.sharebox.model.PinterestPin
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withTimeoutOrNull
 import org.jsoup.Jsoup
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,10 +21,20 @@ import javax.inject.Singleton
 class PinterestRepository @Inject constructor(
     private val services: PinterestServices,
 ) {
+    private val titleCache = ConcurrentHashMap<String, String>()
+    private val detailRequests = Semaphore(4)
+
     suspend fun search(query: String, page: Int = 1): List<PinterestPin> {
         val searchUrl = buildSearchUrl(query, page)
         val html = services.search(searchUrl, MOBILE_USER_AGENT).string()
-        return parseSearchHtml(html)
+        return coroutineScope {
+            parseSearchHtml(html).map { pin ->
+                async {
+                    if (pin.title.isNotBlank()) pin
+                    else pin.copy(title = loadTitle(pin).orEmpty())
+                }
+            }.awaitAll()
+        }
     }
 
     fun buildSearchUrl(query: String, page: Int = 1): String {
@@ -56,15 +74,43 @@ class PinterestRepository @Inject constructor(
             val description = pin.stringAt("description")
             PinterestPin(
                 id = id,
-                title = pin.stringAt("grid_title")
-                    ?: description
-                    ?: pin.stringAt("seo_alt_text")
-                    ?: id,
+                title = pin.postTitle().orEmpty(),
                 description = description,
                 imageUrl = imageUrl,
             )
         }.distinctBy(PinterestPin::id)
     }
+
+    private suspend fun loadTitle(pin: PinterestPin): String? {
+        titleCache[pin.id]?.let { return it }
+        return detailRequests.withPermit {
+            titleCache[pin.id]?.let { return@withPermit it }
+            try {
+                withTimeoutOrNull(8_000L) {
+                    val html = services.search(pin.url, MOBILE_USER_AGENT).use { it.string() }
+                    val document = Jsoup.parse(html)
+                    val json = document.getElementById(INITIAL_PROPS_SCRIPT_ID)?.data()
+                    val post = json?.takeIf(String::isNotBlank)?.let {
+                        JsonParser.parseString(it).asJsonObject
+                            .objectAt("initialReduxState")?.objectAt("pins")?.objectAt(pin.id)
+                    }
+                    val title = post?.postTitle()
+                        ?: document.selectFirst("meta[property=og:title]")
+                            ?.attr("content")?.trim()?.takeIf { it.isNotBlank() && it != "Pinterest" }
+                    title?.also { titleCache[pin.id] = it }
+                }
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                // A missing title must not discard otherwise usable search results.
+                null
+            }
+        }
+    }
+
+    private fun JsonObject.postTitle(): String? =
+        stringAt("grid_title") ?: stringAt("title") ?: stringAt("seo_title")
+        ?: stringAt("description") ?: stringAt("seo_alt_text")
 
     private fun bestImageUrl(images: JsonObject): String? {
         return IMAGE_VARIANTS.firstNotNullOfOrNull { variant ->
@@ -78,6 +124,7 @@ class PinterestRepository @Inject constructor(
     private fun JsonObject.stringAt(name: String): String? =
         get(name)?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isString }
             ?.asString
+            ?.trim()
             ?.takeIf(String::isNotBlank)
 
     private companion object {

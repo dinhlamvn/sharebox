@@ -39,7 +39,7 @@ object ShareFileJsonSerializerDeserializer :
         val fileObject = json.asJsonObject.get("data").asJsonObject
         val fileName = fileObject.get("fileName").asString
         val fileSize = fileObject.get("fileSize").asDouble
-        val mimeType = fileObject.get("mimeType")?.asString
+        val mimeType = fileObject.get("mimeType")?.takeUnless { it.isJsonNull }?.asString
         val fileUri = fileObject.get("fileUri").asString
         return ShareData.ShareFile(fileName, fileSize, mimeType, fileUri.toUri())
     }

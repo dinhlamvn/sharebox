@@ -51,6 +51,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
+        <activity android:name=".ui.transfer.TransferActivity" android:exported="false" />
 
         <uses-library
             android:name="org.apache.http.legacy"

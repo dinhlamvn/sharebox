@@ -1,0 +1,12 @@
+// Merge this match into the existing bucket rules; do not replace unrelated rules.
+// Avoid broad overlapping write rules: Firebase grants access if ANY match allows it.
+// Only the Firebase UID in the code may upload. Authenticated recipients with a
+// transfer code may get the package. Listing is deliberately not granted.
+match /box-packages/{publisherUid}/{boxId}/latest.sharebox {
+  allow get: if request.auth != null;
+  allow create, update: if request.auth != null
+    && request.auth.uid == publisherUid
+    && request.resource.size <= 553648128
+    && request.resource.contentType == 'application/zip';
+  allow delete: if request.auth != null && request.auth.uid == publisherUid;
+}

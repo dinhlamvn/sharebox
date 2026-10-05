@@ -40,7 +40,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WorkerUtils.enqueueJobSyncDataOneTime(this)
+        // Cloud transfers are explicitly selected from the library.
 
         if (appSharePref.isAppFirstInstall()) {
             appSharePref.setAppFirstInstall(false)

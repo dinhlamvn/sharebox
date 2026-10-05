@@ -30,8 +30,6 @@ class FirebaseStorageManager @Inject constructor(
 
     private val avatarImagesRef by lazy { storage.getReference("avatarImages") }
 
-    private val boxExportsRef by lazy { storage.getReference("box-exports") }
-
     suspend fun uploadUserAvatar(uri: Uri): String? =
         withContext(Dispatchers.IO) {
             val ref = avatarImagesRef.child(getUploadAvatarFilePath(userHelper.getCurrentUserId()))
@@ -86,59 +84,42 @@ class FirebaseStorageManager @Inject constructor(
         }
     }
 
-    suspend fun uploadFileWithoutNotification(
-        shareId: String,
-        uri: Uri,
-        fileNumber: Int = 0
-    ): Uri? = withContext(Dispatchers.IO) {
-        val currentUri = getFileDownloadUri(shareId, fileNumber)
-        if (currentUri != null) {
-            return@withContext currentUri
+    /** Publish one complete object; readers never combine assets from different exports. */
+    suspend fun uploadBoxPackage(boxId: String, file: File): String = withContext(Dispatchers.IO) {
+        val uid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+            ?: error("Sign in to upload")
+        val code = "$uid/$boxId"
+        val upload = packageReference(code).putFile(Uri.fromFile(file), StorageMetadata.Builder()
+            .setContentType("application/zip").build())
+        try { upload.await() } catch (error: kotlinx.coroutines.CancellationException) {
+            upload.cancel()
+            throw error
         }
-        val task = fileRef.child(getUploadFilePath(shareId, fileNumber)).putFile(uri).await()
-        if (task.task.isSuccessful) {
-            getFileDownloadUri(shareId, fileNumber)
-        } else {
-            Logger.error("Upload file to firebase failed: Uri $uri")
-            null
-        }
+        code
     }
 
-    suspend fun uploadBoxAsset(
-        boxId: String,
-        shareId: String,
-        uri: Uri,
-        fileNumber: Int = 0,
-    ): Uri = withContext(Dispatchers.IO) {
-        val ref = boxExportsRef.child(boxAssetPath(boxId, shareId, fileNumber))
-        ref.putFile(uri).await()
-        ref.downloadUrl.await()
+    suspend fun downloadBoxPackage(code: String, destination: File): File = withContext(Dispatchers.IO) {
+        val reference = packageReference(code)
+        require(reference.metadata.await().sizeBytes <= 528L * 1024 * 1024) { "Package is too large" }
+        val download = reference.getFile(destination)
+        download.addOnProgressListener { progress ->
+            if (progress.bytesTransferred > 528L * 1024 * 1024) download.cancel()
+        }
+        try { download.await() } catch (error: kotlinx.coroutines.CancellationException) {
+            download.cancel()
+            throw error
+        }
+        destination
     }
 
-    suspend fun uploadBoxManifest(boxId: String, json: String) =
-        withContext(Dispatchers.IO) {
-            val metadata = StorageMetadata.Builder()
-                .setContentType("application/json")
-                .setCustomMetadata("schemaVersion", "1")
-                .build()
-            boxExportsRef.child(manifestPath(boxId))
-                .putBytes(json.toByteArray(Charsets.UTF_8), metadata)
-                .await()
+    private fun packageReference(code: String): com.google.firebase.storage.StorageReference {
+        val parts = code.split('/')
+        require(parts.size == 2 && parts[0].matches(Regex("[A-Za-z0-9_-]{1,128}")) &&
+            runCatching { java.util.UUID.fromString(parts[1]).toString() == parts[1] }.getOrDefault(false)) {
+            "Paste the full transfer code provided after upload (publisher/box ID)"
         }
-
-    suspend fun downloadBoxManifest(boxId: String): String = withContext(Dispatchers.IO) {
-        val bytes = boxExportsRef.child(manifestPath(boxId))
-            .getBytes(MAX_MANIFEST_BYTES)
-            .await()
-        bytes.toString(Charsets.UTF_8)
+        return storage.getReference("box-packages/$code/latest.sharebox")
     }
-
-    suspend fun downloadBoxAsset(uri: Uri, destination: File): File =
-        withContext(Dispatchers.IO) {
-            destination.parentFile?.mkdirs()
-            storage.getReferenceFromUrl(uri.toString()).getFile(destination).await()
-            destination
-        }
 
     suspend fun downloadFile(
         context: Context, shareId: String, uri: Uri, destUri: Uri, fileNumber: Int = 0
@@ -193,15 +174,7 @@ class FirebaseStorageManager @Inject constructor(
         return "avatar_$userId"
     }
 
-    private fun manifestPath(boxId: String) = "$boxId/manifest.json"
-
-    private fun boxAssetPath(boxId: String, shareId: String, fileNumber: Int) =
-        "$boxId/assets/$shareId/asset_$fileNumber"
-
     private fun getNotificationId() =
         (System.currentTimeMillis() / 1000 + Random.nextInt(1, 100)).toInt()
 
-    private companion object {
-        const val MAX_MANIFEST_BYTES = 10L * 1024L * 1024L
-    }
 }

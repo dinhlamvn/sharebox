@@ -91,7 +91,7 @@ class MyInvitesActivity :
         viewModel.listenDataChangeEvent(this)
 
         binding.iconImport.setOnClickListener {
-            showImportBoxDialog()
+            startActivity(android.content.Intent(this, com.dinhlam.sharebox.ui.transfer.TransferActivity::class.java))
         }
     }
 

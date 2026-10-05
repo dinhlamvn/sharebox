@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.dinhlam.sharebox.extensions.doOnQueryTextChangedDebounce
 import com.dinhlam.sharebox.R
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
@@ -181,6 +183,23 @@ class HomeFragment :
         }
 
         homeAdapter.attachTo(binding.recyclerView, this)
+        binding.searchLibrary.doOnQueryTextChangedDebounce(250, viewLifecycleOwner.lifecycleScope, viewModel::searchLibrary)
+        binding.buttonImport.setOnClickListener {
+            startActivity(Intent(requireContext(), com.dinhlam.sharebox.ui.transfer.TransferActivity::class.java))
+        }
+        binding.buttonNewFolder.setOnClickListener { requestCreateBox() }
+        binding.buttonAddContent.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.library_add)
+                .setItems(arrayOf(getString(R.string.library_add_files), getString(R.string.library_add_photos),
+                    getString(R.string.library_add_note), getString(R.string.library_new_folder))) { _, choice ->
+                    when (choice) {
+                        0 -> requestArchiveFile()
+                        1 -> requestArchiveImages()
+                        2 -> archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null, false))
+                        3 -> requestCreateBox()
+                    }
+                }.show()
+        }
 
         onChange(HomeState::asyncLoadSave) { asyncLoad ->
             binding.loading.isVisible = asyncLoad is BaseViewModel.AsyncLoad.Loading

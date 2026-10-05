@@ -80,11 +80,11 @@ class RealtimeDatabaseRepository @Inject constructor(
             return
         }
         when (record) {
-            is Share -> pushShare(record)
+            is Share -> Unit // Library files are published only as explicit packages.
             is User -> pushUser(record)
             is Comment -> pushComment(record)
             is Like -> pushLike(record)
-            is Box -> pushBox(record)
+            is Box -> Unit // Local box metadata is part of the portable package.
         }
     }
 

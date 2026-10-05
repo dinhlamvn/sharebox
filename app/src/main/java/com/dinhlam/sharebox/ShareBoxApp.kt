@@ -119,7 +119,7 @@ class ShareBoxApp : Application(), Configuration.Provider, CoroutineScope {
 
         TrackerManager.addTracker(FirebaseAnalysisTracker(this, userHelper.getCurrentUserId()))
 
-        syncDataServiceManager.bindSyncService()
+        // Library content stays local until the user exports it.
 
         if (BuildConfig.DEBUG) {
             FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->

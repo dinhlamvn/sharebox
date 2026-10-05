@@ -9,197 +9,60 @@ import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.extensions.buildListItemListModel
 import com.dinhlam.sharebox.extensions.castNonNull
 import com.dinhlam.sharebox.extensions.dp
-import com.dinhlam.sharebox.listmodel.BoxItemListModel
-import com.dinhlam.sharebox.listmodel.CircleDrawableIconButtonListModel
-import com.dinhlam.sharebox.listmodel.CircleFontAwesomeIconButtonListModel
-import com.dinhlam.sharebox.listmodel.DiscoverListModel
-import com.dinhlam.sharebox.listmodel.LoadingListModel
-import com.dinhlam.sharebox.listmodel.MainActionListModel
-import com.dinhlam.sharebox.listmodel.PrimaryButtonListModel
-import com.dinhlam.sharebox.listmodel.SecondaryButtonListModel
-import com.dinhlam.sharebox.listmodel.TextListModel
-import com.dinhlam.sharebox.listmodel.TextPairListModel
-import com.dinhlam.sharebox.listmodel.VerticalDividerListModel
-import com.dinhlam.sharebox.model.BoxDetail
+import com.dinhlam.sharebox.listmodel.*
 import com.dinhlam.sharebox.model.Spacing
-import com.dinhlam.sharebox.router.Router
-import com.dinhlam.sharebox.view.FontAwesomeIconView
 import javax.inject.Inject
 
-class HomeAdapter @Inject constructor(
-    private val fragment: Fragment,
-    private val router: Router
-) : BaseListAdapter() {
-    private val homeFragment: HomeFragment = fragment.castNonNull()
+class HomeAdapter @Inject constructor(fragment: Fragment) : BaseListAdapter() {
+    private val home: HomeFragment = fragment.castNonNull()
 
     override fun buildListModels() {
-        val state = homeFragment.viewModel.currentState
-        MainActionListModel(
-            NoHashProp(View.OnClickListener { view ->
-                homeFragment.requestArchiveNote(view)
-            }),
-            NoHashProp(View.OnClickListener { view ->
-                homeFragment.requestArchiveWeb(view)
-            }),
-            NoHashProp(View.OnClickListener {
-                homeFragment.requestArchiveImages()
-            }),
-            NoHashProp(View.OnClickListener {
-                homeFragment.requestArchiveFile()
-            }),
-        ).attachTo(this)
+        val state = home.viewModel.currentState
+        val searching = state.searchQuery.isNotBlank()
+        if (state.isRefreshing || state.isSearching) LoadingListModel("library_loading", height = 48.dp).attachTo(this)
+        val boxes = if (searching) state.matchingBoxes else state.boxes
+        val shares = if (searching) state.matchingShares else state.shares
 
-        DiscoverListModel(getDiscoverList(), Spacing.All(16.dp())).attachTo(this)
-
-        if (state.isRefreshing) {
-            LoadingListModel("top_loading").attachTo(this)
-        }
-
-        VerticalDividerListModel(
-            "margin_my_boxes", height = 32.dp(), dividerColor = android.R.color.transparent
-        ).attachTo(this)
-
-        SecondaryButtonListModel(
-            "your_invited_box",
-            fragment.getString(R.string.title_box_invited),
-            onClick = NoHashProp(View.OnClickListener {
-                fragment.startActivity(router.myInvites(fragment.requireContext()))
-            }), margin = Spacing.Horizontal(16.dp, 16.dp)
-        ).attachTo(this)
-
-        VerticalDividerListModel(
-            "margin_invited", height = 16.dp(), dividerColor = android.R.color.transparent
-        ).attachTo(this)
-
-        TextPairListModel(
-            "title_your_boxes",
-            text1 = homeFragment.requireContext().getString(R.string.your_boxes),
-            textAppearance1 = R.style.TextTitleMedium,
-            text2 = homeFragment.requireContext().getString(R.string.view_all, state.totalBox),
-            textColor2 = R.color.md_theme_primary,
-            actionClick2 = NoHashProp(View.OnClickListener {
-                homeFragment.requestViewAllBox()
-            })
-        ).attachTo(this)
-
-        VerticalDividerListModel(
-            "margin_bottom_title_your_boxes",
-            height = 16.dp(),
-            dividerColor = android.R.color.transparent
-        ).attachTo(this)
-
-        if (state.boxes.isNotEmpty()) {
-            state.boxes.forEachIndexed { idx, boxDetail ->
-                BoxItemListModel(
-                    "box_${boxDetail.boxId}",
-                    boxDetail.boxId,
-                    boxDetail.boxName,
-                    boxDetail.lastSeen,
-                    Spacing.None,
-                    !boxDetail.passcode.isNullOrBlank(),
-                    true,
-                    NoHashProp(View.OnClickListener {
-                        onBoxClick(boxDetail.boxId)
-                    }),
-                    NoHashProp(View.OnClickListener {
-                        onBoxOptionClick(boxDetail)
-                    })
-                ).attachTo(this)
-
-                VerticalDividerListModel(
-                    "box_divider_$idx",
-                    margin = Spacing.Only(16.dp())
-                ).attachTo(this)
+        if (searching) {
+            heading("results", home.getString(R.string.library_search_results))
+            if (boxes.isEmpty() && shares.isEmpty() && !state.isSearching) {
+                message("no_matches", home.getString(R.string.library_no_matches))
             }
+        } else if (boxes.isEmpty() && shares.isEmpty() && !state.isRefreshing) {
+            LibraryEmptyListModel(NoHashProp(View.OnClickListener { home.requestArchiveFile() })).attachTo(this)
+            return
         } else {
-            TextListModel(
-                "text_empty_boxes",
-                homeFragment.requireContext().getString(R.string.no_boxes),
-                height = 100.dp()
+            TextPairListModel("folders", height = 56.dp,
+                padding = Spacing.Horizontal(24.dp, 24.dp),
+                text1 = home.getString(R.string.library_folders), textAppearance1 = R.style.TextTitleMedium,
+                text2 = home.getString(R.string.library_all_folders, state.totalBox),
+                textAppearance2 = R.style.TextCaptionMedium, textColor2 = R.color.md_theme_primary,
+                actionClick2 = NoHashProp(View.OnClickListener { home.requestViewAllBox() })
             ).attachTo(this)
-
-            PrimaryButtonListModel(
-                "button_create_box",
-                "+",
-                margin = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0),
-                onClick = NoHashProp(View.OnClickListener {
-                    homeFragment.requestCreateBox()
-                })
-            ).attachTo(
-                this
-            )
         }
-
-        TextListModel(
-            "title_recently",
-            text = homeFragment.requireContext().getString(R.string.recently_shares),
-            height = ViewGroup.LayoutParams.WRAP_CONTENT,
-            gravity = Gravity.START,
-            textAppearance = R.style.TextTitleMedium,
-            padding = Spacing.Only(16.dp(), 16.dp(), 16.dp(), 0)
-        ).attachTo(this)
-
-        VerticalDividerListModel(
-            "margin_bottom_title_recently",
-            height = 16.dp(),
-            dividerColor = android.R.color.transparent
-        ).attachTo(this)
-
-        if (state.shares.isEmpty()) {
-            TextListModel(
-                "text_empty_shares",
-                homeFragment.requireContext().getString(R.string.no_result),
-                height = 100.dp()
+        boxes.forEach { box ->
+            BoxItemListModel("box_${box.boxId}", box.boxId, box.boxName, box.lastSeen,
+                hasPasscode = !box.passcode.isNullOrBlank(), isShowOptionAction = true,
+                onClick = NoHashProp(View.OnClickListener { home.openBox(box.boxId) }),
+                onOptionClick = NoHashProp(View.OnClickListener { home.showBoxOption(box) })
             ).attachTo(this)
-        } else {
-            state.shares.forEachIndexed { idx, share ->
-                share.buildListItemListModel(
-                    homeFragment::showMore,
-                    homeFragment::openShare
-                ).attachTo(this)
-                VerticalDividerListModel(
-                    "share_divider_$idx",
-                    margin = Spacing.Only(16.dp())
-                ).attachTo(this)
-            }
         }
-
-        VerticalDividerListModel(
-            "margin_bottom",
-            height = 16.dp(),
-            dividerColor = android.R.color.transparent
-        ).attachTo(this)
+        if (!searching) heading("recent", home.getString(R.string.library_recent))
+        if (shares.isEmpty() && !searching && !state.isRefreshing) {
+            message("no_recent", home.getString(R.string.library_no_recent))
+        }
+        shares.forEach { share ->
+            share.buildListItemListModel(home::showMore, home::openShare).attachTo(this)
+        }
     }
 
-    private fun onBoxOptionClick(boxDetail: BoxDetail) {
-        homeFragment.showBoxOption(boxDetail)
+    private fun heading(id: String, text: String) {
+        TextListModel(id, text, height = 56.dp, gravity = Gravity.START or Gravity.CENTER_VERTICAL,
+            textAppearance = R.style.TextTitleMedium, padding = Spacing.Horizontal(24.dp, 24.dp)).attachTo(this)
     }
 
-    private fun onBoxClick(boxId: String) {
-        homeFragment.openBox(boxId)
-    }
-
-    private fun getDiscoverList() = buildList {
-        add(
-            CircleFontAwesomeIconButtonListModel(
-                "tiktok",
-                "e07b",
-                iconStyle = FontAwesomeIconView.IconStyle.BRANDS_REGULAR,
-                onClick = NoHashProp(View.OnClickListener {
-                    homeFragment.moveToDiscover(0)
-                })
-            )
-        )
-
-        add(
-            CircleDrawableIconButtonListModel(
-                "zing_news",
-                R.drawable.ic_zing_news,
-                margin = Spacing.Only(start = 16.dp()),
-                onClick = NoHashProp(View.OnClickListener {
-                    homeFragment.moveToDiscover(1)
-                })
-            )
-        )
+    private fun message(id: String, text: String) {
+        TextListModel(id, text, height = ViewGroup.LayoutParams.WRAP_CONTENT, gravity = Gravity.START,
+            padding = Spacing.All(24.dp)).attachTo(this)
     }
 }

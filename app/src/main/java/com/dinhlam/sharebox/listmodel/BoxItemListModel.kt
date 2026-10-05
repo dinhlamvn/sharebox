@@ -49,7 +49,7 @@ data class BoxItemListModel(
                     if (model.hasPasscode) Icons.lockIcon(
                         buildContext
                     ) { copy(sizeDp = 12) } else null)
-                binding.textCreatedDate.text = model.created.format("yyyy MMM d HH:mm")
+                binding.textCreatedDate.text = buildContext.getString(com.dinhlam.sharebox.R.string.library_folder_date, model.created.format("MMM d, yyyy"))
             }
 
             override fun onUnBind() {

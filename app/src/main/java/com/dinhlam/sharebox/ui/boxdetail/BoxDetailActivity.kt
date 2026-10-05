@@ -149,7 +149,11 @@ class BoxDetailActivity :
         }
 
         binding.iconUpload.setOnClickListener {
-            viewModel.exportBox()
+            if (!getState(viewModel, BoxDetailState::requirePasscode)) {
+                val id = getState(viewModel, BoxDetailState::boxDetail)?.boxId
+                startActivity(Intent(this, com.dinhlam.sharebox.ui.transfer.TransferActivity::class.java)
+                    .putExtra(AppExtras.EXTRA_BOX_ID, id))
+            }
         }
 
         binding.recyclerView.layoutManager = layoutManager

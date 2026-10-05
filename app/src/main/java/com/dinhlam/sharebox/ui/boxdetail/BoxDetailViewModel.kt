@@ -151,11 +151,7 @@ class BoxDetailViewModel @Inject constructor(
     fun deleteBox() = getState { state ->
         val boxId = state.boxDetail?.boxId ?: return@getState
         suspend {
-            if (realtimeDatabaseRepository.deleteBoxAndMoveSharesToTrash(boxId)) {
-                boxRepository.deleteBoxAndMoveSharesToTrash(boxId)
-            } else {
-                false
-            }
+            boxRepository.deleteBoxAndMoveSharesToTrash(boxId)
         }.execute { asyncLoad ->
             copy(asyncLoadDeleteBox = asyncLoad)
         }

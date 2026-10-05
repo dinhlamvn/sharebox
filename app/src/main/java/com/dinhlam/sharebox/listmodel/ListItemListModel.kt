@@ -37,7 +37,13 @@ data class ListItemListModel(
             binding.root.setOnClickListener(model.onClick.prop)
             binding.iconMore.setOnClickListener(model.onMore.prop)
             binding.icon.setIconCode(model.icon)
-            binding.textTitle.text = model.title
+            binding.textTitle.text = model.title?.takeIf { it.isNotBlank() } ?: buildContext.getString(
+                when (model.icon) {
+                    "f03e" -> com.dinhlam.sharebox.R.string.library_photo
+                    "f302" -> com.dinhlam.sharebox.R.string.library_photos
+                    "f0ae" -> com.dinhlam.sharebox.R.string.library_checklist
+                    else -> com.dinhlam.sharebox.R.string.library_files
+                })
             binding.textSubtitle.text = model.subtitle
 
             if (model.tagColor != null) {

@@ -31,4 +31,5 @@
     <external-path
         name="app_download_dir"
         path="Download/Sharebox" />
+    <files-path name="box_imports" path="box-imports/" />
 </paths>

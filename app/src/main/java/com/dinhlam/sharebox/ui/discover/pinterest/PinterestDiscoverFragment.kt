@@ -1,10 +1,7 @@
 package com.dinhlam.sharebox.ui.discover.pinterest
 
-import com.dinhlam.sharebox.R
 import android.app.Activity
 import androidx.activity.result.contract.ActivityResultContracts
-import com.dinhlam.sharebox.common.AppExtras
-import com.dinhlam.sharebox.extensions.showToast
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +9,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.dinhlam.sharebox.R
+import com.dinhlam.sharebox.common.AppExtras
+import com.dinhlam.sharebox.extensions.showToast
 import com.dinhlam.sharebox.base.BaseListAdapter
 import com.dinhlam.sharebox.base.BaseViewModel
 import com.dinhlam.sharebox.base.BaseViewModelFragment
@@ -94,7 +94,6 @@ class PinterestDiscoverFragment :
         val loading = state.asyncSearch is BaseViewModel.AsyncLoad.Loading
         binding.loading.toggle(loading)
         binding.searchButton.isEnabled = !loading
-        binding.openPinterest.isVisible = state.searchUrl != null
         binding.emptyText.isVisible =
             state.asyncSearch.completed && !loading && state.pins.isEmpty()
         adapter.requestBuildListModels()
@@ -114,11 +113,6 @@ class PinterestDiscoverFragment :
                 true
             } else {
                 false
-            }
-        }
-        binding.openPinterest.setOnClickListener {
-            getState(viewModel, PinterestDiscoverState::searchUrl)?.let { url ->
-                router.moveToChromeCustomTab(requireContext(), url, null, null)
             }
         }
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -147,8 +141,8 @@ class PinterestDiscoverFragment :
         }
     }
 
-    private fun onArchive(url: String, note: String?) = getState(viewModel) {
-        val box = getState(viewModel, PinterestDiscoverState::currentBox)
+    private fun onArchive(url: String, note: String?) = getState(viewModel) { state ->
+        val box = state.currentBox
         if (box == null) {
             showToast(R.string.please_choose_box)
             binding.boxSectionButton.playZoomAnimation()
@@ -157,11 +151,10 @@ class PinterestDiscoverFragment :
         viewModel.archiveLink(url, note, box.boxId)
     }
 
-
     private fun submitSearch() {
         val query = binding.searchInput.text.trimmedString()
         binding.searchInputLayout.error = if (query.isBlank()) {
-            getString(com.dinhlam.sharebox.R.string.search_text_required)
+            getString(R.string.search_text_required)
         } else {
             null
         }
