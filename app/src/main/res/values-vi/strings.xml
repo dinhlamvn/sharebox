@@ -221,4 +221,7 @@
     <string-array name="trash_more_menu">
         <item>Khôi phục vào…</item>
     </string-array>
+    <string name="guideline_heading">Hướng dẫn ShareBox</string>
+    <string name="guideline_back">Quay lại</string>
+    <string name="guideline_step">Bước %1$d / %2$d</string>
 </resources>

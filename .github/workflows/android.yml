@@ -2,27 +2,58 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    name: Build dev debug APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     steps:
-    - uses: actions/checkout@v3
-    - name: set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Run the unit tests
-      run: ./gradlew test
-    - name: Build with Gradle
-      run: ./gradlew buildDevDebug
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: gradle
+          cache-dependency-path: |
+            **/*.gradle
+            gradle.properties
+            gradle/wrapper/gradle-wrapper.properties
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-36" "build-tools;35.0.0"
+
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x gradlew
+
+      # Assemble only the debug variant; release signing and tests are not required.
+      - name: Build dev debug APK
+        run: ./gradlew :app:assembleDevDebug --no-daemon --stacktrace --console=plain
+
+      - name: Upload dev debug APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: sharebox-dev-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/dev/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14

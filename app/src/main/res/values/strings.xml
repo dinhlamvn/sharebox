@@ -289,4 +289,7 @@
     <string name="search_unsplash_hint">Search Unsplash</string>
     <string name="save_pinterest_pin">Save %1$s</string>
     <string name="pinterest_untitled_post">Untitled post</string>
+    <string name="guideline_heading">Your ShareBox guide</string>
+    <string name="guideline_back">Back</string>
+    <string name="guideline_step">Step %1$d of %2$d</string>
 </resources>

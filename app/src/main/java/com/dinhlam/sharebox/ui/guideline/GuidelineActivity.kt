@@ -40,91 +40,57 @@ class GuidelineActivity : BaseActivity<ActivityGuidelineBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding.textPage.text = "1/7"
-        val adapter = PageAdapter(this)
-        binding.viewPager.adapter = adapter
-
-        binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                binding.textPage.text = "%d/7".format(position + 1)
-            }
-        })
-
+        binding.viewPager.adapter = PageAdapter(this)
+        binding.pageProgress.max = guidelines.size
+        binding.viewPager.registerOnPageChangeCallback(pageChangeCallback)
+        updateNavigation(binding.viewPager.currentItem)
         binding.buttonNext.setOnClickListener {
-            if (binding.viewPager.currentItem == 6) {
-                finish()
-            } else {
-                binding.viewPager.currentItem += 1
-            }
+            if (binding.viewPager.currentItem == guidelines.lastIndex) finish()
+            else binding.viewPager.currentItem += 1
         }
+        binding.buttonBack.setOnClickListener {
+            binding.viewPager.currentItem = (binding.viewPager.currentItem - 1).coerceAtLeast(0)
+        }
+        binding.buttonSkip.setOnClickListener { finish() }
+    }
 
-        binding.buttonSkip.setOnClickListener {
-            finish()
+    private val pageChangeCallback = object : OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) = updateNavigation(position)
+    }
+
+    private fun updateNavigation(position: Int) {
+        val isLastPage = position == guidelines.lastIndex
+        binding.textPage.text = getString(R.string.guideline_step, position + 1, guidelines.size)
+        binding.pageProgress.setProgressCompat(position + 1, true)
+        binding.buttonBack.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
+        binding.buttonSkip.visibility = if (isLastPage) View.INVISIBLE else View.VISIBLE
+        binding.buttonNext.setText(if (isLastPage) R.string.done else R.string.next)
+    }
+
+    override fun onDestroy() {
+        binding.viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
+        super.onDestroy()
+    }
+
+    private class PageAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
+        override fun getItemCount() = guidelines.size
+
+        override fun createFragment(position: Int): Fragment = GuidelineFragment().apply {
+            arguments = bundleOf(AppExtras.EXTRA_DATA to guidelines[position])
         }
     }
 
-    private class PageAdapter(private val fragmentActivity: FragmentActivity) :
-        FragmentStateAdapter(fragmentActivity) {
-        override fun getItemCount(): Int {
-            return 7
-        }
-
-        override fun createFragment(position: Int): Fragment {
-            return GuidelineFragment().apply {
-                arguments = bundleOf(AppExtras.EXTRA_DATA to buildGuideline(position))
-            }
-        }
-
-        private fun buildGuideline(position: Int): Guideline {
-            return when (position) {
-                0 -> Guideline(
-                    R.drawable.guideline_1,
-                    R.string.guideline_title_1,
-                    R.string.guideline_subtitle_1
-                )
-
-                1 -> Guideline(
-                    R.drawable.guideline_2,
-                    R.string.guideline_title_2,
-                    R.string.guideline_subtitle_2
-                )
-
-                2 -> Guideline(
-                    R.drawable.guideline_3,
-                    R.string.guideline_title_3,
-                    R.string.guideline_subtitle_3
-                )
-
-                3 -> Guideline(
-                    R.drawable.guideline_4,
-                    R.string.guideline_title_4,
-                    R.string.guideline_subtitle_4
-                )
-
-                4 -> Guideline(
-                    R.drawable.guideline_5,
-                    R.string.guideline_title_5,
-                    R.string.guideline_subtitle_5
-                )
-
-                5 -> Guideline(
-                    R.drawable.guideline_6,
-                    R.string.guideline_title_6,
-                    R.string.guideline_subtitle_6
-                )
-
-                6 -> Guideline(
-                    R.drawable.guideline_7,
-                    R.string.guideline_title_7,
-                    R.string.guideline_subtitle_7
-                )
-
-                else -> error("No Guideline Data For Position: $position")
-            }
-        }
+    private companion object {
+        val guidelines = listOf(
+            Guideline(R.drawable.guideline_1, R.string.guideline_title_1, R.string.guideline_subtitle_1),
+            Guideline(R.drawable.guideline_2, R.string.guideline_title_2, R.string.guideline_subtitle_2),
+            Guideline(R.drawable.guideline_3, R.string.guideline_title_3, R.string.guideline_subtitle_3),
+            Guideline(R.drawable.guideline_4, R.string.guideline_title_4, R.string.guideline_subtitle_4),
+            Guideline(R.drawable.guideline_5, R.string.guideline_title_5, R.string.guideline_subtitle_5),
+            Guideline(R.drawable.guideline_6, R.string.guideline_title_6, R.string.guideline_subtitle_6),
+            Guideline(R.drawable.guideline_7, R.string.guideline_title_7, R.string.guideline_subtitle_7),
+        )
     }
-
 
     @AndroidEntryPoint
     class GuidelineFragment : BaseFragment<FragmentGuidelineBinding>() {
