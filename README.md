@@ -1,5 +1,5 @@
 # Build status
-![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/dinhlamvn/sharebox/android.yml?branch=main)
+[![Android CI](https://github.com/dinhlamvn/sharebox/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/dinhlamvn/sharebox/actions/workflows/android.yml?query=branch%3Amain)
 
 
 # Local file transfers
