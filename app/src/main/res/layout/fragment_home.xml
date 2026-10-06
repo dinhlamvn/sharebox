@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="?attr/colorSurface">
-    <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?attr/colorSurface" app:elevation="0dp">
-        <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="56dp" app:contentInsetStart="24dp" app:contentInsetEnd="16dp" app:title="@string/library_brand" app:titleTextAppearance="@style/TextTitleMedium">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorSurface">
+        <androidx.appcompat.widget.Toolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="56dp" app:contentInsetStart="24dp" app:contentInsetEnd="16dp" app:title="@string/library_brand" app:titleTextAppearance="@style/AppTheme.AppNameTextAppearance">
             <com.dinhlam.sharebox.view.FontAwesomeIconView android:id="@+id/icon_setting" android:layout_width="48dp" android:layout_height="48dp" android:layout_gravity="end" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/library_settings" app:icon_code="f013" app:icon_size="20dp" app:icon_color="@color/md_theme_onSurface"/>
         </androidx.appcompat.widget.Toolbar>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingHorizontal="24dp" android:paddingTop="8dp" android:paddingBottom="16dp" app:layout_scrollFlags="scroll|enterAlways">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <com.google.android.material.appbar.AppBarLayout android:id="@+id/home_app_bar" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?attr/colorSurface" app:elevation="0dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingHorizontal="24dp" android:paddingTop="8dp" android:paddingBottom="16dp" app:layout_scrollFlags="scroll">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/library_title" android:textSize="32sp" android:fontFamily="sans-serif-medium" android:textColor="?attr/colorOnSurface"/>
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/library_subtitle" android:textSize="14sp" android:textColor="?attr/colorOnSurfaceVariant"/>
         </LinearLayout>
-        <androidx.appcompat.widget.SearchView android:id="@+id/search_library" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginHorizontal="24dp" android:layout_marginBottom="12dp" android:background="@drawable/library_search_bg" android:inputType="text" app:iconifiedByDefault="false" app:queryBackground="@android:color/transparent" app:queryHint="@string/library_search"/>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingHorizontal="24dp" android:paddingBottom="12dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingHorizontal="24dp" android:paddingBottom="12dp" app:layout_scrollFlags="scroll|enterAlways">
             <com.google.android.material.button.MaterialButton android:id="@+id/button_import" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:text="@string/library_import" android:textSize="13sp" android:insetTop="0dp" android:insetBottom="0dp" app:cornerRadius="10dp"/>
             <com.google.android.material.button.MaterialButton android:id="@+id/button_new_folder" style="@style/Widget.Material3.Button.TonalButton" android:layout_width="0dp" android:layout_height="52dp" android:layout_marginStart="12dp" android:layout_weight="1" android:text="@string/library_new_folder" android:textSize="13sp" android:insetTop="0dp" android:insetBottom="0dp" app:cornerRadius="10dp"/>
         </LinearLayout>
+        <androidx.appcompat.widget.SearchView android:id="@+id/search_library" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginHorizontal="24dp" android:layout_marginBottom="12dp" android:background="@drawable/library_search_bg" android:inputType="text" app:iconifiedByDefault="false" app:queryBackground="@android:color/transparent" app:queryHint="@string/library_search"/>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@+id/swipe_refresh_layout" android:layout_width="match_parent" android:layout_height="match_parent" app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <androidx.recyclerview.widget.RecyclerView android:id="@+id/recycler_view" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:paddingBottom="100dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton android:id="@+id/button_add_content" android:layout_width="wrap_content" android:layout_height="56dp" android:layout_gravity="bottom|end" android:layout_margin="24dp" android:text="@string/library_add" android:textColor="@color/md_theme_onPrimary" app:backgroundTint="@color/md_theme_primary" app:icon="@drawable/ic_library_add" app:iconTint="@color/md_theme_onPrimary"/>
     <com.dinhlam.sharebox.view.ShareBoxLoadingView android:id="@+id/loading" android:layout_width="match_parent" android:layout_height="match_parent"/>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

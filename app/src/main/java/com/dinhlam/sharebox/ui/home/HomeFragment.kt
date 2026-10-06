@@ -183,6 +183,16 @@ class HomeFragment :
         }
 
         homeAdapter.attachTo(binding.recyclerView, this)
+        // Let the header expand before a downward pull starts a refresh.
+        var appBarOffset = 0
+        binding.homeAppBar.addOnOffsetChangedListener(
+            com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { _, offset ->
+                appBarOffset = offset
+            }
+        )
+        binding.swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
+            appBarOffset != 0 || binding.recyclerView.canScrollVertically(-1)
+        }
         binding.searchLibrary.doOnQueryTextChangedDebounce(250, viewLifecycleOwner.lifecycleScope, viewModel::searchLibrary)
         binding.buttonImport.setOnClickListener {
             startActivity(Intent(requireContext(), com.dinhlam.sharebox.ui.transfer.TransferActivity::class.java))
@@ -190,13 +200,19 @@ class HomeFragment :
         binding.buttonNewFolder.setOnClickListener { requestCreateBox() }
         binding.buttonAddContent.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.library_add)
-                .setItems(arrayOf(getString(R.string.library_add_files), getString(R.string.library_add_photos),
-                    getString(R.string.library_add_note), getString(R.string.library_new_folder))) { _, choice ->
+                .setItems(arrayOf(
+                    getString(R.string.library_add_files),
+                    getString(R.string.library_add_photos),
+                    getString(R.string.library_add_note),
+                    getString(R.string.checklist),
+                    getString(R.string.library_new_folder),
+                )) { _, choice ->
                     when (choice) {
                         0 -> requestArchiveFile()
                         1 -> requestArchiveImages()
                         2 -> archiveTextResultLauncher.launch(router.textInput(requireContext(), null, null, false))
-                        3 -> requestCreateBox()
+                        3 -> startActivity(router.checkList(requireContext(), null))
+                        4 -> requestCreateBox()
                     }
                 }.show()
         }
