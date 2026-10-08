@@ -28,8 +28,8 @@ android {
         applicationId "com.dinhlam.sharebox"
         minSdk 23
         targetSdk 36
-        versionCode 202610050
-        versionName "3.10.0"
+        versionCode 202610060
+        versionName "3.10.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "UNSPLASH_ACCESS_KEY", "\"${unsplashAccessKey}\""
@@ -127,6 +127,7 @@ dependencies {
     implementation composeBom
     androidTestImplementation composeBom
     implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material:material'
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.activity:activity-compose:1.8.2'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
